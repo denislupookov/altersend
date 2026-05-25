@@ -107,6 +107,18 @@
           "savePhotosPermission": "AlterSend saves received images and videos to your photo library.",
           "isAccessMediaLocationEnabled": false
         }
+      ],
+      [
+        "expo-share-intent",
+        {
+          "iosAppGroupIdentifier": "group.com.altersend.mobile",
+          "iosActivationRules": {
+            "NSExtensionActivationSupportsImageWithMaxCount": 100,
+            "NSExtensionActivationSupportsMovieWithMaxCount": 100,
+            "NSExtensionActivationSupportsFileWithMaxCount": 100
+          },
+          "androidIntentFilters": ["*/*"]
+        }
       ]
     ],
     "extra": {

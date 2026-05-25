@@ -20,6 +20,7 @@ import { mobileApi } from '../src/api/mobileApi'
 import { ToastProvider } from '../src/components/Toast'
 import { startAppStateBridge } from '../src/lifecycle/appStateBridge'
 import { startDeepLinkHandler } from '../src/lifecycle/deepLinkHandler'
+import { ShareIntentHandler } from '../src/lifecycle/ShareIntentHandler'
 import { startPhotosCopyEffect } from '../src/transfer/receive'
 import { initSentry, captureException } from '../src/sentry'
 
@@ -99,6 +100,7 @@ export default function RootLayout() {
             }}
           >
             <ToastProvider>
+              <ShareIntentHandler />
               <ThemedStack />
             </ToastProvider>
           </ErrorBoundary>

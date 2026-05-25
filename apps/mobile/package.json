@@ -53,6 +53,7 @@
     "expo-linking": "~55.0.13",
     "expo-media-library": "~55.0.15",
     "expo-router": "~55.0.5",
+    "expo-share-intent": "^6.1.0",
     "expo-sharing": "~55.0.18",
     "expo-system-ui": "~55.0.9",
     "lucide-react-native": "^1.8.0",

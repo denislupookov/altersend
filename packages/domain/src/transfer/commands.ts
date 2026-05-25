@@ -74,6 +74,11 @@ export const addSelectedFiles = (files: SelectedFile[]): void => {
   dispatchToTransferStore({ type: 'add_selected_files', files })
 }
 
+export const replaceSelectedFiles = (files: SelectedFile[]): void => {
+  dispatchToTransferStore({ type: 'clear_send_draft' })
+  if (files.length > 0) dispatchToTransferStore({ type: 'add_selected_files', files })
+}
+
 export const removeSelectedFile = (path: string): void => {
   dispatchToTransferStore({ type: 'remove_selected_file', path })
 }
