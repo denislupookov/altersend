@@ -65,7 +65,9 @@ export class TransferSwarm {
           'TransferSwarm: handleConnection failed',
           err instanceof Error ? err.message : String(err)
         )
-        try { socket.destroy() } catch {}
+        try {
+          socket.destroy()
+        } catch {}
       })
     })
     swarm.on('update', () => {})
@@ -85,7 +87,9 @@ export class TransferSwarm {
       this.callbacks.onControlMessage(message, session)
     })
     if (!controlChannel) {
-      try { socket.destroy() } catch {}
+      try {
+        socket.destroy()
+      } catch {}
       return
     }
 
@@ -115,7 +119,9 @@ export class TransferSwarm {
     this.joinedAny = false
 
     for (const conn of this.peerSessions.keys()) {
-      try { conn.destroy() } catch {}
+      try {
+        conn.destroy()
+      } catch {}
     }
     this.peerSessions.clear()
 
@@ -178,7 +184,9 @@ export class TransferSwarm {
 
   async destroy(): Promise<void> {
     for (const conn of this.peerSessions.keys()) {
-      try { conn.destroy() } catch {}
+      try {
+        conn.destroy()
+      } catch {}
     }
     if (this.swarm) {
       await this.swarm.destroy()
