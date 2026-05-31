@@ -10,7 +10,7 @@ import {
   type WorkerClient
 } from '@altersend/core'
 import { isMac, isLinux } from 'which-runtime'
-import { command, flag } from 'paparam'
+import { command, flag, sloppy } from 'paparam'
 import { createRequire } from 'module'
 import { getAppPath, getWorkerClientPath, getWorkerEntryPath } from './workerPaths.js'
 
@@ -76,7 +76,9 @@ const cmd = command(
   productName,
   flag('--storage <path>', 'pass custom storage to pear-runtime'),
   flag('--no-updates', 'start without OTA updates'),
-  flag('--multi', 'allow multiple instances')
+  flag('--multi', 'allow multiple instances'),
+  // Tolerate OS/installer-injected argv (Squirrel --squirrel-*, deep-link URLs) so module load can't crash
+  sloppy({ flags: true, args: true })
 )
 
 const cliArgs = (app.isPackaged ? process.argv.slice(1) : process.argv.slice(2)).filter(
