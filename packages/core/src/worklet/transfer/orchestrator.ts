@@ -256,7 +256,7 @@ export class TransferOrchestrator implements TransferRPC {
 
   async host(): Promise<HostReply> {
     await this.readyPromise
-    const topic = await this.swarm.generateKey()
+    const topic = this.swarm.generateKey()
     this.currentTopic = topic
     return { topic }
   }

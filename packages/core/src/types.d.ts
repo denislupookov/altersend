@@ -107,6 +107,7 @@ declare module 'hyperswarm' {
     leave(discoveryKey: Uint8Array): unknown
     destroy(): Promise<void>
     on(event: 'connection', cb: (socket: PeerSocket, info: PeerInfo) => void): this
+    on(event: 'update', cb: () => void): this
   }
 }
 
@@ -123,7 +124,11 @@ declare module 'protomux' {
   }
   export default class Protomux {
     static from(socket: unknown): Protomux
-    createChannel(opts: { protocol: string }): ProtomuxChannel | null
+    createChannel(opts: {
+      protocol: string
+      onopen?: () => void
+      onclose?: () => void
+    }): ProtomuxChannel | null
   }
 }
 

@@ -74,6 +74,8 @@ type PeerControlHandler = (message: PeerControlMessage) => void
 
 export class PeerControlChannel {
   private readonly message: ProtomuxMessage
+  private opened = false
+  private readonly pending: PeerControlMessage[] = []
 
   constructor(message: ProtomuxMessage) {
     this.message = message
@@ -81,8 +83,12 @@ export class PeerControlChannel {
 
   static create(socket: PeerSocket, onmessage: PeerControlHandler): PeerControlChannel | null {
     const mux = Protomux.from(socket)
+    let instance: PeerControlChannel | null = null
     const channel = mux.createChannel({
-      protocol: 'altersend/control'
+      protocol: 'altersend/control',
+      onopen: () => {
+        if (instance) instance.flush()
+      }
     })
 
     if (!channel) return null
@@ -106,10 +112,23 @@ export class PeerControlChannel {
     })
 
     channel.open()
-    return new PeerControlChannel(message)
+    instance = new PeerControlChannel(message)
+    return instance
   }
 
   send(message: PeerControlMessage): void {
+    if (!this.opened) {
+      this.pending.push(message)
+      return
+    }
     this.message.send({ ...message, protocolVersion: PROTOCOL_VERSION })
+  }
+
+  private flush(): void {
+    this.opened = true
+    const queue = this.pending.splice(0)
+    for (const msg of queue) {
+      this.message.send({ ...msg, protocolVersion: PROTOCOL_VERSION })
+    }
   }
 }
