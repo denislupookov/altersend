@@ -1,43 +1,38 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 import { View } from 'react-native'
 import { Button } from '@altersend/components'
 import { Layout } from '@/src/components'
 import { SelectFilesView } from '@/src/transfer/send'
-import { useRouter } from 'expo-router'
+import { usePathname, useRouter } from 'expo-router'
 import { getSendPageCopy, getSendStep, isShareStep, useTransferStore } from '@altersend/domain'
-import { clearSenderFlow, continueShare } from '@altersend/domain'
-
-type FlowTarget = 'select' | 'preparing' | 'share'
+import { continueShare } from '@altersend/domain'
 
 function NavigationController() {
   const router = useRouter()
+  const pathname = usePathname()
   const connectionState = useTransferStore((s) => s.connectionState)
   const draftPhase = useTransferStore((s) => s.draftPhase)
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
-  const prevTarget = useRef<FlowTarget>('select')
 
   useEffect(() => {
-    const target: FlowTarget =
-      step === 'preparing' ? 'preparing' : isShareStep(step) ? 'share' : 'select'
+    const target =
+      step === 'preparing' ? '/send/preparing' : isShareStep(step) ? '/send/share' : '/send'
 
-    if (prevTarget.current === target) return
+    if (pathname === target) return
 
-    const prev = prevTarget.current
-    prevTarget.current = target
-
-    if (target === 'preparing') {
-      router.push('/send/preparing')
-    } else if (target === 'share') {
-      if (prev === 'preparing') {
-        router.replace('/send/share')
-      } else {
-        router.push('/send/share')
-      }
-    } else if (prev !== 'select') {
-      clearSenderFlow()
-      if (router.canDismiss()) router.dismissAll()
+    if (target === '/send/preparing') {
+      if (pathname === '/send') router.push('/send/preparing')
+      else router.replace('/send/preparing')
+    } else if (target === '/send/share') {
+      if (pathname === '/send') router.push('/send/share')
+      else router.replace('/send/share')
+    } else if (
+      (pathname === '/send/preparing' || pathname === '/send/share') &&
+      router.canDismiss()
+    ) {
+      router.dismissAll()
     }
-  }, [step, router])
+  }, [step, pathname, router])
 
   return null
 }

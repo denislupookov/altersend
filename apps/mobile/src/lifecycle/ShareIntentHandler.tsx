@@ -1,7 +1,13 @@
 import { useEffect } from 'react'
 import { router } from 'expo-router'
 import { useShareIntent } from 'expo-share-intent'
-import { replaceSelectedFiles, continueShare, type SelectedFile } from '@altersend/domain'
+import {
+  clearSession,
+  continueShare,
+  replaceSelectedFiles,
+  useTransferStore,
+  type SelectedFile
+} from '@altersend/domain'
 
 function toFilePath(path: string): string {
   return path.startsWith('file://') ? path.slice('file://'.length) : path
@@ -19,10 +25,15 @@ export function ShareIntentHandler() {
       size: f.size ?? undefined
     }))
 
-    replaceSelectedFiles(files)
-    router.navigate('/send')
-    void continueShare(files)
     resetShareIntent()
+
+    void (async () => {
+      if (useTransferStore.getState().role !== null) await clearSession()
+      if (router.canDismiss()) router.dismissAll()
+      router.navigate('/send')
+      replaceSelectedFiles(files)
+      await continueShare(files)
+    })()
   }, [hasShareIntent, shareIntent, resetShareIntent])
 
   return null

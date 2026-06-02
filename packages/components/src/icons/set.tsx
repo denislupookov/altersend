@@ -5,6 +5,7 @@ import {
   ArrowUpRight,
   AppWindow,
   Bell,
+  Camera,
   Check,
   ChevronDown,
   ChevronRight,
@@ -43,6 +44,7 @@ export const ArrowLeftIcon = adaptLucide(ArrowLeft)
 export const ArrowUpRightIcon = adaptLucide(ArrowUpRight)
 export const AppWindowIcon = adaptLucide(AppWindow)
 export const BellIcon = adaptLucide(Bell)
+export const CameraIcon = adaptLucide(Camera)
 export const CheckIcon = adaptLucide(Check)
 export const ChevronDownIcon = adaptLucide(ChevronDown)
 export const ChevronRightIcon = adaptLucide(ChevronRight)

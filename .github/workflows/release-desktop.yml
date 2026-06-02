@@ -246,3 +246,86 @@ jobs:
             artifacts/**/*.exe
             artifacts/**/*.AppImage
             artifacts/**/*.apk
+
+  pear-release:
+    needs: [build-macos, build-windows, build-linux, build-linux-arm64]
+    runs-on: self-hosted
+    environment: release
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        run: echo "value=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Install pear-build
+        run: npm install -g pear-build@1.1.0
+
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos
+          path: /tmp/pear-installers/macos
+
+      - name: Download Linux x64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux
+          path: /tmp/pear-installers/linux
+
+      - name: Download Linux arm64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-arm64
+          path: /tmp/pear-installers/linux-arm64
+
+      - name: Extract macOS apps from DMGs
+        run: |
+          mkdir -p /tmp/pear-apps
+          ARM64_DMG=$(find /tmp/pear-installers/macos -name "*arm64*.dmg" | head -1)
+          hdiutil attach "$ARM64_DMG" -mountpoint /tmp/dmg-arm64 -nobrowse -quiet
+          cp -r "/tmp/dmg-arm64/AlterSend.app" /tmp/pear-apps/AlterSend-arm64.app
+          hdiutil detach /tmp/dmg-arm64 -quiet
+
+          X64_DMG=$(find /tmp/pear-installers/macos -name "*.dmg" | grep -v arm64 | head -1)
+          hdiutil attach "$X64_DMG" -mountpoint /tmp/dmg-x64 -nobrowse -quiet
+          cp -r "/tmp/dmg-x64/AlterSend.app" /tmp/pear-apps/AlterSend-x64.app
+          hdiutil detach /tmp/dmg-x64 -quiet
+
+      - name: Build Pear packages
+        run: |
+          VERSION="${{ steps.version.outputs.value }}"
+          TARGET="$HOME/altersend-desktop-$VERSION"
+          PKG="$GITHUB_WORKSPACE/apps/desktop/package.json"
+
+          cp -r /tmp/pear-apps/AlterSend-arm64.app /tmp/pear-apps/AlterSend.app
+          pear-build --package "$PKG" --darwin-arm64-app /tmp/pear-apps/AlterSend.app --target "$TARGET"
+          rm -rf /tmp/pear-apps/AlterSend.app
+
+          cp -r /tmp/pear-apps/AlterSend-x64.app /tmp/pear-apps/AlterSend.app
+          pear-build --package "$PKG" --darwin-x64-app /tmp/pear-apps/AlterSend.app --target "$TARGET"
+          rm -rf /tmp/pear-apps/AlterSend.app
+
+          APPIMAGE=$(find /tmp/pear-installers/linux -name "*.AppImage" | head -1)
+          cp "$APPIMAGE" /tmp/AlterSend.AppImage
+          pear-build --package "$PKG" --linux-x64-app /tmp/AlterSend.AppImage --target "$TARGET"
+          rm /tmp/AlterSend.AppImage
+
+          APPIMAGE_ARM=$(find /tmp/pear-installers/linux-arm64 -name "*.AppImage" | head -1)
+          cp "$APPIMAGE_ARM" /tmp/AlterSend.AppImage
+          pear-build --package "$PKG" --linux-arm64-app /tmp/AlterSend.AppImage --target "$TARGET"
+          rm /tmp/AlterSend.AppImage
+
+
+      - name: Stage and release to Pear DHT
+        run: |
+          export PATH="$HOME/Library/Application Support/pear/bin:$PATH"
+          VERSION="${{ steps.version.outputs.value }}"
+          pear stage --no-ask "${{ vars.PEAR_UPGRADE_LINK }}" "$HOME/altersend-desktop-$VERSION"
+          pear release "${{ vars.PEAR_UPGRADE_LINK }}"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -rf "$HOME/altersend-desktop-${{ steps.version.outputs.value }}"
+          rm -rf /tmp/pear-installers /tmp/pear-apps

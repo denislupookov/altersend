@@ -57,15 +57,10 @@
         "hyperswarm",
         "pear-runtime-updater",
         "tailwindcss",
-        "@electron-forge/maker-deb",
         "@electron-forge/maker-dmg",
         "@electron-forge/maker-msix",
-        "@electron-forge/maker-rpm",
         "@electron-forge/maker-squirrel",
-        "@electron-forge/maker-zip",
-        "app-builder-lib",
-        "electron-forge-plugin-prune-prebuilds",
-        "electron-forge-plugin-universal-prebuilds"
+        "app-builder-lib"
       ],
       "ignoreBinaries": [
         "electron-builder.mac.json",

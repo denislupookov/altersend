@@ -2,11 +2,11 @@ import { useCallback, useEffect } from 'react'
 import { Pressable } from 'react-native'
 import { useTheme } from '@altersend/components'
 import { ArrowLeftIcon } from '@altersend/components/icons'
-import { getSendPageCopy, getSendStep, useTransferStore } from '@altersend/domain'
+import { getSendPageCopy, getSendStep, isShareStep, useTransferStore } from '@altersend/domain'
 import { clearSenderFlow } from '@altersend/domain'
 import { Layout } from '@/src/components'
 import { PreparingView } from '@/src/transfer/send'
-import { useNavigation } from 'expo-router'
+import { useNavigation, useRouter } from 'expo-router'
 
 export default function SendPreparingScreen() {
   const { theme } = useTheme()
@@ -15,6 +15,11 @@ export default function SendPreparingScreen() {
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
   const copy = getSendPageCopy(step)
   const navigation = useNavigation()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (isShareStep(step)) router.replace('/send/share')
+  }, [step, router])
 
   const handleBack = useCallback(() => {
     clearSenderFlow()

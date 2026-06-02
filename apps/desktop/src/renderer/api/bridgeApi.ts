@@ -75,5 +75,8 @@ export const bridgeApi = {
   },
   setSentryEnabled(enabled: boolean) {
     return requireBridge().setSentryEnabled(enabled)
+  },
+  requestCameraAccess() {
+    return requireBridge().requestCameraAccess()
   }
 }

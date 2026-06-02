@@ -44,4 +44,5 @@ contextBridge.exposeInMainWorld('bridge', {
     return () => ipcRenderer.removeListener('app:deep-link', listener)
   },
   setSentryEnabled: (enabled) => ipcRenderer.invoke('sentry:setEnabled', enabled),
+  requestCameraAccess: () => ipcRenderer.invoke('app:requestCameraAccess'),
 })

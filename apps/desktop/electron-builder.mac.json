@@ -28,7 +28,10 @@
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
     "entitlements": "build/entitlements.mac.plist",
-    "entitlementsInherit": "build/entitlements.mac.plist"
+    "entitlementsInherit": "build/entitlements.mac.plist",
+    "extendInfo": {
+      "NSCameraUsageDescription": "AlterSend uses your camera to scan a sender's connection QR code."
+    }
   },
   "afterSign": "scripts/notarize.cjs",
   "afterPack": "scripts/afterPack.cjs",

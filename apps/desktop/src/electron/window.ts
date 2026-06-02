@@ -32,6 +32,13 @@ export async function createMainWindow(pear: PearRuntimeInstance) {
     }
   })
 
+  const allowedPermissions = new Set(['media', 'clipboard-sanitized-write'])
+  const { session } = win.webContents
+  session.setPermissionRequestHandler((_wc, permission, callback) =>
+    callback(allowedPermissions.has(permission))
+  )
+  session.setPermissionCheckHandler((_wc, permission) => allowedPermissions.has(permission))
+
   const showWindow = () => {
     if (!win.isDestroyed() && !win.isVisible()) win.show()
   }
