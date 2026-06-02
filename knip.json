@@ -47,6 +47,7 @@
         "src/**/*.{ts,tsx,cjs}",
         "scripts/**/*.{js,cjs,mjs}"
       ],
+      "ignoreUnresolved": ["^\\./sentry-dsn\\.gen\\.js$"],
       "ignoreDependencies": [
         "b4a",
         "bare-rpc",
