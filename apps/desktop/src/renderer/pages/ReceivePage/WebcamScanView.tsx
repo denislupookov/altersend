@@ -39,7 +39,7 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
       if (handledRef.current) return
       const joinCode = extractJoinCode(result.data)
       if (!joinCode) return
-      
+
       handledRef.current = true
       void scannerRef.current?.stop()
       setState('connecting')
@@ -170,7 +170,8 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
                 <div
                   className='relative aspect-square w-[80%]'
                   style={{
-                    boxShadow: '0 0 0 9999px color-mix(in oklab, var(--as-color-scrim) 30%, transparent)'
+                    boxShadow:
+                      '0 0 0 9999px color-mix(in oklab, var(--as-color-scrim) 30%, transparent)'
                   }}
                 >
                   <span className='absolute left-0 top-0 h-7 w-7 rounded-tl-[12px] border-l-[3px] border-t-[3px] border-text-primary' />
@@ -187,7 +188,9 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
                   {state === 'connecting' ? 'Connecting…' : 'Starting camera…'}
                 </span>
                 {state === 'connecting' ? (
-                  <span className='text-[12px] text-on-accent/75'>Joining the sender’s session.</span>
+                  <span className='text-[12px] text-on-accent/75'>
+                    Joining the sender’s session.
+                  </span>
                 ) : null}
               </div>
             ) : null}
