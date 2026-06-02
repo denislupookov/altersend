@@ -25,7 +25,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@altersend/core": "1.0.0"
+    "@altersend/core": "1.0.0",
+    "i18next": "^26.2.0"
   },
   "peerDependencies": {
     "react": "^19.0.0",
@@ -38,4 +39,5 @@
     "vitest": "^3.2.4",
     "zustand": "^5.0.12"
   }
+  
 }
