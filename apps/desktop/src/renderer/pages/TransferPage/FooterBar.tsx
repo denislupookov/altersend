@@ -15,7 +15,10 @@ import {
   githubUrl,
   privacyPolicyUrl,
   termsOfServiceUrl,
-  websiteUrl
+  websiteUrl,
+  useTransferStore,
+  transferStore,
+  i18nextInstance
 } from '@altersend/domain'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
@@ -45,6 +48,12 @@ export function FooterBar({ version }: { version: string }) {
   const [reportMessage, setReportMessage] = useState('')
   const [reportState, setReportState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
+  const locale = useTransferStore((s) => s.locale)
+
+  const availableLanguages = [
+    { code: 'en', label: 'English' },
+    { code: 'pt-BR', label: 'Português (BR)' }
+  ]
 
   const handleCrashReportingToggle = (next: boolean) => {
     setCrashReporting(next)
@@ -142,6 +151,26 @@ export function FooterBar({ version }: { version: string }) {
                         label='Crash reports'
                         description='Share anonymous crash data to help improve AlterSend'
                       />
+                      <div className='mt-3'>
+                        <label className='mb-2 block text-[13px] font-medium text-text-secondary'>Language</label>
+                        <select
+                          className='w-full rounded-md border border-border-primary bg-surface-secondary px-3 py-2 text-[14px] text-text-primary'
+                          value={locale}
+                          onChange={(e) => {
+                            const next = e.target.value
+                            transferStore.setState({ locale: next, isRTL: ['ar', 'he', 'fa', 'ur'].includes(next) })
+                            try {
+                              i18nextInstance.changeLanguage(next)
+                            } catch {}
+                          }}
+                        >
+                          {availableLanguages.map((l) => (
+                            <option key={l.code} value={l.code}>
+                              {l.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                     <div className='border-t border-border-primary py-1'>
                       {MENU_ITEMS.map(({ icon: Icon, label, key, ...rest }) => (
