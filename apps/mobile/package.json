@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@altersend/mobile",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "AlterSend mobile app (React Native / Expo)",
   "main": "expo-router/entry",
   "scripts": {
@@ -34,9 +34,9 @@
   },
   "homepage": "https://github.com/denislupookov/altersend#readme",
   "dependencies": {
-    "@altersend/components": "1.0.0",
-    "@altersend/core": "1.0.0",
-    "@altersend/domain": "1.0.0",
+    "@altersend/components": "1.1.0",
+    "@altersend/core": "1.1.0",
+    "@altersend/domain": "1.1.0",
     "@expo/vector-icons": "^15.0.2",
     "@sentry/react-native": "^8.11.0",
     "b4a": "^1.6.7",

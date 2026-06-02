@@ -54,11 +54,14 @@ export const Layout = ({
               hitSlop={12}
               style={({ pressed }) => [styles.menuButton, { opacity: pressed ? 0.6 : 1 }]}
             >
-              <BlurView
-                intensity={Platform.OS === 'ios' ? 30 : 0}
-                tint='systemUltraThinMaterialDark'
-                style={StyleSheet.absoluteFill}
-              />
+              {Platform.OS === 'ios' ? (
+                <BlurView
+                  pointerEvents='none'
+                  intensity={30}
+                  tint='systemUltraThinMaterialDark'
+                  style={StyleSheet.absoluteFill}
+                />
+              ) : null}
               <View
                 style={[styles.menuButtonBorder, { borderColor: theme.colors.colorBorderPrimary }]}
               />

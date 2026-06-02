@@ -1,7 +1,7 @@
 {
   "name": "@altersend/desktop",
   "productName": "AlterSend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "upgrade": "pear://qxenz5wmspmryjc13m9yzsqj1conqotn8fb4ocbufwtz9mtbqq5o",
   "description": "Peer-to-peer file transfer. No servers, no accounts.",
   "license": "Apache-2.0",
@@ -28,9 +28,9 @@
     "dist:linux:arm64": "npx electron-builder --linux --arm64 -c electron-builder.linux.json --publish never"
   },
   "dependencies": {
-    "@altersend/components": "1.0.0",
-    "@altersend/core": "1.0.0",
-    "@altersend/domain": "1.0.0",
+    "@altersend/components": "1.1.0",
+    "@altersend/core": "1.1.0",
+    "@altersend/domain": "1.1.0",
     "@sentry/electron": "^7.13.0",
     "b4a": "^1.8.0",
     "bare-rpc": "^1.2.0",
@@ -43,6 +43,7 @@
     "paparam": "^1.10.0",
     "pear-runtime": "^1.1.1",
     "pear-runtime-updater": "^3.0.10",
+    "qr-scanner": "^1.4.2",
     "qrcode": "^1.5.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

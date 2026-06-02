@@ -1,4 +1,12 @@
-import { BrowserWindow, dialog, ipcMain, shell, type OpenDialogOptions } from 'electron'
+import {
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  shell,
+  systemPreferences,
+  type OpenDialogOptions
+} from 'electron'
+import { isMac } from 'which-runtime'
 import { stat } from 'fs/promises'
 import path from 'path'
 import { isPathSafe, type TransferMethod } from '@altersend/core'
@@ -145,5 +153,13 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
 
   ipcMain.handle('sentry:setEnabled', (_evt, enabled: boolean) => {
     setReportingEnabled(enabled)
+  })
+
+  // macOS gates camera access behind TCC; request it lazily when the user opens the
+  // webcam scanner. Other platforms grant via the OS/renderer prompt, so report ready.
+  ipcMain.handle('app:requestCameraAccess', async () => {
+    if (!isMac) return true
+    if (systemPreferences.getMediaAccessStatus('camera') === 'granted') return true
+    return systemPreferences.askForMediaAccess('camera')
   })
 }

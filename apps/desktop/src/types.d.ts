@@ -72,6 +72,7 @@ declare global {
     openFile: (filePath: string) => Promise<string>
     openExternalUrl: (url: string) => Promise<void>
     setSentryEnabled: (enabled: boolean) => Promise<void>
+    requestCameraAccess: () => Promise<boolean>
   }
 
   interface Window {
