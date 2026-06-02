@@ -14,6 +14,8 @@ export const initialTransferSessionState: TransferSessionState = {
   role: null,
   peerCount: 0,
   isReconnecting: false,
+  locale: 'en',
+  isRTL: false,
   incomingFileOffers: [],
   receiveDownloadStates: {},
   selectedFiles: [],

@@ -12,24 +12,32 @@ export interface SendShareStatus {
   tone: 'muted' | 'success'
 }
 
+import i18n from '../i18n/config'
+
 export function getSendPageCopy(step: SendStep): SendPageCopy {
   switch (step) {
     case 'selecting':
       return {
-        title: 'Send files',
-        description:
-          'Choose one or more files and generate a one-time code for a direct encrypted transfer.'
+        title: i18n.t('send.steps.selecting.title', { defaultValue: 'Send files' }),
+        description: i18n.t('send.steps.selecting.description', {
+          defaultValue:
+            'Choose one or more files and generate a one-time code for a direct encrypted transfer.'
+        })
       }
     case 'preparing':
       return {
-        title: 'Preparing transfer',
-        description: 'Preparing the selected files before the share code is revealed.'
+        title: i18n.t('send.steps.preparing.title', { defaultValue: 'Preparing transfer' }),
+        description: i18n.t('send.steps.preparing.description', {
+          defaultValue: 'Preparing the selected files before the share code is revealed.'
+        })
       }
     case 'waiting_for_receiver':
     case 'receiver_connected':
       return {
-        title: 'Share the code',
-        description: 'Send the code or QR to your recipient to start the transfer.'
+        title: i18n.t('send.steps.waiting_for_receiver.title', { defaultValue: 'Share the code' }),
+        description: i18n.t('send.steps.waiting_for_receiver.description', {
+          defaultValue: 'Send the code or QR to your recipient to start the transfer.'
+        })
       }
     default: {
       const exhaustiveCheck: never = step
