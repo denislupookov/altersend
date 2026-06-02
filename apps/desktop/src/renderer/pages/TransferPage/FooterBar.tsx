@@ -152,13 +152,18 @@ export function FooterBar({ version }: { version: string }) {
                         description='Share anonymous crash data to help improve AlterSend'
                       />
                       <div className='mt-3'>
-                        <label className='mb-2 block text-[13px] font-medium text-text-secondary'>Language</label>
+                        <label className='mb-2 block text-[13px] font-medium text-text-secondary'>
+                          Language
+                        </label>
                         <select
                           className='w-full rounded-md border border-border-primary bg-surface-secondary px-3 py-2 text-[14px] text-text-primary'
                           value={locale}
                           onChange={(e) => {
                             const next = e.target.value
-                            transferStore.setState({ locale: next, isRTL: ['ar', 'he', 'fa', 'ur'].includes(next) })
+                            transferStore.setState({
+                              locale: next,
+                              isRTL: ['ar', 'he', 'fa', 'ur'].includes(next)
+                            })
                             try {
                               i18nextInstance.changeLanguage(next)
                             } catch {}
