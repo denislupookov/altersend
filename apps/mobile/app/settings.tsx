@@ -7,7 +7,10 @@ import {
   privacyPolicyUrl,
   supportEmail,
   termsOfServiceUrl,
-  websiteUrl
+  websiteUrl,
+  useTransferStore,
+  transferStore,
+  i18nextInstance
 } from '@altersend/domain'
 import { ToggleSwitch, useTheme } from '@altersend/components'
 import {
@@ -66,11 +69,53 @@ function LinkRow({ label, hint, icon, onPress, isLast }: LinkRowProps) {
   )
 }
 
+function LanguageChip({
+  label,
+  selected,
+  onPress
+}: {
+  label: string
+  selected: boolean
+  onPress: () => void
+}) {
+  const { theme } = useTheme()
+  return (
+    <Pressable
+      accessibilityRole='button'
+      accessibilityState={{ selected }}
+      onPress={onPress}
+      style={{
+        flex: 1,
+        backgroundColor: selected ? theme.colors.colorSurfaceHover : 'transparent',
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderRadius: 8
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 14,
+          fontWeight: '500',
+          color: selected ? theme.colors.colorTextPrimary : theme.colors.colorTextMuted
+        }}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  )
+}
+
 export default function SettingsScreen() {
   const { theme } = useTheme()
   const router = useRouter()
   const version = Constants.expoConfig?.version ?? '0.0.0'
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
+  const locale = useTransferStore((s) => s.locale)
+
+  const availableLanguages = [
+    { code: 'en', label: 'English' },
+    { code: 'pt-BR', label: 'Português (BR)' }
+  ]
 
   const handleCrashReportingToggle = (value: boolean) => {
     setCrashReporting(value)
@@ -91,6 +136,40 @@ export default function SettingsScreen() {
   return (
     <Layout title='Settings' description='' hasNativeHeader>
       <View style={styles.content}>
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>
+            Language
+          </Text>
+          <View style={[styles.card, styles.toggleCardPad, cardStyle]}>
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 4,
+                backgroundColor: theme.colors.colorSurfaceSecondary,
+                padding: 4,
+                borderRadius: 12
+              }}
+            >
+              {availableLanguages.map((l) => (
+                <LanguageChip
+                  key={l.code}
+                  label={l.label}
+                  selected={locale === l.code}
+                  onPress={() => {
+                    transferStore.setState({
+                      locale: l.code,
+                      isRTL: ['ar', 'he', 'fa', 'ur'].includes(l.code)
+                    })
+                    try {
+                      i18nextInstance.changeLanguage(l.code)
+                    } catch {}
+                  }}
+                />
+              ))}
+            </View>
+          </View>
+        </View>
+
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>Privacy</Text>
           <View style={[styles.card, styles.toggleCardPad, cardStyle]}>

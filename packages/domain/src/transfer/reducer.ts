@@ -8,14 +8,40 @@ import { applySharingProgress, getPhaseFromSelection, mergeSelectedFiles } from 
 import { applyPeerDownloadEvent } from '../send/shareModel'
 import type { ConnectionState, TransferAction, TransferSessionState } from './types'
 
+function getDefaultLocale(): string {
+  try {
+    if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+      const locale = Intl.DateTimeFormat().resolvedOptions().locale
+      if (locale.startsWith('pt')) return 'pt-BR'
+      if (locale.startsWith('en')) return 'en'
+      return locale.split('-')[0] || 'en'
+    }
+    if (typeof navigator !== 'undefined' && navigator.language) {
+      const locale = navigator.language
+      if (locale.startsWith('pt')) return 'pt-BR'
+      if (locale.startsWith('en')) return 'en'
+      return locale.split('-')[0] || 'en'
+    }
+  } catch {
+    // ignore
+  }
+  return 'en'
+}
+
+function getDefaultIsRTL(locale: string): boolean {
+  return ['ar', 'he', 'fa', 'ur'].includes(locale.split('-')[0] || '')
+}
+
+const defaultLocale = getDefaultLocale()
+
 export const initialTransferSessionState: TransferSessionState = {
   topic: '',
   connectionState: 'disconnected',
   role: null,
   peerCount: 0,
   isReconnecting: false,
-  locale: 'en',
-  isRTL: false,
+  locale: defaultLocale,
+  isRTL: getDefaultIsRTL(defaultLocale),
   incomingFileOffers: [],
   receiveDownloadStates: {},
   selectedFiles: [],
