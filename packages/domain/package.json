@@ -25,7 +25,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@altersend/core": "1.1.0"
+    "@altersend/core": "1.1.0",
+    "@altersend/locales": "1.1.0"
   },
   "peerDependencies": {
     "react": "^19.0.0",

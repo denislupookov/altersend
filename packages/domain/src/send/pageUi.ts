@@ -11,35 +11,25 @@ export interface SendShareStatus {
   label: string
   tone: 'muted' | 'success'
 }
-import type { TOptions } from 'i18next'
+import type { TFunction } from 'i18next'
 
-export function getSendPageCopy(
-  step: SendStep,
-  t: (key: string, options?: TOptions) => string
-): SendPageCopy {
+export function getSendPageCopy(step: SendStep, t: TFunction<'send'>): SendPageCopy {
   switch (step) {
     case 'selecting':
       return {
-        title: t('send.steps.selecting.title', { defaultValue: 'Send files' }),
-        description: t('send.steps.selecting.description', {
-          defaultValue:
-            'Choose one or more files and generate a one-time code for a direct encrypted transfer.'
-        })
+        title: t('steps.selecting.title'),
+        description: t('steps.selecting.description')
       }
     case 'preparing':
       return {
-        title: t('send.steps.preparing.title', { defaultValue: 'Preparing transfer' }),
-        description: t('send.steps.preparing.description', {
-          defaultValue: 'Preparing the selected files before the share code is revealed.'
-        })
+        title: t('steps.preparing.title'),
+        description: t('steps.preparing.description')
       }
     case 'waiting_for_receiver':
     case 'receiver_connected':
       return {
-        title: t('send.steps.waiting_for_receiver.title', { defaultValue: 'Share the code' }),
-        description: t('send.steps.waiting_for_receiver.description', {
-          defaultValue: 'Send the code or QR to your recipient to start the transfer.'
-        })
+        title: t('steps.waiting_for_receiver.title'),
+        description: t('steps.waiting_for_receiver.description')
       }
     default: {
       const exhaustiveCheck: never = step
@@ -48,19 +38,19 @@ export function getSendPageCopy(
   }
 }
 
-export function getSendShareStatus(step: SendStep): SendShareStatus | null {
+export function getSendShareStatus(step: SendStep, t: TFunction<'send'>): SendShareStatus | null {
   switch (step) {
     case 'selecting':
     case 'preparing':
       return null
     case 'waiting_for_receiver':
       return {
-        label: 'Waiting for peer',
+        label: t('status.waiting_for_peer'),
         tone: 'muted'
       }
     case 'receiver_connected':
       return {
-        label: 'Peer connected',
+        label: t('status.peer_connected'),
         tone: 'success'
       }
     default: {

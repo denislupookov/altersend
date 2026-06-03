@@ -19,8 +19,6 @@ export interface TransferSessionState {
   role: TransferRole | null
   peerCount: number
   isReconnecting: boolean
-  locale: string
-  isRTL: boolean
   incomingFileOffers: IncomingFileOffer[]
   receiveDownloadStates: Record<string, DownloadItemState>
   selectedFiles: SelectedFile[]
