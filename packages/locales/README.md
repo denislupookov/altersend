@@ -7,7 +7,7 @@ This package centralizes the internationalization (i18n) infrastructure for the 
 To maintain a clean separation of concerns and avoid unnecessary dependencies, this package adheres to the following principles:
 
 1. **Shared JSON Dictionaries**: All language strings are stored as JSON files split by context/feature (e.g., `common`, `send`, `receive`). These are located in `src/locales/`.
-2. **Framework-Agnostic Core**: The core translation initialization uses vanilla `i18next`. 
+2. **Framework-Agnostic Core**: The core translation initialization uses vanilla `i18next`.
 3. **Thin React Bindings**: We provide a minimal `useTranslate` React hook for UI components to consume translations reactively.
 4. **Lean on Intl**: For formatting numbers, dates, and file sizes, we lean on the browser's built-in `Intl` APIs rather than pulling in large formatting libraries (like moment or date-fns) within this package.
 

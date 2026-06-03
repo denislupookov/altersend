@@ -8,3 +8,4 @@ export function t(key: string, options?: TOptions): string {
 }
 
 export { default as i18nextInstance } from './config'
+export * from './useTranslate'
