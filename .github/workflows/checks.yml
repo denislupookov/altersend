@@ -33,11 +33,12 @@ jobs:
         run: npm run knip
 
       - name: Build packages
-        run: npm run build --workspaces --if-present
+        run: npm run build
 
       - name: Type-check
         run: |
           npm run typecheck -w packages/core
+          npm run typecheck -w packages/locales
           npm run typecheck -w packages/domain
           npm run typecheck -w packages/components
           npm run typecheck -w apps/desktop
