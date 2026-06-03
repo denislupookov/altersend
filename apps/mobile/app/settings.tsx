@@ -8,10 +8,10 @@ import {
   supportEmail,
   termsOfServiceUrl,
   websiteUrl,
-  useTransferStore,
-  transferStore
+  useSettingsStore,
+  changeLocale
 } from '@altersend/domain'
-import { i18nextInstance } from '@altersend/locales'
+import { PICKABLE_LANGUAGES } from '@altersend/locales'
 import { ToggleSwitch, useTheme } from '@altersend/components'
 import {
   AlertCircleIcon,
@@ -28,6 +28,7 @@ import {
   isCrashReportingEnabled,
   setCrashReportingEnabled
 } from '@/src/lifecycle/crashReportingStorage'
+import { setSavedLocale } from '@/src/lifecycle/localeStorage'
 import { closeSentry, initSentry } from '@/src/sentry'
 
 interface LinkRowProps {
@@ -110,12 +111,7 @@ export default function SettingsScreen() {
   const router = useRouter()
   const version = Constants.expoConfig?.version ?? '0.0.0'
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
-  const locale = useTransferStore((s) => s.locale)
-
-  const availableLanguages = [
-    { code: 'en', label: 'English' },
-    { code: 'pt-BR', label: 'Português (BR)' }
-  ]
+  const locale = useSettingsStore((s) => s.locale)
 
   const handleCrashReportingToggle = (value: boolean) => {
     setCrashReporting(value)
@@ -150,21 +146,14 @@ export default function SettingsScreen() {
                 borderRadius: 12
               }}
             >
-              {availableLanguages.map((l) => (
+              {PICKABLE_LANGUAGES.map((l) => (
                 <LanguageChip
                   key={l.code}
                   label={l.label}
                   selected={locale === l.code}
                   onPress={() => {
-                    transferStore.setState({
-                      locale: l.code,
-                      isRTL: ['ar', 'he', 'fa', 'ur'].includes(l.code)
-                    })
-                    try {
-                      i18nextInstance.changeLanguage(l.code)
-                    } catch (err) {
-                      console.error('Failed to change language:', err)
-                    }
+                    changeLocale(l.code)
+                    setSavedLocale(l.code)
                   }}
                 />
               ))}

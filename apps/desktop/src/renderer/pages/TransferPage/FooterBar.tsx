@@ -16,10 +16,10 @@ import {
   privacyPolicyUrl,
   termsOfServiceUrl,
   websiteUrl,
-  useTransferStore,
-  transferStore
+  useSettingsStore,
+  changeLocale
 } from '@altersend/domain'
-import { i18nextInstance } from '@altersend/locales'
+import { PICKABLE_LANGUAGES } from '@altersend/locales'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
 import { closeSentry, initSentry } from '../../sentry'
@@ -27,6 +27,7 @@ import {
   isCrashReportingEnabled,
   setCrashReportingEnabled
 } from '../../lifecycle/crashReportingStorage'
+import { setSavedLocale } from '../../lifecycle/localeStorage'
 
 const PLACEHOLDERS: Record<FeedbackType, string> = {
   'Bug report': 'Describe what went wrong…',
@@ -48,12 +49,7 @@ export function FooterBar({ version }: { version: string }) {
   const [reportMessage, setReportMessage] = useState('')
   const [reportState, setReportState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
-  const locale = useTransferStore((s) => s.locale)
-
-  const availableLanguages = [
-    { code: 'en', label: 'English' },
-    { code: 'pt-BR', label: 'Português (BR)' }
-  ]
+  const locale = useSettingsStore((s) => s.locale)
 
   const handleCrashReportingToggle = (next: boolean) => {
     setCrashReporting(next)
@@ -159,19 +155,11 @@ export function FooterBar({ version }: { version: string }) {
                           className='w-full rounded-md border border-border-primary bg-surface-secondary px-3 py-2 text-[14px] text-text-primary'
                           value={locale}
                           onChange={(e) => {
-                            const next = e.target.value
-                            transferStore.setState({
-                              locale: next,
-                              isRTL: ['ar', 'he', 'fa', 'ur'].includes(next)
-                            })
-                            try {
-                              i18nextInstance.changeLanguage(next)
-                            } catch (err) {
-                              console.error('Failed to change language:', err)
-                            }
+                            changeLocale(e.target.value)
+                            setSavedLocale(e.target.value)
                           }}
                         >
-                          {availableLanguages.map((l) => (
+                          {PICKABLE_LANGUAGES.map((l) => (
                             <option key={l.code} value={l.code}>
                               {l.label}
                             </option>

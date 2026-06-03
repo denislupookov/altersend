@@ -4,13 +4,13 @@ import { Button, useTheme } from '@altersend/components'
 import { ArrowLeftIcon } from '@altersend/components/icons'
 import { getSendPageCopy, getSendStep, useTransferStore } from '@altersend/domain'
 import { clearSenderFlow } from '@altersend/domain'
-import { useTranslate } from '@altersend/locales'
+import { useTranslation } from '@altersend/locales'
 import { Layout } from '@/src/components'
 import { ShareView } from '@/src/transfer/send'
 import { useNavigation } from 'expo-router'
 
 export default function SendShareScreen() {
-  const { t } = useTranslate()
+  const { t } = useTranslation('send')
   const { theme } = useTheme()
   const draftPhase = useTransferStore((s) => s.draftPhase)
   const connectionState = useTransferStore((s) => s.connectionState)

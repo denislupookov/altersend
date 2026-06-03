@@ -7,14 +7,14 @@ import {
   isShareStep,
   useTransferStore
 } from '@altersend/domain'
-import { useTranslate } from '@altersend/locales'
+import { useTranslation } from '@altersend/locales'
 import { TransferActionGroup, TransferCardFrame } from '../../components/TransferPrimitives'
 import { PreparingView } from './PreparingView'
 import { SelectFilesView } from './SelectFilesView'
 import { ShareView } from './ShareView'
 
 export default function SendPage() {
-  const { t } = useTranslate()
+  const { t } = useTranslation('send')
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const draftPhase = useTransferStore((s) => s.draftPhase)
   const connectionState = useTransferStore((s) => s.connectionState)
