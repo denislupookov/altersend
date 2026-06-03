@@ -17,6 +17,9 @@
     "packages/domain": {
       "entry": ["src/**/*.test.ts"]
     },
+    "packages/locales": {
+      "entry": ["src/**/*.test.ts"]
+    },
     "packages/components": {
       "entry": [
         "src/index.ts",

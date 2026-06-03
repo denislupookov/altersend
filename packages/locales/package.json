@@ -21,11 +21,12 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "clean": "rm -rf dist",
-    "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest --passWithNoTests"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
-    "i18next": "^26.2.0"
+    "i18next": "^26.2.0",
+    "react-i18next": "^17.0.8"
   },
   "peerDependencies": {
     "react": "^19.0.0"

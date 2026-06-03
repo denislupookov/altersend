@@ -1,6 +1,8 @@
 import i18next from 'i18next'
+import { initReactI18next } from 'react-i18next'
 import common from './locales/en/common.json'
 import send from './locales/en/send.json'
+import { getInitialLocale } from './utils'
 
 const resources = {
   en: {
@@ -9,13 +11,22 @@ const resources = {
   }
 }
 
-i18next.init({
-  resources,
-  lng: 'en',
-  fallbackLng: 'en',
-  ns: ['common', 'send'],
-  defaultNS: 'common',
-  interpolation: { escapeValue: false }
-})
+// Resources are bundled (no async backend), so v26 initializes synchronously.
+// `useSuspense: false` keeps React Native from suspending on a translation read;
+// react-i18next re-renders consumers once initialization settles regardless.
+void i18next
+  .use(initReactI18next)
+  .init({
+    resources,
+    lng: getInitialLocale(),
+    fallbackLng: 'en',
+    ns: ['common', 'send'],
+    defaultNS: 'common',
+    interpolation: { escapeValue: false },
+    react: { useSuspense: false }
+  })
+  .catch((error) => {
+    console.error('i18next initialization failed', error)
+  })
 
 export default i18next
