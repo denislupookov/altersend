@@ -11,9 +11,7 @@ export interface SendShareStatus {
   label: string
   tone: 'muted' | 'success'
 }
-
-import i18n from '../i18n/config'
-
+import { i18nextInstance as i18n } from '@altersend/locales'
 export function getSendPageCopy(step: SendStep): SendPageCopy {
   switch (step) {
     case 'selecting':

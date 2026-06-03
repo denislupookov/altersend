@@ -17,9 +17,9 @@ import {
   termsOfServiceUrl,
   websiteUrl,
   useTransferStore,
-  transferStore,
-  i18nextInstance
+  transferStore
 } from '@altersend/domain'
+import { i18nextInstance } from '@altersend/locales'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
 import { closeSentry, initSentry } from '../../sentry'
