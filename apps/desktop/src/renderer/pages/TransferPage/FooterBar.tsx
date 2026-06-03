@@ -166,7 +166,9 @@ export function FooterBar({ version }: { version: string }) {
                             })
                             try {
                               i18nextInstance.changeLanguage(next)
-                            } catch {}
+                            } catch (err) {
+                              console.error('Failed to change language:', err)
+                            }
                           }}
                         >
                           {availableLanguages.map((l) => (

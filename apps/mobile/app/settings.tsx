@@ -9,9 +9,9 @@ import {
   termsOfServiceUrl,
   websiteUrl,
   useTransferStore,
-  transferStore,
-  i18nextInstance
+  transferStore
 } from '@altersend/domain'
+import { i18nextInstance } from '@altersend/locales'
 import { ToggleSwitch, useTheme } from '@altersend/components'
 import {
   AlertCircleIcon,
@@ -162,7 +162,9 @@ export default function SettingsScreen() {
                     })
                     try {
                       i18nextInstance.changeLanguage(l.code)
-                    } catch {}
+                    } catch (err) {
+                      console.error('Failed to change language:', err)
+                    }
                   }}
                 />
               ))}
