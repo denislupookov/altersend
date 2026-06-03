@@ -21,8 +21,8 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "clean": "rm -rf dist",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest --passWithNoTests"
   },
   "dependencies": {
     "i18next": "^26.2.0"
