@@ -11,29 +11,33 @@ export interface SendShareStatus {
   label: string
   tone: 'muted' | 'success'
 }
-import { i18nextInstance as i18n } from '@altersend/locales'
-export function getSendPageCopy(step: SendStep): SendPageCopy {
+import type { TOptions } from 'i18next'
+
+export function getSendPageCopy(
+  step: SendStep,
+  t: (key: string, options?: TOptions) => string
+): SendPageCopy {
   switch (step) {
     case 'selecting':
       return {
-        title: i18n.t('send.steps.selecting.title', { defaultValue: 'Send files' }),
-        description: i18n.t('send.steps.selecting.description', {
+        title: t('send.steps.selecting.title', { defaultValue: 'Send files' }),
+        description: t('send.steps.selecting.description', {
           defaultValue:
             'Choose one or more files and generate a one-time code for a direct encrypted transfer.'
         })
       }
     case 'preparing':
       return {
-        title: i18n.t('send.steps.preparing.title', { defaultValue: 'Preparing transfer' }),
-        description: i18n.t('send.steps.preparing.description', {
+        title: t('send.steps.preparing.title', { defaultValue: 'Preparing transfer' }),
+        description: t('send.steps.preparing.description', {
           defaultValue: 'Preparing the selected files before the share code is revealed.'
         })
       }
     case 'waiting_for_receiver':
     case 'receiver_connected':
       return {
-        title: i18n.t('send.steps.waiting_for_receiver.title', { defaultValue: 'Share the code' }),
-        description: i18n.t('send.steps.waiting_for_receiver.description', {
+        title: t('send.steps.waiting_for_receiver.title', { defaultValue: 'Share the code' }),
+        description: t('send.steps.waiting_for_receiver.description', {
           defaultValue: 'Send the code or QR to your recipient to start the transfer.'
         })
       }

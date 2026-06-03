@@ -37,6 +37,7 @@
     "@altersend/components": "1.1.0",
     "@altersend/core": "1.1.0",
     "@altersend/domain": "1.1.0",
+    "@altersend/locales": "1.1.0",
     "@expo/vector-icons": "^15.0.2",
     "@sentry/react-native": "^8.11.0",
     "b4a": "^1.6.7",

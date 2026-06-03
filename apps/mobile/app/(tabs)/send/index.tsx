@@ -6,6 +6,7 @@ import { SelectFilesView } from '@/src/transfer/send'
 import { usePathname, useRouter } from 'expo-router'
 import { getSendPageCopy, getSendStep, isShareStep, useTransferStore } from '@altersend/domain'
 import { continueShare } from '@altersend/domain'
+import { useTranslate } from '@altersend/locales'
 
 function NavigationController() {
   const router = useRouter()
@@ -38,13 +39,14 @@ function NavigationController() {
 }
 
 export default function SendSelectScreen() {
+  const { t } = useTranslate()
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const draftPhase = useTransferStore((s) => s.draftPhase)
   const connectionState = useTransferStore((s) => s.connectionState)
   const router = useRouter()
 
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
-  const copy = getSendPageCopy(step)
+  const copy = getSendPageCopy(step, t)
   const hasSelectedFiles = selectedFiles.length > 0
 
   const openMenu = useCallback(() => router.push('/settings'), [router])
