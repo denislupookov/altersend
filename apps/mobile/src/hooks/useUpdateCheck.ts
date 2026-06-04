@@ -6,8 +6,7 @@ const CACHE_DIR = 'altersend'
 const CACHE_FILE = 'update-check.json'
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000
 const FETCH_TIMEOUT_MS = 10_000
-const GITHUB_RELEASES_URL =
-  'https://api.github.com/repos/denislupookov/altersend/releases/latest'
+const GITHUB_RELEASES_URL = 'https://api.github.com/repos/denislupookov/altersend/releases/latest'
 
 interface CacheEntry {
   version: string
@@ -16,7 +15,10 @@ interface CacheEntry {
 }
 
 function parseParts(version: string): number[] {
-  return version.replace(/[^0-9.]/g, '').split('.').map(Number)
+  return version
+    .replace(/[^0-9.]/g, '')
+    .split('.')
+    .map(Number)
 }
 
 function isNewer(current: string, latest: string): boolean {
@@ -67,7 +69,7 @@ async function fetchLatestRelease(): Promise<CacheEntry | null> {
   try {
     const res = await fetch(GITHUB_RELEASES_URL, {
       headers: { 'User-Agent': 'AlterSend' },
-      signal: controller.signal,
+      signal: controller.signal
     })
     if (!res.ok) return null
 

@@ -17,43 +17,33 @@ export function UpdateBanner() {
   if (!needsUpdate) return null
 
   return (
-    <View
-      pointerEvents='box-none'
-      style={[styles.container, { top: insets.top + 16 }]}
-    >
+    <View pointerEvents='box-none' style={[styles.container, { top: insets.top + 16 }]}>
       <View
         style={[
           styles.banner,
           {
             backgroundColor: theme.colors.colorSurfaceSecondary,
             borderColor: theme.colors.colorBorderPrimary,
-            shadowColor: theme.colors.colorScrim,
-          },
+            shadowColor: theme.colors.colorScrim
+          }
         ]}
       >
-        <View
-          style={[
-            styles.iconWrap,
-            { backgroundColor: theme.colors.colorInfoSubtle },
-          ]}
-        >
+        <View style={[styles.iconWrap, { backgroundColor: theme.colors.colorInfoSubtle }]}>
           <ArrowUp size={14} color={theme.colors.colorInfo} />
         </View>
 
-        <Text
-          style={[styles.label, { color: theme.colors.colorTextPrimary }]}
-          numberOfLines={1}
-        >
+        <Text style={[styles.label, { color: theme.colors.colorTextPrimary }]} numberOfLines={1}>
           Update available
         </Text>
 
         <Pressable
-          onPress={() => { dismiss(); void Linking.openURL(STORE_URL).catch(() => {}) }}
+          onPress={() => {
+            dismiss()
+            void Linking.openURL(STORE_URL).catch(() => {})
+          }}
           hitSlop={8}
         >
-          <Text style={[styles.updateBtn, { color: theme.colors.colorInfo }]}>
-            Update
-          </Text>
+          <Text style={[styles.updateBtn, { color: theme.colors.colorInfo }]}>Update</Text>
         </Pressable>
 
         <Pressable onPress={dismiss} hitSlop={8}>
@@ -68,7 +58,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     left: 16,
-    right: 16,
+    right: 16
   },
   banner: {
     flexDirection: 'row',
@@ -81,22 +71,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.18,
     shadowRadius: 16,
-    elevation: 8,
+    elevation: 8
   },
   iconWrap: {
     width: 22,
     height: 22,
     borderRadius: 11,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   label: {
     flex: 1,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   updateBtn: {
     fontSize: 14,
-    fontWeight: '600',
-  },
+    fontWeight: '600'
+  }
 })
