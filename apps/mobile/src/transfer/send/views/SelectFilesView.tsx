@@ -31,7 +31,7 @@ export function SelectFilesView() {
       const result = await DocumentPicker.getDocumentAsync({
         multiple: true,
         type: '*/*',
-        copyToCacheDirectory: false
+        copyToCacheDirectory: true
       })
 
       if (result.canceled) return
