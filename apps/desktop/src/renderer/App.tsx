@@ -3,11 +3,13 @@ import { useSimulatedLoading } from '@altersend/domain'
 import { bridgeApi, hasBridge } from './api/bridgeApi'
 import { UpdateBanner } from './components/UpdateBanner'
 import { isOnboardingCompleted, markOnboardingCompleted } from './lifecycle/onboardingStorage'
+import { useUpdateReady } from './lifecycle/useUpdateReady'
 import { BridgeUnavailablePage, LoadingPage, OnboardingPage, TransferPage } from './pages'
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingCompleted())
   const progress = useSimulatedLoading()
+  const updateReady = useUpdateReady()
 
   if (progress < 100) {
     return <LoadingPage progress={progress} />
@@ -21,19 +23,22 @@ export default function App() {
 
   if (showOnboarding) {
     return (
-      <OnboardingPage
-        onFinish={() => {
-          markOnboardingCompleted()
-          setShowOnboarding(false)
-        }}
-      />
+      <>
+        <OnboardingPage
+          onFinish={() => {
+            markOnboardingCompleted()
+            setShowOnboarding(false)
+          }}
+        />
+        <UpdateBanner ready={updateReady} />
+      </>
     )
   }
 
   return (
     <>
       <TransferPage version={version} />
-      <UpdateBanner />
+      <UpdateBanner ready={updateReady} />
     </>
   )
 }
