@@ -10,21 +10,25 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "react-native": "./src/index.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
     "./theme": {
       "types": "./dist/theme/index.d.ts",
+      "react-native": "./src/theme/index.ts",
       "import": "./dist/theme/index.js",
       "require": "./dist/theme/index.js"
     },
     "./theme/raw": {
       "types": "./dist/theme/tokens.raw.d.ts",
+      "react-native": "./src/theme/tokens.raw.ts",
       "import": "./dist/theme/tokens.raw.js",
       "require": "./dist/theme/tokens.raw.js"
     },
     "./icons": {
       "types": "./dist/icons/index.d.ts",
+      "react-native": "./src/icons/index.ts",
       "import": "./dist/icons/index.js",
       "require": "./dist/icons/index.js"
     },
@@ -42,6 +46,8 @@
     "generate-tokens": "node scripts/generate-tokens.mjs",
     "build": "npm run generate-tokens && tsc --project tsconfig.build.json && node scripts/fix-esm-imports.mjs",
     "typecheck": "npm run generate-tokens && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "storybook": "storybook dev -p 6100",
     "build-storybook": "storybook build"
   },
@@ -77,6 +83,7 @@
     "react-dom": "^19.2.4",
     "storybook": "^10.2.13",
     "typescript": "^5.9.3",
-    "vite": "^8.0.5"
+    "vite": "^8.0.5",
+    "vitest": "^4.1.8"
   }
 }

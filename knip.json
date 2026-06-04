@@ -6,9 +6,7 @@
       "project": ["scripts/**/*.{js,cjs,mjs}"],
       "ignoreDependencies": [
         "expo",
-        "react",
         "react-dom",
-        "react-native"
       ]
     },
     "packages/core": {
@@ -23,10 +21,6 @@
     },
     "packages/components": {
       "entry": [
-        "src/index.ts",
-        "src/theme/index.ts",
-        "src/theme/tokens.raw.ts",
-        "src/icons/index.ts",
         "scripts/*.mjs",
         ".storybook/{main,preview}.{ts,tsx}",
         "src/**/*.stories.{ts,tsx}"

@@ -7,7 +7,7 @@ const root = join(__dirname, '..');
 
 const sourcePath = join(root, 'src', 'theme', 'tokens.json');
 const tokens = JSON.parse(readFileSync(sourcePath, 'utf8'));
-const { colors, space, radius, fontSize, fontWeight, lineHeight, fontFamily } = tokens;
+const { colors, space, radius, fontSize, fontWeight, lineHeight, fontFamily, fontFamilyNative } = tokens;
 
 function toCssValue(value) {
   return typeof value === 'number' ? `${value}px` : value;
@@ -49,6 +49,37 @@ export const tokens = css.defineVars({
 ${darkColorEntries.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).join('\n')}
 ${scaleEntriesAsCss.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).join('\n')}
 ${scaleEntriesAsString.map(([key, value]) => `  ${key}: ${JSON.stringify(value)},`).join('\n')}
+});
+
+export type Tokens = typeof tokens;
+`;
+
+const tokensCssNativeTs = `${header}
+import { Platform } from 'react-native';
+import { css } from 'react-strict-dom';
+
+export interface NativeFontFamilyStack {
+  fontFamilySans: string;
+  fontFamilyDisplay: string;
+  fontFamilyMono: string;
+}
+
+export const nativeFontFamilies = ${JSON.stringify(fontFamilyNative, null, 2)} as Record<
+  'ios' | 'android' | 'default',
+  NativeFontFamilyStack
+>;
+
+const nativeFontFamily =
+  Platform.select<NativeFontFamilyStack>(nativeFontFamilies) ?? nativeFontFamilies.default;
+
+export const tokens = css.defineVars({
+${darkColorEntries.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).join('\n')}
+${scaleEntriesAsCss.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).join('\n')}
+${fontWeightEntries.map(([key, value]) => `  ${key}: ${JSON.stringify(value)},`).join('\n')}
+${lineHeightEntries.map(([key, value]) => `  ${key}: ${JSON.stringify(value)},`).join('\n')}
+  fontFamilySans: nativeFontFamily.fontFamilySans,
+  fontFamilyDisplay: nativeFontFamily.fontFamilyDisplay,
+  fontFamilyMono: nativeFontFamily.fontFamilyMono,
 });
 
 export type Tokens = typeof tokens;
@@ -147,6 +178,7 @@ ${lightColorEntries.map(([key, value]) => `  --as-${kebab(key)}: ${value};`).joi
 
 const files = [
   ['src/theme/tokens.css.ts', tokensCssTs],
+  ['src/theme/tokens.css.native.ts', tokensCssNativeTs],
   ['src/theme/tokens.raw.ts', tokensRawTs],
   ['src/theme/themes/dark.ts', darkThemeTs],
   ['src/theme/themes/light.ts', lightThemeTs],

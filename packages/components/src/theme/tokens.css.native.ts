@@ -2,7 +2,38 @@
 // Source: src/theme/tokens.json  |  Generator: scripts/generate-tokens.mjs
 // Run `npm run generate-tokens` to update.
 
+import { Platform } from 'react-native';
 import { css } from 'react-strict-dom';
+
+export interface NativeFontFamilyStack {
+  fontFamilySans: string;
+  fontFamilyDisplay: string;
+  fontFamilyMono: string;
+}
+
+export const nativeFontFamilies = {
+  "ios": {
+    "fontFamilySans": "System",
+    "fontFamilyDisplay": "System",
+    "fontFamilyMono": "Menlo"
+  },
+  "android": {
+    "fontFamilySans": "sans-serif",
+    "fontFamilyDisplay": "sans-serif-medium",
+    "fontFamilyMono": "monospace"
+  },
+  "default": {
+    "fontFamilySans": "System",
+    "fontFamilyDisplay": "System",
+    "fontFamilyMono": "monospace"
+  }
+} as Record<
+  'ios' | 'android' | 'default',
+  NativeFontFamilyStack
+>;
+
+const nativeFontFamily =
+  Platform.select<NativeFontFamilyStack>(nativeFontFamilies) ?? nativeFontFamilies.default;
 
 export const tokens = css.defineVars({
   colorBackground: '#16181d',
@@ -75,9 +106,9 @@ export const tokens = css.defineVars({
   lineHeightSnug: "1.35",
   lineHeightNormal: "1.4",
   lineHeightRelaxed: "1.5",
-  fontFamilySans: "\"SF Pro Text\", \"SF Pro Display\", \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans CJK KR\", \"Noto Sans KR\", \"Hiragino Sans\", \"Yu Gothic\", \"PingFang SC\", \"PingFang TC\", \"Microsoft YaHei\", \"Microsoft JhengHei\", \"Noto Sans CJK JP\", \"Noto Sans CJK SC\", \"Noto Sans CJK TC\", \"Helvetica Neue\", Arial, sans-serif",
-  fontFamilyDisplay: "\"SF Pro Display\", \"SF Pro Text\", \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans CJK KR\", \"Noto Sans KR\", \"Hiragino Sans\", \"Yu Gothic\", \"PingFang SC\", \"PingFang TC\", \"Microsoft YaHei\", \"Microsoft JhengHei\", \"Noto Sans CJK JP\", \"Noto Sans CJK SC\", \"Noto Sans CJK TC\", \"Helvetica Neue\", Arial, sans-serif",
-  fontFamilyMono: "\"IBM Plex Mono\", \"SFMono-Regular\", \"JetBrains Mono\", \"Noto Sans Mono CJK KR\", \"Noto Sans CJK KR\", Menlo, Consolas, monospace",
+  fontFamilySans: nativeFontFamily.fontFamilySans,
+  fontFamilyDisplay: nativeFontFamily.fontFamilyDisplay,
+  fontFamilyMono: nativeFontFamily.fontFamilyMono,
 });
 
 export type Tokens = typeof tokens;

@@ -96,6 +96,7 @@ export default tseslint.config(
     files: [
       'packages/components/src/theme/tokens.raw.ts',
       'packages/components/src/theme/tokens.css.ts',
+      'packages/components/src/theme/tokens.css.native.ts',
       'packages/components/src/theme/withAlpha.ts',
       'packages/components/src/theme/fileTypeColors.ts',
       'packages/components/src/theme/themes/*.ts',

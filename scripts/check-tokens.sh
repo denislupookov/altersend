@@ -14,7 +14,7 @@ matches=$(grep -rEn "$PATTERN" apps packages/components \
   --include='*.css' \
   2>/dev/null \
   | grep -vE '(node_modules|/dist/|\.bundle\.js)' \
-  | grep -vE '(packages/components/src/theme/tokens\.json|packages/components/src/theme/tokens\.raw\.ts|packages/components/src/theme/tokens\.css\.ts|packages/components/src/theme/themes/|packages/components/src/theme/tailwind-theme\.css|packages/components/scripts/generate-tokens\.mjs|packages/components/src/theme/fileTypeColors\.ts|packages/components/src/theme/withAlpha\.ts)' \
+  | grep -vE '(packages/components/src/theme/tokens\.json|packages/components/src/theme/tokens\.raw\.ts|packages/components/src/theme/tokens\.css(\.native)?\.ts|packages/components/src/theme/themes/|packages/components/src/theme/tailwind-theme\.css|packages/components/scripts/generate-tokens\.mjs|packages/components/src/theme/fileTypeColors\.ts|packages/components/src/theme/withAlpha\.ts)' \
   | grep -vE '(transparent|currentColor|inherit|absoluteFillObject)' \
   | grep -vE 'packages/components/src/components/SendFileListRow/styles\.ts:[0-9]+:\s+thumb(Image|Video|Pdf|Audio|Archive|App|Code|Generic):' \
   || true)

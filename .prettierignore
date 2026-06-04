@@ -17,6 +17,7 @@ apps/mobile/.expo
 # Generated from tokens.json by scripts/generate-tokens.mjs
 packages/components/src/theme/tokens.raw.ts
 packages/components/src/theme/tokens.css.ts
+packages/components/src/theme/tokens.css.native.ts
 packages/components/src/theme/themes/dark.ts
 packages/components/src/theme/themes/dark.css.ts
 packages/components/src/theme/themes/light.ts
