@@ -12,8 +12,10 @@ import {
   startPeerWatchdog,
   useSimulatedLoading
 } from '@altersend/domain'
+import { initI18n, resolveLocalePreference } from '@altersend/i18n'
 import { Stack } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
+import { useEffect, useState } from 'react'
 import { LoadingScreen } from '../src/loading'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { mobileApi } from '../src/api/mobileApi'
@@ -21,6 +23,8 @@ import { ToastProvider } from '../src/components/Toast'
 import { UpdateBanner } from '../src/components/UpdateBanner'
 import { startAppStateBridge } from '../src/lifecycle/appStateBridge'
 import { startDeepLinkHandler } from '../src/lifecycle/deepLinkHandler'
+import { getSavedLocalePreference } from '../src/lifecycle/localePreferenceStorage'
+import { getMobileSystemLocales } from '../src/lifecycle/systemLocale'
 import { ShareIntentHandler } from '../src/lifecycle/ShareIntentHandler'
 import { startPhotosCopyEffect } from '../src/transfer/receive'
 import { initSentry, captureException } from '../src/sentry'
@@ -56,11 +60,12 @@ function ThemedStack() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-      <Stack.Screen name='onboarding' options={{ headerShown: false, gestureEnabled: false }} />
-      <Stack.Screen name='settings' options={flowScreenOptions} />
-      <Stack.Screen name='report' options={flowScreenOptions} />
+      <Stack>
+        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+        <Stack.Screen name='onboarding' options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name='settings' options={flowScreenOptions} />
+        <Stack.Screen name='language' options={flowScreenOptions} />
+        <Stack.Screen name='report' options={flowScreenOptions} />
       <Stack.Screen
         name='send/preparing'
         options={{ ...flowScreenOptions, gestureEnabled: false }}
@@ -83,6 +88,24 @@ function ThemedStack() {
 }
 
 export default function RootLayout() {
+  const [i18nReady, setI18nReady] = useState(false)
+
+  useEffect(() => {
+    let mounted = true
+    async function initializeLocale() {
+      const preference = await getSavedLocalePreference()
+      await initI18n(resolveLocalePreference(preference, getMobileSystemLocales()))
+      if (mounted) setI18nReady(true)
+    }
+
+    void initializeLocale()
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  if (!i18nReady) return null
+
   return (
     <SafeAreaProvider>
       <View style={styles.root}>

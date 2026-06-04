@@ -1,7 +1,8 @@
 import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native'
 import Constants from 'expo-constants'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
+import { LOCALE_OPTIONS, useTranslation, type LocalePreference } from '@altersend/i18n'
 import {
   discordUrl,
   privacyPolicyUrl,
@@ -21,6 +22,7 @@ import {
 } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
 import brandLogo from '@/assets/images/brand-logo.png'
+import { getSavedLocalePreference } from '@/src/lifecycle/localePreferenceStorage'
 import {
   isCrashReportingEnabled,
   setCrashReportingEnabled
@@ -67,10 +69,22 @@ function LinkRow({ label, hint, icon, onPress, isLast }: LinkRowProps) {
 }
 
 export default function SettingsScreen() {
+  const { t } = useTranslation(['settings', 'common'])
   const { theme } = useTheme()
   const router = useRouter()
   const version = Constants.expoConfig?.version ?? '0.0.0'
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
+  const [localePreference, setLocalePreference] = useState<LocalePreference>('system')
+
+  useEffect(() => {
+    let mounted = true
+    void getSavedLocalePreference().then((preference) => {
+      if (mounted) setLocalePreference(preference)
+    })
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   const handleCrashReportingToggle = (value: boolean) => {
     setCrashReporting(value)
@@ -89,16 +103,33 @@ export default function SettingsScreen() {
   }
 
   return (
-    <Layout title='Settings' description='' hasNativeHeader>
+    <Layout title={t('settings:title')} description='' hasNativeHeader>
       <View style={styles.content}>
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>Privacy</Text>
+          <View style={[styles.card, cardStyle]}>
+            <LinkRow
+              label={t('common:labels.language')}
+              hint={
+                LOCALE_OPTIONS.find((option) => option.preference === localePreference)
+                  ?.nativeName ?? t('common:labels.systemDefault')
+              }
+              icon={<GlobeIcon size={16} color={theme.colors.colorTextSecondary} />}
+              onPress={() => router.push('/language')}
+              isLast
+            />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>
+            {t('settings:sections.privacy')}
+          </Text>
           <View style={[styles.card, styles.toggleCardPad, cardStyle]}>
             <ToggleSwitch
               checked={crashReporting}
               onChange={handleCrashReportingToggle}
-              label='Crash reports'
-              description='Share anonymous crash data to help improve AlterSend'
+              label={t('settings:crashReports.label')}
+              description={t('settings:crashReports.description')}
             />
           </View>
         </View>

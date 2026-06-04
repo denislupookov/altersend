@@ -119,7 +119,8 @@
           },
           "androidIntentFilters": ["*/*"]
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "extra": {
       "eas": {

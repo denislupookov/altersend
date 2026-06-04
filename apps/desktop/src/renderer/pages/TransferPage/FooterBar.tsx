@@ -2,6 +2,14 @@ import { useState } from 'react'
 import { Button, ExternalLink, FeedbackTypeSelector, ToggleSwitch } from '@altersend/components'
 import type { FeedbackType } from '@altersend/components'
 import {
+  LOCALE_OPTIONS,
+  changeI18nLanguage,
+  normalizeLocalePreference,
+  resolveLocalePreference,
+  useTranslation,
+  type LocalePreference
+} from '@altersend/i18n'
+import {
   AlertCircleIcon,
   ArrowLeftIcon,
   ChevronRightIcon,
@@ -19,11 +27,17 @@ import {
 } from '@altersend/domain'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
+import { Select } from '../../components/Select'
 import { closeSentry, initSentry } from '../../sentry'
 import {
   isCrashReportingEnabled,
   setCrashReportingEnabled
 } from '../../lifecycle/crashReportingStorage'
+import {
+  getSavedLocalePreference,
+  setSavedLocalePreference
+} from '../../lifecycle/localePreferenceStorage'
+import { getDesktopSystemLocales } from '../../lifecycle/systemLocale'
 
 const PLACEHOLDERS: Record<FeedbackType, string> = {
   'Bug report': 'Describe what went wrong…',
@@ -39,12 +53,16 @@ const MENU_ITEMS = [
 ] as const
 
 export function FooterBar({ version }: { version: string }) {
+  const { t } = useTranslation(['settings', 'common'])
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [panel, setPanel] = useState<'settings' | 'report'>('settings')
   const [reportType, setReportType] = useState<FeedbackType>('Bug report')
   const [reportMessage, setReportMessage] = useState('')
   const [reportState, setReportState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
+  const [localePreference, setLocalePreference] = useState<LocalePreference>(
+    getSavedLocalePreference
+  )
 
   const handleCrashReportingToggle = (next: boolean) => {
     setCrashReporting(next)
@@ -52,6 +70,13 @@ export function FooterBar({ version }: { version: string }) {
     if (next) initSentry()
     else closeSentry()
     void bridgeApi.setSentryEnabled(next)
+  }
+
+  const handleLocaleChange = (value: string) => {
+    const preference = normalizeLocalePreference(value)
+    setLocalePreference(preference)
+    setSavedLocalePreference(preference)
+    void changeI18nLanguage(resolveLocalePreference(preference, getDesktopSystemLocales()))
   }
 
   const closePanel = () => {
@@ -134,14 +159,30 @@ export function FooterBar({ version }: { version: string }) {
                   <>
                     <div className='px-5 pb-4 pt-5'>
                       <p className='mb-4 mt-0 text-[11px] font-semibold uppercase tracking-widest text-text-muted'>
-                        Settings
+                        {t('settings:title')}
                       </p>
                       <ToggleSwitch
                         checked={crashReporting}
                         onChange={handleCrashReportingToggle}
-                        label='Crash reports'
-                        description='Share anonymous crash data to help improve AlterSend'
+                        label={t('settings:crashReports.label')}
+                        description={t('settings:crashReports.description')}
                       />
+                      <div className='mt-3'>
+                        <label className='mb-2 block text-[13px] font-medium text-text-secondary'>
+                          {t('common:labels.language')}
+                        </label>
+                        <Select
+                          aria-label={t('common:labels.language')}
+                          value={localePreference}
+                          onChange={handleLocaleChange}
+                          options={LOCALE_OPTIONS.map((option) => ({
+                            value: option.preference,
+                            label: option.nativeName
+                              ? `${option.nativeName} · ${option.label}`
+                              : t('common:labels.systemDefault')
+                          }))}
+                        />
+                      </div>
                     </div>
                     <div className='border-t border-border-primary py-1'>
                       {MENU_ITEMS.map(({ icon: Icon, label, key, ...rest }) => (

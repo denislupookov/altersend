@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import QrScanner from 'qr-scanner'
 import { Button } from '@altersend/components'
-import { ChevronDownIcon } from '@altersend/components/icons'
 import { extractJoinCode, joinSession } from '@altersend/domain'
 import { bridgeApi } from '../../api/bridgeApi'
+import { Select } from '../../components/Select'
 
 interface WebcamScanViewProps {
   onCancel: () => void
@@ -208,23 +208,12 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
             {cameras.length > 1 ? (
               <div className='flex flex-col gap-1.5'>
                 <span className='text-[12px] font-medium text-text-secondary'>Camera</span>
-                <div className='relative'>
-                  <select
-                    aria-label='Camera'
-                    className='w-full cursor-pointer appearance-none rounded-[10px] border border-border-primary bg-background-subtle py-3 pl-4 pr-10 text-[13px] text-text-primary transition-colors hover:border-border-strong focus:border-border-strong focus:outline-none'
-                    onChange={(e) => void switchCamera(e.currentTarget.value)}
-                    value={activeCamera ?? undefined}
-                  >
-                    {cameras.map((cam) => (
-                      <option key={cam.id} value={cam.id}>
-                        {cam.label || 'Camera'}
-                      </option>
-                    ))}
-                  </select>
-                  <span className='pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-muted'>
-                    <ChevronDownIcon size={16} />
-                  </span>
-                </div>
+                <Select
+                  aria-label='Camera'
+                  value={activeCamera ?? ''}
+                  onChange={(value) => void switchCamera(value)}
+                  options={cameras.map((cam) => ({ value: cam.id, label: cam.label || 'Camera' }))}
+                />
               </div>
             ) : null}
 
