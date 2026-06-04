@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { useTheme, withAlpha } from '@altersend/components'
+import { Text } from '@/src/components/ThemedText'
 
 interface ErrorPanelProps {
+  title: string
   message: string
 }
 
-export function ErrorPanel({ message }: ErrorPanelProps) {
+export function ErrorPanel({ title, message }: ErrorPanelProps) {
   const { theme } = useTheme()
   return (
     <View
@@ -17,7 +19,7 @@ export function ErrorPanel({ message }: ErrorPanelProps) {
         }
       ]}
     >
-      <Text style={[styles.title, { color: theme.colors.colorDanger }]}>Transfer issue</Text>
+      <Text style={[styles.title, { color: theme.colors.colorDanger }]}>{title}</Text>
       <Text style={[styles.text, { color: theme.colors.colorDanger }]}>{message}</Text>
     </View>
   )

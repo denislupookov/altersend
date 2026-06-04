@@ -111,6 +111,7 @@ export function SelectFilesView() {
               compact
               name={file.name}
               onRemove={() => removeSelectedFile(file.path)}
+              removeLabel={t('send:files.removeLabel', { name: file.name })}
               size={file.size}
             />
           ))}

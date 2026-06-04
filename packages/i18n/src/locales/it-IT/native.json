@@ -1,8 +1,8 @@
 {
   "permissions": {
-    "camera": "AlterSend uses your camera to scan connection QR codes.",
-    "localNetwork": "AlterSend uses your local network to discover nearby devices for peer-to-peer file transfer.",
-    "photoRead": "AlterSend reads your photo library so you can pick photos and videos to send to another device.",
-    "photoSave": "AlterSend saves received images and videos to your photo library."
+    "camera": "AlterSend utilizza la fotocamera per scansionare i codici di connessione QR.",
+    "localNetwork": "AlterSend utilizza la tua rete locale per rilevare i dispositivi nelle vicinanze per il trasferimento di file peer-to-peer.",
+    "photoRead": "AlterSend legge la tua libreria fotografica così puoi scegliere foto e video da inviare a un altro dispositivo.",
+    "photoSave": "AlterSend salva le immagini e i video ricevuti nella tua libreria di foto."
   }
 }

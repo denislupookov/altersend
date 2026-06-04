@@ -29,7 +29,11 @@ export function Select({
         aria-label={ariaLabel}
         className='w-full cursor-pointer appearance-none rounded-[10px] border border-border-primary bg-background-subtle py-3 pl-4 pr-10 text-[13px] text-text-primary transition-colors hover:border-border-strong focus:border-border-strong focus:outline-none'
         value={value}
-        onChange={(event) => onChange(event.currentTarget.value)}
+        onChange={(event) => {
+          const nextValue = event.currentTarget.value
+          event.currentTarget.blur()
+          onChange(nextValue)
+        }}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

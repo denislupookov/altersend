@@ -162,7 +162,9 @@ export default function ReceiveScreen() {
 
   const displayError = getDisplayError(t, errorMessage)
   const errorPanel =
-    displayError && step !== 'interrupted' ? <ErrorPanel message={displayError} /> : null
+    displayError && step !== 'interrupted' ? (
+      <ErrorPanel title={t('receive:errors.transferIssue')} message={displayError} />
+    ) : null
 
   if (step === 'join') {
     return (

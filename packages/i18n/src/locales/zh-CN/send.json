@@ -2,67 +2,67 @@
   "page": {
     "selecting": {
       "title": "发送文件",
-      "description": "Choose one or more files and generate a one-time code for a direct encrypted transfer."
+      "description": "选择一个或多个文件并生成一次性代码以进行直接加密传输。"
     },
     "preparing": {
-      "title": "Preparing transfer",
-      "description": "Preparing the selected files before the share code is revealed."
+      "title": "准备转移",
+      "description": "在共享代码公开之前准备好选定的文件。"
     },
     "waitingForReceiver": {
-      "title": "Share the code",
-      "description": "Send the code or QR to your recipient to start the transfer."
+      "title": "分享代码",
+      "description": "将代码或 QR 发送给您的收件人以开始转移。"
     },
     "receiverConnected": {
-      "title": "Share the code",
-      "description": "Send the code or QR to your recipient to start the transfer."
+      "title": "分享代码",
+      "description": "将代码或 QR 发送给您的收件人以开始转移。"
     }
   },
   "actions": {
-    "sendFiles_one": "Send {{count}} file",
-    "sendFiles_other": "Send {{count}} files",
-    "addFiles": "Add files",
-    "addMoreFiles": "Add more files",
-    "dragAndDrop": "Drag and drop",
-    "clear": "Clear",
-    "endSession": "End session",
-    "pickFilesTitle": "Add files",
-    "pickPhotos": "Photos",
-    "pickFiles": "Files"
+    "sendFiles_one": "发送 {{count}} 文件",
+    "sendFiles_other": "发送 {{count}} 个文件",
+    "addFiles": "添加文件",
+    "addMoreFiles": "添加更多文件",
+    "dragAndDrop": "拖放",
+    "clear": "清除",
+    "endSession": "结束会话",
+    "pickFilesTitle": "添加文件",
+    "pickPhotos": "照片",
+    "pickFiles": "文件"
   },
   "status": {
-    "waitingForPeer": "Waiting for peer",
-    "peerConnected": "Peer connected",
-    "uploadComplete": "Upload complete",
-    "uploadingFiles": "Uploading files",
-    "uploaded": "Uploaded",
-    "uploading": "Uploading…",
-    "waiting": "Waiting",
-    "failed": "Failed",
-    "downloaded": "Downloaded",
-    "disconnected": "Disconnected",
-    "online": "Online",
-    "downloading": "Downloading",
-    "downloadingPercent": "Downloading {{percent}}%"
+    "waitingForPeer": "等待同伴",
+    "peerConnected": "对等连接",
+    "uploadComplete": "上传完成",
+    "uploadingFiles": "上传文件",
+    "uploaded": "已上传",
+    "uploading": "正在上传...",
+    "waiting": "等待",
+    "failed": "失败",
+    "downloaded": "已下载",
+    "disconnected": "已断开连接",
+    "online": "在线",
+    "downloading": "正在下载",
+    "downloadingPercent": "正在下载 {{percent}}%"
   },
   "connection": {
-    "placeholder": "Generating secure key…",
-    "copyLabel": "Copy connection code",
-    "showQrLabel": "Show QR code",
-    "qrCodeLabel": "QR code for connection key",
-    "qrModalDescription": "Open AlterSend on another device and scan this code",
-    "copiedToast": "Copied to clipboard",
+    "placeholder": "正在生成安全密钥...",
+    "copyLabel": "复制连接代码",
+    "showQrLabel": "显示QR代码",
+    "qrCodeLabel": "连接密钥的 QR 代码",
+    "qrModalDescription": "在另一台设备上打开 AlterSend 并扫描此代码",
+    "copiedToast": "已复制到剪贴板",
     "scanToConnect": "扫描以连接",
     "orScan": "或扫描",
     "generating": "正在生成…",
     "waitingForConnection": "正在等待连接…"
   },
   "errors": {
-    "folderUnsupported": "Folders aren't supported yet. Please select files only.",
-    "failedPickFiles": "Failed to pick files",
-    "failedPickPhotos": "Failed to pick photos"
+    "folderUnsupported": "尚不支持文件夹。请仅选择文件。",
+    "failedPickFiles": "选取文件失败",
+    "failedPickPhotos": "无法选择照片"
   },
   "hints": {
-    "keepOpen": "Closing the app cancels the transfer."
+    "keepOpen": "关闭应用程序会取消传输。"
   },
   "preparing": {
     "uploadedCount_one": "已上传 {{count}} 个文件中的 {{completed}} 个",
@@ -70,7 +70,10 @@
   },
   "peer": {
     "completedDone_one": "{{count}} 个已完成",
-    "completedDone_other": "{{count}} 个已完成"
+    "completedDone_other": "{{count}} 个已完成",
+    "devices": "设备",
+    "connectedCount_one": "{{count}} 已连接",
+    "connectedCount_other": "{{count}} 已连接"
   },
   "dropzone": {
     "addMoreDescription": "或点击<link>继续添加</link>",
@@ -81,5 +84,8 @@
     "tapTo": "点按",
     "addMoreLink": "继续添加",
     "browseLink": "浏览"
+  },
+  "files": {
+    "removeLabel": "删除{{name}}"
   }
 }

@@ -1,9 +1,10 @@
 import React, { PropsWithChildren } from 'react'
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native'
+import { View, ActivityIndicator, StyleSheet } from 'react-native'
 import { useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/i18n'
 import { IllustrationLayout } from '@/src/components'
 import ConnectionLostSvg from '../../../../../../assets/connection-lost.svg'
+import { Text } from '@/src/components/ThemedText'
 
 interface ReceiveReconnectingViewProps {
   title: string

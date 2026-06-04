@@ -1,24 +1,24 @@
 {
   "title": "피드백",
   "types": {
-    "bug": "Bug report",
-    "feature": "Feature request",
-    "general": "General"
+    "bug": "버그 신고",
+    "feature": "기능 요청",
+    "general": "일반"
   },
   "placeholders": {
-    "bug": "Describe what happened and how to reproduce it…",
-    "desktopBug": "Describe what went wrong…",
-    "feature": "What would you like to see in AlterSend?",
-    "desktopFeature": "What would you like to see?",
-    "general": "Share your thoughts…"
+    "bug": "무슨 일이 일어났는지, 그리고 그것을 재현하는 방법을 설명하세요…",
+    "desktopBug": "무엇이 잘못되었는지 설명하세요…",
+    "feature": "AlterSend에서 무엇을 보고 싶나요?",
+    "desktopFeature": "무엇을 보고 싶나요?",
+    "general": "당신의 생각을 공유하세요…"
   },
   "actions": {
-    "send": "Send feedback",
-    "sending": "Sending…"
+    "send": "피드백 보내기",
+    "sending": "보내는 중…"
   },
   "states": {
-    "sent": "Thanks for your feedback!",
-    "failed": "Failed to send. Check your connection.",
+    "sent": "피드백을 보내주셔서 감사합니다!",
+    "failed": "전송하지 못했습니다. 연결을 확인하세요.",
     "received": "피드백을 받았습니다."
   }
 }

@@ -11,19 +11,19 @@
     "getStarted": "开始使用",
     "cancel": "取消",
     "clear": "清除",
-    "close": "Close",
+    "close": "关闭",
     "copy": "复制",
     "copied": "已复制",
     "connect": "连接",
-    "connecting": "Connecting…",
+    "connecting": "正在连接…",
     "done": "完成",
     "endSession": "结束会话",
     "restart": "重启",
     "tryAgain": "重试",
-    "dismiss": "Dismiss",
-    "openSettings": "Open settings",
+    "dismiss": "解雇",
+    "openSettings": "打开设置",
     "update": "更新",
-    "downloadAll": "Download all",
+    "downloadAll": "下载全部",
     "skip": "跳过"
   },
   "labels": {
@@ -31,33 +31,37 @@
     "language": "语言",
     "systemDefault": "系统默认",
     "camera": "摄像头",
-    "statusBar": "Status bar",
-    "transferMode": "Transfer mode",
-    "version": "Version",
-    "platform": "Platform",
-    "desktop": "Desktop",
-    "mobile": "Mobile",
+    "statusBar": "状态栏",
+    "transferMode": "传输方式",
+    "version": "版本",
+    "platform": "平台",
+    "desktop": "桌面",
+    "mobile": "手机",
     "send": "发送",
     "receive": "接收",
-    "connectionCode": "Connection code"
+    "connectionCode": "连接代码"
   },
   "files": {
     "count_one": "{{count}} 个文件",
     "count_other": "{{count}} 个文件",
     "photos": "照片",
     "files": "文件",
-    "downloads": "Files › Downloads",
-    "photosAndAlterSend": "Photos + AlterSend folder",
-    "alterSendFolder": "AlterSend folder"
+    "downloads": "文件 › 下载",
+    "photosAndAlterSend": "照片 + AlterSend 文件夹",
+    "alterSendFolder": "AlterSend 文件夹"
   },
   "update": {
-    "ready": "Update ready",
-    "available": "Update available",
+    "ready": "更新准备就绪",
+    "available": "可用更新",
     "restart": "重启",
     "update": "更新",
-    "restartFailed": "Restart failed — please quit and reopen"
+    "restartFailed": "重新启动失败 - 请退出并重新启动"
   },
   "status": {
     "connected": "已连接"
+  },
+  "confirm": {
+    "leaveShareSession": "离开将结束您的活跃共享会话。继续？",
+    "leaveReceiveSession": "离开将结束您的活动接收会话。继续？"
   }
 }

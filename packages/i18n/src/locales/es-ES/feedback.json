@@ -1,24 +1,24 @@
 {
   "title": "Comentarios",
   "types": {
-    "bug": "Bug report",
-    "feature": "Feature request",
-    "general": "General"
+    "bug": "Informe de error",
+    "feature": "Solicitud de función",
+    "general": "generales"
   },
   "placeholders": {
-    "bug": "Describe what happened and how to reproduce it…",
-    "desktopBug": "Describe what went wrong…",
-    "feature": "What would you like to see in AlterSend?",
-    "desktopFeature": "What would you like to see?",
-    "general": "Share your thoughts…"
+    "bug": "Describe lo que pasó y cómo reproducirlo...",
+    "desktopBug": "Describe lo que salió mal...",
+    "feature": "¿Qué te gustaría ver en AlterSend?",
+    "desktopFeature": "¿Qué te gustaría ver?",
+    "general": "Comparte tus pensamientos..."
   },
   "actions": {
-    "send": "Send feedback",
-    "sending": "Sending…"
+    "send": "Enviar comentarios",
+    "sending": "Enviando…"
   },
   "states": {
-    "sent": "Thanks for your feedback!",
-    "failed": "Failed to send. Check your connection.",
+    "sent": "¡Gracias por tus comentarios!",
+    "failed": "No se pudo enviar. Comprueba tu conexión.",
     "received": "Hemos recibido tus comentarios."
   }
 }

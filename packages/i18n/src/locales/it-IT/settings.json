@@ -1,31 +1,31 @@
 {
   "title": "Impostazioni",
   "languageTitle": "Lingua",
-  "languageHint": "Choose the language used by AlterSend.",
+  "languageHint": "Scegli la lingua utilizzata da AlterSend.",
   "sections": {
-    "privacy": "Privacy",
+    "privacy": "Riservatezza",
     "support": "Supporto",
     "about": "Informazioni"
   },
   "crashReports": {
-    "label": "Crash reports",
-    "description": "Share anonymous crash data to help improve AlterSend"
+    "label": "Rapporti sugli incidenti",
+    "description": "Condividi dati anonimi sugli arresti anomali per contribuire a migliorare AlterSend"
   },
   "rows": {
-    "feedback": "Feedback",
-    "feedbackHint": "Report a problem or suggest a feature",
+    "feedback": "Segnalazioni",
+    "feedbackHint": "Segnala un problema o suggerisci una funzionalità",
     "discord": "Discord",
-    "discordHint": "Join the community",
-    "contact": "Contact us",
-    "privacyPolicy": "Privacy policy",
-    "privacyPolicyHint": "How AlterSend handles your data",
-    "terms": "Terms of service",
-    "termsHint": "Rules for using AlterSend",
-    "website": "Website"
+    "discordHint": "Unisciti alla comunità",
+    "contact": "Contattaci",
+    "privacyPolicy": "Informativa sulla privacy",
+    "privacyPolicyHint": "Come AlterSend gestisce i tuoi dati",
+    "terms": "Termini di servizio",
+    "termsHint": "Regole per l'utilizzo di AlterSend",
+    "website": "Sito web"
   },
   "legal": {
-    "terms": "Terms of Use",
-    "privacy": "Privacy Statement",
-    "sentence": "{{terms}} and {{privacy}}."
+    "terms": "Condizioni d'uso",
+    "privacy": "Informativa sulla privacy",
+    "sentence": "PLACEholder_0 e Placeholder_1."
   }
 }

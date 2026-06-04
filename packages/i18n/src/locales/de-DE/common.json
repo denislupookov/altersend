@@ -11,19 +11,19 @@
     "getStarted": "Loslegen",
     "cancel": "Abbrechen",
     "clear": "Löschen",
-    "close": "Close",
+    "close": "Schließen",
     "copy": "Kopieren",
     "copied": "Kopiert",
     "connect": "Verbinden",
-    "connecting": "Connecting…",
+    "connecting": "Verbinden…",
     "done": "Fertig",
     "endSession": "Sitzung beenden",
     "restart": "Neu starten",
     "tryAgain": "Erneut versuchen",
-    "dismiss": "Dismiss",
-    "openSettings": "Open settings",
+    "dismiss": "Entlassen",
+    "openSettings": "Einstellungen öffnen",
     "update": "Aktualisieren",
-    "downloadAll": "Download all",
+    "downloadAll": "Alles herunterladen",
     "skip": "Überspringen"
   },
   "labels": {
@@ -31,33 +31,37 @@
     "language": "Sprache",
     "systemDefault": "Systemstandard",
     "camera": "Kamera",
-    "statusBar": "Status bar",
-    "transferMode": "Transfer mode",
-    "version": "Version",
-    "platform": "Platform",
-    "desktop": "Desktop",
-    "mobile": "Mobile",
+    "statusBar": "Statusleiste",
+    "transferMode": "Übertragungsmodus",
+    "version": "Versionsnummer",
+    "platform": "Plattform",
+    "desktop": "Desktop-App",
+    "mobile": "Mobil",
     "send": "Senden",
     "receive": "Empfangen",
-    "connectionCode": "Connection code"
+    "connectionCode": "Verbindungscode"
   },
   "files": {
     "count_one": "{{count}} Datei",
     "count_other": "{{count}} Dateien",
     "photos": "Fotos",
     "files": "Dateien",
-    "downloads": "Files › Downloads",
-    "photosAndAlterSend": "Photos + AlterSend folder",
-    "alterSendFolder": "AlterSend folder"
+    "downloads": "Dateien › Downloads",
+    "photosAndAlterSend": "Ordner „Fotos + AlterSend“.",
+    "alterSendFolder": "Ordner AlterSend"
   },
   "update": {
-    "ready": "Update ready",
-    "available": "Update available",
+    "ready": "Update bereit",
+    "available": "Update verfügbar",
     "restart": "Neu starten",
     "update": "Aktualisieren",
-    "restartFailed": "Restart failed — please quit and reopen"
+    "restartFailed": "Neustart fehlgeschlagen – bitte beenden und erneut öffnen"
   },
   "status": {
     "connected": "Verbunden"
+  },
+  "confirm": {
+    "leaveShareSession": "Durch das Verlassen wird Ihre aktive Freigabesitzung beendet. Weitermachen?",
+    "leaveReceiveSession": "Durch das Verlassen wird Ihre aktive Empfangssitzung beendet. Weitermachen?"
   }
 }

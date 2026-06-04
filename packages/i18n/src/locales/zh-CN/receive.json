@@ -3,59 +3,59 @@
     "tabTitle": "接收",
     "join": {
       "title": "接收文件",
-      "description": "Enter a 64-character connection code from the sender to stream their files.",
-      "mobileDescription": "Scan a sender's QR or paste their 64-character code to start streaming."
+      "description": "输入发件人提供的 64 个字符的连接代码以传输其文件。",
+      "mobileDescription": "扫描发件人的 QR 或粘贴其 64 字符代码以开始流式传输。"
     },
     "connecting": {
-      "title": "Connecting",
-      "description": "Establishing a secure session with the sender."
+      "title": "正在连接",
+      "description": "与发件人建立安全会话。"
     },
     "incomingTransfer": {
-      "title": "Files available",
+      "title": "可用文件",
       "description": "{{count}} {{fileLabel}} · {{size}}",
       "description_one": "{{count}} 个文件 · {{size}}",
       "description_other": "{{count}} 个文件 · {{size}}"
     },
     "completed": {
-      "title_one": "File received",
-      "title_other": "Files received",
-      "downloadsComplete": "Downloads complete"
+      "title_one": "文件已收到",
+      "title_other": "收到文件",
+      "downloadsComplete": "下载完成"
     },
     "reconnecting": {
-      "title": "Reconnecting",
-      "description": "Reconnecting to the session. Files will be available again as soon as the link is restored.",
+      "title": "重新连接",
+      "description": "重新连接到会话。链接恢复后，文件将再次可用。",
       "panelDescription": "连接已断开。正在重新加入会话…"
     },
     "interrupted": {
-      "title": "Transfer incomplete",
-      "description": "The sender left before all files arrived."
+      "title": "传输不完整",
+      "description": "发件人在所有文件到达之前离开。"
     },
     "handshake": {
-      "title": "Connection in progress",
-      "description": "Completing the secure handshake with the sender."
+      "title": "连接正在进行中",
+      "description": "完成与发送方的安全握手。"
     },
     "sessionEnded": {
-      "title": "Session ended",
-      "description": "Return to start a new transfer."
+      "title": "会议结束",
+      "description": "返回开始新的传输。"
     }
   },
   "panel": {
-    "filesReadyTitle": "Files ready",
-    "filesReadyDescription": "The sender has shared files. Review them and start each download when ready.",
-    "receivedFiles": "Received files"
+    "filesReadyTitle": "文件准备好",
+    "filesReadyDescription": "发件人已共享文件。查看它们并在准备好后开始每次下载。",
+    "receivedFiles": "收到的文件"
   },
   "form": {
-    "codeLabel": "Connection code",
-    "codePlaceholder": "Paste 64-char code…",
+    "codeLabel": "连接代码",
+    "codePlaceholder": "粘贴 64 字符代码...",
     "orPasteCode": "或粘贴代码"
   },
   "actions": {
-    "scanQr": "Scan QR code",
-    "allowCamera": "Allow camera",
-    "downloadAll": "Download all",
-    "view": "View",
-    "play": "Play",
-    "open": "Open",
+    "scanQr": "扫描QR代码",
+    "allowCamera": "允许拍照",
+    "downloadAll": "下载全部",
+    "view": "查看",
+    "play": "玩",
+    "open": "打开",
     "scanQrHint": "使用摄像头读取发送者的二维码",
     "downloadingPercent": "正在下载 {{percent}}%",
     "downloadAllWithSize": "全部下载（{{size}}）",
@@ -64,54 +64,55 @@
     "viewPhotos": "查看照片"
   },
   "errors": {
-    "invalidCode": "Enter a valid 64-character hex code.",
-    "invalidKey": "Enter a valid 64-character hex key.",
-    "joinFailed": "Could not join the session.",
-    "unreachable": "Couldn't reach the sender. Check the code and try again.",
-    "unsupportedQrTitle": "Unsupported QR code",
-    "unsupportedQrHint": "Scan an AlterSend connection code.",
-    "mobileJoinFailedTitle": "Couldn’t join session",
-    "mobileJoinFailedHint": "Try scanning again or paste the code manually.",
-    "cameraUnavailable": "Camera unavailable.",
-    "cameraCouldNotStart": "The camera could not be started. Paste the connection code instead.",
-    "downloadFailed": "Failed",
-    "didntArrive": "Didn't arrive"
+    "invalidCode": "输入有效的 64 字符十六进制代码。",
+    "invalidKey": "输入有效的 64 字符十六进制密钥。",
+    "joinFailed": "无法加入会话。",
+    "unreachable": "无法联系发件人。检查代码并重试。",
+    "unsupportedQrTitle": "QR 代码不受支持",
+    "unsupportedQrHint": "扫描 AlterSend 连接代码。",
+    "mobileJoinFailedTitle": "无法加入会话",
+    "mobileJoinFailedHint": "尝试再次扫描或手动粘贴代码。",
+    "cameraUnavailable": "相机不可用。",
+    "cameraCouldNotStart": "相机无法启动。请改为粘贴连接代码。",
+    "downloadFailed": "失败",
+    "didntArrive": "没有到达",
+    "transferIssue": "转账问题"
   },
   "camera": {
-    "preparingTitle": "Preparing camera",
-    "preparingDescription": "Checking camera access so you can scan the sender’s QR code.",
-    "accessNeededTitle": "Camera access needed",
-    "accessNeededDescription": "Allow camera access to scan a sender’s connection QR code.",
-    "scanTitle": "Scan QR code",
-    "scanDescription": "Center the sender’s QR code inside the frame. AlterSend will connect automatically.",
-    "desktopHint": "Point the sender’s QR code at the webcam — AlterSend connects automatically.",
-    "blockedTitle": "Camera access blocked",
-    "blockedHint": "Allow camera access for AlterSend in your system settings, then try again. You can also paste the code instead.",
-    "noneTitle": "No camera found",
-    "noneHint": "Connect a webcam to scan, or paste the connection code instead.",
-    "unavailableTitle": "Camera unavailable",
-    "starting": "Starting camera…",
+    "preparingTitle": "准备相机",
+    "preparingDescription": "检查摄像头访问权限，以便您可以扫描发件人的 QR 代码。",
+    "accessNeededTitle": "需要相机访问权限",
+    "accessNeededDescription": "允许摄像头访问以扫描发送者的连接 QR 代码。",
+    "scanTitle": "扫描QR代码",
+    "scanDescription": "将发件人的 QR 代码置于框架内的中心。 AlterSend 将自动连接。",
+    "desktopHint": "将发送者的 QR 代码指向网络摄像头 — AlterSend 会自动连接。",
+    "blockedTitle": "摄像头访问被阻止",
+    "blockedHint": "在系统设置中允许 AlterSend 访问摄像头，然后重试。您也可以粘贴代码。",
+    "noneTitle": "没有找到相机",
+    "noneHint": "连接网络摄像头进行扫描，或粘贴连接代码。",
+    "unavailableTitle": "相机不可用",
+    "starting": "启动相机...",
     "enableTitle": "启用摄像头访问",
     "enableDescription": "仅用于扫描发送者的二维码。你也可以返回并手动粘贴代码。",
     "usePastedCode": "改用粘贴的代码",
     "joiningDescription": "正在加入发送者的会话。"
   },
   "status": {
-    "ready": "Ready",
-    "saved": "Saved",
-    "failed": "Failed",
-    "downloadingPercent": "Downloading {{percent}}%",
+    "ready": "准备好了",
+    "saved": "已保存",
+    "failed": "失败",
+    "downloadingPercent": "正在下载 {{percent}}%",
     "percent": "{{percent}}%",
     "waitingForFiles": "正在等待发送者的文件…"
   },
   "summary": {
-    "receivedCount_one": "Received {{completed}} of {{count}} file",
-    "receivedCount_other": "Received {{completed}} of {{count}} files",
-    "savedToPhotos_one": "Saved to Photos",
-    "savedToPhotos_other": "{{count}} saved to Photos",
-    "savedInFiles_one": "Saved in Files",
-    "savedInFiles_other": "{{count}} saved in Files",
-    "tapToView": "Tap to view",
+    "receivedCount_one": "已收到 {{completed}} 个文件（共 {{count}} 个）",
+    "receivedCount_other": "已收到 {{completed}} 个文件（共 {{count}} 个）",
+    "savedToPhotos_one": "保存到照片",
+    "savedToPhotos_other": "{{count}} 已保存到照片",
+    "savedInFiles_one": "保存在文件中",
+    "savedInFiles_other": "{{count}} 保存在文件中",
+    "tapToView": "点击查看",
     "saved": "已保存",
     "savedToLocation": "已保存到 {{location}}",
     "receivedProgress": "已接收 {{count}} 个中的 {{completed}} 个",

@@ -56,7 +56,12 @@ function WaitingForPeers({ topic, isKeyCopied, onCopy }: WaitingForPeersProps) {
 
       <div className='flex flex-col items-center gap-3'>
         {topic ? (
-          <QRCode size={180} value={buildJoinUrl(topic)} />
+          <QRCode
+            imageLabel={t('send:connection.qrCodeLabel')}
+            loadingLabel={t('send:connection.generating')}
+            size={180}
+            value={buildJoinUrl(topic)}
+          />
         ) : (
           <div
             className='flex items-center justify-center rounded-lg bg-surface-primary text-[12px] text-text-muted'

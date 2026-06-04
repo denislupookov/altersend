@@ -11,19 +11,19 @@
     "getStarted": "Commencer",
     "cancel": "Annuler",
     "clear": "Effacer",
-    "close": "Close",
+    "close": "Fermer",
     "copy": "Copier",
     "copied": "Copié",
     "connect": "Connecter",
-    "connecting": "Connecting…",
+    "connecting": "Connexion…",
     "done": "Terminé",
     "endSession": "Terminer la session",
     "restart": "Redémarrer",
     "tryAgain": "Réessayer",
-    "dismiss": "Dismiss",
-    "openSettings": "Open settings",
+    "dismiss": "Rejeter",
+    "openSettings": "Ouvrir les paramètres",
     "update": "Mettre à jour",
-    "downloadAll": "Download all",
+    "downloadAll": "Téléchargez tout",
     "skip": "Ignorer"
   },
   "labels": {
@@ -31,33 +31,37 @@
     "language": "Langue",
     "systemDefault": "Valeur système",
     "camera": "Caméra",
-    "statusBar": "Status bar",
-    "transferMode": "Transfer mode",
-    "version": "Version",
-    "platform": "Platform",
-    "desktop": "Desktop",
-    "mobile": "Mobile",
+    "statusBar": "Barre d'état",
+    "transferMode": "Mode de transfert",
+    "version": "Version de l’app",
+    "platform": "Plateforme",
+    "desktop": "Bureau",
+    "mobile": "Appareil mobile",
     "send": "Envoyer",
     "receive": "Recevoir",
-    "connectionCode": "Connection code"
+    "connectionCode": "Code de connexion"
   },
   "files": {
     "count_one": "{{count}} fichier",
     "count_other": "{{count}} fichiers",
-    "photos": "Photos",
+    "photos": "Photothèque",
     "files": "Fichiers",
-    "downloads": "Files › Downloads",
-    "photosAndAlterSend": "Photos + AlterSend folder",
-    "alterSendFolder": "AlterSend folder"
+    "downloads": "Fichiers › Téléchargements",
+    "photosAndAlterSend": "Photos + dossier AlterSend",
+    "alterSendFolder": "Dossier AlterSend"
   },
   "update": {
-    "ready": "Update ready",
-    "available": "Update available",
+    "ready": "Mise à jour prête",
+    "available": "Mise à jour disponible",
     "restart": "Redémarrer",
     "update": "Mettre à jour",
-    "restartFailed": "Restart failed — please quit and reopen"
+    "restartFailed": "Échec du redémarrage: veuillez quitter et rouvrir"
   },
   "status": {
     "connected": "Connecté"
+  },
+  "confirm": {
+    "leaveShareSession": "Quitter mettra fin à votre session de partage active. Continuer?",
+    "leaveReceiveSession": "Quitter mettra fin à votre session de réception active. Continuer?"
   }
 }

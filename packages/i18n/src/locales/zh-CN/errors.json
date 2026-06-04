@@ -1,14 +1,14 @@
 {
   "crash": {
-    "title": "Something went wrong",
-    "desktopDescription": "AlterSend hit an unexpected error and needs to restart. The transfer worker may be in an inconsistent state, so a restart is the safest option.",
-    "mobileDescription": "AlterSend hit an unexpected error. Try again, or close and reopen the app if the problem persists.",
-    "restartAlterSend": "Restart AlterSend",
-    "tryAgain": "Try again"
+    "title": "出了点问题",
+    "desktopDescription": "AlterSend 遇到意外错误，需要重新启动。 Transfer Worker 可能处于不一致的状态，因此重新启动是最安全的选择。",
+    "mobileDescription": "AlterSend 遇到意外错误。请重试，或者如果问题仍然存在，请关闭并重新打开应用程序。",
+    "restartAlterSend": "重新启动AlterSend",
+    "tryAgain": "再试一次"
   },
   "bridgeUnavailable": {
-    "title": "Electron bridge unavailable",
-    "description": "This renderer is running without the desktop bridge. Restart AlterSend from the desktop app.",
+    "title": "电子桥不可用",
+    "description": "该渲染器在没有桌面桥的情况下运行。从桌面应用程序重新启动 AlterSend。",
     "status": "桥接不可用"
   }
 }

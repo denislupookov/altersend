@@ -1,8 +1,9 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { SendFileListRow, useTheme } from '@altersend/components'
 import { getDownloadRowDisplay, getOfferKey, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/i18n'
+import { Text } from '@/src/components/ThemedText'
 
 export function ReceiveIncomingView() {
   const { t } = useTranslation(['receive'])

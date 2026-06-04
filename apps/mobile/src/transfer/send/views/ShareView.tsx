@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import type { PeerListCardEntry } from '@altersend/components'
 import {
@@ -14,6 +14,7 @@ import { AlertCircleIcon, FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/i18n'
 import { useToast } from '@/src/components/Toast'
 import { QRSection } from './QRSection'
+import { Text } from '@/src/components/ThemedText'
 
 function getPeerStatusLabel(t: ReturnType<typeof useTranslation>['t'], entry: PeerListEntry) {
   switch (entry.status) {
@@ -120,7 +121,13 @@ export function ShareView() {
 
       {peerEntries.length > 0 ? (
         <View style={styles.peerListWrap}>
-          <PeerListCard entries={peerCardEntries} />
+          <PeerListCard
+            entries={peerCardEntries}
+            labels={{
+              title: t('send:peer.devices'),
+              connectedCount: (count) => t('send:peer.connectedCount', { count })
+            }}
+          />
         </View>
       ) : null}
 

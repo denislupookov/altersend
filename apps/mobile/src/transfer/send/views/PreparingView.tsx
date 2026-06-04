@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import {
   getOverallProgress,
   getProgressState,
@@ -7,6 +7,7 @@ import {
 } from '@altersend/domain'
 import { SendFileListRow, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/i18n'
+import { Text } from '@/src/components/ThemedText'
 
 export function PreparingView() {
   const { t } = useTranslation(['send'])

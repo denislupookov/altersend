@@ -1,4 +1,4 @@
-import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Image, Linking, Pressable, StyleSheet, View } from 'react-native'
 import Constants from 'expo-constants'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
@@ -28,6 +28,7 @@ import {
   setCrashReportingEnabled
 } from '@/src/lifecycle/crashReportingStorage'
 import { closeSentry, initSentry } from '@/src/sentry'
+import { Text } from '@/src/components/ThemedText'
 
 interface LinkRowProps {
   label: string

@@ -1,8 +1,9 @@
 import React from 'react'
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Animated, Pressable, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
+import { Text } from '@/src/components/ThemedText'
 
 interface ToastIosProps {
   title: string

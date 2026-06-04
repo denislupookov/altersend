@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { RESOURCES, SUPPORTED_LOCALES } from './index'
 
 type JsonRecord = Record<string, unknown>
+type StringEntry = { path: string; value: string }
 
 function flattenKeys(value: unknown, prefix = ''): string[] {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -16,6 +17,34 @@ function collectStrings(value: unknown): string[] {
   if (typeof value === 'string') return [value]
   if (!value || typeof value !== 'object' || Array.isArray(value)) return []
   return Object.values(value as JsonRecord).flatMap((child) => collectStrings(child))
+}
+
+function flattenStringEntries(value: unknown, prefix = ''): StringEntry[] {
+  if (typeof value === 'string') return prefix ? [{ path: prefix, value }] : []
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return []
+
+  return Object.entries(value as JsonRecord).flatMap(([key, child]) =>
+    flattenStringEntries(child, prefix ? `${prefix}.${key}` : key)
+  )
+}
+
+function isPlaceholderOnly(value: string): boolean {
+  const withoutPlaceholders = value.replace(/\{\{[^}]+\}\}/g, '')
+  const withoutPunctuation = withoutPlaceholders.replace(/[\s%.,:;!?()[\]{}'"“”‘’…·\-+/#|]+/g, '')
+  return withoutPunctuation.length === 0
+}
+
+const identicalValueAllowList = new Set([
+  'AlterSend',
+  'Discord',
+  'GitHub',
+  'GitHub Issues',
+  'QR',
+  'OK'
+])
+
+function canMatchEnglishSource(value: string): boolean {
+  return identicalValueAllowList.has(value.trim()) || isPlaceholderOnly(value)
 }
 
 describe('translation resources', () => {
@@ -52,6 +81,33 @@ describe('translation resources', () => {
         )
         expect(emptyStrings, `${locale.code}/${namespace}`).toEqual([])
       }
+    }
+  })
+
+  it('does not leave en-US strings in non-English locales', () => {
+    const source = RESOURCES['en-US']
+    const namespaces = Object.keys(source) as Array<keyof typeof source>
+    const checkedLocales = SUPPORTED_LOCALES.filter(
+      (locale) => locale.code !== 'en-US' && locale.code !== 'en-GB'
+    )
+
+    for (const locale of checkedLocales) {
+      const identicalEntries: string[] = []
+
+      for (const namespace of namespaces) {
+        const sourceByPath = new Map(
+          flattenStringEntries(source[namespace]).map((entry) => [entry.path, entry.value])
+        )
+
+        for (const entry of flattenStringEntries(RESOURCES[locale.code][namespace])) {
+          const sourceValue = sourceByPath.get(entry.path)
+          if (sourceValue && entry.value === sourceValue && !canMatchEnglishSource(sourceValue)) {
+            identicalEntries.push(`${String(namespace)}.${entry.path}: ${entry.value}`)
+          }
+        }
+      }
+
+      expect(identicalEntries, locale.code).toEqual([])
     }
   })
 

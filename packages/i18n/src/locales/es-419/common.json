@@ -11,19 +11,19 @@
     "getStarted": "Comenzar",
     "cancel": "Cancelar",
     "clear": "Borrar",
-    "close": "Close",
+    "close": "Cerrar",
     "copy": "Copiar",
     "copied": "Copiado",
     "connect": "Conectar",
-    "connecting": "Connecting…",
+    "connecting": "Conectando…",
     "done": "Listo",
     "endSession": "Finalizar sesión",
     "restart": "Reiniciar",
     "tryAgain": "Intentar de nuevo",
-    "dismiss": "Dismiss",
-    "openSettings": "Open settings",
+    "dismiss": "Descartar",
+    "openSettings": "Abrir configuración",
     "update": "Actualizar",
-    "downloadAll": "Download all",
+    "downloadAll": "Descargar todo",
     "skip": "Omitir"
   },
   "labels": {
@@ -31,33 +31,37 @@
     "language": "Idioma",
     "systemDefault": "Predeterminado del sistema",
     "camera": "Cámara",
-    "statusBar": "Status bar",
-    "transferMode": "Transfer mode",
-    "version": "Version",
-    "platform": "Platform",
-    "desktop": "Desktop",
-    "mobile": "Mobile",
+    "statusBar": "barra de estado",
+    "transferMode": "Modo de transferencia",
+    "version": "Versión",
+    "platform": "Plataforma",
+    "desktop": "Escritorio",
+    "mobile": "Móvil",
     "send": "Enviar",
     "receive": "Recibir",
-    "connectionCode": "Connection code"
+    "connectionCode": "Código de conexión"
   },
   "files": {
     "count_one": "{{count}} archivo",
     "count_other": "{{count}} archivos",
     "photos": "Fotos",
     "files": "Archivos",
-    "downloads": "Files › Downloads",
-    "photosAndAlterSend": "Photos + AlterSend folder",
-    "alterSendFolder": "AlterSend folder"
+    "downloads": "Archivos › Descargas",
+    "photosAndAlterSend": "Fotos + carpeta AlterSend",
+    "alterSendFolder": "Carpeta AlterSend"
   },
   "update": {
-    "ready": "Update ready",
-    "available": "Update available",
+    "ready": "Actualización lista",
+    "available": "Actualización disponible",
     "restart": "Reiniciar",
     "update": "Actualizar",
-    "restartFailed": "Restart failed — please quit and reopen"
+    "restartFailed": "Error al reiniciar: salga y vuelva a abrir"
   },
   "status": {
     "connected": "Conectado"
+  },
+  "confirm": {
+    "leaveShareSession": "Al salir, finalizará su sesión activa para compartir. ¿Continuar?",
+    "leaveReceiveSession": "Al salir, finalizará su sesión de recepción activa. ¿Continuar?"
   }
 }

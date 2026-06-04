@@ -1,0 +1,12 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "AlterSend",
+    "NSCameraUsageDescription": "AlterSend 使用您的相機掃描連接 QR 代碼。",
+    "NSLocalNetworkUsageDescription": "AlterSend 使用您的本地網路來發現附近的裝置以進行點對點檔案傳輸。",
+    "NSPhotoLibraryUsageDescription": "AlterSend 會讀取您的照片庫，以便您可以選擇照片和影片發送到其他裝置。",
+    "NSPhotoLibraryAddUsageDescription": "AlterSend 將收到的圖像和影片儲存到您的照片庫。"
+  },
+  "android": {
+    "app_name": "AlterSend"
+  }
+}

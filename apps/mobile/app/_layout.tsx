@@ -12,7 +12,13 @@ import {
   startPeerWatchdog,
   useSimulatedLoading
 } from '@altersend/domain'
-import { initI18n, resolveLocalePreference, useTranslation } from '@altersend/i18n'
+import {
+  getLocaleFontFamily,
+  initI18n,
+  isSupportedLocaleCode,
+  resolveLocalePreference,
+  useTranslation
+} from '@altersend/i18n'
 import { Stack } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
@@ -21,6 +27,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { mobileApi } from '../src/api/mobileApi'
 import { ToastProvider } from '../src/components/Toast'
 import { UpdateBanner } from '../src/components/UpdateBanner'
+import { useAlterSendFonts } from '../src/theme/useAlterSendFonts'
 import { startAppStateBridge } from '../src/lifecycle/appStateBridge'
 import { startDeepLinkHandler } from '../src/lifecycle/deepLinkHandler'
 import { getSavedLocalePreference } from '../src/lifecycle/localePreferenceStorage'
@@ -102,29 +109,16 @@ function ThemedStack() {
   )
 }
 
-export default function RootLayout() {
-  const [i18nReady, setI18nReady] = useState(false)
-
-  useEffect(() => {
-    let mounted = true
-    async function initializeLocale() {
-      const preference = await getSavedLocalePreference()
-      await initI18n(resolveLocalePreference(preference, getMobileSystemLocales()))
-      if (mounted) setI18nReady(true)
-    }
-
-    void initializeLocale()
-    return () => {
-      mounted = false
-    }
-  }, [])
-
-  if (!i18nReady) return null
+function AppShell() {
+  const { i18n } = useTranslation()
+  const language = i18n.resolvedLanguage ?? i18n.language
+  const locale = isSupportedLocaleCode(language) ? language : 'en-US'
+  const fontFamily = getLocaleFontFamily(locale)
 
   return (
     <SafeAreaProvider>
       <View style={styles.root}>
-        <ThemeProvider theme={ThemeType.Dark}>
+        <ThemeProvider theme={ThemeType.Dark} fontFamily={fontFamily}>
           <ErrorBoundary
             fallback={(error, reset) => {
               captureException(error)
@@ -141,6 +135,30 @@ export default function RootLayout() {
       </View>
     </SafeAreaProvider>
   )
+}
+
+export default function RootLayout() {
+  const [i18nReady, setI18nReady] = useState(false)
+  const [fontsLoaded, fontError] = useAlterSendFonts()
+
+  useEffect(() => {
+    let mounted = true
+    async function initializeLocale() {
+      const preference = await getSavedLocalePreference()
+      await initI18n(resolveLocalePreference(preference, getMobileSystemLocales()))
+      if (mounted) setI18nReady(true)
+    }
+
+    void initializeLocale()
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  if (fontError) throw fontError
+  if (!i18nReady || !fontsLoaded) return null
+
+  return <AppShell />
 }
 
 const styles = StyleSheet.create({

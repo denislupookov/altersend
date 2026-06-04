@@ -11,19 +11,19 @@
     "getStarted": "Inizia",
     "cancel": "Annulla",
     "clear": "Cancella",
-    "close": "Close",
+    "close": "Chiudi",
     "copy": "Copia",
     "copied": "Copiato",
     "connect": "Connetti",
-    "connecting": "Connecting…",
+    "connecting": "Connessione…",
     "done": "Fine",
     "endSession": "Termina sessione",
     "restart": "Riavvia",
     "tryAgain": "Riprova",
-    "dismiss": "Dismiss",
-    "openSettings": "Open settings",
+    "dismiss": "Ignora",
+    "openSettings": "Apri le impostazioni",
     "update": "Aggiorna",
-    "downloadAll": "Download all",
+    "downloadAll": "Scarica tutto",
     "skip": "Salta"
   },
   "labels": {
@@ -31,33 +31,37 @@
     "language": "Lingua",
     "systemDefault": "Predefinito di sistema",
     "camera": "Fotocamera",
-    "statusBar": "Status bar",
-    "transferMode": "Transfer mode",
-    "version": "Version",
-    "platform": "Platform",
-    "desktop": "Desktop",
-    "mobile": "Mobile",
+    "statusBar": "Barra di stato",
+    "transferMode": "Modalità di trasferimento",
+    "version": "Versione",
+    "platform": "Piattaforma",
+    "desktop": "App desktop",
+    "mobile": "Cellulare",
     "send": "Invia",
     "receive": "Ricevi",
-    "connectionCode": "Connection code"
+    "connectionCode": "Codice di connessione"
   },
   "files": {
-    "count_one": "{{count}} file",
+    "count_one": "PLACEholder_0 file",
     "count_other": "{{count}} file",
     "photos": "Foto",
     "files": "File",
-    "downloads": "Files › Downloads",
-    "photosAndAlterSend": "Photos + AlterSend folder",
-    "alterSendFolder": "AlterSend folder"
+    "downloads": "File › Download",
+    "photosAndAlterSend": "Foto + cartella AlterSend",
+    "alterSendFolder": "Cartella AlterSend"
   },
   "update": {
-    "ready": "Update ready",
-    "available": "Update available",
+    "ready": "Aggiornamento pronto",
+    "available": "Aggiornamento disponibile",
     "restart": "Riavvia",
     "update": "Aggiorna",
-    "restartFailed": "Restart failed — please quit and reopen"
+    "restartFailed": "Riavvio non riuscito: esci e riapri"
   },
   "status": {
     "connected": "Connesso"
+  },
+  "confirm": {
+    "leaveShareSession": "L'abbandono terminerà la sessione di condivisione attiva. Continuare?",
+    "leaveReceiveSession": "L'abbandono terminerà la sessione di ricezione attiva. Continuare?"
   }
 }

@@ -1,9 +1,10 @@
 import { useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/i18n'
 import { ArrowUp, X } from 'lucide-react-native'
-import { Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Linking, Platform, Pressable, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useUpdateCheck } from '../../hooks/useUpdateCheck'
+import { Text } from '@/src/components/ThemedText'
 
 const STORE_URL =
   Platform.OS === 'ios'

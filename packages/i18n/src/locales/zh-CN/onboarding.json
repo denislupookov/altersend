@@ -1,17 +1,17 @@
 {
   "slides": {
     "direct": {
-      "title": "Files, directly between devices.",
-      "description": "One device sends, the other receives. A short code connects them so files can stream directly."
+      "title": "直接在设备之间传输文件。",
+      "description": "一台设备发送，另一台设备接收。一个简短的代码将它们连接起来，以便文件可以直接流式传输。"
     },
     "keepOpen": {
-      "title": "Keep both apps open.",
-      "description": "Files stream directly between devices — there is no cloud. Closing or backgrounding the app will cancel the transfer."
+      "title": "保持两个应用程序打开。",
+      "description": "文件直接在设备之间传输——没有云。关闭或后台应用程序将取消传输。"
     },
     "encrypted": {
-      "title": "End-to-end encrypted.",
-      "description": "No servers, no copies, no middlemen. Your files travel peer-to-peer between you and the recipient.",
-      "link": "Read our privacy policy"
+      "title": "端到端加密。",
+      "description": "没有服务器，没有副本，没有中间商。您的文件在您和收件人之间点对点传输。",
+      "link": "阅读我们的隐私政策"
     }
   }
 }

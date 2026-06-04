@@ -1,14 +1,14 @@
 {
   "crash": {
-    "title": "Something went wrong",
-    "desktopDescription": "AlterSend hit an unexpected error and needs to restart. The transfer worker may be in an inconsistent state, so a restart is the safest option.",
-    "mobileDescription": "AlterSend hit an unexpected error. Try again, or close and reopen the app if the problem persists.",
-    "restartAlterSend": "Restart AlterSend",
-    "tryAgain": "Try again"
+    "title": "Etwas ist schief gelaufen",
+    "desktopDescription": "AlterSend ist auf einen unerwarteten Fehler gestoßen und muss neu gestartet werden. Der Transfer-Worker befindet sich möglicherweise in einem inkonsistenten Zustand, daher ist ein Neustart die sicherste Option.",
+    "mobileDescription": "AlterSend hat einen unerwarteten Fehler festgestellt. Versuchen Sie es erneut oder schließen Sie die App und öffnen Sie sie erneut, wenn das Problem weiterhin besteht.",
+    "restartAlterSend": "Starten Sie AlterSend neu",
+    "tryAgain": "Versuchen Sie es erneut"
   },
   "bridgeUnavailable": {
-    "title": "Electron bridge unavailable",
-    "description": "This renderer is running without the desktop bridge. Restart AlterSend from the desktop app.",
+    "title": "Elektronenbrücke nicht verfügbar",
+    "description": "Dieser Renderer läuft ohne die Desktop Bridge. Starten Sie AlterSend über die Desktop-App neu.",
     "status": "Bridge nicht verfügbar"
   }
 }

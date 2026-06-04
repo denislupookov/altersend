@@ -1,0 +1,40 @@
+@font-face {
+  font-family: "AlterSend Sans";
+  src: url("../../../../assets/fonts/NotoSans-Latin.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AlterSend Sans JP";
+  src: url("../../../../assets/fonts/NotoSans-JP.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AlterSend Sans KR";
+  src: url("../../../../assets/fonts/NotoSans-KR.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AlterSend Sans SC";
+  src: url("../../../../assets/fonts/NotoSans-SC.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AlterSend Sans TC";
+  src: url("../../../../assets/fonts/NotoSans-TC.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+

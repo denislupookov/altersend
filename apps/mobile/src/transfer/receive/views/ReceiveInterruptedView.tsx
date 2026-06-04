@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import type { IncomingFileOffer } from '@altersend/core'
 import { SendFileListRow, useTheme, withAlpha } from '@altersend/components'
 import { CloseIcon } from '@altersend/components/icons'
@@ -8,6 +8,7 @@ import { useTranslation } from '@altersend/i18n'
 import { IllustrationLayout } from '@/src/components'
 import { OpenAction, getFileMeta } from '../utils/fileRowUtils'
 import MissingFilesSvg from '../../../../../../assets/missing-files.svg'
+import { Text } from '@/src/components/ThemedText'
 
 interface ReceiveInterruptedViewProps {
   title: string

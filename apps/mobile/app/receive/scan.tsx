@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Linking, Pressable, StyleSheet, View } from 'react-native'
 import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { ArrowLeftIcon, QrCodeIcon } from '@altersend/components/icons'
@@ -9,6 +9,7 @@ import { extractJoinCode, useTransferStore } from '@altersend/domain'
 import { joinSession } from '@altersend/domain'
 import { Layout } from '@/src/components'
 import { useToast } from '@/src/components/Toast'
+import { Text } from '@/src/components/ThemedText'
 
 export default function ReceiveScanScreen() {
   const { t } = useTranslation(['receive', 'common'])

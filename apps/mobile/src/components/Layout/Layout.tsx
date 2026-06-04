@@ -3,8 +3,9 @@ import { SettingsIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/i18n'
 import { BlurView } from 'expo-blur'
 import { PropsWithChildren } from 'react'
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform } from 'react-native'
+import { View, StyleSheet, ScrollView, Pressable, Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Text } from '@/src/components/ThemedText'
 
 interface LayoutProps {
   title: string

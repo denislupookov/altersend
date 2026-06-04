@@ -11,19 +11,19 @@
     "getStarted": "Começar",
     "cancel": "Cancelar",
     "clear": "Limpar",
-    "close": "Close",
+    "close": "Fechar",
     "copy": "Copiar",
     "copied": "Copiado",
     "connect": "Conectar",
-    "connecting": "Connecting…",
+    "connecting": "Conectando…",
     "done": "Concluído",
     "endSession": "Encerrar sessão",
     "restart": "Reiniciar",
     "tryAgain": "Tentar novamente",
-    "dismiss": "Dismiss",
-    "openSettings": "Open settings",
+    "dismiss": "Dispensar",
+    "openSettings": "Abrir configurações",
     "update": "Atualizar",
-    "downloadAll": "Download all",
+    "downloadAll": "Baixar tudo",
     "skip": "Pular"
   },
   "labels": {
@@ -31,33 +31,37 @@
     "language": "Idioma",
     "systemDefault": "Padrão do sistema",
     "camera": "Câmera",
-    "statusBar": "Status bar",
-    "transferMode": "Transfer mode",
-    "version": "Version",
-    "platform": "Platform",
-    "desktop": "Desktop",
-    "mobile": "Mobile",
+    "statusBar": "Barra de status",
+    "transferMode": "Modo de transferência",
+    "version": "Versão",
+    "platform": "Plataforma",
+    "desktop": "Área de trabalho",
+    "mobile": "Móvel",
     "send": "Enviar",
     "receive": "Receber",
-    "connectionCode": "Connection code"
+    "connectionCode": "Código de conexão"
   },
   "files": {
     "count_one": "{{count}} arquivo",
     "count_other": "{{count}} arquivos",
     "photos": "Fotos",
     "files": "Arquivos",
-    "downloads": "Files › Downloads",
-    "photosAndAlterSend": "Photos + AlterSend folder",
-    "alterSendFolder": "AlterSend folder"
+    "downloads": "Arquivos › Downloads",
+    "photosAndAlterSend": "Fotos + pasta AlterSend",
+    "alterSendFolder": "Pasta AlterSend"
   },
   "update": {
-    "ready": "Update ready",
-    "available": "Update available",
+    "ready": "Atualização pronta",
+    "available": "Atualização disponível",
     "restart": "Reiniciar",
     "update": "Atualizar",
-    "restartFailed": "Restart failed — please quit and reopen"
+    "restartFailed": "Falha na reinicialização – saia e reabra"
   },
   "status": {
     "connected": "Conectado"
+  },
+  "confirm": {
+    "leaveShareSession": "Sair encerrará sua sessão de compartilhamento ativa. Continuar?",
+    "leaveReceiveSession": "Sair encerrará sua sessão de recebimento ativa. Continuar?"
   }
 }

@@ -49,6 +49,7 @@
     "expo-constants": "~55.0.7",
     "expo-document-picker": "~55.0.13",
     "expo-file-system": "~55.0.16",
+    "expo-font": "~55.0.7",
     "expo-haptics": "~15.0.7",
     "expo-image-picker": "~55.0.18",
     "expo-linking": "~55.0.13",

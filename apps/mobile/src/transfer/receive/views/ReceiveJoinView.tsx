@@ -1,8 +1,9 @@
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 import { Button, Input, useTheme, withAlpha } from '@altersend/components'
 import { ChevronRightIcon, QrCodeIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/i18n'
+import { Text } from '@/src/components/ThemedText'
 
 interface ReceiveJoinViewProps {
   joinCode: string

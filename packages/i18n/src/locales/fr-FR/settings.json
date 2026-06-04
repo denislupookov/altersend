@@ -1,31 +1,31 @@
 {
   "title": "Paramètres",
   "languageTitle": "Langue",
-  "languageHint": "Choose the language used by AlterSend.",
+  "languageHint": "Choisissez la langue utilisée par AlterSend.",
   "sections": {
     "privacy": "Confidentialité",
     "support": "Assistance",
     "about": "À propos"
   },
   "crashReports": {
-    "label": "Crash reports",
-    "description": "Share anonymous crash data to help improve AlterSend"
+    "label": "Rapports d'erreur",
+    "description": "Partagez des données anonymes sur les accidents pour contribuer à améliorer AlterSend"
   },
   "rows": {
     "feedback": "Commentaires",
-    "feedbackHint": "Report a problem or suggest a feature",
+    "feedbackHint": "Signaler un problème ou suggérer une fonctionnalité",
     "discord": "Discord",
-    "discordHint": "Join the community",
-    "contact": "Contact us",
-    "privacyPolicy": "Privacy policy",
-    "privacyPolicyHint": "How AlterSend handles your data",
-    "terms": "Terms of service",
-    "termsHint": "Rules for using AlterSend",
-    "website": "Website"
+    "discordHint": "Rejoignez la communauté",
+    "contact": "Contactez-nous",
+    "privacyPolicy": "Politique de confidentialité",
+    "privacyPolicyHint": "Comment AlterSend gère vos données",
+    "terms": "Conditions d'utilisation",
+    "termsHint": "Règles d'utilisation de AlterSend",
+    "website": "Site Web"
   },
   "legal": {
-    "terms": "Terms of Use",
-    "privacy": "Privacy Statement",
-    "sentence": "{{terms}} and {{privacy}}."
+    "terms": "Conditions d'utilisation",
+    "privacy": "Déclaration de confidentialité",
+    "sentence": "{{terms}} et {{privacy}}."
   }
 }

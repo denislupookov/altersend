@@ -1,31 +1,31 @@
 {
   "title": "Einstellungen",
   "languageTitle": "Sprache",
-  "languageHint": "Choose the language used by AlterSend.",
+  "languageHint": "Wählen Sie die von AlterSend verwendete Sprache.",
   "sections": {
     "privacy": "Datenschutz",
-    "support": "Support",
+    "support": "Unterstützung",
     "about": "Info"
   },
   "crashReports": {
-    "label": "Crash reports",
-    "description": "Share anonymous crash data to help improve AlterSend"
+    "label": "Absturzberichte",
+    "description": "Teilen Sie anonyme Absturzdaten, um AlterSend zu verbessern"
   },
   "rows": {
-    "feedback": "Feedback",
-    "feedbackHint": "Report a problem or suggest a feature",
+    "feedback": "Rückmeldung",
+    "feedbackHint": "Melden Sie ein Problem oder schlagen Sie eine Funktion vor",
     "discord": "Discord",
-    "discordHint": "Join the community",
-    "contact": "Contact us",
-    "privacyPolicy": "Privacy policy",
-    "privacyPolicyHint": "How AlterSend handles your data",
-    "terms": "Terms of service",
-    "termsHint": "Rules for using AlterSend",
-    "website": "Website"
+    "discordHint": "Treten Sie der Community bei",
+    "contact": "Kontaktieren Sie uns",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "privacyPolicyHint": "Wie AlterSend mit Ihren Daten umgeht",
+    "terms": "Nutzungsbedingungen",
+    "termsHint": "Regeln für die Verwendung von AlterSend",
+    "website": "Webseite"
   },
   "legal": {
-    "terms": "Terms of Use",
-    "privacy": "Privacy Statement",
-    "sentence": "{{terms}} and {{privacy}}."
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutzerklärung",
+    "sentence": "{{terms}} und {{privacy}}."
   }
 }

@@ -70,7 +70,10 @@
   },
   "peer": {
     "completedDone_one": "{{count}} done",
-    "completedDone_other": "{{count}} done"
+    "completedDone_other": "{{count}} done",
+    "devices": "Devices",
+    "connectedCount_one": "{{count}} connected",
+    "connectedCount_other": "{{count}} connected"
   },
   "dropzone": {
     "addMoreDescription": "or click to <link>add more</link>",
@@ -81,5 +84,8 @@
     "tapTo": "Tap to",
     "addMoreLink": "add more",
     "browseLink": "browse"
+  },
+  "files": {
+    "removeLabel": "Remove {{name}}"
   }
 }

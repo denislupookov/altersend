@@ -75,7 +75,8 @@
     "cameraUnavailable": "カメラを利用できません。",
     "cameraCouldNotStart": "カメラを開始できませんでした。コードを貼り付けてください。",
     "downloadFailed": "失敗",
-    "didntArrive": "未着"
+    "didntArrive": "未着",
+    "transferIssue": "転送の問題"
   },
   "camera": {
     "preparingTitle": "カメラを準備中",

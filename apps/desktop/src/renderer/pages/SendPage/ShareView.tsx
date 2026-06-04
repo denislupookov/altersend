@@ -107,7 +107,13 @@ export function ShareView() {
         onOpenQR={() => setIsQRModalOpen(true)}
       />
 
-      <PeerListCard entries={peerCardEntries} />
+      <PeerListCard
+        entries={peerCardEntries}
+        labels={{
+          title: t('send:peer.devices'),
+          connectedCount: (count) => t('send:peer.connectedCount', { count })
+        }}
+      />
 
       <Disclosure
         compact

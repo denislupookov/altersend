@@ -59,5 +59,9 @@
   },
   "status": {
     "connected": "Connected"
+  },
+  "confirm": {
+    "leaveShareSession": "Leaving will end your active share session. Continue?",
+    "leaveReceiveSession": "Leaving will end your active receive session. Continue?"
   }
 }

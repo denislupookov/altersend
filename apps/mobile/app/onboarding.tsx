@@ -10,7 +10,6 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   StyleSheet,
-  Text,
   View,
   useWindowDimensions
 } from 'react-native'
@@ -18,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { OnboardingIllustration } from '@/src/onboarding/OnboardingIllustration'
 import { markOnboardingCompleted } from '@/src/onboarding/onboardingStorage'
 import brandLogo from '@/assets/images/brand-logo.png'
+import { Text } from '@/src/components/ThemedText'
 
 function getSlideKey(kind: OnboardingSlideKind) {
   switch (kind) {

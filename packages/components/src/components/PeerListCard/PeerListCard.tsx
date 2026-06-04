@@ -14,6 +14,10 @@ export interface PeerListCardEntry {
 
 interface PeerListCardProps {
   entries: PeerListCardEntry[]
+  labels: {
+    title: string
+    connectedCount: (count: number) => string
+  }
 }
 
 const DOT_TONE = {
@@ -32,16 +36,16 @@ const TEXT_TONE = {
   disconnected: styles.textDisconnected
 } as const
 
-export function PeerListCard({ entries }: PeerListCardProps) {
+export function PeerListCard({ entries, labels }: PeerListCardProps) {
   if (entries.length === 0) return null
 
   const activeCount = entries.filter((entry) => entry.status !== 'disconnected').length
-  const peersLabel = activeCount === 1 ? '1 connected' : `${activeCount} connected`
+  const peersLabel = labels.connectedCount(activeCount)
 
   return (
     <html.section style={styles.section}>
       <html.div style={styles.header}>
-        <html.p style={styles.headerLabel}>Devices</html.p>
+        <html.p style={styles.headerLabel}>{labels.title}</html.p>
         <html.p style={styles.headerCount}>{peersLabel}</html.p>
       </html.div>
 

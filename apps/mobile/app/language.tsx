@@ -16,7 +16,8 @@ import {
 import { getMobileSystemLocales } from '@/src/lifecycle/systemLocale'
 import { useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
+import { Text } from '@/src/components/ThemedText'
 
 export default function LanguageScreen() {
   const { t } = useTranslation(['settings', 'common'])

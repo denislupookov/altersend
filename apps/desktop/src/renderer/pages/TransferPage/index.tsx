@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@altersend/components'
 import { clearSession, useTransferStore } from '@altersend/domain'
+import { useTranslation } from '@altersend/i18n'
 import { FooterBar } from './FooterBar'
 import { ReceivePage, SendPage } from '..'
 
 type TransferTab = 'send' | 'receive'
 
 export default function TransferPage({ version }: { version: string }) {
+  const { t } = useTranslation(['common'])
   const role = useTransferStore((s) => s.role)
   const [userTab, setUserTab] = useState<TransferTab>('send')
 
@@ -16,8 +18,8 @@ export default function TransferPage({ version }: { version: string }) {
     if (role !== null) {
       const message =
         role === 'sender'
-          ? 'Leaving will end your active share session. Continue?'
-          : 'Leaving will end your active receive session. Continue?'
+          ? t('common:confirm.leaveShareSession')
+          : t('common:confirm.leaveReceiveSession')
       if (!window.confirm(message)) return
       void clearSession()
     }
@@ -32,9 +34,9 @@ export default function TransferPage({ version }: { version: string }) {
         <Tabs onValueChange={handleTabChange} value={userTab}>
           <div className='mx-auto flex h-full w-full max-w-[860px] flex-1 flex-col'>
             <div className='flex items-center gap-4'>
-              <TabsList aria-label='Transfer mode'>
-                <TabsTrigger value='send'>Send</TabsTrigger>
-                <TabsTrigger value='receive'>Receive</TabsTrigger>
+              <TabsList aria-label={t('common:labels.transferMode')}>
+                <TabsTrigger value='send'>{t('common:labels.send')}</TabsTrigger>
+                <TabsTrigger value='receive'>{t('common:labels.receive')}</TabsTrigger>
               </TabsList>
             </div>
 

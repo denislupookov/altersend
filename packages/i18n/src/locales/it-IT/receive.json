@@ -3,59 +3,59 @@
     "tabTitle": "Ricevi",
     "join": {
       "title": "Ricevi file",
-      "description": "Enter a 64-character connection code from the sender to stream their files.",
-      "mobileDescription": "Scan a sender's QR or paste their 64-character code to start streaming."
+      "description": "Inserisci un codice di connessione di 64 caratteri dal mittente per eseguire lo streaming dei suoi file.",
+      "mobileDescription": "Scansiona il QR di un mittente o incolla il suo codice di 64 caratteri per avviare lo streaming."
     },
     "connecting": {
-      "title": "Connecting",
-      "description": "Establishing a secure session with the sender."
+      "title": "Connessione",
+      "description": "Stabilire una sessione sicura con il mittente."
     },
     "incomingTransfer": {
-      "title": "Files available",
+      "title": "File disponibili",
       "description": "{{count}} {{fileLabel}} · {{size}}",
-      "description_one": "{{count}} file · {{size}}",
+      "description_one": "{{count}} file disponibile · {{size}}",
       "description_other": "{{count}} file · {{size}}"
     },
     "completed": {
-      "title_one": "File received",
-      "title_other": "Files received",
-      "downloadsComplete": "Downloads complete"
+      "title_one": "File ricevuto",
+      "title_other": "File ricevuti",
+      "downloadsComplete": "Download completati"
     },
     "reconnecting": {
-      "title": "Reconnecting",
-      "description": "Reconnecting to the session. Files will be available again as soon as the link is restored.",
+      "title": "Riconnessione",
+      "description": "Riconnessione alla sessione. I file saranno nuovamente disponibili non appena il collegamento verrà ripristinato.",
       "panelDescription": "Connessione interrotta. Rientro nella sessione…"
     },
     "interrupted": {
-      "title": "Transfer incomplete",
-      "description": "The sender left before all files arrived."
+      "title": "Trasferimento incompleto",
+      "description": "Il mittente se n'è andato prima che arrivassero tutti i file."
     },
     "handshake": {
-      "title": "Connection in progress",
-      "description": "Completing the secure handshake with the sender."
+      "title": "Connessione in corso",
+      "description": "Completamento dell'handshake sicuro con il mittente."
     },
     "sessionEnded": {
-      "title": "Session ended",
-      "description": "Return to start a new transfer."
+      "title": "La sessione è terminata",
+      "description": "Ritorna per iniziare un nuovo trasferimento."
     }
   },
   "panel": {
-    "filesReadyTitle": "Files ready",
-    "filesReadyDescription": "The sender has shared files. Review them and start each download when ready.",
-    "receivedFiles": "Received files"
+    "filesReadyTitle": "File pronti",
+    "filesReadyDescription": "Il mittente ha file condivisi. Rivedili e avvia ciascun download quando è pronto.",
+    "receivedFiles": "File ricevuti"
   },
   "form": {
-    "codeLabel": "Connection code",
-    "codePlaceholder": "Paste 64-char code…",
+    "codeLabel": "Codice di connessione",
+    "codePlaceholder": "Incolla il codice di 64 caratteri…",
     "orPasteCode": "oppure incolla il codice"
   },
   "actions": {
-    "scanQr": "Scan QR code",
-    "allowCamera": "Allow camera",
-    "downloadAll": "Download all",
-    "view": "View",
-    "play": "Play",
-    "open": "Open",
+    "scanQr": "Scansiona il codice QR",
+    "allowCamera": "Consenti fotocamera",
+    "downloadAll": "Scarica tutto",
+    "view": "Visualizza",
+    "play": "Gioca",
+    "open": "Aperto",
     "scanQrHint": "Usa la webcam per leggere il QR del mittente",
     "downloadingPercent": "Download {{percent}}%",
     "downloadAllWithSize": "Scarica tutto ({{size}})",
@@ -64,54 +64,55 @@
     "viewPhotos": "Visualizza foto"
   },
   "errors": {
-    "invalidCode": "Enter a valid 64-character hex code.",
-    "invalidKey": "Enter a valid 64-character hex key.",
-    "joinFailed": "Could not join the session.",
-    "unreachable": "Couldn't reach the sender. Check the code and try again.",
-    "unsupportedQrTitle": "Unsupported QR code",
-    "unsupportedQrHint": "Scan an AlterSend connection code.",
-    "mobileJoinFailedTitle": "Couldn’t join session",
-    "mobileJoinFailedHint": "Try scanning again or paste the code manually.",
-    "cameraUnavailable": "Camera unavailable.",
-    "cameraCouldNotStart": "The camera could not be started. Paste the connection code instead.",
-    "downloadFailed": "Failed",
-    "didntArrive": "Didn't arrive"
+    "invalidCode": "Inserisci un codice esadecimale valido di 64 caratteri.",
+    "invalidKey": "Immettere una chiave esadecimale valida di 64 caratteri.",
+    "joinFailed": "Impossibile partecipare alla sessione.",
+    "unreachable": "Impossibile raggiungere il mittente. Controlla il codice e riprova.",
+    "unsupportedQrTitle": "Codice QR non supportato",
+    "unsupportedQrHint": "Scansiona un codice di connessione AlterSend.",
+    "mobileJoinFailedTitle": "Impossibile partecipare alla sessione",
+    "mobileJoinFailedHint": "Prova a eseguire nuovamente la scansione o incolla il codice manualmente.",
+    "cameraUnavailable": "Fotocamera non disponibile.",
+    "cameraCouldNotStart": "Non è stato possibile avviare la fotocamera. Incolla invece il codice di connessione.",
+    "downloadFailed": "Fallito",
+    "didntArrive": "Non è arrivato",
+    "transferIssue": "Problema di trasferimento"
   },
   "camera": {
-    "preparingTitle": "Preparing camera",
-    "preparingDescription": "Checking camera access so you can scan the sender’s QR code.",
-    "accessNeededTitle": "Camera access needed",
-    "accessNeededDescription": "Allow camera access to scan a sender’s connection QR code.",
-    "scanTitle": "Scan QR code",
-    "scanDescription": "Center the sender’s QR code inside the frame. AlterSend will connect automatically.",
-    "desktopHint": "Point the sender’s QR code at the webcam — AlterSend connects automatically.",
-    "blockedTitle": "Camera access blocked",
-    "blockedHint": "Allow camera access for AlterSend in your system settings, then try again. You can also paste the code instead.",
-    "noneTitle": "No camera found",
-    "noneHint": "Connect a webcam to scan, or paste the connection code instead.",
-    "unavailableTitle": "Camera unavailable",
-    "starting": "Starting camera…",
+    "preparingTitle": "Preparazione della fotocamera",
+    "preparingDescription": "Controllo dell'accesso alla fotocamera in modo da poter scansionare il codice QR del mittente.",
+    "accessNeededTitle": "È necessario l'accesso alla fotocamera",
+    "accessNeededDescription": "Consenti l'accesso alla fotocamera per scansionare il codice QR di connessione di un mittente.",
+    "scanTitle": "Scansiona il codice QR",
+    "scanDescription": "Centrare il codice QR del mittente all'interno del frame. AlterSend si connetterà automaticamente.",
+    "desktopHint": "Punta il codice QR del mittente verso la webcam: AlterSend si connette automaticamente.",
+    "blockedTitle": "Accesso alla telecamera bloccato",
+    "blockedHint": "Consenti l'accesso alla fotocamera per AlterSend nelle impostazioni di sistema, quindi riprova. Puoi anche incollare il codice.",
+    "noneTitle": "Nessuna fotocamera trovata",
+    "noneHint": "Collega una webcam per eseguire la scansione oppure incolla il codice di connessione.",
+    "unavailableTitle": "Fotocamera non disponibile",
+    "starting": "Avvio della fotocamera…",
     "enableTitle": "Abilita l'accesso alla fotocamera",
     "enableDescription": "Serve solo per scansionare il QR del mittente. Puoi anche tornare indietro e incollare il codice manualmente.",
     "usePastedCode": "Usa invece il codice incollato",
     "joiningDescription": "Accesso alla sessione del mittente."
   },
   "status": {
-    "ready": "Ready",
-    "saved": "Saved",
-    "failed": "Failed",
-    "downloadingPercent": "Downloading {{percent}}%",
+    "ready": "Pronto",
+    "saved": "Salvato",
+    "failed": "Fallito",
+    "downloadingPercent": "Download di {{percent}}%",
     "percent": "{{percent}}%",
     "waitingForFiles": "In attesa dei file dal mittente…"
   },
   "summary": {
-    "receivedCount_one": "Received {{completed}} of {{count}} file",
-    "receivedCount_other": "Received {{completed}} of {{count}} files",
-    "savedToPhotos_one": "Saved to Photos",
-    "savedToPhotos_other": "{{count}} saved to Photos",
-    "savedInFiles_one": "Saved in Files",
-    "savedInFiles_other": "{{count}} saved in Files",
-    "tapToView": "Tap to view",
+    "receivedCount_one": "Ricevuto PLACEholder_0 di file Placeholder_1",
+    "receivedCount_other": "Ricevuto {{completed}} di {{count}} file",
+    "savedToPhotos_one": "Salvato in Foto",
+    "savedToPhotos_other": "{{count}} salvato in Foto",
+    "savedInFiles_one": "Salvato in File",
+    "savedInFiles_other": "{{count}} salvato in File",
+    "tapToView": "Tocca per visualizzare",
     "saved": "salvato",
     "savedToLocation": "salvato in {{location}}",
     "receivedProgress": "{{completed}} di {{count}} ricevuti",

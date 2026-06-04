@@ -59,5 +59,9 @@
   },
   "status": {
     "connected": "接続済み"
+  },
+  "confirm": {
+    "leaveShareSession": "退出すると、アクティブな共有セッションが終了します。続く？",
+    "leaveReceiveSession": "終了すると、アクティブな受信セッションが終了します。続く？"
   }
 }

@@ -1,14 +1,14 @@
 {
   "crash": {
-    "title": "Something went wrong",
-    "desktopDescription": "AlterSend hit an unexpected error and needs to restart. The transfer worker may be in an inconsistent state, so a restart is the safest option.",
-    "mobileDescription": "AlterSend hit an unexpected error. Try again, or close and reopen the app if the problem persists.",
-    "restartAlterSend": "Restart AlterSend",
-    "tryAgain": "Try again"
+    "title": "Algo deu errado",
+    "desktopDescription": "AlterSend ocorreu um erro inesperado e precisa ser reiniciado. O trabalhador de transferência pode estar em um estado inconsistente, portanto, reiniciar é a opção mais segura.",
+    "mobileDescription": "AlterSend ocorreu um erro inesperado. Tente novamente ou feche e reabra o aplicativo se o problema persistir.",
+    "restartAlterSend": "Reinicie AlterSend",
+    "tryAgain": "Tente novamente"
   },
   "bridgeUnavailable": {
-    "title": "Electron bridge unavailable",
-    "description": "This renderer is running without the desktop bridge. Restart AlterSend from the desktop app.",
+    "title": "Ponte eletrônica indisponível",
+    "description": "Este renderizador está sendo executado sem a ponte da área de trabalho. Reinicie AlterSend no aplicativo de desktop.",
     "status": "Bridge indisponível"
   }
 }

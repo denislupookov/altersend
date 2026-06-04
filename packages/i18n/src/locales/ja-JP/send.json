@@ -70,7 +70,10 @@
   },
   "peer": {
     "completedDone_one": "{{count}} 個完了",
-    "completedDone_other": "{{count}} 個完了"
+    "completedDone_other": "{{count}} 個完了",
+    "devices": "デバイス",
+    "connectedCount_one": "{{count}} が接続されました",
+    "connectedCount_other": "{{count}} が接続されました"
   },
   "dropzone": {
     "addMoreDescription": "またはクリックして<link>さらに追加</link>",
@@ -81,5 +84,8 @@
     "tapTo": "タップして",
     "addMoreLink": "さらに追加",
     "browseLink": "参照"
+  },
+  "files": {
+    "removeLabel": "{{name}} を削除"
   }
 }

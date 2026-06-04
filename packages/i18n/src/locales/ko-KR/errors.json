@@ -1,14 +1,14 @@
 {
   "crash": {
-    "title": "Something went wrong",
-    "desktopDescription": "AlterSend hit an unexpected error and needs to restart. The transfer worker may be in an inconsistent state, so a restart is the safest option.",
-    "mobileDescription": "AlterSend hit an unexpected error. Try again, or close and reopen the app if the problem persists.",
-    "restartAlterSend": "Restart AlterSend",
-    "tryAgain": "Try again"
+    "title": "문제가 발생했습니다.",
+    "desktopDescription": "AlterSend에 예상치 못한 오류가 발생하여 다시 시작해야 합니다. 전송 작업자의 상태가 일관되지 않을 수 있으므로 다시 시작하는 것이 가장 안전한 옵션입니다.",
+    "mobileDescription": "AlterSend에 예상치 못한 오류가 발생했습니다. 다시 시도하거나 문제가 지속되면 앱을 닫았다가 다시 열어보세요.",
+    "restartAlterSend": "다시 시작 AlterSend",
+    "tryAgain": "다시 시도하세요"
   },
   "bridgeUnavailable": {
-    "title": "Electron bridge unavailable",
-    "description": "This renderer is running without the desktop bridge. Restart AlterSend from the desktop app.",
+    "title": "전자 브리지를 사용할 수 없음",
+    "description": "이 렌더러는 데스크톱 브리지 없이 실행 중입니다. 데스크톱 앱에서 AlterSend을 다시 시작하세요.",
     "status": "브리지를 사용할 수 없음"
   }
 }

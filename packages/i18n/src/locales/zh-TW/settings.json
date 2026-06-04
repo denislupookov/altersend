@@ -1,31 +1,31 @@
 {
   "title": "設定",
   "languageTitle": "語言",
-  "languageHint": "Choose the language used by AlterSend.",
+  "languageHint": "選擇AlterSend 使用的語言。",
   "sections": {
     "privacy": "隱私",
     "support": "支援",
     "about": "關於"
   },
   "crashReports": {
-    "label": "Crash reports",
-    "description": "Share anonymous crash data to help improve AlterSend"
+    "label": "崩潰報告",
+    "description": "共享匿名崩潰資料以幫助改進AlterSend"
   },
   "rows": {
     "feedback": "意見回饋",
-    "feedbackHint": "Report a problem or suggest a feature",
+    "feedbackHint": "報告問題或建議功能",
     "discord": "Discord",
-    "discordHint": "Join the community",
-    "contact": "Contact us",
-    "privacyPolicy": "Privacy policy",
-    "privacyPolicyHint": "How AlterSend handles your data",
-    "terms": "Terms of service",
-    "termsHint": "Rules for using AlterSend",
-    "website": "Website"
+    "discordHint": "加入社區",
+    "contact": "聯絡我們",
+    "privacyPolicy": "隱私權政策",
+    "privacyPolicyHint": "AlterSend 如何處理您的數據",
+    "terms": "服務條款",
+    "termsHint": "AlterSend 使用規則",
+    "website": "網站"
   },
   "legal": {
-    "terms": "Terms of Use",
-    "privacy": "Privacy Statement",
-    "sentence": "{{terms}} and {{privacy}}."
+    "terms": "使用條款",
+    "privacy": "隱私權聲明",
+    "sentence": "{{terms}} 和 {{privacy}}。"
   }
 }

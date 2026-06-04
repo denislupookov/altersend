@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import Constants from 'expo-constants'
 import { useState } from 'react'
 import { Button, FeedbackTypeSelector, useTheme } from '@altersend/components'
@@ -6,6 +6,7 @@ import { SendIcon } from '@altersend/components/icons'
 import type { FeedbackType } from '@altersend/components'
 import { useTranslation } from '@altersend/i18n'
 import { Layout } from '@/src/components'
+import { Text, TextInput } from '@/src/components/ThemedText'
 
 type State = 'idle' | 'sending' | 'sent' | 'error'
 

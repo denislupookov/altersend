@@ -75,7 +75,8 @@
     "cameraUnavailable": "Camera unavailable.",
     "cameraCouldNotStart": "The camera could not be started. Paste the connection code instead.",
     "downloadFailed": "Failed",
-    "didntArrive": "Didn't arrive"
+    "didntArrive": "Didn't arrive",
+    "transferIssue": "Transfer issue"
   },
   "camera": {
     "preparingTitle": "Preparing camera",

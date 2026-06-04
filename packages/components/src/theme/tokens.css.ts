@@ -75,9 +75,9 @@ export const tokens = css.defineVars({
   lineHeightSnug: "1.35",
   lineHeightNormal: "1.4",
   lineHeightRelaxed: "1.5",
-  fontFamilySans: "\"SF Pro Text\", \"SF Pro Display\", \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans CJK KR\", \"Noto Sans KR\", \"Hiragino Sans\", \"Yu Gothic\", \"PingFang SC\", \"PingFang TC\", \"Microsoft YaHei\", \"Microsoft JhengHei\", \"Noto Sans CJK JP\", \"Noto Sans CJK SC\", \"Noto Sans CJK TC\", \"Helvetica Neue\", Arial, sans-serif",
-  fontFamilyDisplay: "\"SF Pro Display\", \"SF Pro Text\", \"Segoe UI\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans CJK KR\", \"Noto Sans KR\", \"Hiragino Sans\", \"Yu Gothic\", \"PingFang SC\", \"PingFang TC\", \"Microsoft YaHei\", \"Microsoft JhengHei\", \"Noto Sans CJK JP\", \"Noto Sans CJK SC\", \"Noto Sans CJK TC\", \"Helvetica Neue\", Arial, sans-serif",
-  fontFamilyMono: "\"IBM Plex Mono\", \"SFMono-Regular\", \"JetBrains Mono\", \"Noto Sans Mono CJK KR\", \"Noto Sans CJK KR\", Menlo, Consolas, monospace",
+  fontFamilySans: "\"AlterSend Sans\"",
+  fontFamilyDisplay: "\"AlterSend Sans\"",
+  fontFamilyMono: "\"AlterSend Sans\"",
 });
 
 export type Tokens = typeof tokens;

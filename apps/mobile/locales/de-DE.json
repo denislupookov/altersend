@@ -1,0 +1,12 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "AlterSend",
+    "NSCameraUsageDescription": "AlterSend verwendet Ihre Kamera, um QR-Verbindungscodes zu scannen.",
+    "NSLocalNetworkUsageDescription": "AlterSend nutzt Ihr lokales Netzwerk, um Geräte in der Nähe für die Peer-to-Peer-Dateiübertragung zu erkennen.",
+    "NSPhotoLibraryUsageDescription": "AlterSend liest Ihre Fotobibliothek, sodass Sie Fotos und Videos auswählen und an ein anderes Gerät senden können.",
+    "NSPhotoLibraryAddUsageDescription": "AlterSend speichert empfangene Bilder und Videos in Ihrer Fotobibliothek."
+  },
+  "android": {
+    "app_name": "AlterSend"
+  }
+}

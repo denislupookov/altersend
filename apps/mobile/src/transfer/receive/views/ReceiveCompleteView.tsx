@@ -1,11 +1,12 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { SendFileListRow, useTheme, withAlpha } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { formatFileSize, getOfferKey, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/i18n'
 import { OpenAction, getFileMeta } from '../utils/fileRowUtils'
 import { openCompletedFile } from '../utils/openCompletedFile'
+import { Text } from '@/src/components/ThemedText'
 
 export function ReceiveCompleteView() {
   const { t } = useTranslation(['receive', 'common'])

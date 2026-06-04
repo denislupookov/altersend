@@ -63,7 +63,12 @@ export function QRModal({ topic, open, onClose }: QRModalProps) {
 
         <div className='flex justify-center px-6 pb-6 pt-4'>
           <div className='overflow-hidden rounded-[12px]'>
-            <QRCode size={240} value={buildJoinUrl(topic)} />
+            <QRCode
+              imageLabel={t('send:connection.qrCodeLabel')}
+              loadingLabel={t('send:connection.generating')}
+              size={240}
+              value={buildJoinUrl(topic)}
+            />
           </div>
         </div>
       </div>

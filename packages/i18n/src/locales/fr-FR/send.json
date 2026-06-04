@@ -2,67 +2,67 @@
   "page": {
     "selecting": {
       "title": "Envoyer des fichiers",
-      "description": "Choose one or more files and generate a one-time code for a direct encrypted transfer."
+      "description": "Choisissez un ou plusieurs fichiers et générez un code à usage unique pour un transfert crypté direct."
     },
     "preparing": {
-      "title": "Preparing transfer",
-      "description": "Preparing the selected files before the share code is revealed."
+      "title": "Préparation du transfert",
+      "description": "Préparation des fichiers sélectionnés avant la révélation du code de partage."
     },
     "waitingForReceiver": {
-      "title": "Share the code",
-      "description": "Send the code or QR to your recipient to start the transfer."
+      "title": "Partagez le code",
+      "description": "Envoyez le code ou QR à votre destinataire pour démarrer le transfert."
     },
     "receiverConnected": {
-      "title": "Share the code",
-      "description": "Send the code or QR to your recipient to start the transfer."
+      "title": "Partagez le code",
+      "description": "Envoyez le code ou QR à votre destinataire pour démarrer le transfert."
     }
   },
   "actions": {
-    "sendFiles_one": "Send {{count}} file",
-    "sendFiles_other": "Send {{count}} files",
-    "addFiles": "Add files",
-    "addMoreFiles": "Add more files",
-    "dragAndDrop": "Drag and drop",
-    "clear": "Clear",
-    "endSession": "End session",
-    "pickFilesTitle": "Add files",
-    "pickPhotos": "Photos",
-    "pickFiles": "Files"
+    "sendFiles_one": "Envoyer le fichier {{count}}",
+    "sendFiles_other": "Envoyer {{count}} fichiers",
+    "addFiles": "Ajouter des fichiers",
+    "addMoreFiles": "Ajouter plus de fichiers",
+    "dragAndDrop": "Glisser et déposer",
+    "clear": "Effacer",
+    "endSession": "Fin de séance",
+    "pickFilesTitle": "Ajouter des fichiers",
+    "pickPhotos": "Photothèque",
+    "pickFiles": "Fichiers"
   },
   "status": {
-    "waitingForPeer": "Waiting for peer",
-    "peerConnected": "Peer connected",
-    "uploadComplete": "Upload complete",
-    "uploadingFiles": "Uploading files",
-    "uploaded": "Uploaded",
-    "uploading": "Uploading…",
-    "waiting": "Waiting",
-    "failed": "Failed",
-    "downloaded": "Downloaded",
-    "disconnected": "Disconnected",
-    "online": "Online",
-    "downloading": "Downloading",
-    "downloadingPercent": "Downloading {{percent}}%"
+    "waitingForPeer": "En attente d'un pair",
+    "peerConnected": "Pair connecté",
+    "uploadComplete": "Téléchargement terminé",
+    "uploadingFiles": "Téléchargement de fichiers",
+    "uploaded": "Téléchargé",
+    "uploading": "Téléchargement…",
+    "waiting": "En attente",
+    "failed": "Échec",
+    "downloaded": "Téléchargé",
+    "disconnected": "Déconnecté",
+    "online": "En ligne",
+    "downloading": "Téléchargement",
+    "downloadingPercent": "Téléchargement de {{percent}} %"
   },
   "connection": {
-    "placeholder": "Generating secure key…",
-    "copyLabel": "Copy connection code",
-    "showQrLabel": "Show QR code",
-    "qrCodeLabel": "QR code for connection key",
-    "qrModalDescription": "Open AlterSend on another device and scan this code",
-    "copiedToast": "Copied to clipboard",
+    "placeholder": "Génération de clé sécurisée…",
+    "copyLabel": "Copier le code de connexion",
+    "showQrLabel": "Afficher le code QR",
+    "qrCodeLabel": "Code QR pour la clé de connexion",
+    "qrModalDescription": "Ouvrez AlterSend sur un autre appareil et scannez ce code",
+    "copiedToast": "Copié dans le presse-papiers",
     "scanToConnect": "Scannez pour vous connecter",
     "orScan": "ou scannez",
     "generating": "Génération…",
     "waitingForConnection": "En attente de connexion…"
   },
   "errors": {
-    "folderUnsupported": "Folders aren't supported yet. Please select files only.",
-    "failedPickFiles": "Failed to pick files",
-    "failedPickPhotos": "Failed to pick photos"
+    "folderUnsupported": "Les dossiers ne sont pas encore pris en charge. Veuillez sélectionner uniquement les fichiers.",
+    "failedPickFiles": "Échec de la sélection des fichiers",
+    "failedPickPhotos": "Échec de la sélection des photos"
   },
   "hints": {
-    "keepOpen": "Closing the app cancels the transfer."
+    "keepOpen": "La fermeture de l'application annule le transfert."
   },
   "preparing": {
     "uploadedCount_one": "{{completed}} fichier sur {{count}} téléversé",
@@ -70,7 +70,10 @@
   },
   "peer": {
     "completedDone_one": "{{count}} terminé",
-    "completedDone_other": "{{count}} terminés"
+    "completedDone_other": "{{count}} terminés",
+    "devices": "Appareils",
+    "connectedCount_one": "{{count}} connecté",
+    "connectedCount_other": "{{count}} connecté"
   },
   "dropzone": {
     "addMoreDescription": "ou cliquez pour <link>en ajouter</link>",
@@ -81,5 +84,8 @@
     "tapTo": "Touchez pour",
     "addMoreLink": "en ajouter",
     "browseLink": "parcourir"
+  },
+  "files": {
+    "removeLabel": "Supprimer {{name}}"
   }
 }

@@ -1,17 +1,17 @@
 {
   "slides": {
     "direct": {
-      "title": "Files, directly between devices.",
-      "description": "One device sends, the other receives. A short code connects them so files can stream directly."
+      "title": "Fichiers, directement entre appareils.",
+      "description": "Un appareil envoie, l'autre reçoit. Un code court les connecte afin que les fichiers puissent être diffusés directement."
     },
     "keepOpen": {
-      "title": "Keep both apps open.",
-      "description": "Files stream directly between devices — there is no cloud. Closing or backgrounding the app will cancel the transfer."
+      "title": "Gardez les deux applications ouvertes.",
+      "description": "Les fichiers sont diffusés directement entre les appareils – il n’y a pas de cloud. La fermeture ou la mise en arrière-plan de l'application annulera le transfert."
     },
     "encrypted": {
-      "title": "End-to-end encrypted.",
-      "description": "No servers, no copies, no middlemen. Your files travel peer-to-peer between you and the recipient.",
-      "link": "Read our privacy policy"
+      "title": "Chiffré de bout en bout.",
+      "description": "Pas de serveurs, pas de copies, pas d'intermédiaires. Vos fichiers voyagent en peer-to-peer entre vous et le destinataire.",
+      "link": "Lire notre politique de confidentialité"
     }
   }
 }

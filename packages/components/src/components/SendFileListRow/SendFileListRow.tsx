@@ -18,6 +18,7 @@ export interface SendFileListRowProps {
   bare?: boolean
   disabled?: boolean
   onRemove?: () => void
+  removeLabel?: string
   trailing?: ReactNode
   status?: { label: string; tone?: FileRowStatusTone }
   progress?: FileRowProgressState
@@ -56,6 +57,7 @@ export function SendFileListRow({
   isFirst = false,
   disabled = false,
   onRemove,
+  removeLabel,
   trailing,
   status,
   progress,
@@ -131,7 +133,7 @@ export function SendFileListRow({
         : (trailing ??
           (onRemove ? (
             <html.button
-              aria-label={`Remove ${name}`}
+              aria-label={removeLabel}
               onClick={onRemove}
               style={[styles.removeButton, compact && styles.removeButtonCompact]}
               type='button'

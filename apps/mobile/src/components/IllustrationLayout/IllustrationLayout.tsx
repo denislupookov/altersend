@@ -1,7 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   Pressable,
@@ -12,6 +11,7 @@ import { useTheme } from '@altersend/components'
 import { SettingsIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/i18n'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Text } from '@/src/components/ThemedText'
 
 interface IllustrationLayoutProps {
   title: string

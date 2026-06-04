@@ -5,9 +5,11 @@ import { useTheme } from '@altersend/components'
 interface QRCodeProps {
   value: string
   size?: number
+  loadingLabel: string
+  imageLabel: string
 }
 
-export function QRCode({ value, size = 220 }: QRCodeProps) {
+export function QRCode({ value, loadingLabel, imageLabel, size = 220 }: QRCodeProps) {
   const [svg, setSvg] = useState<string | null>(null)
   const { theme } = useTheme()
   const dark = theme.colors.colorBackground
@@ -53,14 +55,14 @@ export function QRCode({ value, size = 220 }: QRCodeProps) {
         className='flex items-center justify-center rounded-lg bg-background-subtle text-[12px] text-text-muted'
         style={{ width: size, height: size }}
       >
-        Generating…
+        {loadingLabel}
       </div>
     )
   }
 
   return (
     <div
-      aria-label='QR code for connection key'
+      aria-label={imageLabel}
       className='rounded-lg p-3'
       dangerouslySetInnerHTML={{ __html: svg }}
       role='img'

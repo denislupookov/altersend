@@ -1,24 +1,24 @@
 {
-  "title": "Feedback",
+  "title": "Rückmeldung",
   "types": {
-    "bug": "Bug report",
-    "feature": "Feature request",
-    "general": "General"
+    "bug": "Fehlerbericht",
+    "feature": "Funktionsanfrage",
+    "general": "Allgemein"
   },
   "placeholders": {
-    "bug": "Describe what happened and how to reproduce it…",
-    "desktopBug": "Describe what went wrong…",
-    "feature": "What would you like to see in AlterSend?",
-    "desktopFeature": "What would you like to see?",
-    "general": "Share your thoughts…"
+    "bug": "Beschreiben Sie, was passiert ist und wie Sie es reproduzieren können...",
+    "desktopBug": "Beschreiben Sie, was schief gelaufen ist...",
+    "feature": "Was würden Sie gerne in AlterSend sehen?",
+    "desktopFeature": "Was möchten Sie sehen?",
+    "general": "Teilen Sie Ihre Gedanken mit..."
   },
   "actions": {
-    "send": "Send feedback",
-    "sending": "Sending…"
+    "send": "Feedback senden",
+    "sending": "Senden…"
   },
   "states": {
-    "sent": "Thanks for your feedback!",
-    "failed": "Failed to send. Check your connection.",
+    "sent": "Vielen Dank für Ihr Feedback!",
+    "failed": "Senden fehlgeschlagen. Überprüfen Sie Ihre Verbindung.",
     "received": "Dein Feedback wurde empfangen."
   }
 }

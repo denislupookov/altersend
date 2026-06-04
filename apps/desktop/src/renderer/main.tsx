@@ -1,7 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { CrashScreen, ErrorBoundary, ThemeProvider, ThemeType } from '@altersend/components'
-import { initI18n, resolveLocalePreference, useTranslation } from '@altersend/i18n'
+import {
+  getLocaleFontFamily,
+  initI18n,
+  isSupportedLocaleCode,
+  resolveLocalePreference,
+  useTranslation
+} from '@altersend/i18n'
 import {
   bindTransferApi,
   startBackgroundReconnectEffect,
@@ -15,6 +21,7 @@ import { isCrashReportingEnabled } from './lifecycle/crashReportingStorage'
 import { getSavedLocalePreference } from './lifecycle/localePreferenceStorage'
 import { getDesktopSystemLocales } from './lifecycle/systemLocale'
 import './strict.css'
+import './fonts.css'
 import './index.css'
 
 function DesktopCrashScreen({ error }: { error: Error }) {
@@ -28,6 +35,26 @@ function DesktopCrashScreen({ error }: { error: Error }) {
       description={t('errors:crash.desktopDescription')}
       restartLabel={t('errors:crash.restartAlterSend')}
     />
+  )
+}
+
+function DesktopRoot() {
+  const { i18n } = useTranslation()
+  const language = i18n.resolvedLanguage ?? i18n.language
+  const locale = isSupportedLocaleCode(language) ? language : 'en-US'
+  const fontFamily = getLocaleFontFamily(locale)
+
+  return (
+    <ThemeProvider theme={ThemeType.Dark} fontFamily={fontFamily}>
+      <ErrorBoundary
+        fallback={(error) => {
+          captureException(error)
+          return <DesktopCrashScreen error={error} />
+        }}
+      >
+        <App />
+      </ErrorBoundary>
+    </ThemeProvider>
   )
 }
 
@@ -48,16 +75,7 @@ async function bootstrap() {
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <ThemeProvider theme={ThemeType.Dark}>
-        <ErrorBoundary
-          fallback={(error) => {
-            captureException(error)
-            return <DesktopCrashScreen error={error} />
-          }}
-        >
-          <App />
-        </ErrorBoundary>
-      </ThemeProvider>
+      <DesktopRoot />
     </React.StrictMode>
   )
 }

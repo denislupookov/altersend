@@ -11,19 +11,19 @@
     "getStarted": "시작하기",
     "cancel": "취소",
     "clear": "지우기",
-    "close": "Close",
+    "close": "닫기",
     "copy": "복사",
     "copied": "복사됨",
     "connect": "연결",
-    "connecting": "Connecting…",
+    "connecting": "연결 중…",
     "done": "완료",
     "endSession": "세션 종료",
     "restart": "다시 시작",
     "tryAgain": "다시 시도",
-    "dismiss": "Dismiss",
-    "openSettings": "Open settings",
+    "dismiss": "닫기",
+    "openSettings": "설정 열기",
     "update": "업데이트",
-    "downloadAll": "Download all",
+    "downloadAll": "모두 다운로드",
     "skip": "건너뛰기"
   },
   "labels": {
@@ -31,33 +31,37 @@
     "language": "언어",
     "systemDefault": "시스템 기본값",
     "camera": "카메라",
-    "statusBar": "Status bar",
-    "transferMode": "Transfer mode",
-    "version": "Version",
-    "platform": "Platform",
-    "desktop": "Desktop",
-    "mobile": "Mobile",
+    "statusBar": "상태 표시줄",
+    "transferMode": "전송 모드",
+    "version": "버전",
+    "platform": "플랫폼",
+    "desktop": "데스크탑",
+    "mobile": "모바일",
     "send": "보내기",
     "receive": "받기",
-    "connectionCode": "Connection code"
+    "connectionCode": "연결 코드"
   },
   "files": {
     "count_one": "{{count}}개 파일",
     "count_other": "{{count}}개 파일",
     "photos": "사진",
     "files": "파일",
-    "downloads": "Files › Downloads",
-    "photosAndAlterSend": "Photos + AlterSend folder",
-    "alterSendFolder": "AlterSend folder"
+    "downloads": "파일 › 다운로드",
+    "photosAndAlterSend": "사진 + AlterSend 폴더",
+    "alterSendFolder": "AlterSend 폴더"
   },
   "update": {
-    "ready": "Update ready",
-    "available": "Update available",
+    "ready": "업데이트 준비됨",
+    "available": "업데이트 가능",
     "restart": "다시 시작",
     "update": "업데이트",
-    "restartFailed": "Restart failed — please quit and reopen"
+    "restartFailed": "다시 시작하지 못했습니다. 종료하고 다시 시작해 주세요."
   },
   "status": {
     "connected": "연결됨"
+  },
+  "confirm": {
+    "leaveShareSession": "나가면 활성 공유 세션이 종료됩니다. 계속하다?",
+    "leaveReceiveSession": "나가면 활성 수신 세션이 종료됩니다. 계속하다?"
   }
 }

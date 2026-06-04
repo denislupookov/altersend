@@ -1,9 +1,10 @@
 import { useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/i18n'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import LoadingSvg from '../../../../assets/loading.svg'
 import brandLogo from '@/assets/images/brand-logo.png'
+import { Text } from '@/src/components/ThemedText'
 
 interface LoadingScreenProps {
   progress?: number

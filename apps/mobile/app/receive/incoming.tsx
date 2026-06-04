@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { View, StyleSheet, Pressable } from 'react-native'
 import { Paths } from 'expo-file-system'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { ArrowLeftIcon, DownloadIcon } from '@altersend/components/icons'
@@ -19,6 +19,7 @@ import {
   useTransferStore
 } from '@altersend/domain'
 import { clearSession, downloadFiles } from '@altersend/domain'
+import { Text } from '@/src/components/ThemedText'
 
 function getDisplayError(t: ReturnType<typeof useTranslation>['t'], message: string | null) {
   if (!message) return null
@@ -227,7 +228,9 @@ export default function ReceiveIncomingScreen() {
         </View>
       }
     >
-      {displayError ? <ErrorPanel message={displayError} /> : null}
+      {displayError ? (
+        <ErrorPanel title={t('receive:errors.transferIssue')} message={displayError} />
+      ) : null}
       <ReceiveIncomingView />
     </Layout>
   )

@@ -21,7 +21,8 @@
         "NSBonjourServices": ["_altersend._udp", "_altersend._tcp"],
         "UIFileSharingEnabled": true,
         "LSSupportsOpeningDocumentsInPlace": true,
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleAllowMixedLocalizations": true
       },
       "privacyManifests": {
         "NSPrivacyTracking": false,
@@ -120,12 +121,60 @@
           "androidIntentFilters": ["*/*"]
         }
       ],
-      "expo-localization"
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": [
+              "en-US",
+              "en-GB",
+              "ja-JP",
+              "ko-KR",
+              "zh-CN",
+              "zh-TW",
+              "fr-FR",
+              "de-DE",
+              "it-IT",
+              "pt-BR",
+              "es-419",
+              "es-ES"
+            ],
+            "android": [
+              "en-US",
+              "en-GB",
+              "ja-JP",
+              "ko-KR",
+              "zh-CN",
+              "zh-TW",
+              "fr-FR",
+              "de-DE",
+              "it-IT",
+              "pt-BR",
+              "es-419",
+              "es-ES"
+            ]
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {
         "projectId": "3727baf7-0b5c-4e81-97bd-28296124d0c0"
       }
+    },
+    "locales": {
+      "en-US": "./locales/en-US.json",
+      "en-GB": "./locales/en-GB.json",
+      "ja-JP": "./locales/ja-JP.json",
+      "ko-KR": "./locales/ko-KR.json",
+      "zh-CN": "./locales/zh-CN.json",
+      "zh-TW": "./locales/zh-TW.json",
+      "fr-FR": "./locales/fr-FR.json",
+      "de-DE": "./locales/de-DE.json",
+      "it-IT": "./locales/it-IT.json",
+      "pt-BR": "./locales/pt-BR.json",
+      "es-419": "./locales/es-419.json",
+      "es-ES": "./locales/es-ES.json"
     }
   }
 }
