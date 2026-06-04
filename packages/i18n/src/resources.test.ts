@@ -34,8 +34,10 @@ describe('translation resources', () => {
       expect(Object.keys(localeResources).sort(), locale.code).toEqual(expectedNamespaces)
 
       for (const namespace of expectedNamespaces) {
-        expect(flattenKeys(localeResources[namespace]).sort(), `${locale.code}/${namespace}`)
-          .toEqual(flattenKeys(source[namespace]).sort())
+        expect(
+          flattenKeys(localeResources[namespace]).sort(),
+          `${locale.code}/${namespace}`
+        ).toEqual(flattenKeys(source[namespace]).sort())
       }
     }
   })
@@ -57,10 +59,22 @@ describe('translation resources', () => {
     for (const locale of SUPPORTED_LOCALES) {
       expect(RESOURCES[locale.code].common.files.count_one, locale.code).toBeTruthy()
       expect(RESOURCES[locale.code].common.files.count_other, locale.code).toBeTruthy()
+      expect(
+        RESOURCES[locale.code].receive.page.incomingTransfer.description_one,
+        locale.code
+      ).toBeTruthy()
+      expect(
+        RESOURCES[locale.code].receive.page.incomingTransfer.description_other,
+        locale.code
+      ).toBeTruthy()
       expect(RESOURCES[locale.code].receive.summary.receivedCount_one, locale.code).toBeTruthy()
       expect(RESOURCES[locale.code].receive.summary.receivedCount_other, locale.code).toBeTruthy()
+      expect(RESOURCES[locale.code].receive.summary.filesSaved_one, locale.code).toBeTruthy()
+      expect(RESOURCES[locale.code].receive.summary.filesSaved_other, locale.code).toBeTruthy()
       expect(RESOURCES[locale.code].send.actions.sendFiles_one, locale.code).toBeTruthy()
       expect(RESOURCES[locale.code].send.actions.sendFiles_other, locale.code).toBeTruthy()
+      expect(RESOURCES[locale.code].send.preparing.uploadedCount_one, locale.code).toBeTruthy()
+      expect(RESOURCES[locale.code].send.preparing.uploadedCount_other, locale.code).toBeTruthy()
     }
   })
 })
