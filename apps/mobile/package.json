@@ -54,7 +54,6 @@
     "expo-linking": "~55.0.13",
     "expo-localization": "~55.0.15",
     "expo-media-library": "~55.0.15",
-    "expo-modules-core": "~55.0.25",
     "expo-router": "~55.0.5",
     "expo-share-intent": "^6.1.0",
     "expo-sharing": "~55.0.18",
