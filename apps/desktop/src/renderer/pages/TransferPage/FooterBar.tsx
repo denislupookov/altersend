@@ -22,6 +22,7 @@ import {
 import { PICKABLE_LANGUAGES } from '@altersend/locales'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
+import { Select } from '../../components/Select'
 import { closeSentry, initSentry } from '../../sentry'
 import {
   isCrashReportingEnabled,
@@ -151,20 +152,18 @@ export function FooterBar({ version }: { version: string }) {
                         <label className='mb-2 block text-[13px] font-medium text-text-secondary'>
                           Language
                         </label>
-                        <select
-                          className='w-full rounded-md border border-border-primary bg-surface-secondary px-3 py-2 text-[14px] text-text-primary'
+                        <Select
+                          aria-label='Language'
                           value={locale}
-                          onChange={(e) => {
-                            changeLocale(e.target.value)
-                            setSavedLocale(e.target.value)
+                          onChange={(value) => {
+                            changeLocale(value)
+                            setSavedLocale(value)
                           }}
-                        >
-                          {PICKABLE_LANGUAGES.map((l) => (
-                            <option key={l.code} value={l.code}>
-                              {l.label}
-                            </option>
-                          ))}
-                        </select>
+                          options={PICKABLE_LANGUAGES.map((l) => ({
+                            value: l.code,
+                            label: l.label
+                          }))}
+                        />
                       </div>
                     </div>
                     <div className='border-t border-border-primary py-1'>

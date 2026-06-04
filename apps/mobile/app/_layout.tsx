@@ -66,6 +66,7 @@ function ThemedStack() {
       <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
       <Stack.Screen name='onboarding' options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name='settings' options={flowScreenOptions} />
+      <Stack.Screen name='language' options={flowScreenOptions} />
       <Stack.Screen name='report' options={flowScreenOptions} />
       <Stack.Screen
         name='send/preparing'

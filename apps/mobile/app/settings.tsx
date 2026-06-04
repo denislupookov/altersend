@@ -8,10 +8,9 @@ import {
   supportEmail,
   termsOfServiceUrl,
   websiteUrl,
-  useSettingsStore,
-  changeLocale
+  useSettingsStore
 } from '@altersend/domain'
-import { PICKABLE_LANGUAGES } from '@altersend/locales'
+import { getLanguage } from '@altersend/locales'
 import { ToggleSwitch, useTheme } from '@altersend/components'
 import {
   AlertCircleIcon,
@@ -28,7 +27,6 @@ import {
   isCrashReportingEnabled,
   setCrashReportingEnabled
 } from '@/src/lifecycle/crashReportingStorage'
-import { setSavedLocale } from '@/src/lifecycle/localeStorage'
 import { closeSentry, initSentry } from '@/src/sentry'
 
 interface LinkRowProps {
@@ -70,42 +68,6 @@ function LinkRow({ label, hint, icon, onPress, isLast }: LinkRowProps) {
   )
 }
 
-function LanguageChip({
-  label,
-  selected,
-  onPress
-}: {
-  label: string
-  selected: boolean
-  onPress: () => void
-}) {
-  const { theme } = useTheme()
-  return (
-    <Pressable
-      accessibilityRole='button'
-      accessibilityState={{ selected }}
-      onPress={onPress}
-      style={{
-        flex: 1,
-        backgroundColor: selected ? theme.colors.colorSurfaceHover : 'transparent',
-        paddingVertical: 10,
-        alignItems: 'center',
-        borderRadius: 8
-      }}
-    >
-      <Text
-        style={{
-          fontSize: 14,
-          fontWeight: '500',
-          color: selected ? theme.colors.colorTextPrimary : theme.colors.colorTextMuted
-        }}
-      >
-        {label}
-      </Text>
-    </Pressable>
-  )
-}
-
 export default function SettingsScreen() {
   const { theme } = useTheme()
   const router = useRouter()
@@ -133,31 +95,14 @@ export default function SettingsScreen() {
     <Layout title='Settings' description='' hasNativeHeader>
       <View style={styles.content}>
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>
-            Language
-          </Text>
-          <View style={[styles.card, styles.toggleCardPad, cardStyle]}>
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 4,
-                backgroundColor: theme.colors.colorSurfaceSecondary,
-                padding: 4,
-                borderRadius: 12
-              }}
-            >
-              {PICKABLE_LANGUAGES.map((l) => (
-                <LanguageChip
-                  key={l.code}
-                  label={l.label}
-                  selected={locale === l.code}
-                  onPress={() => {
-                    changeLocale(l.code)
-                    setSavedLocale(l.code)
-                  }}
-                />
-              ))}
-            </View>
+          <View style={[styles.card, cardStyle]}>
+            <LinkRow
+              label='Language'
+              hint={getLanguage(locale)?.label ?? locale}
+              icon={<GlobeIcon size={16} color={theme.colors.colorTextSecondary} />}
+              onPress={() => router.push('/language')}
+              isLast
+            />
           </View>
         </View>
 
