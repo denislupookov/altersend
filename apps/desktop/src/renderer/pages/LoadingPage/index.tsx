@@ -1,3 +1,4 @@
+import { useTranslation } from '@altersend/i18n'
 import logo from '../../../../../../assets/logo.png'
 import loadingSvg from '../../../../../../assets/loading.svg'
 
@@ -6,7 +7,9 @@ interface LoadingPageProps {
 }
 
 export default function LoadingPage({ progress = 0 }: LoadingPageProps) {
+  const { t } = useTranslation(['common'])
   const clamped = Math.max(0, Math.min(100, progress))
+  const taglineLines = t('common:app.loadingTagline').split('\n')
 
   return (
     <main className='flex h-screen w-full flex-col overflow-hidden bg-background text-text-primary'>
@@ -24,12 +27,15 @@ export default function LoadingPage({ progress = 0 }: LoadingPageProps) {
       <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-8 py-6'>
         <img src={loadingSvg} alt='' className='block h-auto max-h-[200px] max-w-[280px] w-auto' />
         <h1 className='mb-0 mt-9 max-w-[460px] text-center text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-text-primary'>
-          Welcome to AlterSend
+          {t('common:app.welcome')}
         </h1>
         <p className='mt-3 max-w-[420px] text-center text-[13px] leading-[1.6] text-text-secondary'>
-          Files travel directly between your devices.
-          <br />
-          No servers, no copies, no middlemen.
+          {taglineLines.map((line, index) => (
+            <span key={line}>
+              {line}
+              {index < taglineLines.length - 1 ? <br /> : null}
+            </span>
+          ))}
         </p>
       </div>
 

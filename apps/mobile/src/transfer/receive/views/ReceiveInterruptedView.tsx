@@ -4,6 +4,7 @@ import type { IncomingFileOffer } from '@altersend/core'
 import { SendFileListRow, useTheme, withAlpha } from '@altersend/components'
 import { CloseIcon } from '@altersend/components/icons'
 import { getOfferKey, type DownloadItemState } from '@altersend/domain'
+import { useTranslation } from '@altersend/i18n'
 import { IllustrationLayout } from '@/src/components'
 import { OpenAction, getFileMeta } from '../utils/fileRowUtils'
 import MissingFilesSvg from '../../../../../../assets/missing-files.svg'
@@ -28,6 +29,7 @@ export function ReceiveInterruptedView({
   onMenuPress,
   children
 }: PropsWithChildren<ReceiveInterruptedViewProps>) {
+  const { t } = useTranslation(['receive', 'common'])
   const { theme } = useTheme()
 
   const completedCount = incomingFileOffers.filter(
@@ -65,10 +67,10 @@ export function ReceiveInterruptedView({
           </View>
           <View style={styles.statusText}>
             <Text style={[styles.statusTitle, { color: theme.colors.colorWarning }]}>
-              {`Received ${completedCount} of ${total} ${total === 1 ? 'file' : 'files'}`}
+              {t('receive:summary.receivedCount', { completed: completedCount, count: total })}
             </Text>
             <Text style={[styles.statusSubtitle, { color: theme.colors.colorTextMuted }]}>
-              The sender left before finishing.
+              {t('receive:summary.senderLeftBeforeFinishing')}
             </Text>
           </View>
         </View>
@@ -93,7 +95,7 @@ export function ReceiveInterruptedView({
                 isFirst={index === 0}
                 disabled={!isComplete}
                 name={file.name}
-                description={getFileMeta(file.size, state, { disabled: !isComplete })}
+                description={getFileMeta(file.size, state, t, { disabled: !isComplete })}
                 trailing={
                   isComplete ? (
                     <OpenAction fileName={file.name} offerKey={offerKey} onPress={onOpenFile} />

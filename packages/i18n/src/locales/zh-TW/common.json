@@ -23,7 +23,8 @@
     "dismiss": "Dismiss",
     "openSettings": "Open settings",
     "update": "更新",
-    "downloadAll": "Download all"
+    "downloadAll": "Download all",
+    "skip": "略過"
   },
   "labels": {
     "settings": "設定",
@@ -55,5 +56,8 @@
     "restart": "重新啟動",
     "update": "更新",
     "restartFailed": "Restart failed — please quit and reopen"
+  },
+  "status": {
+    "connected": "已連線"
   }
 }

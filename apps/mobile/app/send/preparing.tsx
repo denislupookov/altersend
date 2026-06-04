@@ -2,18 +2,45 @@ import { useCallback, useEffect } from 'react'
 import { Pressable } from 'react-native'
 import { useTheme } from '@altersend/components'
 import { ArrowLeftIcon } from '@altersend/components/icons'
-import { getSendPageCopy, getSendStep, isShareStep, useTransferStore } from '@altersend/domain'
+import { getSendStep, isShareStep, type SendStep, useTransferStore } from '@altersend/domain'
 import { clearSenderFlow } from '@altersend/domain'
+import { useTranslation } from '@altersend/i18n'
 import { Layout } from '@/src/components'
 import { PreparingView } from '@/src/transfer/send'
 import { useNavigation, useRouter } from 'expo-router'
 
+function getSendPageCopy(t: ReturnType<typeof useTranslation>['t'], step: SendStep) {
+  switch (step) {
+    case 'selecting':
+      return {
+        title: t('send:page.selecting.title'),
+        description: t('send:page.selecting.description')
+      }
+    case 'preparing':
+      return {
+        title: t('send:page.preparing.title'),
+        description: t('send:page.preparing.description')
+      }
+    case 'waiting_for_receiver':
+      return {
+        title: t('send:page.waitingForReceiver.title'),
+        description: t('send:page.waitingForReceiver.description')
+      }
+    case 'receiver_connected':
+      return {
+        title: t('send:page.receiverConnected.title'),
+        description: t('send:page.receiverConnected.description')
+      }
+  }
+}
+
 export default function SendPreparingScreen() {
+  const { t } = useTranslation(['send', 'common'])
   const { theme } = useTheme()
   const draftPhase = useTransferStore((s) => s.draftPhase)
   const connectionState = useTransferStore((s) => s.connectionState)
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
-  const copy = getSendPageCopy(step)
+  const copy = getSendPageCopy(t, step)
   const navigation = useNavigation()
   const router = useRouter()
 
@@ -31,7 +58,7 @@ export default function SendPreparingScreen() {
       headerLeft: () => (
         <Pressable
           accessibilityRole='button'
-          accessibilityLabel='Back'
+          accessibilityLabel={t('common:actions.back')}
           onPress={handleBack}
           hitSlop={12}
           style={({ pressed }) => ({
@@ -44,7 +71,7 @@ export default function SendPreparingScreen() {
         </Pressable>
       )
     })
-  }, [navigation, handleBack, theme.colors.colorTextPrimary])
+  }, [navigation, handleBack, t, theme.colors.colorTextPrimary])
 
   return (
     <Layout title={copy.title} description={copy.description} hasNativeHeader>

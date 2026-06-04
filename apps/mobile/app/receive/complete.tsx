@@ -1,11 +1,13 @@
 import { useEffect } from 'react'
 import { Button } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 import { useRouter } from 'expo-router'
 import { clearSession } from '@altersend/domain'
 import { mobileApi } from '@/src/api/mobileApi'
 import { Layout } from '@/src/components'
 import { ReceiveCompleteView } from '@/src/transfer/receive'
 export default function ReceiveCompleteScreen() {
+  const { t } = useTranslation(['receive', 'common'])
   const router = useRouter()
 
   useEffect(() => {
@@ -21,11 +23,11 @@ export default function ReceiveCompleteScreen() {
 
   return (
     <Layout
-      title='Downloads complete'
+      title={t('receive:page.completed.downloadsComplete')}
       description=''
       footer={
         <Button onClick={handleDone} size='lg' variant='primary' width='full'>
-          Done
+          {t('common:actions.done')}
         </Button>
       }
     >

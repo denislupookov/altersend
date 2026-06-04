@@ -50,7 +50,11 @@
     "showQrLabel": "Show QR code",
     "qrCodeLabel": "QR code for connection key",
     "qrModalDescription": "Open AlterSend on another device and scan this code",
-    "copiedToast": "Copied to clipboard"
+    "copiedToast": "Copied to clipboard",
+    "scanToConnect": "Escanea para conectar",
+    "orScan": "o escanea",
+    "generating": "Generando…",
+    "waitingForConnection": "Esperando una conexión…"
   },
   "errors": {
     "folderUnsupported": "Folders aren't supported yet. Please select files only.",
@@ -59,5 +63,23 @@
   },
   "hints": {
     "keepOpen": "Closing the app cancels the transfer."
+  },
+  "preparing": {
+    "uploadedCount_one": "{{completed}} de {{count}} archivo subido",
+    "uploadedCount_other": "{{completed}} de {{count}} archivos subidos"
+  },
+  "peer": {
+    "completedDone_one": "{{count}} completado",
+    "completedDone_other": "{{count}} completados"
+  },
+  "dropzone": {
+    "addMoreDescription": "o haz clic para <link>agregar más</link>",
+    "browseDescription": "o haz clic para <link>buscar</link>",
+    "tapAddMoreDescription": "Toca para <link>agregar más</link>",
+    "tapBrowseDescription": "Toca para <link>buscar</link>",
+    "orClickTo": "o haz clic para",
+    "tapTo": "Toca para",
+    "addMoreLink": "agregar más",
+    "browseLink": "buscar"
   }
 }

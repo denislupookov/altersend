@@ -1,16 +1,25 @@
 import { useState, type ChangeEvent } from 'react'
 import { Button, Input } from '@altersend/components'
 import { ChevronRightIcon, QrCodeIcon } from '@altersend/components/icons'
-import { isValidJoinCode, joinSession, useTransferStore } from '@altersend/domain'
+import {
+  PEER_UNREACHABLE_ERROR_CODE,
+  isValidJoinCode,
+  joinSession,
+  useTransferStore
+} from '@altersend/domain'
+import { useTranslation } from '@altersend/i18n'
 import { WebcamScanView } from './WebcamScanView'
 
 export function ReceiveJoinView() {
+  const { t } = useTranslation(['receive', 'common'])
   const [joinKey, setJoinKey] = useState('')
   const [showValidation, setShowValidation] = useState(false)
   const [isJoining, setIsJoining] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
   const [mode, setMode] = useState<'paste' | 'scan'>('paste')
   const storeError = useTransferStore((s) => s.errorMessage)
+  const displayStoreError =
+    storeError === PEER_UNREACHABLE_ERROR_CODE ? t('receive:errors.unreachable') : storeError
 
   if (mode === 'scan') {
     return <WebcamScanView onCancel={() => setMode('paste')} />
@@ -20,8 +29,8 @@ export function ReceiveJoinView() {
   const isValidJoinKey = isValidJoinCode(trimmedJoinKey)
   const joinKeyError =
     showValidation && trimmedJoinKey.length > 0 && !isValidJoinKey
-      ? 'Enter a valid 64-character hex key.'
-      : (localError ?? storeError ?? undefined)
+      ? t('receive:errors.invalidKey')
+      : (localError ?? displayStoreError ?? undefined)
 
   const join = async () => {
     setShowValidation(true)
@@ -32,7 +41,7 @@ export function ReceiveJoinView() {
       await joinSession(trimmedJoinKey)
     } catch (error) {
       setIsJoining(false)
-      setLocalError(error instanceof Error ? error.message : 'Could not join the session.')
+      setLocalError(error instanceof Error ? error.message : t('receive:errors.joinFailed'))
     }
   }
 
@@ -48,9 +57,11 @@ export function ReceiveJoinView() {
           <QrCodeIcon size={18} />
         </span>
         <span className='min-w-0 flex-1'>
-          <span className='block text-[13.5px] font-semibold text-text-primary'>Scan QR code</span>
+          <span className='block text-[13.5px] font-semibold text-text-primary'>
+            {t('receive:actions.scanQr')}
+          </span>
           <span className='block text-[12px] leading-snug text-text-muted'>
-            Use the webcam to read the sender’s QR
+            {t('receive:actions.scanQrHint')}
           </span>
         </span>
         <span className='shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5'>
@@ -58,7 +69,9 @@ export function ReceiveJoinView() {
         </span>
       </button>
 
-      <div className='py-0.5 text-center text-[12px] text-text-muted'>or paste code</div>
+      <div className='py-0.5 text-center text-[12px] text-text-muted'>
+        {t('receive:form.orPasteCode')}
+      </div>
 
       <div className='flex flex-col gap-3.5'>
         <Input
@@ -67,14 +80,14 @@ export function ReceiveJoinView() {
           disabled={isJoining}
           error={joinKeyError}
           secure
-          label='Connection code'
+          label={t('receive:form.codeLabel')}
           mono
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setJoinKey(e.currentTarget.value)
             if (showValidation) setShowValidation(false)
             if (localError) setLocalError(null)
           }}
-          placeholder='Paste 64-char code…'
+          placeholder={t('receive:form.codePlaceholder')}
           spellCheck={false}
           type='text'
           value={joinKey}
@@ -82,7 +95,7 @@ export function ReceiveJoinView() {
 
         <div>
           <Button disabled={isJoining} onClick={() => void join()} size='sm' variant='primary'>
-            {isJoining ? 'Connecting…' : 'Connect'}
+            {isJoining ? t('common:actions.connecting') : t('common:actions.connect')}
           </Button>
         </div>
       </div>

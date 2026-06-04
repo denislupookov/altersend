@@ -2,13 +2,14 @@ import { View, Text, StyleSheet } from 'react-native'
 import {
   getOverallProgress,
   getProgressState,
-  getStatusLabel,
   getStatusTone,
   useTransferStore
 } from '@altersend/domain'
 import { SendFileListRow, useTheme } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 
 export function PreparingView() {
+  const { t } = useTranslation(['send'])
   const uploadItems = useTransferStore((s) => s.uploadItems)
   const { theme } = useTheme()
   const { completed, total, percent } = getOverallProgress(uploadItems)
@@ -24,7 +25,7 @@ export function PreparingView() {
       <View style={[styles.card, surfaceStyle]}>
         <View style={styles.header}>
           <Text style={[styles.title, { color: theme.colors.colorTextPrimary }]}>
-            {allCompleted ? 'Upload complete' : 'Uploading files'}
+            {allCompleted ? t('send:status.uploadComplete') : t('send:status.uploadingFiles')}
           </Text>
           <Text style={[styles.percent, { color: theme.colors.colorTextPrimary }]}>{percent}%</Text>
         </View>
@@ -42,7 +43,7 @@ export function PreparingView() {
         </View>
 
         <Text style={[styles.subtitle, { color: theme.colors.colorTextSecondary }]}>
-          {completed} of {total} {total === 1 ? 'file' : 'files'} uploaded
+          {t('send:preparing.uploadedCount', { completed, count: total })}
         </Text>
       </View>
 
@@ -54,7 +55,15 @@ export function PreparingView() {
               key={item.path}
               name={item.name}
               size={item.size}
-              status={{ label: getStatusLabel(item), tone: getStatusTone(item) }}
+              status={{
+                label:
+                  item.status === 'completed'
+                    ? t('send:status.uploaded')
+                    : item.status === 'uploading'
+                      ? t('send:status.uploading')
+                      : t('send:status.waiting'),
+                tone: getStatusTone(item)
+              }}
               progress={
                 progress === 'waiting' || progress === 'uploading' || progress === 'completed'
                   ? progress

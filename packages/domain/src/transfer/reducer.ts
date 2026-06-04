@@ -8,6 +8,8 @@ import { applySharingProgress, getPhaseFromSelection, mergeSelectedFiles } from 
 import { applyPeerDownloadEvent } from '../send/shareModel'
 import type { ConnectionState, TransferAction, TransferSessionState } from './types'
 
+export const PEER_UNREACHABLE_ERROR_CODE = 'peer_unreachable'
+
 export const initialTransferSessionState: TransferSessionState = {
   topic: '',
   connectionState: 'disconnected',
@@ -251,7 +253,7 @@ export function transferSessionReducer(
         isReconnecting: false,
         topic: '',
         connectedPeers: {},
-        errorMessage: "Couldn't reach the sender. Check the code and try again."
+        errorMessage: PEER_UNREACHABLE_ERROR_CODE
       }
 
     // ─── Misc ─────────────────────────────────────────────────────

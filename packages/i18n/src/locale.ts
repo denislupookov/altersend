@@ -43,7 +43,12 @@ export const SUPPORTED_LOCALES: SupportedLocale[] = [
   { code: 'fr-FR', englishName: 'French', nativeName: 'Français', dir: 'ltr' },
   { code: 'de-DE', englishName: 'German', nativeName: 'Deutsch', dir: 'ltr' },
   { code: 'it-IT', englishName: 'Italian', nativeName: 'Italiano', dir: 'ltr' },
-  { code: 'pt-BR', englishName: 'Portuguese (Brazil)', nativeName: 'Português (Brasil)', dir: 'ltr' },
+  {
+    code: 'pt-BR',
+    englishName: 'Portuguese (Brazil)',
+    nativeName: 'Português (Brasil)',
+    dir: 'ltr'
+  },
   {
     code: 'es-419',
     englishName: 'Spanish (Latin America)',
@@ -69,7 +74,9 @@ export function getLocaleByCode(code: string): SupportedLocale | undefined {
   return SUPPORTED_LOCALES.find((locale) => locale.code === code)
 }
 
-export function isSupportedLocaleCode(code: string | null | undefined): code is SupportedLocaleCode {
+export function isSupportedLocaleCode(
+  code: string | null | undefined
+): code is SupportedLocaleCode {
   return typeof code === 'string' && SUPPORTED_CODES.has(code)
 }
 
@@ -105,12 +112,7 @@ function resolveSystemLocaleTag(tag: string): SupportedLocaleCode | null {
   if (lower === 'zh' || lower.includes('hans') || lower === 'zh-cn' || lower === 'zh-sg') {
     return 'zh-CN'
   }
-  if (
-    lower.includes('hant') ||
-    lower === 'zh-tw' ||
-    lower === 'zh-hk' ||
-    lower === 'zh-mo'
-  ) {
+  if (lower.includes('hant') || lower === 'zh-tw' || lower === 'zh-hk' || lower === 'zh-mo') {
     return 'zh-TW'
   }
 

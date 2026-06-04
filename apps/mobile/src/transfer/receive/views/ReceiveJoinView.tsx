@@ -2,6 +2,7 @@ import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { Button, Input, useTheme, withAlpha } from '@altersend/components'
 import { ChevronRightIcon, QrCodeIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/i18n'
 
 interface ReceiveJoinViewProps {
   joinCode: string
@@ -20,6 +21,7 @@ export function ReceiveJoinView({
   onConnect,
   onScanQr
 }: ReceiveJoinViewProps) {
+  const { t } = useTranslation(['receive', 'common'])
   const { theme } = useTheme()
   const trimmed = joinCode.trim()
   const canConnect = trimmed.length > 0 && !isLoading
@@ -49,10 +51,10 @@ export function ReceiveJoinView({
           </View>
           <View style={styles.qrText}>
             <Text style={[styles.qrTitle, { color: theme.colors.colorTextPrimary }]}>
-              Scan QR code
+              {t('receive:actions.scanQr')}
             </Text>
             <Text style={[styles.qrSubtitle, { color: theme.colors.colorTextSecondary }]}>
-              Use camera to read sender&apos;s QR
+              {t('receive:actions.scanQrHint')}
             </Text>
           </View>
           <ChevronRightIcon size={18} color={theme.colors.colorTextMuted} />
@@ -61,7 +63,7 @@ export function ReceiveJoinView({
 
       <View style={styles.divider}>
         <Text style={[styles.dividerText, { color: theme.colors.colorTextMuted }]}>
-          or paste code
+          {t('receive:form.orPasteCode')}
         </Text>
       </View>
 
@@ -79,17 +81,17 @@ export function ReceiveJoinView({
         <Input
           disabled={isLoading}
           error={joinCodeError}
-          label='Connection code'
+          label={t('receive:form.codeLabel')}
           mono
           secure
           onChange={(e: { target: { value: string } }) => onJoinCodeChange(e.target.value)}
-          placeholder='Paste 64-char code…'
+          placeholder={t('receive:form.codePlaceholder')}
           type='text'
           value={joinCode}
         />
 
         <Button disabled={!canConnect} onClick={onConnect} size='md' variant='primary' width='full'>
-          {isLoading ? 'Connecting…' : 'Connect'}
+          {isLoading ? t('common:actions.connecting') : t('common:actions.connect')}
         </Button>
       </View>
     </View>

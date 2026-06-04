@@ -1,46 +1,42 @@
-import { formatFileSize } from '../format'
 import type { ConnectedPeer, PeerDownloadEvent, PeerListStatus, PeerStatusData } from './shareModel'
 import { derivePeerStatus } from './shareModel'
+
+export type PeerListEntryDetail =
+  | { type: 'failed-file'; fileName: string }
+  | { type: 'completed-files'; count: number }
+  | { type: 'completed-done'; count: number }
+  | { type: 'progress-bytes'; transferredBytes: number; totalBytes: number }
+  | { type: 'in-flight-file'; fileName: string }
 
 export interface PeerListEntry {
   peerKey: string
   shortKey: string
   status: PeerListStatus
-  statusLabel: string
-  detail: string | null
+  detail: PeerListEntryDetail | null
   progressPercent?: number
   sortKey: number
 }
 
-function getStatusLabel(data: PeerStatusData): string {
+function getStatusDetail(data: PeerStatusData): PeerListEntryDetail | null {
   switch (data.status) {
     case 'failed':
-      return 'Failed'
+      return data.failedFileName ? { type: 'failed-file', fileName: data.failedFileName } : null
     case 'downloaded':
-      return 'Downloaded'
-    case 'disconnected':
-      return 'Disconnected'
-    case 'online':
-      return 'Online'
-    case 'downloading':
-      return data.progressPercent != null ? `Downloading ${data.progressPercent}%` : 'Downloading'
-  }
-}
-
-function getStatusDetail(data: PeerStatusData): string | null {
-  switch (data.status) {
-    case 'failed':
-      return data.failedFileName ?? null
-    case 'downloaded':
-      return `${data.completedCount} ${data.completedCount === 1 ? 'file' : 'files'}`
+      return { type: 'completed-files', count: data.completedCount }
     case 'disconnected':
     case 'online':
-      return data.completedCount > 0 ? `${data.completedCount} done` : null
+      return data.completedCount > 0 ? { type: 'completed-done', count: data.completedCount } : null
     case 'downloading':
       if (data.transferredBytes != null && data.totalForDisplay != null) {
-        return `${formatFileSize(data.transferredBytes)} / ${formatFileSize(data.totalForDisplay)}`
+        return {
+          type: 'progress-bytes',
+          transferredBytes: data.transferredBytes,
+          totalBytes: data.totalForDisplay
+        }
       }
-      return data.inFlightFileName ?? null
+      return data.inFlightFileName
+        ? { type: 'in-flight-file', fileName: data.inFlightFileName }
+        : null
   }
 }
 
@@ -71,7 +67,6 @@ export function getPeerListEntries(
       peerKey,
       shortKey: peerKey.slice(0, 6),
       status: data.status,
-      statusLabel: getStatusLabel(data),
       detail: getStatusDetail(data),
       progressPercent: data.progressPercent,
       sortKey: data.sortKey || tracked?.connectedAt || 0

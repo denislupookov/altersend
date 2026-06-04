@@ -1,13 +1,14 @@
 import { css, html } from 'react-strict-dom'
 import { tokens } from '../../theme/tokens.css'
 
-const TYPES = ['Bug report', 'Feature request', 'General'] as const
+const TYPES = ['bug', 'feature', 'general'] as const
 export type FeedbackType = (typeof TYPES)[number]
 export { TYPES as FEEDBACK_TYPES }
 
 interface FeedbackTypeSelectorProps {
   value: FeedbackType
   onChange: (type: FeedbackType) => void
+  labels: Record<FeedbackType, string>
   disabled?: boolean
 }
 
@@ -63,7 +64,12 @@ const styles = css.create({
   }
 })
 
-export function FeedbackTypeSelector({ value, onChange, disabled }: FeedbackTypeSelectorProps) {
+export function FeedbackTypeSelector({
+  value,
+  onChange,
+  labels,
+  disabled
+}: FeedbackTypeSelectorProps) {
   return (
     <html.div style={styles.track}>
       {TYPES.map((t) => {
@@ -82,7 +88,7 @@ export function FeedbackTypeSelector({ value, onChange, disabled }: FeedbackType
             <html.span
               style={[styles.label, selected ? styles.labelSelected : styles.labelDefault]}
             >
-              {t}
+              {labels[t]}
             </html.span>
           </html.button>
         )

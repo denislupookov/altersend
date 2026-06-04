@@ -1,13 +1,14 @@
 import { SendFileListRow } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 import {
   getOverallProgress,
   getProgressState,
-  getStatusLabel,
   getStatusTone,
   useTransferStore
 } from '@altersend/domain'
 
 export function PreparingView() {
+  const { t } = useTranslation(['send'])
   const uploadItems = useTransferStore((s) => s.uploadItems)
   const { completed, total, percent } = getOverallProgress(uploadItems)
   const allCompleted = completed === total && total > 0
@@ -17,7 +18,7 @@ export function PreparingView() {
       <div className='rounded-[10px] border border-border-primary bg-background-subtle px-4 py-4'>
         <div className='flex items-center justify-between gap-4'>
           <p className='m-0 text-[14px] font-medium text-text-primary'>
-            {allCompleted ? 'Upload complete' : 'Uploading files'}
+            {allCompleted ? t('send:status.uploadComplete') : t('send:status.uploadingFiles')}
           </p>
           <span className='tabular-nums text-[14px] font-semibold text-text-primary'>
             {percent}%
@@ -30,7 +31,7 @@ export function PreparingView() {
           />
         </div>
         <p className='m-0 mt-2 text-[12px] text-text-secondary'>
-          {completed} of {total} {total === 1 ? 'file' : 'files'} uploaded
+          {t('send:preparing.uploadedCount', { completed, count: total })}
         </p>
       </div>
 
@@ -43,7 +44,15 @@ export function PreparingView() {
               compact
               name={item.name}
               size={item.size}
-              status={{ label: getStatusLabel(item), tone: getStatusTone(item) }}
+              status={{
+                label:
+                  item.status === 'completed'
+                    ? t('send:status.uploaded')
+                    : item.status === 'uploading'
+                      ? t('send:status.uploading')
+                      : t('send:status.waiting'),
+                tone: getStatusTone(item)
+              }}
               progress={
                 progress === 'waiting' || progress === 'uploading' || progress === 'completed'
                   ? progress

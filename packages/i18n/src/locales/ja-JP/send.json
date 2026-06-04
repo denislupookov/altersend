@@ -50,7 +50,11 @@
     "showQrLabel": "QRコードを表示",
     "qrCodeLabel": "接続キーのQRコード",
     "qrModalDescription": "別の端末で AlterSend を開き、このコードをスキャンしてください",
-    "copiedToast": "クリップボードにコピーしました"
+    "copiedToast": "クリップボードにコピーしました",
+    "scanToConnect": "スキャンして接続",
+    "orScan": "またはスキャン",
+    "generating": "生成中…",
+    "waitingForConnection": "接続を待機中…"
   },
   "errors": {
     "folderUnsupported": "フォルダはまだ対応していません。ファイルのみ選択してください。",
@@ -59,5 +63,23 @@
   },
   "hints": {
     "keepOpen": "アプリを閉じると転送はキャンセルされます。"
+  },
+  "preparing": {
+    "uploadedCount_one": "{{count}} 個中 {{completed}} 個のファイルをアップロード済み",
+    "uploadedCount_other": "{{count}} 個中 {{completed}} 個のファイルをアップロード済み"
+  },
+  "peer": {
+    "completedDone_one": "{{count}} 個完了",
+    "completedDone_other": "{{count}} 個完了"
+  },
+  "dropzone": {
+    "addMoreDescription": "またはクリックして<link>さらに追加</link>",
+    "browseDescription": "またはクリックして<link>参照</link>",
+    "tapAddMoreDescription": "タップして<link>さらに追加</link>",
+    "tapBrowseDescription": "タップして<link>参照</link>",
+    "orClickTo": "またはクリックして",
+    "tapTo": "タップして",
+    "addMoreLink": "さらに追加",
+    "browseLink": "参照"
   }
 }

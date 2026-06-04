@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 import {
   addSelectedFiles,
   normalizeSelectedFiles,
@@ -23,6 +24,7 @@ function getEntry(item: DataTransferItem) {
 }
 
 export function SelectFilesView() {
+  const { t } = useTranslation(['send'])
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const [isDropZoneDragging, setIsDropZoneDragging] = useState(false)
   const [selectionError, setSelectionError] = useState<string | null>(null)
@@ -60,9 +62,7 @@ export function SelectFilesView() {
           })
         : Array.from(event.dataTransfer.files ?? [])
 
-    setSelectionError(
-      hasFolderSelection ? "Folders aren't supported yet. Please select files only." : null
-    )
+    setSelectionError(hasFolderSelection ? t('send:errors.folderUnsupported') : null)
 
     const normalizedFiles = normalizeSelectedFiles(droppedFiles, bridgeApi.getPathForFile)
     if (normalizedFiles.length > 0) {
@@ -77,11 +77,13 @@ export function SelectFilesView() {
           description={
             hasSelectedFiles ? (
               <>
-                or click to <DropZoneLink>add more</DropZoneLink>
+                {t('send:dropzone.orClickTo')}{' '}
+                <DropZoneLink>{t('send:dropzone.addMoreLink')}</DropZoneLink>
               </>
             ) : (
               <>
-                or click to <DropZoneLink>browse</DropZoneLink>
+                {t('send:dropzone.orClickTo')}{' '}
+                <DropZoneLink>{t('send:dropzone.browseLink')}</DropZoneLink>
               </>
             )
           }
@@ -97,7 +99,7 @@ export function SelectFilesView() {
             setIsDropZoneDragging(true)
           }}
           onDrop={onDrop}
-          title={hasSelectedFiles ? 'Add more files' : 'Drag and drop'}
+          title={hasSelectedFiles ? t('send:actions.addMoreFiles') : t('send:actions.dragAndDrop')}
         />
       </div>
 

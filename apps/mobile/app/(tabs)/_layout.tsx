@@ -1,8 +1,10 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 
 export default function TabLayout() {
+  const { t } = useTranslation(['common'])
   const { theme } = useTheme()
   const c = theme.colors
   return (
@@ -24,7 +26,7 @@ export default function TabLayout() {
           sf='paperplane.fill'
           src={<NativeTabs.Trigger.VectorIcon family={Ionicons} name='paper-plane' />}
         />
-        <NativeTabs.Trigger.Label>Send</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('common:labels.send')}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name='receive/index'>
@@ -32,7 +34,7 @@ export default function TabLayout() {
           sf='square.and.arrow.down'
           src={<NativeTabs.Trigger.VectorIcon family={Ionicons} name='download' />}
         />
-        <NativeTabs.Trigger.Label>Receive</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('common:labels.receive')}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   )

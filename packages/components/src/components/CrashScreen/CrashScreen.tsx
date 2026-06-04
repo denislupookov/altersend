@@ -5,17 +5,17 @@ import { styles } from './styles'
 export interface CrashScreenProps {
   error: Error
   onRestart: () => void
-  title?: string
+  title: string
   description?: string
-  restartLabel?: string
+  restartLabel: string
 }
 
 export function CrashScreen({
   error,
   onRestart,
-  title = 'Something went wrong',
+  title,
   description,
-  restartLabel = 'Restart'
+  restartLabel
 }: CrashScreenProps) {
   return (
     <html.div style={styles.root}>

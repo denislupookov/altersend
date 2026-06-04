@@ -3,10 +3,12 @@ import { StyleSheet, Text, View } from 'react-native'
 import { SendFileListRow, useTheme, withAlpha } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { formatFileSize, getOfferKey, useTransferStore } from '@altersend/domain'
+import { useTranslation } from '@altersend/i18n'
 import { OpenAction, getFileMeta } from '../utils/fileRowUtils'
 import { openCompletedFile } from '../utils/openCompletedFile'
 
 export function ReceiveCompleteView() {
+  const { t } = useTranslation(['receive', 'common'])
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const onOpenFile = openCompletedFile
@@ -36,10 +38,10 @@ export function ReceiveCompleteView() {
         </View>
         <View style={styles.successText}>
           <Text style={[styles.successTitle, { color: theme.colors.colorSuccess }]}>
-            {fileCount} {fileCount === 1 ? 'file' : 'files'} received
+            {t('receive:page.completed.title', { count: fileCount })}
           </Text>
           <Text style={[styles.successSubtitle, { color: theme.colors.colorTextMuted }]}>
-            {formatFileSize(totalBytes)} · saved
+            {formatFileSize(totalBytes)} · {t('receive:summary.saved')}
           </Text>
         </View>
       </View>
@@ -63,7 +65,7 @@ export function ReceiveCompleteView() {
               bare
               isFirst={index === 0}
               name={file.name}
-              description={getFileMeta(file.size, state)}
+              description={getFileMeta(file.size, state, t)}
               trailing={
                 isComplete ? (
                   <OpenAction fileName={file.name} offerKey={offerKey} onPress={onOpenFile} />

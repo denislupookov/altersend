@@ -12,7 +12,7 @@ import {
   startPeerWatchdog,
   useSimulatedLoading
 } from '@altersend/domain'
-import { initI18n, resolveLocalePreference } from '@altersend/i18n'
+import { initI18n, resolveLocalePreference, useTranslation } from '@altersend/i18n'
 import { Stack } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
@@ -39,20 +39,35 @@ startBackgroundReconnectEffect()
 startPhotosCopyEffect()
 startDeepLinkHandler()
 
-function getFlowScreenOptions(theme: Theme) {
+function MobileCrashScreen({ error, onRestart }: { error: Error; onRestart: () => void }) {
+  const { t } = useTranslation(['errors'])
+
+  return (
+    <CrashScreen
+      error={error}
+      onRestart={onRestart}
+      title={t('errors:crash.title')}
+      description={t('errors:crash.mobileDescription')}
+      restartLabel={t('errors:crash.tryAgain')}
+    />
+  )
+}
+
+function getFlowScreenOptions(theme: Theme, backTitle: string) {
   return {
     headerShown: true,
     headerStyle: { backgroundColor: theme.colors.colorBackground },
     headerTintColor: theme.colors.colorTextPrimary,
     headerShadowVisible: false,
     headerTitle: '',
-    headerBackTitle: 'Back'
+    headerBackTitle: backTitle
   } as const
 }
 
 function ThemedStack() {
+  const { t } = useTranslation(['common'])
   const { theme } = useTheme()
-  const flowScreenOptions = getFlowScreenOptions(theme)
+  const flowScreenOptions = getFlowScreenOptions(theme, t('common:actions.back'))
   const progress = useSimulatedLoading()
 
   if (progress < 100) {
@@ -60,12 +75,12 @@ function ThemedStack() {
   }
 
   return (
-      <Stack>
-        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-        <Stack.Screen name='onboarding' options={{ headerShown: false, gestureEnabled: false }} />
-        <Stack.Screen name='settings' options={flowScreenOptions} />
-        <Stack.Screen name='language' options={flowScreenOptions} />
-        <Stack.Screen name='report' options={flowScreenOptions} />
+    <Stack>
+      <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+      <Stack.Screen name='onboarding' options={{ headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name='settings' options={flowScreenOptions} />
+      <Stack.Screen name='language' options={flowScreenOptions} />
+      <Stack.Screen name='report' options={flowScreenOptions} />
       <Stack.Screen
         name='send/preparing'
         options={{ ...flowScreenOptions, gestureEnabled: false }}
@@ -113,14 +128,7 @@ export default function RootLayout() {
           <ErrorBoundary
             fallback={(error, reset) => {
               captureException(error)
-              return (
-                <CrashScreen
-                  error={error}
-                  onRestart={reset}
-                  description='AlterSend hit an unexpected error. Try again, or close and reopen the app if the problem persists.'
-                  restartLabel='Try again'
-                />
-              )
+              return <MobileCrashScreen error={error} onRestart={reset} />
             }}
           >
             <ToastProvider>

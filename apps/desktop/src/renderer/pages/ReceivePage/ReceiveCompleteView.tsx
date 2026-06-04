@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Button, SendFileListRow } from '@altersend/components'
 import { CheckIcon, FolderIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/i18n'
 import {
   clearSession,
   formatFileSize,
@@ -18,6 +19,7 @@ function openFileWithLogging(filePath: string): void {
 }
 
 export function ReceiveCompleteView() {
+  const { t } = useTranslation(['receive', 'common'])
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
 
@@ -35,9 +37,11 @@ export function ReceiveCompleteView() {
   const displayDir = saveDir ? shortenHomePath(saveDir) : null
 
   const successSubtitle = [
-    `${fileCount} ${fileCount === 1 ? 'file' : 'files'}`,
+    t('common:files.count', { count: fileCount }),
     formatFileSize(totalBytes),
-    displayDir ? `saved to ${displayDir}` : 'saved'
+    displayDir
+      ? t('receive:summary.savedToLocation', { location: displayDir })
+      : t('receive:summary.saved')
   ].join(' · ')
 
   return (
@@ -48,7 +52,9 @@ export function ReceiveCompleteView() {
             <CheckIcon size={16} />
           </div>
           <div>
-            <p className='m-0 text-[14px] font-bold text-success'>Files received</p>
+            <p className='m-0 text-[14px] font-bold text-success'>
+              {t('receive:page.completed.title', { count: fileCount })}
+            </p>
             <p className='m-0 mt-0.5 text-[12px] leading-5 text-text-secondary'>
               {successSubtitle}
             </p>
@@ -61,16 +67,18 @@ export function ReceiveCompleteView() {
             size='sm'
             variant='secondary'
           >
-            Show in Finder
+            {t('receive:actions.showInFinder')}
           </Button>
         ) : null}
       </div>
 
       <div className='flex min-h-0 flex-1 flex-col overflow-hidden rounded-[12px] border border-border-primary bg-surface-primary'>
         <div className='flex shrink-0 items-center justify-between border-b border-border-primary pl-[14px] pr-3 py-3'>
-          <p className='m-0 text-[14px] font-semibold text-text-primary'>Received files</p>
+          <p className='m-0 text-[14px] font-semibold text-text-primary'>
+            {t('receive:panel.receivedFiles')}
+          </p>
           <p className='m-0 text-[13px] text-text-muted'>
-            {fileCount} {fileCount === 1 ? 'file' : 'files'}
+            {t('common:files.count', { count: fileCount })}
           </p>
         </div>
 
@@ -95,7 +103,7 @@ export function ReceiveCompleteView() {
                       size='sm'
                       variant='secondary'
                     >
-                      Open
+                      {t('receive:actions.open')}
                     </Button>
                   ) : undefined
                 }
@@ -106,7 +114,7 @@ export function ReceiveCompleteView() {
 
         <div className='flex shrink-0 items-center justify-end gap-2.5 border-t border-border-primary px-6 py-4'>
           <Button onClick={clearSession} size='sm' variant='primary'>
-            Done
+            {t('common:actions.done')}
           </Button>
         </div>
       </div>

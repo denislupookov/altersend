@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Button, SendFileListRow } from '@altersend/components'
 import { DownloadIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/i18n'
 import { bridgeApi } from '../../api/bridgeApi'
 import {
   clearSession,
@@ -13,7 +14,23 @@ import {
   useTransferStore
 } from '@altersend/domain'
 
+type DownloadRow = ReturnType<typeof getDownloadRowDisplay>
+
+function getDownloadStatusLabel(t: ReturnType<typeof useTranslation>['t'], row: DownloadRow) {
+  switch (row.status.kind) {
+    case 'saved':
+      return t('receive:status.saved')
+    case 'failed':
+      return row.status.message ?? t('receive:status.failed')
+    case 'progress':
+      return t('receive:status.percent', { percent: row.percent })
+    case 'ready':
+      return t('receive:status.ready')
+  }
+}
+
 export function ReceiveConnectedView() {
+  const { t } = useTranslation(['receive', 'common'])
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const peerCount = useTransferStore((s) => s.peerCount)
@@ -68,7 +85,7 @@ export function ReceiveConnectedView() {
                 name={file.name}
                 size={file.size}
                 description={row.description}
-                status={row.status}
+                status={{ label: getDownloadStatusLabel(t, row), tone: row.status.tone }}
                 progressPercent={row.progressPercent}
               />
             )
@@ -79,7 +96,7 @@ export function ReceiveConnectedView() {
       <div className='mt-4 flex shrink-0 items-center justify-end gap-4'>
         <div className='flex shrink-0 items-center gap-2'>
           <Button onClick={clearSession} size='sm' variant='secondary'>
-            End session
+            {t('common:actions.endSession')}
           </Button>
           {peerCount > 0 && hasIncomingFiles && !allCompleted ? (
             <Button
@@ -89,7 +106,9 @@ export function ReceiveConnectedView() {
               size='sm'
               variant='primary'
             >
-              {isDownloading ? `Downloading ${totals.percent}%` : 'Download all'}
+              {isDownloading
+                ? t('receive:actions.downloadingPercent', { percent: totals.percent })
+                : t('receive:actions.downloadAll')}
             </Button>
           ) : null}
         </div>

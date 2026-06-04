@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from 'react'
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native'
 import { useTheme } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 import { IllustrationLayout } from '@/src/components'
 import ConnectingSvg from '../../../../../../assets/connecting.svg'
 
@@ -18,6 +19,7 @@ export function ReceiveConnectingView({
   onMenuPress,
   children
 }: PropsWithChildren<ReceiveConnectingViewProps>) {
+  const { t } = useTranslation(['receive'])
   const { theme } = useTheme()
 
   return (
@@ -42,10 +44,10 @@ export function ReceiveConnectingView({
           <ActivityIndicator color={theme.colors.colorAccent} size='small' />
           <View style={styles.textWrap}>
             <Text style={[styles.title, { color: theme.colors.colorTextPrimary }]}>
-              Connection in progress
+              {t('receive:page.handshake.title')}
             </Text>
             <Text style={[styles.description, { color: theme.colors.colorTextSecondary }]}>
-              Completing the secure handshake with the sender.
+              {t('receive:page.handshake.description')}
             </Text>
           </View>
         </View>

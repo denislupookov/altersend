@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button, PaginationDots } from '@altersend/components'
 import { onboardingSlides, type OnboardingSlide, type OnboardingSlideKind } from '@altersend/domain'
 import { ExternalLink } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 import logo from '../../../../../../assets/logo.png'
 import pairingSvg from '../../../../../../assets/onboarding.svg'
 import keepOpenSvg from '../../../../../../assets/laptop.svg'
@@ -13,14 +14,27 @@ const ILLUSTRATIONS: Record<OnboardingSlideKind, string> = {
   privacy: encryptedSvg
 }
 
+function getSlideKey(kind: OnboardingSlideKind) {
+  switch (kind) {
+    case 'pairing':
+      return 'direct'
+    case 'keep-open':
+      return 'keepOpen'
+    case 'privacy':
+      return 'encrypted'
+  }
+}
+
 interface OnboardingPageProps {
   onFinish: () => void
 }
 
 export default function OnboardingPage({ onFinish }: OnboardingPageProps) {
+  const { t } = useTranslation(['onboarding', 'common'])
   const [index, setIndex] = useState(0)
   const slide = onboardingSlides[index]
   const isLast = index === onboardingSlides.length - 1
+  const slideKey = getSlideKey(slide.kind)
 
   const next = () => {
     if (isLast) {
@@ -43,7 +57,7 @@ export default function OnboardingPage({ onFinish }: OnboardingPageProps) {
         </div>
         <div className={isLast ? 'pointer-events-none invisible' : ''}>
           <Button onClick={onFinish} size='sm' variant='ghost'>
-            Skip
+            {t('common:actions.skip')}
           </Button>
         </div>
       </div>
@@ -52,16 +66,18 @@ export default function OnboardingPage({ onFinish }: OnboardingPageProps) {
         <SlideHero slide={slide} />
 
         <h1 className='mb-0 mt-9 max-w-[460px] text-center text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-text-primary'>
-          {slide.title}
+          {t(`onboarding:slides.${slideKey}.title`)}
         </h1>
 
         <p className='mt-3 max-w-[420px] text-center text-[13px] leading-[1.6] text-text-secondary'>
-          {slide.subtitle}
+          {t(`onboarding:slides.${slideKey}.description`)}
         </p>
 
         {slide.link ? (
           <div className='absolute bottom-4'>
-            <ExternalLink href={slide.link.url}>{slide.link.label}</ExternalLink>
+            <ExternalLink href={slide.link.url}>
+              {t('onboarding:slides.encrypted.link')}
+            </ExternalLink>
           </div>
         ) : null}
       </div>
@@ -70,7 +86,7 @@ export default function OnboardingPage({ onFinish }: OnboardingPageProps) {
         <PaginationDots count={onboardingSlides.length} activeIndex={index} />
 
         <Button onClick={next} size='sm' variant='primary'>
-          {isLast ? 'Get started' : 'Continue'}
+          {isLast ? t('common:actions.getStarted') : t('common:actions.continue')}
         </Button>
       </div>
     </main>

@@ -23,7 +23,8 @@
     "dismiss": "Dismiss",
     "openSettings": "Open settings",
     "update": "Mettre à jour",
-    "downloadAll": "Download all"
+    "downloadAll": "Download all",
+    "skip": "Ignorer"
   },
   "labels": {
     "settings": "Paramètres",
@@ -55,5 +56,8 @@
     "restart": "Redémarrer",
     "update": "Mettre à jour",
     "restartFailed": "Restart failed — please quit and reopen"
+  },
+  "status": {
+    "connected": "Connecté"
   }
 }

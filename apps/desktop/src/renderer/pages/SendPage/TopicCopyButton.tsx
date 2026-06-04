@@ -1,3 +1,4 @@
+import { useTranslation } from '@altersend/i18n'
 import { LockIcon } from '@altersend/components/icons'
 
 interface TopicCopyButtonProps {
@@ -8,9 +9,11 @@ interface TopicCopyButtonProps {
 }
 
 export function TopicCopyButton({ topic, copied, onCopy, placeholder }: TopicCopyButtonProps) {
+  const { t } = useTranslation(['send', 'common'])
+
   return (
     <button
-      aria-label='Copy connection code'
+      aria-label={t('send:connection.copyLabel')}
       className='flex min-w-0 flex-1 items-center gap-3 rounded-[8px] border border-border-primary bg-surface-primary px-3.5 py-2.5 text-left transition-colors hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-60'
       disabled={!topic}
       onClick={onCopy}
@@ -25,7 +28,7 @@ export function TopicCopyButton({ topic, copied, onCopy, placeholder }: TopicCop
       <span
         className={`shrink-0 text-[12px] font-medium ${copied ? 'text-success' : 'text-text-muted'}`}
       >
-        {copied ? 'Copied' : 'Copy'}
+        {copied ? t('common:actions.copied') : t('common:actions.copy')}
       </span>
     </button>
   )

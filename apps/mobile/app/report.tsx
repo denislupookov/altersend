@@ -4,17 +4,17 @@ import { useState } from 'react'
 import { Button, FeedbackTypeSelector, useTheme } from '@altersend/components'
 import { SendIcon } from '@altersend/components/icons'
 import type { FeedbackType } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 import { Layout } from '@/src/components'
 
 type State = 'idle' | 'sending' | 'sent' | 'error'
 
-const PLACEHOLDERS: Record<FeedbackType, string> = {
-  'Bug report': 'Describe what happened and how to reproduce it…',
-  'Feature request': 'What would you like to see in AlterSend?',
-  General: 'Share your thoughts…'
-}
-
-async function postToDiscord(type: FeedbackType, message: string, version: string): Promise<void> {
+async function postToDiscord(
+  title: string,
+  message: string,
+  version: string,
+  labels: { version: string; platform: string; mobile: string }
+): Promise<void> {
   const url = process.env.EXPO_PUBLIC_DISCORD_WEBHOOK_URL
   if (!url || url.includes('PLACEHOLDER')) throw new Error('Webhook not configured')
   await fetch(url, {
@@ -23,12 +23,12 @@ async function postToDiscord(type: FeedbackType, message: string, version: strin
     body: JSON.stringify({
       embeds: [
         {
-          title: type,
+          title,
           description: message,
           color: 0x5865f2,
           fields: [
-            { name: 'Version', value: `v${version}`, inline: true },
-            { name: 'Platform', value: 'Mobile', inline: true }
+            { name: labels.version, value: `v${version}`, inline: true },
+            { name: labels.platform, value: labels.mobile, inline: true }
           ],
           timestamp: new Date().toISOString()
         }
@@ -38,8 +38,9 @@ async function postToDiscord(type: FeedbackType, message: string, version: strin
 }
 
 export default function ReportScreen() {
+  const { t } = useTranslation(['feedback', 'common'])
   const { theme } = useTheme()
-  const [type, setType] = useState<FeedbackType>('Bug report')
+  const [type, setType] = useState<FeedbackType>('bug')
   const [message, setMessage] = useState('')
   const [state, setState] = useState<State>('idle')
   const version = Constants.expoConfig?.version ?? '0.0.0'
@@ -47,7 +48,11 @@ export default function ReportScreen() {
   const send = async () => {
     setState('sending')
     try {
-      await postToDiscord(type, message.trim(), version)
+      await postToDiscord(t(`feedback:types.${type}`), message.trim(), version, {
+        version: t('common:labels.version'),
+        platform: t('common:labels.platform'),
+        mobile: t('common:labels.mobile')
+      })
       setState('sent')
     } catch {
       setState('error')
@@ -58,11 +63,13 @@ export default function ReportScreen() {
 
   if (state === 'sent') {
     return (
-      <Layout title='Feedback' description='' hasNativeHeader>
+      <Layout title={t('feedback:title')} description='' hasNativeHeader>
         <View style={styles.centred}>
-          <Text style={[styles.sentTitle, { color: theme.colors.colorTextPrimary }]}>Thanks!</Text>
+          <Text style={[styles.sentTitle, { color: theme.colors.colorTextPrimary }]}>
+            {t('feedback:states.sent')}
+          </Text>
           <Text style={[styles.sentHint, { color: theme.colors.colorTextMuted }]}>
-            Your feedback has been received.
+            {t('feedback:states.received')}
           </Text>
         </View>
       </Layout>
@@ -70,9 +77,18 @@ export default function ReportScreen() {
   }
 
   return (
-    <Layout title='Feedback' description='' hasNativeHeader>
+    <Layout title={t('feedback:title')} description='' hasNativeHeader>
       <View style={styles.content}>
-        <FeedbackTypeSelector value={type} onChange={setType} disabled={state === 'sending'} />
+        <FeedbackTypeSelector
+          value={type}
+          onChange={setType}
+          labels={{
+            bug: t('feedback:types.bug'),
+            feature: t('feedback:types.feature'),
+            general: t('feedback:types.general')
+          }}
+          disabled={state === 'sending'}
+        />
 
         <TextInput
           style={[
@@ -84,7 +100,13 @@ export default function ReportScreen() {
                 state === 'error' ? theme.colors.colorDanger : theme.colors.colorBorderPrimary
             }
           ]}
-          placeholder={PLACEHOLDERS[type]}
+          placeholder={
+            type === 'bug'
+              ? t('feedback:placeholders.bug')
+              : type === 'feature'
+                ? t('feedback:placeholders.feature')
+                : t('feedback:placeholders.general')
+          }
           placeholderTextColor={theme.colors.colorTextMuted}
           multiline
           textAlignVertical='top'
@@ -98,7 +120,7 @@ export default function ReportScreen() {
 
         {state === 'error' && (
           <Text style={[styles.error, { color: theme.colors.colorDanger }]}>
-            Failed to send. Check your connection and try again.
+            {t('feedback:states.failed')}
           </Text>
         )}
 
@@ -115,7 +137,7 @@ export default function ReportScreen() {
             />
           }
         >
-          {state === 'sending' ? 'Sending…' : 'Send feedback'}
+          {state === 'sending' ? t('feedback:actions.sending') : t('feedback:actions.send')}
         </Button>
       </View>
     </Layout>

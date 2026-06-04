@@ -1,4 +1,5 @@
 import { useTheme } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 import { ArrowUp, X } from 'lucide-react-native'
 import { Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -10,6 +11,7 @@ const STORE_URL =
     : 'https://play.google.com/store/apps/details?id=com.altersend.mobile'
 
 export function UpdateBanner() {
+  const { t } = useTranslation(['common'])
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
   const { needsUpdate, dismiss } = useUpdateCheck()
@@ -33,7 +35,7 @@ export function UpdateBanner() {
         </View>
 
         <Text style={[styles.label, { color: theme.colors.colorTextPrimary }]} numberOfLines={1}>
-          Update available
+          {t('common:update.available')}
         </Text>
 
         <Pressable
@@ -43,10 +45,17 @@ export function UpdateBanner() {
           }}
           hitSlop={8}
         >
-          <Text style={[styles.updateBtn, { color: theme.colors.colorInfo }]}>Update</Text>
+          <Text style={[styles.updateBtn, { color: theme.colors.colorInfo }]}>
+            {t('common:update.update')}
+          </Text>
         </Pressable>
 
-        <Pressable onPress={dismiss} hitSlop={8}>
+        <Pressable
+          accessibilityRole='button'
+          accessibilityLabel={t('common:actions.dismiss')}
+          onPress={dismiss}
+          hitSlop={8}
+        >
           <X size={16} color={theme.colors.colorTextSecondary} />
         </Pressable>
       </View>

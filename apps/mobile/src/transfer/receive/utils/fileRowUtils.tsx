@@ -2,27 +2,31 @@ import React from 'react'
 import { Pressable, StyleSheet, Text } from 'react-native'
 import { getFileKind, useTheme } from '@altersend/components'
 import { formatFileSize, type DownloadItemState } from '@altersend/domain'
+import { useTranslation } from '@altersend/i18n'
 
-function getActionLabel(name: string): string {
+type Translate = ReturnType<typeof useTranslation>['t']
+
+function getActionLabel(name: string, t: Translate): string {
   const kind = getFileKind(name)
-  if (kind === 'image') return 'View'
-  if (kind === 'video') return 'Play'
-  return 'Open'
+  if (kind === 'image') return t('receive:actions.view')
+  if (kind === 'video') return t('receive:actions.play')
+  return t('receive:actions.open')
 }
 
-function getDestinationLabel(state: DownloadItemState | undefined): string {
+function getDestinationLabel(state: DownloadItemState | undefined, t: Translate): string {
   if (!state || state.destination === undefined) return ''
-  if (state.destination === 'photos') return 'Photos'
-  return 'Files › Downloads'
+  if (state.destination === 'photos') return t('common:files.photos')
+  return t('common:files.downloads')
 }
 
 export function getFileMeta(
   size: number,
   state: DownloadItemState | undefined,
+  t: Translate,
   options?: { disabled?: boolean }
 ): string {
-  if (options?.disabled) return "Didn't arrive"
-  const destination = getDestinationLabel(state)
+  if (options?.disabled) return t('receive:errors.didntArrive')
+  const destination = getDestinationLabel(state, t)
   return destination ? `${destination} · ${formatFileSize(size)}` : formatFileSize(size)
 }
 
@@ -33,6 +37,7 @@ interface OpenActionProps {
 }
 
 export function OpenAction({ fileName, offerKey, onPress }: OpenActionProps) {
+  const { t } = useTranslation(['receive'])
   const { theme } = useTheme()
   return (
     <Pressable
@@ -46,7 +51,7 @@ export function OpenAction({ fileName, offerKey, onPress }: OpenActionProps) {
       ]}
     >
       <Text style={[actionStyles.label, { color: theme.colors.colorTextSecondary }]}>
-        {getActionLabel(fileName)}
+        {getActionLabel(fileName, t)}
       </Text>
     </Pressable>
   )

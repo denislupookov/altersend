@@ -50,7 +50,11 @@
     "showQrLabel": "Show QR code",
     "qrCodeLabel": "QR code for connection key",
     "qrModalDescription": "Open AlterSend on another device and scan this code",
-    "copiedToast": "Copied to clipboard"
+    "copiedToast": "Copied to clipboard",
+    "scanToConnect": "掃描以連線",
+    "orScan": "或掃描",
+    "generating": "產生中…",
+    "waitingForConnection": "正在等待連線…"
   },
   "errors": {
     "folderUnsupported": "Folders aren't supported yet. Please select files only.",
@@ -59,5 +63,23 @@
   },
   "hints": {
     "keepOpen": "Closing the app cancels the transfer."
+  },
+  "preparing": {
+    "uploadedCount_one": "已上傳 {{count}} 個檔案中的 {{completed}} 個",
+    "uploadedCount_other": "已上傳 {{count}} 個檔案中的 {{completed}} 個"
+  },
+  "peer": {
+    "completedDone_one": "{{count}} 個已完成",
+    "completedDone_other": "{{count}} 個已完成"
+  },
+  "dropzone": {
+    "addMoreDescription": "或點擊<link>繼續新增</link>",
+    "browseDescription": "或點擊<link>瀏覽</link>",
+    "tapAddMoreDescription": "點一下<link>繼續新增</link>",
+    "tapBrowseDescription": "點一下<link>瀏覽</link>",
+    "orClickTo": "或點擊",
+    "tapTo": "點一下",
+    "addMoreLink": "繼續新增",
+    "browseLink": "瀏覽"
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { CrashScreen, ErrorBoundary, ThemeProvider, ThemeType } from '@altersend/components'
-import { initI18n, resolveLocalePreference } from '@altersend/i18n'
+import { initI18n, resolveLocalePreference, useTranslation } from '@altersend/i18n'
 import {
   bindTransferApi,
   startBackgroundReconnectEffect,
@@ -16,6 +16,20 @@ import { getSavedLocalePreference } from './lifecycle/localePreferenceStorage'
 import { getDesktopSystemLocales } from './lifecycle/systemLocale'
 import './strict.css'
 import './index.css'
+
+function DesktopCrashScreen({ error }: { error: Error }) {
+  const { t } = useTranslation(['errors'])
+
+  return (
+    <CrashScreen
+      error={error}
+      onRestart={() => bridgeApi.appRestart?.()}
+      title={t('errors:crash.title')}
+      description={t('errors:crash.desktopDescription')}
+      restartLabel={t('errors:crash.restartAlterSend')}
+    />
+  )
+}
 
 initSentry()
 void bridgeApi.setSentryEnabled(isCrashReportingEnabled())
@@ -38,14 +52,7 @@ async function bootstrap() {
         <ErrorBoundary
           fallback={(error) => {
             captureException(error)
-            return (
-              <CrashScreen
-                error={error}
-                onRestart={() => bridgeApi.appRestart?.()}
-                description='AlterSend hit an unexpected error and needs to restart. The transfer worker may be in an inconsistent state, so a restart is the safest option.'
-                restartLabel='Restart AlterSend'
-              />
-            )
+            return <DesktopCrashScreen error={error} />
           }}
         >
           <App />

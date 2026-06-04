@@ -12,7 +12,9 @@
     },
     "incomingTransfer": {
       "title": "ファイルがあります",
-      "description": "{{count}} {{fileLabel}} · {{size}}"
+      "description": "{{count}} {{fileLabel}} · {{size}}",
+      "description_one": "{{count}} 個のファイル · {{size}}",
+      "description_other": "{{count}} 個のファイル · {{size}}"
     },
     "completed": {
       "title_one": "ファイルを受信しました",
@@ -21,7 +23,8 @@
     },
     "reconnecting": {
       "title": "再接続中",
-      "description": "セッションに再接続しています。リンクが復旧するとファイルを再び利用できます。"
+      "description": "セッションに再接続しています。リンクが復旧するとファイルを再び利用できます。",
+      "panelDescription": "接続が切れました。セッションに再参加しています…"
     },
     "interrupted": {
       "title": "転送未完了",
@@ -43,7 +46,8 @@
   },
   "form": {
     "codeLabel": "接続コード",
-    "codePlaceholder": "64文字のコードを貼り付け…"
+    "codePlaceholder": "64文字のコードを貼り付け…",
+    "orPasteCode": "またはコードを貼り付け"
   },
   "actions": {
     "scanQr": "QRコードをスキャン",
@@ -51,7 +55,13 @@
     "downloadAll": "すべてダウンロード",
     "view": "表示",
     "play": "再生",
-    "open": "開く"
+    "open": "開く",
+    "scanQrHint": "Web カメラで送信者の QR を読み取ります",
+    "downloadingPercent": "ダウンロード中 {{percent}}%",
+    "downloadAllWithSize": "すべてダウンロード（{{size}}）",
+    "showInFinder": "Finder で表示",
+    "backToHome": "ホームに戻る",
+    "viewPhotos": "写真を表示"
   },
   "errors": {
     "invalidCode": "有効な64文字の16進コードを入力してください。",
@@ -80,13 +90,19 @@
     "noneTitle": "カメラが見つかりません",
     "noneHint": "Webカメラを接続するか、接続コードを貼り付けてください。",
     "unavailableTitle": "カメラを利用できません",
-    "starting": "カメラを起動中…"
+    "starting": "カメラを起動中…",
+    "enableTitle": "カメラアクセスを有効にする",
+    "enableDescription": "送信者の QR コードを読み取るためだけに使用します。戻ってコードを手動で貼り付けることもできます。",
+    "usePastedCode": "代わりに貼り付けたコードを使う",
+    "joiningDescription": "送信者のセッションに参加しています。"
   },
   "status": {
     "ready": "準備完了",
     "saved": "保存済み",
     "failed": "失敗",
-    "downloadingPercent": "{{percent}}% ダウンロード中"
+    "downloadingPercent": "{{percent}}% ダウンロード中",
+    "percent": "{{percent}}%",
+    "waitingForFiles": "送信者からのファイルを待機中…"
   },
   "summary": {
     "receivedCount_one": "{{count}} 個中 {{completed}} 個を受信",
@@ -95,6 +111,12 @@
     "savedToPhotos_other": "{{count}} 個を写真に保存しました",
     "savedInFiles_one": "ファイルに保存しました",
     "savedInFiles_other": "{{count}} 個をファイルに保存しました",
-    "tapToView": "タップして表示"
+    "tapToView": "タップして表示",
+    "saved": "保存済み",
+    "savedToLocation": "{{location}} に保存済み",
+    "receivedProgress": "{{count}} 個中 {{completed}} 個受信済み",
+    "senderLeftBeforeFinishing": "完了前に送信者が退出しました。",
+    "filesSaved_one": "{{count}} 個のファイルを保存済み",
+    "filesSaved_other": "{{count}} 個のファイルを保存済み"
   }
 }

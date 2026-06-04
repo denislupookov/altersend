@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { buildJoinUrl } from '@altersend/domain'
 import { CloseIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/i18n'
 import { QRCode } from './QRCode'
 
 interface QRModalProps {
@@ -10,6 +11,7 @@ interface QRModalProps {
 }
 
 export function QRModal({ topic, open, onClose }: QRModalProps) {
+  const { t } = useTranslation(['send', 'common'])
   useEffect(() => {
     if (!open) return
     const onKey = (event: KeyboardEvent) => {
@@ -42,14 +44,14 @@ export function QRModal({ topic, open, onClose }: QRModalProps) {
         <div className='relative flex items-start justify-center px-10 pb-1 pt-5'>
           <div className='text-center'>
             <span className='block text-[17px] font-semibold text-text-primary'>
-              Scan to connect
+              {t('send:connection.scanToConnect')}
             </span>
             <p className='m-0 mt-1 text-[12px] leading-relaxed text-text-muted'>
-              Open AlterSend on another device and scan this code
+              {t('send:connection.qrModalDescription')}
             </p>
           </div>
           <button
-            aria-label='Close'
+            aria-label={t('common:actions.close')}
             className='absolute right-4 top-4 inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-text-muted transition-colors hover:bg-surface-secondary hover:text-text-primary'
             onClick={onClose}
             style={{ appearance: 'none' }}

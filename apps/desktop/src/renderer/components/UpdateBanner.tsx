@@ -1,8 +1,10 @@
 import { ArrowUp, X } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from '@altersend/i18n'
 import { bridgeApi } from '../api/bridgeApi'
 
 export function UpdateBanner({ ready }: { ready: boolean }) {
+  const { t } = useTranslation(['common'])
   const [dismissed, setDismissed] = useState(false)
   const [restartFailed, setRestartFailed] = useState(false)
 
@@ -25,17 +27,17 @@ export function UpdateBanner({ ready }: { ready: boolean }) {
           <ArrowUp size={12} className='text-info' aria-hidden />
         </div>
         <span className='flex-1 text-[13px] font-semibold text-text-primary'>
-          {restartFailed ? 'Restart failed — please quit and reopen' : 'Update ready'}
+          {restartFailed ? t('common:update.restartFailed') : t('common:update.ready')}
         </span>
         <div className='flex items-center gap-2'>
           <button
             onClick={() => void restart()}
             className='appearance-none border-0 bg-transparent p-0 text-[13px] font-semibold text-info cursor-pointer'
           >
-            Restart
+            {t('common:update.restart')}
           </button>
           <button
-            aria-label='Dismiss'
+            aria-label={t('common:actions.dismiss')}
             onClick={() => setDismissed(true)}
             className='flex appearance-none border-0 bg-transparent p-0 cursor-pointer text-text-secondary'
           >

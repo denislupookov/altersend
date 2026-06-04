@@ -9,6 +9,7 @@ import {
   type SelectedFile
 } from '@altersend/domain'
 import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 
 function uriToFilePath(uri: string): string {
   if (!uri.startsWith('file://')) return uri
@@ -21,6 +22,7 @@ function uriToFilePath(uri: string): string {
 }
 
 export function SelectFilesView() {
+  const { t } = useTranslation(['send', 'common'])
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const [selectionError, setSelectionError] = useState<string | null>(null)
 
@@ -47,7 +49,7 @@ export function SelectFilesView() {
         addSelectedFiles(normalizedFiles)
       }
     } catch (error) {
-      setSelectionError('Failed to pick files')
+      setSelectionError(t('send:errors.failedPickFiles'))
       console.error(error)
     }
   }
@@ -74,7 +76,7 @@ export function SelectFilesView() {
         addSelectedFiles(normalizedFiles)
       }
     } catch (error) {
-      setSelectionError('Failed to pick photos')
+      setSelectionError(t('send:errors.failedPickPhotos'))
       console.error(error)
     }
   }
@@ -83,7 +85,7 @@ export function SelectFilesView() {
     if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
-          options: ['Cancel', 'Photos', 'Files'],
+          options: [t('common:actions.cancel'), t('common:files.photos'), t('common:files.files')],
           cancelButtonIndex: 0
         },
         (index) => {
@@ -94,10 +96,10 @@ export function SelectFilesView() {
       return
     }
 
-    Alert.alert('Add files', undefined, [
-      { text: 'Photos', onPress: () => void pickFromPhotos() },
-      { text: 'Files', onPress: () => void pickFromFiles() },
-      { text: 'Cancel', style: 'cancel' }
+    Alert.alert(t('send:actions.pickFilesTitle'), undefined, [
+      { text: t('common:files.photos'), onPress: () => void pickFromPhotos() },
+      { text: t('common:files.files'), onPress: () => void pickFromFiles() },
+      { text: t('common:actions.cancel'), style: 'cancel' }
     ])
   }
 
@@ -108,17 +110,19 @@ export function SelectFilesView() {
           description={
             hasSelectedFiles ? (
               <>
-                Tap to <DropZoneLink>add more</DropZoneLink>
+                {t('send:dropzone.tapTo')}{' '}
+                <DropZoneLink>{t('send:dropzone.addMoreLink')}</DropZoneLink>
               </>
             ) : (
               <>
-                Tap to <DropZoneLink>browse</DropZoneLink>
+                {t('send:dropzone.tapTo')}{' '}
+                <DropZoneLink>{t('send:dropzone.browseLink')}</DropZoneLink>
               </>
             )
           }
           hasFiles={hasSelectedFiles}
           onClick={() => void browse()}
-          title={hasSelectedFiles ? 'Add more files' : 'Add files'}
+          title={hasSelectedFiles ? t('send:actions.addMoreFiles') : t('send:actions.addFiles')}
         />
       </View>
 

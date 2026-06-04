@@ -1,11 +1,5 @@
 import type { SenderUploadItem } from './draftTypes'
 
-export function getStatusLabel(item: Pick<SenderUploadItem, 'status'>) {
-  if (item.status === 'completed') return 'Uploaded'
-  if (item.status === 'uploading') return 'Uploading...'
-  return 'Waiting'
-}
-
 export function getStatusTone(
   item: Pick<SenderUploadItem, 'status'>
 ): 'muted' | 'active' | 'success' {

@@ -8,6 +8,7 @@
   },
   "bridgeUnavailable": {
     "title": "Electron bridge unavailable",
-    "description": "This renderer is running without the desktop bridge. Restart AlterSend from the desktop app."
+    "description": "This renderer is running without the desktop bridge. Restart AlterSend from the desktop app.",
+    "status": "Bridge unavailable"
   }
 }

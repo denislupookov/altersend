@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { Paths } from 'expo-file-system'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { ArrowLeftIcon, DownloadIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/i18n'
 import { useNavigation, useRouter } from 'expo-router'
 import { uriToPath } from '@/src/api/mobileApi'
 import { Layout, IllustrationLayout } from '@/src/components'
@@ -10,15 +11,65 @@ import { ErrorPanel, ReceiveIncomingView, ReceiveReconnectingView } from '@/src/
 import ConnectionLostSvg from '../../../../assets/connection-lost.svg'
 import {
   createDirectoryDownloadRequests,
+  PEER_UNREACHABLE_ERROR_CODE,
   formatFileSize,
   getDownloadTotals,
-  getReceivePageCopy,
   getReceiveStep,
+  type ReceiveStep,
   useTransferStore
 } from '@altersend/domain'
 import { clearSession, downloadFiles } from '@altersend/domain'
 
+function getDisplayError(t: ReturnType<typeof useTranslation>['t'], message: string | null) {
+  if (!message) return null
+  return message === PEER_UNREACHABLE_ERROR_CODE ? t('receive:errors.unreachable') : message
+}
+
+function getReceivePageCopy(
+  t: ReturnType<typeof useTranslation>['t'],
+  step: ReceiveStep,
+  incomingCount: number,
+  totalBytes: number
+) {
+  switch (step) {
+    case 'join':
+      return {
+        title: t('receive:page.join.title'),
+        description: t('receive:page.join.description')
+      }
+    case 'connecting':
+      return {
+        title: t('receive:page.connecting.title'),
+        description: t('receive:page.connecting.description')
+      }
+    case 'incoming_transfer':
+      return {
+        title: t('receive:page.incomingTransfer.title'),
+        description: t('receive:page.incomingTransfer.description', {
+          count: incomingCount,
+          size: formatFileSize(totalBytes)
+        })
+      }
+    case 'completed':
+      return {
+        title: t('receive:page.completed.title', { count: incomingCount }),
+        description: ''
+      }
+    case 'reconnecting':
+      return {
+        title: t('receive:page.reconnecting.title'),
+        description: t('receive:page.reconnecting.description')
+      }
+    case 'interrupted':
+      return {
+        title: t('receive:page.interrupted.title'),
+        description: t('receive:page.interrupted.description')
+      }
+  }
+}
+
 export default function ReceiveIncomingScreen() {
+  const { t } = useTranslation(['receive', 'common'])
   const { theme } = useTheme()
   const navigation = useNavigation()
   const router = useRouter()
@@ -28,6 +79,7 @@ export default function ReceiveIncomingScreen() {
   const peerCount = useTransferStore((s) => s.peerCount)
   const isReconnecting = useTransferStore((s) => s.isReconnecting)
   const errorMessage = useTransferStore((s) => s.errorMessage)
+  const displayError = getDisplayError(t, errorMessage)
 
   const totals = useMemo(
     () => getDownloadTotals(incomingFileOffers, receiveDownloadStates),
@@ -63,7 +115,7 @@ export default function ReceiveIncomingScreen() {
       headerLeft: () => (
         <Pressable
           accessibilityRole='button'
-          accessibilityLabel='Back'
+          accessibilityLabel={t('common:actions.back')}
           onPress={handleEndSession}
           hitSlop={12}
           style={({ pressed }) => ({
@@ -76,10 +128,10 @@ export default function ReceiveIncomingScreen() {
         </Pressable>
       )
     })
-  }, [navigation, handleEndSession, theme.colors.colorTextPrimary])
+  }, [navigation, handleEndSession, t, theme.colors.colorTextPrimary])
 
   const totalBytes = incomingFileOffers.reduce((sum, f) => sum + f.size, 0)
-  const { title, description } = getReceivePageCopy(step, incomingFileOffers.length, totalBytes)
+  const { title, description } = getReceivePageCopy(t, step, incomingFileOffers.length, totalBytes)
 
   const handleDownloadAll = async () => {
     if (incomingFileOffers.length === 0 || isDownloading) return
@@ -96,7 +148,7 @@ export default function ReceiveIncomingScreen() {
 
   const endSessionButton = (
     <Button onClick={handleEndSession} size='lg' variant='secondary' width='full'>
-      End session
+      {t('common:actions.endSession')}
     </Button>
   )
 
@@ -118,14 +170,14 @@ export default function ReceiveIncomingScreen() {
   if (step !== 'incoming_transfer') {
     return (
       <IllustrationLayout
-        title='Session ended'
-        description='Return to start a new transfer.'
+        title={t('receive:page.sessionEnded.title')}
+        description={t('receive:page.sessionEnded.description')}
         hasNativeHeader
         illustration={<ConnectionLostSvg width='100%' height='100%' />}
         aspectRatio={800 / 430}
         footer={
           <Button onClick={handleEndSession} size='lg' variant='primary' width='full'>
-            Back to home
+            {t('receive:actions.backToHome')}
           </Button>
         }
       />
@@ -143,7 +195,9 @@ export default function ReceiveIncomingScreen() {
       ]}
     >
       <View style={[styles.badgeDot, { backgroundColor: theme.colors.colorSuccess }]} />
-      <Text style={[styles.badgeText, { color: theme.colors.colorSuccess }]}>Connected</Text>
+      <Text style={[styles.badgeText, { color: theme.colors.colorSuccess }]}>
+        {t('common:status.connected')}
+      </Text>
     </View>
   )
 
@@ -163,13 +217,17 @@ export default function ReceiveIncomingScreen() {
             variant='light'
             width='full'
           >
-            {isDownloading ? `Downloading ${totals.percent}%` : `Download all${sizeLabel}`}
+            {isDownloading
+              ? t('receive:actions.downloadingPercent', { percent: totals.percent })
+              : sizeLabel
+                ? t('receive:actions.downloadAllWithSize', { size: formatFileSize(totalBytes) })
+                : t('receive:actions.downloadAll')}
           </Button>
           {endSessionButton}
         </View>
       }
     >
-      {errorMessage ? <ErrorPanel message={errorMessage} /> : null}
+      {displayError ? <ErrorPanel message={displayError} /> : null}
       <ReceiveIncomingView />
     </Layout>
   )

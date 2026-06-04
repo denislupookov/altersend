@@ -23,7 +23,8 @@
     "dismiss": "Dismiss",
     "openSettings": "Open settings",
     "update": "업데이트",
-    "downloadAll": "Download all"
+    "downloadAll": "Download all",
+    "skip": "건너뛰기"
   },
   "labels": {
     "settings": "설정",
@@ -55,5 +56,8 @@
     "restart": "다시 시작",
     "update": "업데이트",
     "restartFailed": "Restart failed — please quit and reopen"
+  },
+  "status": {
+    "connected": "연결됨"
   }
 }

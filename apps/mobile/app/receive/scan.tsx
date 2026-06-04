@@ -3,6 +3,7 @@ import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from 'r
 import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { ArrowLeftIcon, QrCodeIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/i18n'
 import { useNavigation, useRouter } from 'expo-router'
 import { extractJoinCode, useTransferStore } from '@altersend/domain'
 import { joinSession } from '@altersend/domain'
@@ -10,6 +11,7 @@ import { Layout } from '@/src/components'
 import { useToast } from '@/src/components/Toast'
 
 export default function ReceiveScanScreen() {
+  const { t } = useTranslation(['receive', 'common'])
   const { theme } = useTheme()
   const navigation = useNavigation()
   const router = useRouter()
@@ -39,7 +41,7 @@ export default function ReceiveScanScreen() {
       headerBackVisible: false,
       headerLeft: () => (
         <Pressable
-          accessibilityLabel='Back'
+          accessibilityLabel={t('common:actions.back')}
           accessibilityRole='button'
           hitSlop={12}
           onPress={goBack}
@@ -53,7 +55,7 @@ export default function ReceiveScanScreen() {
         </Pressable>
       )
     })
-  }, [goBack, navigation, theme.colors.colorTextPrimary])
+  }, [goBack, navigation, t, theme.colors.colorTextPrimary])
 
   useEffect(() => {
     if (!permission) {
@@ -78,8 +80,8 @@ export default function ReceiveScanScreen() {
         if (now - invalidScanAtRef.current > 1500) {
           invalidScanAtRef.current = now
           toast.show({
-            title: 'Unsupported QR code',
-            hint: 'Scan an AlterSend connection code.',
+            title: t('receive:errors.unsupportedQrTitle'),
+            hint: t('receive:errors.unsupportedQrHint'),
             durationMs: 2500
           })
         }
@@ -96,36 +98,35 @@ export default function ReceiveScanScreen() {
         scanLockRef.current = false
         setIsResolving(false)
         toast.show({
-          title: 'Couldn’t join session',
-          hint: 'Try scanning again or paste the code manually.',
+          title: t('receive:errors.mobileJoinFailedTitle'),
+          hint: t('receive:errors.mobileJoinFailedHint'),
           durationMs: 3500
         })
       }
     },
-    [canScan, goBack, toast]
+    [canScan, goBack, t, toast]
   )
 
   const permissionCopy = useMemo(() => {
     if (!permission) {
       return {
-        title: 'Preparing camera',
-        description: 'Checking camera access so you can scan the sender’s QR code.'
+        title: t('receive:camera.preparingTitle'),
+        description: t('receive:camera.preparingDescription')
       }
     }
 
     if (!cameraGranted) {
       return {
-        title: 'Camera access needed',
-        description: 'Allow camera access to scan a sender’s connection QR code.'
+        title: t('receive:camera.accessNeededTitle'),
+        description: t('receive:camera.accessNeededDescription')
       }
     }
 
     return {
-      title: 'Scan QR code',
-      description:
-        'Center the sender’s QR code inside the frame. AlterSend will connect automatically.'
+      title: t('receive:camera.scanTitle'),
+      description: t('receive:camera.scanDescription')
     }
-  }, [cameraGranted, permission])
+  }, [cameraGranted, permission, t])
 
   const handlePermissionAction = useCallback(async () => {
     if (canAskAgain) {
@@ -136,7 +137,9 @@ export default function ReceiveScanScreen() {
     await Linking.openSettings()
   }, [canAskAgain, requestPermission])
 
-  const permissionButtonLabel = canAskAgain ? 'Allow camera' : 'Open settings'
+  const permissionButtonLabel = canAskAgain
+    ? t('receive:actions.allowCamera')
+    : t('common:actions.openSettings')
 
   return (
     <Layout title={permissionCopy.title} description={permissionCopy.description} hasNativeHeader>
@@ -156,11 +159,10 @@ export default function ReceiveScanScreen() {
             <QrCodeIcon size={24} color={theme.colors.colorInfo} />
           </View>
           <Text style={[styles.noticeTitle, { color: theme.colors.colorTextPrimary }]}>
-            Enable camera access
+            {t('receive:camera.enableTitle')}
           </Text>
           <Text style={[styles.noticeText, { color: theme.colors.colorTextSecondary }]}>
-            You only need this to scan the sender’s QR code. You can still go back and paste the
-            code manually.
+            {t('receive:camera.enableDescription')}
           </Text>
           <Button
             onClick={() => void handlePermissionAction()}
@@ -171,7 +173,7 @@ export default function ReceiveScanScreen() {
             {permissionButtonLabel}
           </Button>
           <Button onClick={goBack} size='lg' variant='secondary' width='full'>
-            Use pasted code instead
+            {t('receive:camera.usePastedCode')}
           </Button>
         </View>
       ) : (
@@ -266,7 +268,7 @@ export default function ReceiveScanScreen() {
                 >
                   <ActivityIndicator color={theme.colors.colorTextPrimary} />
                   <Text style={[styles.statusTitle, { color: theme.colors.colorTextPrimary }]}>
-                    Connecting…
+                    {t('common:actions.connecting')}
                   </Text>
                   <Text
                     style={[
@@ -274,7 +276,7 @@ export default function ReceiveScanScreen() {
                       { color: withAlpha(theme.colors.colorTextPrimary, 0.82) }
                     ]}
                   >
-                    Joining the sender’s session.
+                    {t('receive:camera.joiningDescription')}
                   </Text>
                 </View>
               </View>

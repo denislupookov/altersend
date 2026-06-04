@@ -8,6 +8,7 @@
   },
   "bridgeUnavailable": {
     "title": "Electron ブリッジを利用できません",
-    "description": "このレンダラーはデスクトップブリッジなしで実行されています。デスクトップアプリから AlterSend を再起動してください。"
+    "description": "このレンダラーはデスクトップブリッジなしで実行されています。デスクトップアプリから AlterSend を再起動してください。",
+    "status": "ブリッジを利用できません"
   }
 }

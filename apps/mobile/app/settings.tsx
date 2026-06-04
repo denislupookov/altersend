@@ -135,22 +135,24 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>Support</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>
+            {t('settings:sections.support')}
+          </Text>
           <View style={[styles.card, cardStyle]}>
             <LinkRow
-              label='Feedback'
-              hint='Report a problem or suggest a feature'
+              label={t('settings:rows.feedback')}
+              hint={t('settings:rows.feedbackHint')}
               icon={<AlertCircleIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => router.push('/report')}
             />
             <LinkRow
-              label='Discord'
-              hint='Join the community'
+              label={t('settings:rows.discord')}
+              hint={t('settings:rows.discordHint')}
               icon={<DiscordIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(discordUrl)}
             />
             <LinkRow
-              label='Contact us'
+              label={t('settings:rows.contact')}
               hint={supportEmail}
               icon={<MailIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(`mailto:${supportEmail}`)}
@@ -160,22 +162,24 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>About</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>
+            {t('settings:sections.about')}
+          </Text>
           <View style={[styles.card, cardStyle]}>
             <LinkRow
-              label='Privacy policy'
-              hint='How AlterSend handles your data'
+              label={t('settings:rows.privacyPolicy')}
+              hint={t('settings:rows.privacyPolicyHint')}
               icon={<LockIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(privacyPolicyUrl)}
             />
             <LinkRow
-              label='Terms of service'
-              hint='Rules for using AlterSend'
+              label={t('settings:rows.terms')}
+              hint={t('settings:rows.termsHint')}
               icon={<FileTextIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(termsOfServiceUrl)}
             />
             <LinkRow
-              label='Website'
+              label={t('settings:rows.website')}
               hint={websiteUrl.replace(/^https?:\/\//, '')}
               icon={<GlobeIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(websiteUrl)}
@@ -191,7 +195,7 @@ export default function SettingsScreen() {
               AlterSend
             </Text>
             <Text style={[styles.brandTagline, { color: theme.colors.colorTextMuted }]}>
-              Peer-to-peer file transfer
+              {t('common:app.tagline')}
             </Text>
           </View>
           <View style={[styles.versionChip, { backgroundColor: theme.colors.colorSurfacePrimary }]}>

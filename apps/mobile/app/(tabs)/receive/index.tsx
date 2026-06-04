@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '@altersend/components'
+import { useTranslation } from '@altersend/i18n'
 import { useFocusEffect, useRouter } from 'expo-router'
 import {
   JOIN_CODE_PATTERN,
+  PEER_UNREACHABLE_ERROR_CODE,
+  formatFileSize,
   getDownloadTotals,
-  getReceivePageCopy,
   getReceiveStep,
+  type ReceiveStep,
   useTransferStore
 } from '@altersend/domain'
 import { clearSession, joinSession } from '@altersend/domain'
@@ -18,7 +21,56 @@ import {
 } from '@/src/transfer/receive'
 import { Layout } from '@/src/components'
 
+function getDisplayError(t: ReturnType<typeof useTranslation>['t'], message: string | null) {
+  if (!message) return null
+  return message === PEER_UNREACHABLE_ERROR_CODE ? t('receive:errors.unreachable') : message
+}
+
+function getReceivePageCopy(
+  t: ReturnType<typeof useTranslation>['t'],
+  step: ReceiveStep,
+  incomingCount: number,
+  totalBytes: number
+) {
+  switch (step) {
+    case 'join':
+      return {
+        title: t('receive:page.join.title'),
+        description: t('receive:page.join.description')
+      }
+    case 'connecting':
+      return {
+        title: t('receive:page.connecting.title'),
+        description: t('receive:page.connecting.description')
+      }
+    case 'incoming_transfer':
+      return {
+        title: t('receive:page.incomingTransfer.title'),
+        description: t('receive:page.incomingTransfer.description', {
+          count: incomingCount,
+          size: formatFileSize(totalBytes)
+        })
+      }
+    case 'completed':
+      return {
+        title: t('receive:page.completed.title', { count: incomingCount }),
+        description: ''
+      }
+    case 'reconnecting':
+      return {
+        title: t('receive:page.reconnecting.title'),
+        description: t('receive:page.reconnecting.description')
+      }
+    case 'interrupted':
+      return {
+        title: t('receive:page.interrupted.title'),
+        description: t('receive:page.interrupted.description')
+      }
+  }
+}
+
 export default function ReceiveScreen() {
+  const { t } = useTranslation(['receive', 'common'])
   const router = useRouter()
   const errorMessage = useTransferStore((s) => s.errorMessage)
   const role = useTransferStore((s) => s.role)
@@ -38,8 +90,8 @@ export default function ReceiveScreen() {
     if (!showValidation || isValidJoinCode || trimmedJoinCode.length === 0) {
       return undefined
     }
-    return 'Enter a valid 64-character hex code.'
-  }, [isValidJoinCode, showValidation, trimmedJoinCode.length])
+    return t('receive:errors.invalidCode')
+  }, [isValidJoinCode, showValidation, t, trimmedJoinCode.length])
 
   const handleJoinCodeChange = (value: string) => {
     setJoinCode(value)
@@ -91,12 +143,10 @@ export default function ReceiveScreen() {
     }
   }, [step])
 
-  const copy = getReceivePageCopy(step, incomingFileOffers.length)
-  const title = step === 'join' ? 'Receive' : copy.title
-  const description =
-    step === 'join'
-      ? "Scan a sender's QR or paste their 64-character code to start streaming."
-      : copy.description
+  const totalBytes = incomingFileOffers.reduce((sum, file) => sum + file.size, 0)
+  const copy = getReceivePageCopy(t, step, incomingFileOffers.length, totalBytes)
+  const title = step === 'join' ? t('receive:page.tabTitle') : copy.title
+  const description = step === 'join' ? t('receive:page.join.mobileDescription') : copy.description
 
   const footer =
     step === 'join' ? undefined : (
@@ -106,12 +156,13 @@ export default function ReceiveScreen() {
         variant={step === 'interrupted' ? 'primary' : 'secondary'}
         width='full'
       >
-        {step === 'interrupted' ? 'Done' : 'End session'}
+        {step === 'interrupted' ? t('common:actions.done') : t('common:actions.endSession')}
       </Button>
     )
 
+  const displayError = getDisplayError(t, errorMessage)
   const errorPanel =
-    errorMessage && step !== 'interrupted' ? <ErrorPanel message={errorMessage} /> : null
+    displayError && step !== 'interrupted' ? <ErrorPanel message={displayError} /> : null
 
   if (step === 'join') {
     return (

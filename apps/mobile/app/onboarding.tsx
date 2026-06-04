@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Button, ExternalLink, PaginationDots, useTheme } from '@altersend/components'
-import { onboardingSlides, type OnboardingSlide } from '@altersend/domain'
+import { onboardingSlides, type OnboardingSlide, type OnboardingSlideKind } from '@altersend/domain'
+import { useTranslation } from '@altersend/i18n'
 import { useRouter } from 'expo-router'
 import {
   FlatList,
@@ -18,7 +19,19 @@ import { OnboardingIllustration } from '@/src/onboarding/OnboardingIllustration'
 import { markOnboardingCompleted } from '@/src/onboarding/onboardingStorage'
 import brandLogo from '@/assets/images/brand-logo.png'
 
+function getSlideKey(kind: OnboardingSlideKind) {
+  switch (kind) {
+    case 'pairing':
+      return 'direct'
+    case 'keep-open':
+      return 'keepOpen'
+    case 'privacy':
+      return 'encrypted'
+  }
+}
+
 export default function OnboardingScreen() {
+  const { t } = useTranslation(['onboarding', 'common'])
   const { theme } = useTheme()
   const router = useRouter()
   const insets = useSafeAreaInsets()
@@ -66,7 +79,7 @@ export default function OnboardingScreen() {
         </View>
         <View pointerEvents={isLast ? 'none' : 'auto'} style={{ opacity: isLast ? 0 : 1 }}>
           <Button onClick={finish} size='sm' variant='ghost'>
-            Skip
+            {t('common:actions.skip')}
           </Button>
         </View>
       </View>
@@ -87,7 +100,7 @@ export default function OnboardingScreen() {
       <View style={styles.footer}>
         <PaginationDots count={onboardingSlides.length} activeIndex={index} />
         <Button onClick={next} size='lg' variant='light' width='full'>
-          {isLast ? 'Get started' : 'Continue'}
+          {isLast ? t('common:actions.getStarted') : t('common:actions.continue')}
         </Button>
       </View>
     </View>
@@ -95,7 +108,9 @@ export default function OnboardingScreen() {
 }
 
 function Slide({ slide, width }: { slide: OnboardingSlide; width: number }) {
+  const { t } = useTranslation(['onboarding'])
   const { theme } = useTheme()
+  const slideKey = getSlideKey(slide.kind)
 
   return (
     <View style={[styles.slide, { width }]}>
@@ -103,15 +118,17 @@ function Slide({ slide, width }: { slide: OnboardingSlide; width: number }) {
         <SlideHero slide={slide} />
       </View>
 
-      <Text style={[styles.title, { color: theme.colors.colorTextPrimary }]}>{slide.title}</Text>
+      <Text style={[styles.title, { color: theme.colors.colorTextPrimary }]}>
+        {t(`onboarding:slides.${slideKey}.title`)}
+      </Text>
       <Text style={[styles.subtitle, { color: theme.colors.colorTextSecondary }]}>
-        {slide.subtitle}
+        {t(`onboarding:slides.${slideKey}.description`)}
       </Text>
 
       {slide.link ? (
         <View style={styles.linkButton}>
           <ExternalLink href={slide.link.url} onPress={() => void Linking.openURL(slide.link!.url)}>
-            {slide.link.label}
+            {t('onboarding:slides.encrypted.link')}
           </ExternalLink>
         </View>
       ) : null}

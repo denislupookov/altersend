@@ -1,5 +1,6 @@
 import { Linking, Platform } from 'react-native'
 import type { SaveDestination } from '@altersend/domain'
+import { i18nextInstance } from '@altersend/i18n'
 import type { ShowToastInput } from '@/src/components/Toast'
 
 interface BuildCompletionToastInput {
@@ -30,9 +31,11 @@ export function buildCompletionToast({
 
   if (photosCount > 0 && filesystemCount > 0) {
     return {
-      title: `${count} files saved`,
-      hint: Platform.OS === 'ios' ? 'Photos + AlterSend folder' : undefined,
-      actionLabel: Platform.OS === 'android' ? 'View Photos' : undefined,
+      title: i18nextInstance.t('receive:summary.filesSaved', { count }),
+      hint:
+        Platform.OS === 'ios' ? i18nextInstance.t('common:files.photosAndAlterSend') : undefined,
+      actionLabel:
+        Platform.OS === 'android' ? i18nextInstance.t('receive:actions.viewPhotos') : undefined,
       onPress: openPhotos,
       durationMs: LONG_DURATION_MS
     }
@@ -40,18 +43,19 @@ export function buildCompletionToast({
 
   if (photosCount > 0) {
     return {
-      title: count === 1 ? 'Saved to Photos' : `${count} saved to Photos`,
-      hint: Platform.OS === 'ios' ? 'Tap to view' : undefined,
-      actionLabel: Platform.OS === 'android' ? 'View' : undefined,
+      title: i18nextInstance.t('receive:summary.savedToPhotos', { count }),
+      hint: Platform.OS === 'ios' ? i18nextInstance.t('receive:summary.tapToView') : undefined,
+      actionLabel:
+        Platform.OS === 'android' ? i18nextInstance.t('receive:actions.view') : undefined,
       onPress: openPhotos,
       durationMs: LONG_DURATION_MS
     }
   }
 
   return {
-    title: count === 1 ? 'Saved in Files' : `${count} saved in Files`,
-    hint: Platform.OS === 'ios' ? 'AlterSend folder' : undefined,
-    actionLabel: Platform.OS === 'android' ? 'Open' : undefined,
+    title: i18nextInstance.t('receive:summary.savedInFiles', { count }),
+    hint: Platform.OS === 'ios' ? i18nextInstance.t('common:files.alterSendFolder') : undefined,
+    actionLabel: Platform.OS === 'android' ? i18nextInstance.t('receive:actions.open') : undefined,
     onPress: Platform.OS === 'ios' ? openFiles : undefined,
     durationMs: LONG_DURATION_MS
   }

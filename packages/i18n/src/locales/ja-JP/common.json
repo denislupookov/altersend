@@ -23,7 +23,8 @@
     "dismiss": "閉じる",
     "openSettings": "設定を開く",
     "update": "更新",
-    "downloadAll": "すべてダウンロード"
+    "downloadAll": "すべてダウンロード",
+    "skip": "スキップ"
   },
   "labels": {
     "settings": "設定",
@@ -55,5 +56,8 @@
     "restart": "再起動",
     "update": "更新",
     "restartFailed": "再起動に失敗しました — 終了して開き直してください"
+  },
+  "status": {
+    "connected": "接続済み"
   }
 }

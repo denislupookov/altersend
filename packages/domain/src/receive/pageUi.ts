@@ -1,5 +1,4 @@
-import type { TransferRole } from '@altersend/domain'
-import { formatFileSize } from '../format'
+import type { TransferRole } from '@altersend/core'
 
 export type ReceiveStep =
   | 'join'
@@ -8,16 +7,6 @@ export type ReceiveStep =
   | 'reconnecting'
   | 'interrupted'
   | 'completed'
-
-export interface ReceivePageCopy {
-  title: string
-  description: string
-}
-
-export interface ReceiveConnectedPanelCopy {
-  title: string
-  description: string
-}
 
 interface ReceiveStepInput {
   hasIncomingFiles: boolean
@@ -55,72 +44,6 @@ export function getReceiveStep({
   }
 
   return 'connecting'
-}
-
-export function getReceivePageCopy(
-  step: ReceiveStep,
-  incomingCount: number,
-  totalBytes = 0
-): ReceivePageCopy {
-  switch (step) {
-    case 'join':
-      return {
-        title: 'Receive files',
-        description: 'Enter a 64-character connection code from the sender to stream their files.'
-      }
-    case 'connecting':
-      return {
-        title: 'Connecting',
-        description: 'Establishing a secure session with the sender.'
-      }
-    case 'incoming_transfer':
-      return {
-        title: 'Files available',
-        description: `${incomingCount} ${incomingCount === 1 ? 'file' : 'files'} · ${formatFileSize(totalBytes)}`
-      }
-    case 'completed':
-      return {
-        title: incomingCount === 1 ? 'File received' : 'Files received',
-        description: ''
-      }
-    case 'reconnecting':
-      return {
-        title: 'Reconnecting',
-        description:
-          'Reconnecting to the session. Files will be available again as soon as the link is restored.'
-      }
-    case 'interrupted':
-      return {
-        title: 'Transfer incomplete',
-        description: 'The sender left before all files arrived.'
-      }
-    default: {
-      const exhaustiveCheck: never = step
-      return exhaustiveCheck
-    }
-  }
-}
-
-export function getConnectedPanelCopy(step: ReceiveStep): ReceiveConnectedPanelCopy | null {
-  switch (step) {
-    case 'incoming_transfer':
-      return {
-        title: 'Files ready',
-        description: 'The sender has shared files. Review them and start each download when ready.'
-      }
-    case 'completed':
-      return null
-    case 'reconnecting':
-    case 'interrupted':
-      return null
-    case 'join':
-    case 'connecting':
-      return null
-    default: {
-      const exhaustiveCheck: never = step
-      return exhaustiveCheck
-    }
-  }
 }
 
 export function isConnectedStep(step: ReceiveStep): boolean {

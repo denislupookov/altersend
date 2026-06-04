@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from '@altersend/components/icons'
 
-export interface SelectOption {
+interface SelectOption {
   value: string
   label: string
 }

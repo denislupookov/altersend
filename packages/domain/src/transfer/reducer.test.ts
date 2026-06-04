@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { initialTransferSessionState, transferSessionReducer } from './reducer'
+import {
+  PEER_UNREACHABLE_ERROR_CODE,
+  initialTransferSessionState,
+  transferSessionReducer
+} from './reducer'
 import type { TransferAction, TransferSessionState } from './types'
 import type { IncomingFileOffer } from '@altersend/core'
 
@@ -133,7 +137,7 @@ describe('transferSessionReducer — peer_unreachable', () => {
     expect(next.role).toBeNull()
     expect(next.connectionState).toBe('disconnected')
     expect(next.topic).toBe('')
-    expect(next.errorMessage).toMatch(/Couldn't reach the sender/)
+    expect(next.errorMessage).toBe(PEER_UNREACHABLE_ERROR_CODE)
   })
 })
 

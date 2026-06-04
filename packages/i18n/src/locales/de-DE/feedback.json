@@ -18,6 +18,7 @@
   },
   "states": {
     "sent": "Thanks for your feedback!",
-    "failed": "Failed to send. Check your connection."
+    "failed": "Failed to send. Check your connection.",
+    "received": "Dein Feedback wurde empfangen."
   }
 }

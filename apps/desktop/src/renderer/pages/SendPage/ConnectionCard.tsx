@@ -1,5 +1,6 @@
 import { buildJoinUrl } from '@altersend/domain'
 import { QrCodeIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/i18n'
 import { QRCode } from '../../components/QRCode'
 import { TopicCopyButton } from './TopicCopyButton'
 
@@ -36,18 +37,20 @@ interface WaitingForPeersProps {
 }
 
 function WaitingForPeers({ topic, isKeyCopied, onCopy }: WaitingForPeersProps) {
+  const { t } = useTranslation(['send'])
+
   return (
     <div className='flex flex-col gap-5 px-5 py-5'>
       <TopicCopyButton
         topic={topic}
         copied={isKeyCopied}
         onCopy={onCopy}
-        placeholder='Generating secure key…'
+        placeholder={t('send:connection.placeholder')}
       />
 
       <div className='flex items-center gap-3'>
         <span className='h-px flex-1 bg-border-primary' />
-        <span className='text-[11px] text-text-muted'>or scan</span>
+        <span className='text-[11px] text-text-muted'>{t('send:connection.orScan')}</span>
         <span className='h-px flex-1 bg-border-primary' />
       </div>
 
@@ -59,7 +62,7 @@ function WaitingForPeers({ topic, isKeyCopied, onCopy }: WaitingForPeersProps) {
             className='flex items-center justify-center rounded-lg bg-surface-primary text-[12px] text-text-muted'
             style={{ width: 180, height: 180 }}
           >
-            Generating…
+            {t('send:connection.generating')}
           </div>
         )}
         <div className='flex items-center gap-2'>
@@ -70,7 +73,9 @@ function WaitingForPeers({ topic, isKeyCopied, onCopy }: WaitingForPeersProps) {
             />
             <div className='relative h-1.5 w-1.5 rounded-full bg-text-muted' />
           </div>
-          <span className='text-[12px] text-text-muted'>Waiting for a connection…</span>
+          <span className='text-[12px] text-text-muted'>
+            {t('send:connection.waitingForConnection')}
+          </span>
         </div>
       </div>
     </div>
@@ -85,17 +90,19 @@ interface ConnectedKeyProps {
 }
 
 function ConnectedKey({ topic, isKeyCopied, onCopy, onOpenQR }: ConnectedKeyProps) {
+  const { t } = useTranslation(['send'])
+
   return (
     <div className='flex items-center gap-2 px-5 py-5'>
       <TopicCopyButton topic={topic} copied={isKeyCopied} onCopy={onCopy} placeholder='—' />
       {topic ? (
         <button
-          aria-label='Show QR code'
+          aria-label={t('send:connection.showQrLabel')}
           className='flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[8px] border border-border-primary bg-surface-primary text-text-muted transition-colors hover:bg-surface-secondary hover:text-text-primary'
           onClick={onOpenQR}
           type='button'
         >
-          <QrCodeIcon size={14} label='Show QR code' />
+          <QrCodeIcon size={14} label={t('send:connection.showQrLabel')} />
         </button>
       ) : null}
     </div>

@@ -20,7 +20,11 @@ export type DownloadRowStatusTone = 'muted' | 'active' | 'success'
 export interface DownloadRowDisplay {
   description: string | undefined
   progressPercent: number | undefined
-  status: { label: string; tone: DownloadRowStatusTone }
+  status: {
+    kind: 'saved' | 'failed' | 'progress' | 'ready'
+    tone: DownloadRowStatusTone
+    message?: string
+  }
   percent: number
   isActive: boolean
   isCompleted: boolean
@@ -76,7 +80,7 @@ export function getDownloadRowDisplay(
     return {
       description: undefined,
       progressPercent: 100,
-      status: { label: 'Saved', tone: 'success' },
+      status: { kind: 'saved', tone: 'success' },
       percent: 100,
       isActive: false,
       isCompleted: true
@@ -87,7 +91,7 @@ export function getDownloadRowDisplay(
     return {
       description: undefined,
       progressPercent: state.bytesTransferred > 0 ? percent : undefined,
-      status: { label: state.message ?? 'Failed', tone: 'muted' },
+      status: { kind: 'failed', tone: 'muted', message: state.message },
       percent,
       isActive: false,
       isCompleted: false
@@ -98,7 +102,7 @@ export function getDownloadRowDisplay(
     return {
       description: `${formatFileSize(state!.bytesTransferred)} / ${formatFileSize(totalBytes)}`,
       progressPercent: percent,
-      status: { label: `${percent}%`, tone: percent > 0 ? 'active' : 'muted' },
+      status: { kind: 'progress', tone: percent > 0 ? 'active' : 'muted' },
       percent,
       isActive: true,
       isCompleted: false
@@ -108,7 +112,7 @@ export function getDownloadRowDisplay(
   return {
     description: undefined,
     progressPercent: undefined,
-    status: { label: 'Ready', tone: 'muted' },
+    status: { kind: 'ready', tone: 'muted' },
     percent: 0,
     isActive: false,
     isCompleted: false
