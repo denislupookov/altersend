@@ -43,9 +43,6 @@ export const bridgeApi = {
   onTransferEvent(cb: (message: RendererTransferEvent) => void) {
     return requireBridge().onTransferEvent(cb)
   },
-  applyUpdate() {
-    return requireBridge().applyUpdate()
-  },
   pickFiles() {
     return requireBridge().pickFiles()
   },
@@ -72,6 +69,9 @@ export const bridgeApi = {
   },
   onDeepLink(cb: (url: string) => void) {
     return requireBridge().onDeepLink(cb)
+  },
+  onRuntimeUpdated(cb: () => void) {
+    return requireBridge().onRuntimeUpdated(cb)
   },
   setSentryEnabled(enabled: boolean) {
     return requireBridge().setSentryEnabled(enabled)

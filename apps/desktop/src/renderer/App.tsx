@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useSimulatedLoading } from '@altersend/domain'
 import { bridgeApi, hasBridge } from './api/bridgeApi'
+import { UpdateBanner } from './components/UpdateBanner'
 import { isOnboardingCompleted, markOnboardingCompleted } from './lifecycle/onboardingStorage'
 import { BridgeUnavailablePage, LoadingPage, OnboardingPage, TransferPage } from './pages'
 
@@ -29,5 +30,10 @@ export default function App() {
     )
   }
 
-  return <TransferPage version={version} />
+  return (
+    <>
+      <TransferPage version={version} />
+      <UpdateBanner />
+    </>
+  )
 }

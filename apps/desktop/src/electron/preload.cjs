@@ -16,7 +16,6 @@ contextBridge.exposeInMainWorld('bridge', {
     return () => ipcRenderer.removeListener('pear:worker:event:' + P2P_WORKER, listener)
   },
 
-  applyUpdate: () => ipcRenderer.invoke('pear:applyUpdate'),
   pickFiles: () => ipcRenderer.invoke('app:pickFiles'),
   pickDirectory: () => ipcRenderer.invoke('app:pickDirectory'),
   pickSaveFile: (defaultName) => {
@@ -42,6 +41,11 @@ contextBridge.exposeInMainWorld('bridge', {
     const listener = (_evt, url) => cb(url)
     ipcRenderer.on('app:deep-link', listener)
     return () => ipcRenderer.removeListener('app:deep-link', listener)
+  },
+  onRuntimeUpdated: (cb) => {
+    const listener = () => cb()
+    ipcRenderer.on('runtime:updated', listener)
+    return () => ipcRenderer.removeListener('runtime:updated', listener)
   },
   setSentryEnabled: (enabled) => ipcRenderer.invoke('sentry:setEnabled', enabled),
   requestCameraAccess: () => ipcRenderer.invoke('app:requestCameraAccess'),

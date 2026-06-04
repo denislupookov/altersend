@@ -61,13 +61,13 @@ declare global {
       ...args: TransferMethodArgs<T>
     ) => TransferMethodReturn<T>
     onTransferEvent: (cb: (message: RendererTransferEvent) => void) => () => void
-    applyUpdate: () => Promise<unknown>
     pickFiles: () => Promise<PickedFile[] | null>
     pickDirectory: () => Promise<PickedFile | null>
     pickSaveFile: (defaultName: string) => Promise<PickedFile | null>
     getPathForFile: (file: File) => string
     appRestart: () => Promise<unknown>
     onDeepLink: (cb: (url: string) => void) => () => void
+    onRuntimeUpdated: (cb: () => void) => () => void
     showInFolder: (filePath: string) => Promise<void>
     openFile: (filePath: string) => Promise<string>
     openExternalUrl: (url: string) => Promise<void>
