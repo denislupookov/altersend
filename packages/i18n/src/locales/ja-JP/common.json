@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "AlterSend",
+    "tagline": "ピアツーピアのファイル転送",
+    "welcome": "AlterSend へようこそ",
+    "loadingTagline": "ファイルは端末間で直接転送されます。\nサーバーもコピーも仲介もありません。"
+  },
+  "actions": {
+    "back": "戻る",
+    "continue": "続ける",
+    "getStarted": "始める",
+    "cancel": "キャンセル",
+    "clear": "クリア",
+    "close": "閉じる",
+    "copy": "コピー",
+    "copied": "コピー済み",
+    "connect": "接続",
+    "connecting": "接続中…",
+    "done": "完了",
+    "endSession": "セッション終了",
+    "restart": "再起動",
+    "tryAgain": "再試行",
+    "dismiss": "閉じる",
+    "openSettings": "設定を開く",
+    "update": "更新",
+    "downloadAll": "すべてダウンロード"
+  },
+  "labels": {
+    "settings": "設定",
+    "language": "言語",
+    "systemDefault": "システム設定",
+    "camera": "カメラ",
+    "statusBar": "ステータスバー",
+    "transferMode": "転送モード",
+    "version": "バージョン",
+    "platform": "プラットフォーム",
+    "desktop": "デスクトップ",
+    "mobile": "モバイル",
+    "send": "送信",
+    "receive": "受信",
+    "connectionCode": "接続コード"
+  },
+  "files": {
+    "count_one": "{{count}} 個のファイル",
+    "count_other": "{{count}} 個のファイル",
+    "photos": "写真",
+    "files": "ファイル",
+    "downloads": "ファイル › ダウンロード",
+    "photosAndAlterSend": "写真 + AlterSend フォルダ",
+    "alterSendFolder": "AlterSend フォルダ"
+  },
+  "update": {
+    "ready": "更新の準備ができました",
+    "available": "更新があります",
+    "restart": "再起動",
+    "update": "更新",
+    "restartFailed": "再起動に失敗しました — 終了して開き直してください"
+  }
+}

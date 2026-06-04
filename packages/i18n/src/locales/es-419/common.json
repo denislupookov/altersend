@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "AlterSend",
+    "tagline": "Transferencia de archivos punto a punto",
+    "welcome": "Te damos la bienvenida a AlterSend",
+    "loadingTagline": "Los archivos viajan directamente entre tus dispositivos.\nSin servidores, sin copias, sin intermediarios."
+  },
+  "actions": {
+    "back": "Atrás",
+    "continue": "Continuar",
+    "getStarted": "Comenzar",
+    "cancel": "Cancelar",
+    "clear": "Borrar",
+    "close": "Close",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "connect": "Conectar",
+    "connecting": "Connecting…",
+    "done": "Listo",
+    "endSession": "Finalizar sesión",
+    "restart": "Reiniciar",
+    "tryAgain": "Intentar de nuevo",
+    "dismiss": "Dismiss",
+    "openSettings": "Open settings",
+    "update": "Actualizar",
+    "downloadAll": "Download all"
+  },
+  "labels": {
+    "settings": "Configuración",
+    "language": "Idioma",
+    "systemDefault": "Predeterminado del sistema",
+    "camera": "Cámara",
+    "statusBar": "Status bar",
+    "transferMode": "Transfer mode",
+    "version": "Version",
+    "platform": "Platform",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "send": "Enviar",
+    "receive": "Recibir",
+    "connectionCode": "Connection code"
+  },
+  "files": {
+    "count_one": "{{count}} archivo",
+    "count_other": "{{count}} archivos",
+    "photos": "Fotos",
+    "files": "Archivos",
+    "downloads": "Files › Downloads",
+    "photosAndAlterSend": "Photos + AlterSend folder",
+    "alterSendFolder": "AlterSend folder"
+  },
+  "update": {
+    "ready": "Update ready",
+    "available": "Update available",
+    "restart": "Reiniciar",
+    "update": "Actualizar",
+    "restartFailed": "Restart failed — please quit and reopen"
+  }
+}

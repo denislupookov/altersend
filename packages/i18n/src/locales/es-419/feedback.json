@@ -1,0 +1,23 @@
+{
+  "title": "Comentarios",
+  "types": {
+    "bug": "Bug report",
+    "feature": "Feature request",
+    "general": "General"
+  },
+  "placeholders": {
+    "bug": "Describe what happened and how to reproduce it…",
+    "desktopBug": "Describe what went wrong…",
+    "feature": "What would you like to see in AlterSend?",
+    "desktopFeature": "What would you like to see?",
+    "general": "Share your thoughts…"
+  },
+  "actions": {
+    "send": "Send feedback",
+    "sending": "Sending…"
+  },
+  "states": {
+    "sent": "Thanks for your feedback!",
+    "failed": "Failed to send. Check your connection."
+  }
+}

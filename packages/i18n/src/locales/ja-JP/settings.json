@@ -1,0 +1,31 @@
+{
+  "title": "設定",
+  "languageTitle": "言語",
+  "languageHint": "AlterSend で使用する言語を選択します。",
+  "sections": {
+    "privacy": "プライバシー",
+    "support": "サポート",
+    "about": "情報"
+  },
+  "crashReports": {
+    "label": "クラッシュレポート",
+    "description": "AlterSend 改善のため匿名のクラッシュデータを共有する"
+  },
+  "rows": {
+    "feedback": "フィードバック",
+    "feedbackHint": "問題を報告または機能を提案",
+    "discord": "Discord",
+    "discordHint": "コミュニティに参加",
+    "contact": "お問い合わせ",
+    "privacyPolicy": "プライバシーポリシー",
+    "privacyPolicyHint": "AlterSend のデータの扱い",
+    "terms": "利用規約",
+    "termsHint": "AlterSend の利用ルール",
+    "website": "Webサイト"
+  },
+  "legal": {
+    "terms": "利用規約",
+    "privacy": "プライバシー声明",
+    "sentence": "{{terms}} と {{privacy}}。"
+  }
+}

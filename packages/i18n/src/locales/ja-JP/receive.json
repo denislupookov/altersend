@@ -1,0 +1,100 @@
+{
+  "page": {
+    "tabTitle": "受信",
+    "join": {
+      "title": "ファイルを受信",
+      "description": "送信側の64文字の接続コードを入力してファイルを受信します。",
+      "mobileDescription": "送信側のQRをスキャンするか64文字のコードを貼り付けて受信を開始します。"
+    },
+    "connecting": {
+      "title": "接続中",
+      "description": "送信側との安全なセッションを確立しています。"
+    },
+    "incomingTransfer": {
+      "title": "ファイルがあります",
+      "description": "{{count}} {{fileLabel}} · {{size}}"
+    },
+    "completed": {
+      "title_one": "ファイルを受信しました",
+      "title_other": "ファイルを受信しました",
+      "downloadsComplete": "ダウンロード完了"
+    },
+    "reconnecting": {
+      "title": "再接続中",
+      "description": "セッションに再接続しています。リンクが復旧するとファイルを再び利用できます。"
+    },
+    "interrupted": {
+      "title": "転送未完了",
+      "description": "すべてのファイルが届く前に送信側が退出しました。"
+    },
+    "handshake": {
+      "title": "接続処理中",
+      "description": "送信側との安全なハンドシェイクを完了しています。"
+    },
+    "sessionEnded": {
+      "title": "セッション終了",
+      "description": "戻って新しい転送を開始してください。"
+    }
+  },
+  "panel": {
+    "filesReadyTitle": "ファイル準備完了",
+    "filesReadyDescription": "送信側がファイルを共有しました。確認して必要なものをダウンロードしてください。",
+    "receivedFiles": "受信したファイル"
+  },
+  "form": {
+    "codeLabel": "接続コード",
+    "codePlaceholder": "64文字のコードを貼り付け…"
+  },
+  "actions": {
+    "scanQr": "QRコードをスキャン",
+    "allowCamera": "カメラを許可",
+    "downloadAll": "すべてダウンロード",
+    "view": "表示",
+    "play": "再生",
+    "open": "開く"
+  },
+  "errors": {
+    "invalidCode": "有効な64文字の16進コードを入力してください。",
+    "invalidKey": "有効な64文字の16進キーを入力してください。",
+    "joinFailed": "セッションに参加できませんでした。",
+    "unreachable": "送信側に接続できませんでした。コードを確認して再試行してください。",
+    "unsupportedQrTitle": "対応していないQRコード",
+    "unsupportedQrHint": "AlterSend の接続コードをスキャンしてください。",
+    "mobileJoinFailedTitle": "セッションに参加できませんでした",
+    "mobileJoinFailedHint": "もう一度スキャンするかコードを貼り付けてください。",
+    "cameraUnavailable": "カメラを利用できません。",
+    "cameraCouldNotStart": "カメラを開始できませんでした。コードを貼り付けてください。",
+    "downloadFailed": "失敗",
+    "didntArrive": "未着"
+  },
+  "camera": {
+    "preparingTitle": "カメラを準備中",
+    "preparingDescription": "送信側のQRコードをスキャンできるようカメラ権限を確認しています。",
+    "accessNeededTitle": "カメラアクセスが必要です",
+    "accessNeededDescription": "送信側の接続QRコードをスキャンするにはカメラを許可してください。",
+    "scanTitle": "QRコードをスキャン",
+    "scanDescription": "送信側のQRコードを枠内に合わせてください。AlterSend が自動で接続します。",
+    "desktopHint": "送信側のQRコードをWebカメラに向けてください — AlterSend が自動で接続します。",
+    "blockedTitle": "カメラアクセスがブロックされています",
+    "blockedHint": "システム設定で AlterSend のカメラアクセスを許可してから再試行してください。コード貼り付けも使えます。",
+    "noneTitle": "カメラが見つかりません",
+    "noneHint": "Webカメラを接続するか、接続コードを貼り付けてください。",
+    "unavailableTitle": "カメラを利用できません",
+    "starting": "カメラを起動中…"
+  },
+  "status": {
+    "ready": "準備完了",
+    "saved": "保存済み",
+    "failed": "失敗",
+    "downloadingPercent": "{{percent}}% ダウンロード中"
+  },
+  "summary": {
+    "receivedCount_one": "{{count}} 個中 {{completed}} 個を受信",
+    "receivedCount_other": "{{count}} 個中 {{completed}} 個を受信",
+    "savedToPhotos_one": "写真に保存しました",
+    "savedToPhotos_other": "{{count}} 個を写真に保存しました",
+    "savedInFiles_one": "ファイルに保存しました",
+    "savedInFiles_other": "{{count}} 個をファイルに保存しました",
+    "tapToView": "タップして表示"
+  }
+}

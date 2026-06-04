@@ -1,0 +1,5 @@
+export { useTranslation, Trans } from 'react-i18next'
+export * from './i18n'
+export * from './locale'
+export * from './resources'
+export type { Resources } from './i18n-augmentation'

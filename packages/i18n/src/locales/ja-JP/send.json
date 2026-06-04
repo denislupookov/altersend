@@ -1,0 +1,63 @@
+{
+  "page": {
+    "selecting": {
+      "title": "ファイルを送信",
+      "description": "1つ以上のファイルを選び、直接暗号化転送用のワンタイムコードを生成します。"
+    },
+    "preparing": {
+      "title": "転送を準備中",
+      "description": "共有コードを表示する前に、選択したファイルを準備しています。"
+    },
+    "waitingForReceiver": {
+      "title": "コードを共有",
+      "description": "コードまたはQRを相手に送ると転送を開始できます。"
+    },
+    "receiverConnected": {
+      "title": "コードを共有",
+      "description": "コードまたはQRを相手に送ると転送を開始できます。"
+    }
+  },
+  "actions": {
+    "sendFiles_one": "{{count}} 個のファイルを送信",
+    "sendFiles_other": "{{count}} 個のファイルを送信",
+    "addFiles": "ファイルを追加",
+    "addMoreFiles": "さらに追加",
+    "dragAndDrop": "ドラッグ＆ドロップ",
+    "clear": "クリア",
+    "endSession": "セッション終了",
+    "pickFilesTitle": "ファイルを追加",
+    "pickPhotos": "写真",
+    "pickFiles": "ファイル"
+  },
+  "status": {
+    "waitingForPeer": "相手を待機中",
+    "peerConnected": "相手が接続済み",
+    "uploadComplete": "アップロード完了",
+    "uploadingFiles": "ファイルをアップロード中",
+    "uploaded": "アップロード済み",
+    "uploading": "アップロード中…",
+    "waiting": "待機中",
+    "failed": "失敗",
+    "downloaded": "ダウンロード済み",
+    "disconnected": "切断",
+    "online": "オンライン",
+    "downloading": "ダウンロード中",
+    "downloadingPercent": "{{percent}}% ダウンロード中"
+  },
+  "connection": {
+    "placeholder": "安全なキーを生成中…",
+    "copyLabel": "接続コードをコピー",
+    "showQrLabel": "QRコードを表示",
+    "qrCodeLabel": "接続キーのQRコード",
+    "qrModalDescription": "別の端末で AlterSend を開き、このコードをスキャンしてください",
+    "copiedToast": "クリップボードにコピーしました"
+  },
+  "errors": {
+    "folderUnsupported": "フォルダはまだ対応していません。ファイルのみ選択してください。",
+    "failedPickFiles": "ファイルの選択に失敗しました",
+    "failedPickPhotos": "写真の選択に失敗しました"
+  },
+  "hints": {
+    "keepOpen": "アプリを閉じると転送はキャンセルされます。"
+  }
+}

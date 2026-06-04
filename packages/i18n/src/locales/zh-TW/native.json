@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "camera": "AlterSend uses your camera to scan connection QR codes.",
+    "localNetwork": "AlterSend uses your local network to discover nearby devices for peer-to-peer file transfer.",
+    "photoRead": "AlterSend reads your photo library so you can pick photos and videos to send to another device.",
+    "photoSave": "AlterSend saves received images and videos to your photo library."
+  }
+}

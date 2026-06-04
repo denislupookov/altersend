@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "AlterSend",
+    "tagline": "點對點檔案傳輸",
+    "welcome": "歡迎使用 AlterSend",
+    "loadingTagline": "文件会在你的设备之间直接传输。\n没有服务器、没有副本、没有中间人。"
+  },
+  "actions": {
+    "back": "返回",
+    "continue": "繼續",
+    "getStarted": "開始使用",
+    "cancel": "取消",
+    "clear": "清除",
+    "close": "Close",
+    "copy": "複製",
+    "copied": "已複製",
+    "connect": "連線",
+    "connecting": "Connecting…",
+    "done": "完成",
+    "endSession": "結束工作階段",
+    "restart": "重新啟動",
+    "tryAgain": "再試一次",
+    "dismiss": "Dismiss",
+    "openSettings": "Open settings",
+    "update": "更新",
+    "downloadAll": "Download all"
+  },
+  "labels": {
+    "settings": "設定",
+    "language": "語言",
+    "systemDefault": "系統預設",
+    "camera": "相機",
+    "statusBar": "Status bar",
+    "transferMode": "Transfer mode",
+    "version": "Version",
+    "platform": "Platform",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "send": "傳送",
+    "receive": "接收",
+    "connectionCode": "Connection code"
+  },
+  "files": {
+    "count_one": "{{count}} 个文件",
+    "count_other": "{{count}} 个文件",
+    "photos": "照片",
+    "files": "檔案",
+    "downloads": "Files › Downloads",
+    "photosAndAlterSend": "Photos + AlterSend folder",
+    "alterSendFolder": "AlterSend folder"
+  },
+  "update": {
+    "ready": "Update ready",
+    "available": "Update available",
+    "restart": "重新啟動",
+    "update": "更新",
+    "restartFailed": "Restart failed — please quit and reopen"
+  }
+}

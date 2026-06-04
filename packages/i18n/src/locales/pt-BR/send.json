@@ -1,0 +1,63 @@
+{
+  "page": {
+    "selecting": {
+      "title": "Enviar arquivos",
+      "description": "Choose one or more files and generate a one-time code for a direct encrypted transfer."
+    },
+    "preparing": {
+      "title": "Preparing transfer",
+      "description": "Preparing the selected files before the share code is revealed."
+    },
+    "waitingForReceiver": {
+      "title": "Share the code",
+      "description": "Send the code or QR to your recipient to start the transfer."
+    },
+    "receiverConnected": {
+      "title": "Share the code",
+      "description": "Send the code or QR to your recipient to start the transfer."
+    }
+  },
+  "actions": {
+    "sendFiles_one": "Send {{count}} file",
+    "sendFiles_other": "Send {{count}} files",
+    "addFiles": "Add files",
+    "addMoreFiles": "Add more files",
+    "dragAndDrop": "Drag and drop",
+    "clear": "Clear",
+    "endSession": "End session",
+    "pickFilesTitle": "Add files",
+    "pickPhotos": "Photos",
+    "pickFiles": "Files"
+  },
+  "status": {
+    "waitingForPeer": "Waiting for peer",
+    "peerConnected": "Peer connected",
+    "uploadComplete": "Upload complete",
+    "uploadingFiles": "Uploading files",
+    "uploaded": "Uploaded",
+    "uploading": "Uploading…",
+    "waiting": "Waiting",
+    "failed": "Failed",
+    "downloaded": "Downloaded",
+    "disconnected": "Disconnected",
+    "online": "Online",
+    "downloading": "Downloading",
+    "downloadingPercent": "Downloading {{percent}}%"
+  },
+  "connection": {
+    "placeholder": "Generating secure key…",
+    "copyLabel": "Copy connection code",
+    "showQrLabel": "Show QR code",
+    "qrCodeLabel": "QR code for connection key",
+    "qrModalDescription": "Open AlterSend on another device and scan this code",
+    "copiedToast": "Copied to clipboard"
+  },
+  "errors": {
+    "folderUnsupported": "Folders aren't supported yet. Please select files only.",
+    "failedPickFiles": "Failed to pick files",
+    "failedPickPhotos": "Failed to pick photos"
+  },
+  "hints": {
+    "keepOpen": "Closing the app cancels the transfer."
+  }
+}

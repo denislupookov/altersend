@@ -1,0 +1,23 @@
+{
+  "title": "フィードバック",
+  "types": {
+    "bug": "バグ報告",
+    "feature": "機能リクエスト",
+    "general": "一般"
+  },
+  "placeholders": {
+    "bug": "発生内容と再現手順を入力してください…",
+    "desktopBug": "問題の内容を入力してください…",
+    "feature": "AlterSend に欲しい機能は何ですか？",
+    "desktopFeature": "欲しい機能を教えてください",
+    "general": "ご意見を入力してください…"
+  },
+  "actions": {
+    "send": "フィードバックを送信",
+    "sending": "送信中…"
+  },
+  "states": {
+    "sent": "フィードバックありがとうございます！",
+    "failed": "送信に失敗しました。接続を確認してください。"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "AlterSend",
+    "tagline": "Peer-to-Peer-Dateiübertragung",
+    "welcome": "Willkommen bei AlterSend",
+    "loadingTagline": "Dateien werden direkt zwischen deinen Geräten übertragen.\nKeine Server, keine Kopien, keine Vermittler."
+  },
+  "actions": {
+    "back": "Zurück",
+    "continue": "Weiter",
+    "getStarted": "Loslegen",
+    "cancel": "Abbrechen",
+    "clear": "Löschen",
+    "close": "Close",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "connect": "Verbinden",
+    "connecting": "Connecting…",
+    "done": "Fertig",
+    "endSession": "Sitzung beenden",
+    "restart": "Neu starten",
+    "tryAgain": "Erneut versuchen",
+    "dismiss": "Dismiss",
+    "openSettings": "Open settings",
+    "update": "Aktualisieren",
+    "downloadAll": "Download all"
+  },
+  "labels": {
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "systemDefault": "Systemstandard",
+    "camera": "Kamera",
+    "statusBar": "Status bar",
+    "transferMode": "Transfer mode",
+    "version": "Version",
+    "platform": "Platform",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "send": "Senden",
+    "receive": "Empfangen",
+    "connectionCode": "Connection code"
+  },
+  "files": {
+    "count_one": "{{count}} Datei",
+    "count_other": "{{count}} Dateien",
+    "photos": "Fotos",
+    "files": "Dateien",
+    "downloads": "Files › Downloads",
+    "photosAndAlterSend": "Photos + AlterSend folder",
+    "alterSendFolder": "AlterSend folder"
+  },
+  "update": {
+    "ready": "Update ready",
+    "available": "Update available",
+    "restart": "Neu starten",
+    "update": "Aktualisieren",
+    "restartFailed": "Restart failed — please quit and reopen"
+  }
+}

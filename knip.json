@@ -17,6 +17,10 @@
     "packages/domain": {
       "entry": ["src/**/*.test.ts"]
     },
+    "packages/i18n": {
+      "entry": ["src/index.ts", "src/**/*.test.ts"],
+      "project": ["src/**/*.{ts,tsx,json}"]
+    },
     "packages/components": {
       "entry": [
         "src/index.ts",

@@ -1,0 +1,100 @@
+{
+  "page": {
+    "tabTitle": "받기",
+    "join": {
+      "title": "파일 받기",
+      "description": "Enter a 64-character connection code from the sender to stream their files.",
+      "mobileDescription": "Scan a sender's QR or paste their 64-character code to start streaming."
+    },
+    "connecting": {
+      "title": "Connecting",
+      "description": "Establishing a secure session with the sender."
+    },
+    "incomingTransfer": {
+      "title": "Files available",
+      "description": "{{count}} {{fileLabel}} · {{size}}"
+    },
+    "completed": {
+      "title_one": "File received",
+      "title_other": "Files received",
+      "downloadsComplete": "Downloads complete"
+    },
+    "reconnecting": {
+      "title": "Reconnecting",
+      "description": "Reconnecting to the session. Files will be available again as soon as the link is restored."
+    },
+    "interrupted": {
+      "title": "Transfer incomplete",
+      "description": "The sender left before all files arrived."
+    },
+    "handshake": {
+      "title": "Connection in progress",
+      "description": "Completing the secure handshake with the sender."
+    },
+    "sessionEnded": {
+      "title": "Session ended",
+      "description": "Return to start a new transfer."
+    }
+  },
+  "panel": {
+    "filesReadyTitle": "Files ready",
+    "filesReadyDescription": "The sender has shared files. Review them and start each download when ready.",
+    "receivedFiles": "Received files"
+  },
+  "form": {
+    "codeLabel": "Connection code",
+    "codePlaceholder": "Paste 64-char code…"
+  },
+  "actions": {
+    "scanQr": "Scan QR code",
+    "allowCamera": "Allow camera",
+    "downloadAll": "Download all",
+    "view": "View",
+    "play": "Play",
+    "open": "Open"
+  },
+  "errors": {
+    "invalidCode": "Enter a valid 64-character hex code.",
+    "invalidKey": "Enter a valid 64-character hex key.",
+    "joinFailed": "Could not join the session.",
+    "unreachable": "Couldn't reach the sender. Check the code and try again.",
+    "unsupportedQrTitle": "Unsupported QR code",
+    "unsupportedQrHint": "Scan an AlterSend connection code.",
+    "mobileJoinFailedTitle": "Couldn’t join session",
+    "mobileJoinFailedHint": "Try scanning again or paste the code manually.",
+    "cameraUnavailable": "Camera unavailable.",
+    "cameraCouldNotStart": "The camera could not be started. Paste the connection code instead.",
+    "downloadFailed": "Failed",
+    "didntArrive": "Didn't arrive"
+  },
+  "camera": {
+    "preparingTitle": "Preparing camera",
+    "preparingDescription": "Checking camera access so you can scan the sender’s QR code.",
+    "accessNeededTitle": "Camera access needed",
+    "accessNeededDescription": "Allow camera access to scan a sender’s connection QR code.",
+    "scanTitle": "Scan QR code",
+    "scanDescription": "Center the sender’s QR code inside the frame. AlterSend will connect automatically.",
+    "desktopHint": "Point the sender’s QR code at the webcam — AlterSend connects automatically.",
+    "blockedTitle": "Camera access blocked",
+    "blockedHint": "Allow camera access for AlterSend in your system settings, then try again. You can also paste the code instead.",
+    "noneTitle": "No camera found",
+    "noneHint": "Connect a webcam to scan, or paste the connection code instead.",
+    "unavailableTitle": "Camera unavailable",
+    "starting": "Starting camera…"
+  },
+  "status": {
+    "ready": "Ready",
+    "saved": "Saved",
+    "failed": "Failed",
+    "downloadingPercent": "Downloading {{percent}}%"
+  },
+  "summary": {
+    "receivedCount_one": "Received {{completed}} of {{count}} file",
+    "receivedCount_other": "Received {{completed}} of {{count}} files",
+    "savedToPhotos_one": "Saved to Photos",
+    "savedToPhotos_other": "{{count}} saved to Photos",
+    "savedInFiles_one": "Saved in Files",
+    "savedInFiles_other": "{{count}} saved in Files",
+    "tapToView": "Tap to view"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "AlterSend",
+    "tagline": "피어 투 피어 파일 전송",
+    "welcome": "AlterSend에 오신 것을 환영합니다",
+    "loadingTagline": "파일은 기기 간에 직접 이동합니다.\n서버도 복사본도 중간자도 없습니다."
+  },
+  "actions": {
+    "back": "뒤로",
+    "continue": "계속",
+    "getStarted": "시작하기",
+    "cancel": "취소",
+    "clear": "지우기",
+    "close": "Close",
+    "copy": "복사",
+    "copied": "복사됨",
+    "connect": "연결",
+    "connecting": "Connecting…",
+    "done": "완료",
+    "endSession": "세션 종료",
+    "restart": "다시 시작",
+    "tryAgain": "다시 시도",
+    "dismiss": "Dismiss",
+    "openSettings": "Open settings",
+    "update": "업데이트",
+    "downloadAll": "Download all"
+  },
+  "labels": {
+    "settings": "설정",
+    "language": "언어",
+    "systemDefault": "시스템 기본값",
+    "camera": "카메라",
+    "statusBar": "Status bar",
+    "transferMode": "Transfer mode",
+    "version": "Version",
+    "platform": "Platform",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "send": "보내기",
+    "receive": "받기",
+    "connectionCode": "Connection code"
+  },
+  "files": {
+    "count_one": "{{count}}개 파일",
+    "count_other": "{{count}}개 파일",
+    "photos": "사진",
+    "files": "파일",
+    "downloads": "Files › Downloads",
+    "photosAndAlterSend": "Photos + AlterSend folder",
+    "alterSendFolder": "AlterSend folder"
+  },
+  "update": {
+    "ready": "Update ready",
+    "available": "Update available",
+    "restart": "다시 시작",
+    "update": "업데이트",
+    "restartFailed": "Restart failed — please quit and reopen"
+  }
+}

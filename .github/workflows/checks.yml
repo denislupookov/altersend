@@ -38,6 +38,7 @@ jobs:
       - name: Type-check
         run: |
           npm run typecheck -w packages/core
+          npm run typecheck -w packages/i18n
           npm run typecheck -w packages/domain
           npm run typecheck -w packages/components
           npm run typecheck -w apps/desktop
