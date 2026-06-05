@@ -24,10 +24,12 @@ const styles = css.create({
   chip: {
     display: 'flex',
     flex: 1,
+    minWidth: 0,
+    minHeight: 40,
     borderRadius: tokens.radiusSm,
     borderWidth: 0,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
     paddingLeft: 8,
     paddingRight: 8,
     alignItems: 'center',
@@ -35,8 +37,7 @@ const styles = css.create({
     cursor: 'pointer',
     transitionProperty: 'background-color',
     transitionDuration: '150ms',
-    transitionTimingFunction: 'ease',
-    whiteSpace: 'nowrap'
+    transitionTimingFunction: 'ease'
   },
   chipDefault: {
     backgroundColor: 'transparent'
@@ -53,8 +54,11 @@ const styles = css.create({
     fontFamily: tokens.fontFamilySans,
     fontSize: tokens.fontSizeMd,
     fontWeight: tokens.fontWeightMedium,
+    overflow: 'hidden',
     textAlign: 'center',
-    whiteSpace: 'nowrap'
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    width: '100%'
   },
   labelDefault: {
     color: tokens.colorTextMuted
