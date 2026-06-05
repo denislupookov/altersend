@@ -1,5 +1,6 @@
 export const DEFAULT_LOCALE = 'en-US'
 export const SYSTEM_LOCALE_PREFERENCE = 'system'
+export const isMultiLangEnabled: boolean = false
 
 export type TextDirection = 'ltr' | 'rtl'
 export type LocaleFontFamily =
@@ -208,4 +209,12 @@ export function resolveLocalePreference(
   }
 
   return DEFAULT_LOCALE
+}
+
+export function resolveActiveLocalePreference(
+  preference: string | null | undefined,
+  systemLocales: readonly string[]
+): SupportedLocaleCode {
+  if (!isMultiLangEnabled) return DEFAULT_LOCALE
+  return resolveLocalePreference(preference, systemLocales)
 }

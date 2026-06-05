@@ -16,7 +16,7 @@ import {
   getLocaleFontFamily,
   initI18n,
   isSupportedLocaleCode,
-  resolveLocalePreference,
+  resolveActiveLocalePreference,
   useTranslation
 } from '@altersend/i18n'
 import { Stack } from 'expo-router'
@@ -145,7 +145,7 @@ export default function RootLayout() {
     let mounted = true
     async function initializeLocale() {
       const preference = await getSavedLocalePreference()
-      await initI18n(resolveLocalePreference(preference, getMobileSystemLocales()))
+      await initI18n(resolveActiveLocalePreference(preference, getMobileSystemLocales()))
       if (mounted) setI18nReady(true)
     }
 

@@ -5,7 +5,7 @@ import {
   getLocaleFontFamily,
   initI18n,
   isSupportedLocaleCode,
-  resolveLocalePreference,
+  resolveActiveLocalePreference,
   useTranslation
 } from '@altersend/i18n'
 import {
@@ -71,7 +71,9 @@ if (hasBridge()) {
 }
 
 async function bootstrap() {
-  await initI18n(resolveLocalePreference(getSavedLocalePreference(), getDesktopSystemLocales()))
+  await initI18n(
+    resolveActiveLocalePreference(getSavedLocalePreference(), getDesktopSystemLocales())
+  )
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

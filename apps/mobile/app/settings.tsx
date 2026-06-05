@@ -2,7 +2,12 @@ import { Image, Linking, Pressable, StyleSheet, View } from 'react-native'
 import Constants from 'expo-constants'
 import { useCallback, useEffect, useState } from 'react'
 import { useFocusEffect, useRouter } from 'expo-router'
-import { LOCALE_OPTIONS, useTranslation, type LocalePreference } from '@altersend/i18n'
+import {
+  LOCALE_OPTIONS,
+  isMultiLangEnabled,
+  useTranslation,
+  type LocalePreference
+} from '@altersend/i18n'
 import {
   discordUrl,
   privacyPolicyUrl,
@@ -118,20 +123,22 @@ export default function SettingsScreen() {
   return (
     <Layout title={t('settings:title')} description='' hasNativeHeader>
       <View style={styles.content}>
-        <View style={styles.section}>
-          <View style={[styles.card, cardStyle]}>
-            <LinkRow
-              label={t('common:labels.language')}
-              hint={
-                LOCALE_OPTIONS.find((option) => option.preference === localePreference)
-                  ?.nativeName ?? t('common:labels.systemDefault')
-              }
-              icon={<GlobeIcon size={16} color={theme.colors.colorTextSecondary} />}
-              onPress={() => router.push('/language')}
-              isLast
-            />
+        {isMultiLangEnabled && (
+          <View style={styles.section}>
+            <View style={[styles.card, cardStyle]}>
+              <LinkRow
+                label={t('common:labels.language')}
+                hint={
+                  LOCALE_OPTIONS.find((option) => option.preference === localePreference)
+                    ?.nativeName ?? t('common:labels.systemDefault')
+                }
+                icon={<GlobeIcon size={16} color={theme.colors.colorTextSecondary} />}
+                onPress={() => router.push('/language')}
+                isLast
+              />
+            </View>
           </View>
-        </View>
+        )}
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>

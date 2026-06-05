@@ -5,7 +5,9 @@ import {
   SUPPORTED_LOCALES,
   getLocaleByCode,
   getLocaleFontFamily,
+  isMultiLangEnabled,
   isLocalePreference,
+  resolveActiveLocalePreference,
   resolveLocalePreference
 } from './locale'
 
@@ -84,5 +86,16 @@ describe('resolveLocalePreference', () => {
     expect(resolveLocalePreference('system', ['ru-RU'])).toBe(DEFAULT_LOCALE)
     expect(resolveLocalePreference('system', [])).toBe(DEFAULT_LOCALE)
     expect(resolveLocalePreference('not-a-locale', ['ja-JP'])).toBe(DEFAULT_LOCALE)
+  })
+})
+
+describe('release-gated locale activation', () => {
+  it('keeps multi-language UI disabled until release', () => {
+    expect(isMultiLangEnabled).toBe(false)
+  })
+
+  it('forces en-US while multi-language support is release-gated', () => {
+    expect(resolveActiveLocalePreference('ja-JP', ['ja-JP'])).toBe(DEFAULT_LOCALE)
+    expect(resolveActiveLocalePreference('system', ['ko-KR'])).toBe(DEFAULT_LOCALE)
   })
 })

@@ -1,6 +1,6 @@
 # Architecture
 
-AlterSend is a monorepo with two apps (desktop, mobile) sharing three packages (core, domain, components). All P2P networking runs in a Bare worklet process, isolated from both the UI and the host runtime.
+AlterSend is a monorepo with two apps (desktop, mobile) sharing four packages (core, domain, components, i18n). All P2P networking runs in a Bare worklet process, isolated from both the UI and the host runtime.
 
 ## Repository layout
 
@@ -12,6 +12,7 @@ packages/
   core/             P2P protocol — Hyperswarm, Hyperdrive, RPC, transfer orchestration
   domain/           State management — Zustand store, reducers, business logic
   components/       Shared UI — React Strict DOM components, Tailwind tokens
+  i18n/             Shared locale metadata, i18next setup, and catalogs
 ```
 
 ## Data flow
@@ -71,6 +72,10 @@ Key modules:
 ### `packages/components`
 
 Shared React components using **React Strict DOM** (works on both web and native) and Tailwind for styling. Built with Storybook for visual development.
+
+### `packages/i18n`
+
+Shared internationalization package used by desktop and mobile. It owns supported locale metadata, locale preference resolution, i18next initialization, and bundled translation catalogs. The app-facing language UI is currently release-gated by `isMultiLangEnabled = false`; while disabled, desktop and mobile hide language pickers and force the active locale to `en-US`. See [i18n.md](i18n.md) for catalog structure and translation workflow.
 
 ## Transfer flow
 

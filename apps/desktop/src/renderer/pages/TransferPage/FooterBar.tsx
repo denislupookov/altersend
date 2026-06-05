@@ -11,8 +11,9 @@ import {
   LOCALE_OPTIONS,
   changeI18nLanguage,
   getLocaleFontFamily,
+  isMultiLangEnabled,
   normalizeLocalePreference,
-  resolveLocalePreference,
+  resolveActiveLocalePreference,
   useTranslation,
   type LocaleOption,
   type LocalePreference
@@ -82,7 +83,7 @@ export function FooterBar({ version }: { version: string }) {
     const preference = normalizeLocalePreference(value)
     setLocalePreference(preference)
     setSavedLocalePreference(preference)
-    void changeI18nLanguage(resolveLocalePreference(preference, getDesktopSystemLocales()))
+    void changeI18nLanguage(resolveActiveLocalePreference(preference, getDesktopSystemLocales()))
   }
 
   const closePanel = () => {
@@ -177,23 +178,25 @@ export function FooterBar({ version }: { version: string }) {
                         label={t('settings:crashReports.label')}
                         description={t('settings:crashReports.description')}
                       />
-                      <div className='mt-3'>
-                        <label className='mb-2 block text-[13px] font-medium text-text-secondary'>
-                          {t('common:labels.language')}
-                        </label>
-                        <Select
-                          aria-label={t('common:labels.language')}
-                          value={localePreference}
-                          onChange={handleLocaleChange}
-                          options={LOCALE_OPTIONS.map((option) => ({
-                            value: option.preference,
-                            label: option.nativeName
-                              ? `${option.nativeName} · ${option.label}`
-                              : t('common:labels.systemDefault'),
-                            fontFamily: getLocaleOptionFontFamily(option)
-                          }))}
-                        />
-                      </div>
+                      {isMultiLangEnabled && (
+                        <div className='mt-3'>
+                          <label className='mb-2 block text-[13px] font-medium text-text-secondary'>
+                            {t('common:labels.language')}
+                          </label>
+                          <Select
+                            aria-label={t('common:labels.language')}
+                            value={localePreference}
+                            onChange={handleLocaleChange}
+                            options={LOCALE_OPTIONS.map((option) => ({
+                              value: option.preference,
+                              label: option.nativeName
+                                ? `${option.nativeName} · ${option.label}`
+                                : t('common:labels.systemDefault'),
+                              fontFamily: getLocaleOptionFontFamily(option)
+                            }))}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className='border-t border-border-primary py-1'>
                       {MENU_ITEMS.map(({ icon: Icon, key, ...rest }) => (
