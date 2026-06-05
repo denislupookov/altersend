@@ -59,6 +59,9 @@
         "@electron-forge/maker-squirrel",
         "app-builder-lib"
       ],
+      "ignoreUnresolved": [
+        "^\\./sentry-dsn\\.gen\\.js$"
+      ],
       "ignoreBinaries": [
         "electron-builder.mac.json",
         "electron-builder.linux.json"
