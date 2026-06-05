@@ -4,6 +4,7 @@ import {
   LOCALE_OPTIONS,
   SUPPORTED_LOCALES,
   getLocaleByCode,
+  getLocaleFontFamily,
   isLocalePreference,
   resolveLocalePreference
 } from './locale'
@@ -46,6 +47,13 @@ describe('locale registry', () => {
       dir: 'ltr'
     })
     expect(getLocaleByCode('ar')).toBeUndefined()
+  })
+
+  it('maps CJK locales to bundled script font families', () => {
+    expect(getLocaleFontFamily('ja-JP')).toBe('japanese')
+    expect(getLocaleFontFamily('ko-KR')).toBe('korean')
+    expect(getLocaleFontFamily('zh-CN')).toBe('simplifiedChinese')
+    expect(getLocaleFontFamily('zh-TW')).toBe('traditionalChinese')
   })
 })
 

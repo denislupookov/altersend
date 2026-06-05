@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
 import { BUNDLED_FONT_FAMILIES } from './fonts'
+import { getFontFamilyCssVariables } from './fontCssVariables'
 import { rawTokens } from './tokens.raw'
 import tokenSource from './tokens.json'
 
@@ -84,5 +85,33 @@ describe('font family tokens', () => {
     expect(webFontThemeSource).toContain('fontFamilySans: \'"AlterSend Sans KR"\'')
     expect(nativeFontThemeSource).toContain("fontFamilySans: 'AlterSend Sans KR'")
     expect(nativeFontThemeSource).not.toContain('fontFamilySans: \'"AlterSend Sans KR"\'')
+  })
+
+  it('exposes Korean CSS variables for Tailwind and plain DOM text', () => {
+    const expectedFamilies = {
+      latin: 'AlterSend Sans',
+      japanese: 'AlterSend Sans JP',
+      korean: 'AlterSend Sans KR',
+      simplifiedChinese: 'AlterSend Sans SC',
+      traditionalChinese: 'AlterSend Sans TC'
+    } as const
+
+    for (const [fontFamilyKey, cssFamily] of Object.entries(expectedFamilies)) {
+      expect(getFontFamilyCssVariables(fontFamilyKey as keyof typeof expectedFamilies)).toEqual({
+        '--as-font-family-sans': `"${cssFamily}"`,
+        '--as-font-family-display': `"${cssFamily}"`,
+        '--as-font-family-mono': `"${cssFamily}"`,
+        fontFamily: cssFamily
+      })
+    }
+  })
+
+  it('centralizes web font synchronization in ThemeProvider', () => {
+    const themeContextSource = readFileSync(new URL('./ThemeContext.tsx', import.meta.url), 'utf8')
+
+    expect(themeContextSource).toContain('getFontFamilyCssVariables')
+    expect(themeContextSource).toContain('document.documentElement')
+    expect(themeContextSource).toContain('document.body')
+    expect(themeContextSource).toContain('fontThemeStyle')
   })
 })

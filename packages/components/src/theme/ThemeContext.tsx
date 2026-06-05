@@ -1,10 +1,11 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { css, html } from 'react-strict-dom'
 import { darkTheme } from './themes/dark'
 import { lightTheme } from './themes/light'
 import { darkThemeStyle } from './themes/dark.css'
 import { lightThemeStyle } from './themes/light.css'
 import { BUNDLED_FONT_FAMILIES, DEFAULT_FONT_FAMILY_KEY, type FontFamilyKey } from './fonts'
+import { getFontFamilyCssVariables, type FontFamilyCssVariables } from './fontCssVariables'
 import { fontThemeStyles } from './fontThemes.css'
 import type { Theme } from './types'
 import { ThemeType } from './types'
@@ -40,6 +41,46 @@ function getFontFamilyName(fontFamily: FontFamilyKey) {
     BUNDLED_FONT_FAMILIES[fontFamily]?.cssFamily ??
     BUNDLED_FONT_FAMILIES[DEFAULT_FONT_FAMILY_KEY].cssFamily
   )
+}
+
+const FONT_CUSTOM_PROPERTIES = [
+  '--as-font-family-sans',
+  '--as-font-family-display',
+  '--as-font-family-mono'
+] as const
+
+interface FontRootSnapshot {
+  element: HTMLElement
+  customProperties: Record<(typeof FONT_CUSTOM_PROPERTIES)[number], string>
+  fontFamily: string
+}
+
+function applyFontFamilyCssVariables(element: HTMLElement, variables: FontFamilyCssVariables) {
+  for (const property of FONT_CUSTOM_PROPERTIES) {
+    element.style.setProperty(property, variables[property])
+  }
+  element.style.fontFamily = variables.fontFamily
+}
+
+function snapshotFontRoot(element: HTMLElement): FontRootSnapshot {
+  return {
+    element,
+    customProperties: {
+      '--as-font-family-sans': element.style.getPropertyValue('--as-font-family-sans'),
+      '--as-font-family-display': element.style.getPropertyValue('--as-font-family-display'),
+      '--as-font-family-mono': element.style.getPropertyValue('--as-font-family-mono')
+    },
+    fontFamily: element.style.fontFamily
+  }
+}
+
+function restoreFontRoot(snapshot: FontRootSnapshot) {
+  for (const property of FONT_CUSTOM_PROPERTIES) {
+    const value = snapshot.customProperties[property]
+    if (value) snapshot.element.style.setProperty(property, value)
+    else snapshot.element.style.removeProperty(property)
+  }
+  snapshot.element.style.fontFamily = snapshot.fontFamily
 }
 
 interface ThemeContextValue {
@@ -82,6 +123,17 @@ export function ThemeProvider({
   const themeStyle = getThemeStyle(themeType)
   const fontThemeStyle = getFontThemeStyle(fontFamily)
   const fontFamilyName = getFontFamilyName(fontFamily)
+  const fontRootStyle = useMemo(() => getFontFamilyCssVariables(fontFamily), [fontFamily])
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+
+    const roots = [document.documentElement, document.body].filter(Boolean)
+    const snapshots = roots.map(snapshotFontRoot)
+    roots.forEach((root) => applyFontFamilyCssVariables(root, fontRootStyle))
+
+    return () => snapshots.forEach(restoreFontRoot)
+  }, [fontRootStyle])
 
   return (
     <ThemeContext.Provider
@@ -95,7 +147,7 @@ export function ThemeProvider({
     >
       <html.div
         data-theme={themeType}
-        style={[themeStyle, fontThemeStyle] as unknown as HtmlDivStyle}
+        style={[themeStyle, fontThemeStyle, fontRootStyle] as unknown as HtmlDivStyle}
       >
         <html.div style={styles.root}>{children}</html.div>
       </html.div>

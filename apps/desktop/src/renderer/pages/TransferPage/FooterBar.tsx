@@ -1,12 +1,20 @@
 import { useState } from 'react'
-import { Button, ExternalLink, FeedbackTypeSelector, ToggleSwitch } from '@altersend/components'
+import {
+  Button,
+  ExternalLink,
+  FeedbackTypeSelector,
+  ToggleSwitch,
+  getFontFamilyCssVariables
+} from '@altersend/components'
 import type { FeedbackType } from '@altersend/components'
 import {
   LOCALE_OPTIONS,
   changeI18nLanguage,
+  getLocaleFontFamily,
   normalizeLocalePreference,
   resolveLocalePreference,
   useTranslation,
+  type LocaleOption,
   type LocalePreference
 } from '@altersend/i18n'
 import {
@@ -45,6 +53,11 @@ const MENU_ITEMS = [
   { icon: GithubIcon, key: 'github' },
   { icon: GlobeIcon, key: 'website' }
 ] as const
+
+function getLocaleOptionFontFamily(option: LocaleOption): string | undefined {
+  if (!option.resolvedCode) return undefined
+  return getFontFamilyCssVariables(getLocaleFontFamily(option.resolvedCode)).fontFamily
+}
 
 export function FooterBar({ version }: { version: string }) {
   const { t } = useTranslation(['settings', 'common', 'feedback'])
@@ -176,7 +189,8 @@ export function FooterBar({ version }: { version: string }) {
                             value: option.preference,
                             label: option.nativeName
                               ? `${option.nativeName} · ${option.label}`
-                              : t('common:labels.systemDefault')
+                              : t('common:labels.systemDefault'),
+                            fontFamily: getLocaleOptionFontFamily(option)
                           }))}
                         />
                       </div>

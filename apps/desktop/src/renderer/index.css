@@ -88,6 +88,13 @@
     text-rendering: optimizeLegibility;
   }
 
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
   ::selection {
     background: color-mix(in oklab, var(--as-color-accent) 20%, transparent);
   }
