@@ -10,23 +10,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
+      - name: Verify EAS CLI
+        run: pnpm exec eas --version
 
       - name: Build Android APK on EAS
         working-directory: apps/mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          eas build --platform android --profile preview --non-interactive --wait --json > build.json
+          pnpm exec eas build --platform android --profile preview --non-interactive --wait --json > build.json
           BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)
           if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
             echo "No build URL in EAS response"

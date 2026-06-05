@@ -15,7 +15,7 @@
   "author": "AlterSend",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/denislupookov/altersend.git"
+    "url": "https://github.com/denislupookov/altersend.git"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -25,17 +25,17 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@altersend/core": "1.1.0"
+    "@altersend/core": "workspace:1.1.0"
   },
   "peerDependencies": {
     "react": "^19.0.0",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
+    "@types/react": "19.2.16",
     "react": "19.2.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.8",
-    "zustand": "^5.0.12"
+    "typescript": "5.9.3",
+    "vitest": "4.1.8",
+    "zustand": "5.0.14"
   }
 }

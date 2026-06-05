@@ -51,6 +51,9 @@ yarn-error.log*
 # Claude Code
 .claude/settings.local.json
 
+# OpenCode local agent state
+.omo/
+
 # Internal — not for the public repo
 app-marketing-context.md
 

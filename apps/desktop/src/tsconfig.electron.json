@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "../dist",
     "rootDir": ".",
+    "noEmit": false,
     "paths": {
       "@altersend/domain": ["../../../packages/domain/dist"],
       "@altersend/components": ["../../../packages/components/dist"],

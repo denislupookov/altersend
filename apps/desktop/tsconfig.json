@@ -8,6 +8,7 @@
     "types": ["vite/client"],
     "jsx": "react-jsx",
     "allowJs": true,
+    "noEmit": true,
     "moduleSuffixes": [".web", ""],
     "paths": {
       "@altersend/domain": ["../../packages/domain/src"],

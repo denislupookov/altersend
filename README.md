@@ -1,14 +1,14 @@
 <div align="center">
   <img src="assets/altersend-logo.png" alt="AlterSend" width="380" />
 
-  ### File transfer without the cloud.
+### File transfer without the cloud.
 
-  Files go directly between your devices — end-to-end encrypted, no accounts, no servers, no limits.
+Files go directly between your devices — end-to-end encrypted, no accounts, no servers, no limits.
 
-  [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-  [![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20iOS%20%7C%20Android-lightgrey)](#download)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20iOS%20%7C%20Android-lightgrey)](#download)
 
-  [Website](https://altersend.com) · [Download](https://altersend.com/download) · [Discord](https://discord.gg/R6tmrk85Vx)
+[Website](https://altersend.com) · [Download](https://altersend.com/download) · [Discord](https://discord.gg/R6tmrk85Vx)
 
   <br/>
 
@@ -58,13 +58,13 @@ Why use WeTransfer, Dropbox, or Google Drive when you can send files directly �
 
 Get the latest release from [altersend.com/download](https://altersend.com/download) or directly from the table below.
 
-| Platform | Download |
-|---|---|
-| **Windows** | [Microsoft Store](https://apps.microsoft.com/detail/9NHLK9GLVDLW) (signed) · [EXE installer](https://github.com/denislupookov/altersend/releases/latest) |
-| **macOS** | [DMG — Apple Silicon](https://github.com/denislupookov/altersend/releases/latest) · [DMG — Intel](https://github.com/denislupookov/altersend/releases/latest) |
-| **Linux** | [AppImage](https://github.com/denislupookov/altersend/releases/latest) |
-| **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.altersend.mobile) · [APK](https://github.com/denislupookov/altersend/releases/latest) |
-| **iOS** | [App Store](https://apps.apple.com/us/app/altersend-file-transfer/id6772496271) |
+| Platform    | Download                                                                                                                                                      |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Windows** | [Microsoft Store](https://apps.microsoft.com/detail/9NHLK9GLVDLW) (signed) · [EXE installer](https://github.com/denislupookov/altersend/releases/latest)      |
+| **macOS**   | [DMG — Apple Silicon](https://github.com/denislupookov/altersend/releases/latest) · [DMG — Intel](https://github.com/denislupookov/altersend/releases/latest) |
+| **Linux**   | [AppImage](https://github.com/denislupookov/altersend/releases/latest)                                                                                        |
+| **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.altersend.mobile) · [APK](https://github.com/denislupookov/altersend/releases/latest)         |
+| **iOS**     | [App Store](https://apps.apple.com/us/app/altersend-file-transfer/id6772496271)                                                                               |
 
 > **macOS `.dmg`** — signed with our Developer ID but not yet notarized by Apple, so macOS will show "AlterSend cannot be opened because the developer cannot be verified" on first launch. **Right-click the app → Open → Open** to bypass Gatekeeper (one time only). Notarization is in progress.
 
@@ -96,8 +96,8 @@ Discovery uses [Hyperswarm](https://github.com/holepunchto/hyperswarm) (a DHT) �
 
 ### Prerequisites
 
-- Node.js 20+
-- npm 10+
+- Node.js 22.13+
+- pnpm 11+
 - Xcode (iOS) or Android Studio (Android)
 
 ### Setup
@@ -105,7 +105,7 @@ Discovery uses [Hyperswarm](https://github.com/holepunchto/hyperswarm) (a DHT) �
 ```sh
 git clone https://github.com/denislupookov/altersend.git
 cd altersend
-npm install
+pnpm install
 
 cp apps/desktop/.env.example apps/desktop/.env
 cp apps/mobile/.env.example apps/mobile/.env
@@ -115,14 +115,14 @@ cp apps/mobile/.env.example apps/mobile/.env
 ### Run
 
 ```sh
-npm run dev            # desktop (Electron)
-npm run mobile:start   # mobile (Expo)
+pnpm run dev            # desktop (Electron)
+pnpm run mobile:start   # mobile (Expo)
 ```
 
 ### Build
 
 ```sh
-npm run desktop:build  # packages + desktop app
+pnpm run desktop:build  # packages + desktop app
 ```
 
 Platform installers (`.dmg`, `.exe`, `.AppImage`) are produced by the release CI workflow — trigger manually from the Actions tab.

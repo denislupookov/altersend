@@ -10,28 +10,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
       - name: Build desktop app
-        run: npm run build -w apps/desktop
+        run: pnpm --filter @altersend/desktop build
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-
-      - name: Prune dev dependencies before packaging
-        run: |
-          npm prune --omit=dev
-          npm install electron@40.2.1 electron-builder@26.8.1 @electron/notarize@2.2.1 --no-save
 
       - name: Install Apple signing certificate into a temp keychain
         env:
@@ -55,16 +54,16 @@ jobs:
           echo "CSC_KEYCHAIN=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
 
       - name: Make macOS (arm64)
-        run: npm run dist:mac:arm64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:mac:arm64
         env:
-          CSC_NAME: "Devaprime LLC"
-          SKIP_NOTARIZE: "true"
+          CSC_NAME: 'Devaprime LLC'
+          SKIP_NOTARIZE: 'true'
 
       - name: Make macOS (x64)
-        run: npm run dist:mac:x64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:mac:x64
         env:
-          CSC_NAME: "Devaprime LLC"
-          SKIP_NOTARIZE: "true"
+          CSC_NAME: 'Devaprime LLC'
+          SKIP_NOTARIZE: 'true'
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
@@ -77,20 +76,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
       - name: Build desktop app
         shell: bash
-        run: npm run build -w apps/desktop
+        run: pnpm --filter @altersend/desktop build
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
@@ -112,7 +115,7 @@ jobs:
           "WINDOWS_CERTIFICATE_PASSWORD=buildcert" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Make Windows
-        run: npm run dist:win:x64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:win:x64
         env:
           DEBUG: electron-windows-msix*
 
@@ -159,26 +162,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
       - name: Build desktop app
-        run: npm run build -w apps/desktop
+        run: pnpm --filter @altersend/desktop build
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Make Linux
-        run: npm run dist:linux:x64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:linux:x64
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
@@ -191,26 +198,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
       - name: Build desktop app
-        run: npm run build -w apps/desktop
+        run: pnpm --filter @altersend/desktop build
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Make Linux (arm64)
-        run: npm run dist:linux:arm64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:linux:arm64
 
       - name: Upload Linux arm64 artifacts
         uses: actions/upload-artifact@v4
@@ -225,6 +236,10 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13
 
       - name: Read version
         id: version
@@ -258,8 +273,12 @@ jobs:
         id: version
         run: echo "value=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
       - name: Install pear-build
-        run: npm install -g pear-build@1.1.0
+        run: pnpm add -g pear-build@1.1.0
 
       - name: Download macOS artifacts
         uses: actions/download-artifact@v4
@@ -315,7 +334,6 @@ jobs:
           cp "$APPIMAGE_ARM" /tmp/AlterSend.AppImage
           pear-build --package "$PKG" --linux-arm64-app /tmp/AlterSend.AppImage --target "$TARGET"
           rm /tmp/AlterSend.AppImage
-
 
       - name: Stage and release to Pear DHT
         run: |

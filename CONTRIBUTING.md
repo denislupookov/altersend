@@ -4,9 +4,9 @@ Thanks for your interest in contributing! This guide covers everything from firs
 
 ## Prerequisites
 
-- Node.js 20+
-- npm 10+
-- For iOS: Xcode 15+ (and CocoaPods, installed automatically by `npm run mobile:setup`)
+- Node.js 22.13+
+- pnpm 11+
+- For iOS: Xcode 15+ (and CocoaPods, installed automatically by `pnpm run mobile:setup`)
 - For Android: Android Studio + an SDK / emulator
 
 ## Setup
@@ -14,14 +14,14 @@ Thanks for your interest in contributing! This guide covers everything from firs
 ```sh
 git clone https://github.com/denislupookov/altersend.git
 cd altersend
-npm install
+pnpm install
 
 # Optional — apps run without these in dev
 cp apps/desktop/.env.example apps/desktop/.env
 cp apps/mobile/.env.example apps/mobile/.env
 
 # iOS only — installs Pods and builds the Bare worklet for the mobile app
-npm run mobile:setup
+pnpm run mobile:setup
 ```
 
 ## Architecture in one minute
@@ -39,20 +39,20 @@ Full diagrams and inter-process boundaries: [docs/architecture.md](docs/architec
 ## Running in development
 
 > **Build order matters.** Packages must be built in dependency order before apps can start:
-> `core → domain → components → apps`. The scripts below handle this automatically. Don't run `npm start -w apps/desktop` directly.
+> `core → domain → components → apps`. The scripts below handle this automatically. Don't run `pnpm --filter @altersend/desktop start` directly.
 
 ```sh
 # Desktop
-npm run dev
+pnpm run dev
 
 # Mobile (Metro bundler — Expo dev client)
-npm run mobile:start
+pnpm run mobile:start
 
 # Mobile (build packages + launch iOS simulator)
-npm run mobile
+pnpm run mobile
 
 # UI development in isolation
-npm run components:storybook   # http://localhost:6100
+pnpm run components:storybook   # http://localhost:6100
 ```
 
 ### Multi-peer local testing
@@ -60,8 +60,8 @@ npm run components:storybook   # http://localhost:6100
 To exercise peer-to-peer transfer on a single machine, launch additional desktop instances with their own storage:
 
 ```sh
-npm run desktop:dev:peer2      # second Electron instance
-npm run desktop:dev:peer3      # third Electron instance
+pnpm run desktop:dev:peer2      # second Electron instance
+pnpm run desktop:dev:peer3      # third Electron instance
 ```
 
 Each peer has an isolated identity and storage, so they can discover and transfer to each other as if they were separate devices.
@@ -85,7 +85,7 @@ docs/
 
 **Raw color literals are banned** in `apps/**` and `packages/components/**`. Use Tailwind utilities (`bg-success`, `border-info`), StyleX tokens (`tokens.colorXxx`), or `theme.colors.colorXxx` for React Native inline styles. For opacity, use `withAlpha(token, alpha)` (RN) or Tailwind opacity utilities (`bg-success/12`).
 
-The only allowed exceptions are files under `packages/components/src/theme/` — that's the source of truth. `npm run check:tokens` enforces this in CI.
+The only allowed exceptions are files under `packages/components/src/theme/` — that's the source of truth. `pnpm run check:tokens` enforces this in CI.
 
 ## Making changes
 
@@ -93,10 +93,10 @@ The only allowed exceptions are files under `packages/components/src/theme/` —
 2. Make your changes
 3. Run the full PR gate locally:
    ```sh
-   npm run lint                  # ESLint, --max-warnings=0
-   npm run check:tokens          # token-system enforcement
-   npm run components:typecheck  # type-check the components package
-   npm test                      # runs tests across all workspaces
+   pnpm run lint                  # ESLint, --max-warnings=0
+   pnpm run check:tokens          # token-system enforcement
+   pnpm run components:typecheck  # type-check the components package
+   pnpm test                      # runs tests across all workspaces
    ```
 4. Open a pull request — fill in the PR template
 
@@ -106,8 +106,8 @@ CI runs the same checks; a PR with any of them failing won't be merged.
 
 - TypeScript everywhere — `strict: true` across all packages
 - Prettier for formatting (config in `.prettierrc` at the repo root)
-- ESLint must pass with `--max-warnings=0` (`npm run lint`)
-- Comments: default to none. Add one only when the *why* is non-obvious (a hidden constraint, a subtle invariant, a workaround). Don't explain what well-named code already says.
+- ESLint must pass with `--max-warnings=0` (`pnpm run lint`)
+- Comments: default to none. Add one only when the _why_ is non-obvious (a hidden constraint, a subtle invariant, a workaround). Don't explain what well-named code already says.
 - Avoid stray `console.log` in committed code — `console.warn` / `console.error` are fine for legitimate error paths
 
 ## Submitting issues
