@@ -111,6 +111,17 @@ describe('font family tokens', () => {
     expect(webInputSource).not.toContain('textAlignVertical')
   })
 
+  it('keeps mobile Metro pointed at component source so Android Input is selectable', () => {
+    const metroSource = readFileSync(
+      new URL('../../../../apps/mobile/metro.config.js', import.meta.url),
+      'utf8'
+    )
+
+    expect(metroSource).toContain("'@altersend/components'")
+    expect(metroSource).toContain('packages/components/src/index.ts')
+    expect(metroSource).toContain('resolveRequest')
+  })
+
   it('does not pass CSS-quoted font family names to React Native font themes', () => {
     const webFontThemeSource = readFileSync(new URL('./fontThemes.css.ts', import.meta.url), 'utf8')
     const nativeFontThemeSource = readFileSync(

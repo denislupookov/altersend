@@ -5,6 +5,24 @@ const projectRoot = __dirname
 const monorepoRoot = path.resolve(projectRoot, '../..')
 
 const config = getDefaultConfig(projectRoot)
+const workspaceSourceAliases = new Map([
+  ['@altersend/core', path.resolve(monorepoRoot, 'packages/core/src/index.ts')],
+  ['@altersend/domain', path.resolve(monorepoRoot, 'packages/domain/src/index.ts')],
+  ['@altersend/components', path.resolve(monorepoRoot, 'packages/components/src/index.ts')],
+  [
+    '@altersend/components/icons',
+    path.resolve(monorepoRoot, 'packages/components/src/icons/index.ts')
+  ],
+  [
+    '@altersend/components/theme',
+    path.resolve(monorepoRoot, 'packages/components/src/theme/index.ts')
+  ],
+  [
+    '@altersend/components/theme/raw',
+    path.resolve(monorepoRoot, 'packages/components/src/theme/tokens.raw.ts')
+  ],
+  ['@altersend/i18n', path.resolve(monorepoRoot, 'packages/i18n/src/index.ts')]
+])
 
 config.watchFolders = [monorepoRoot]
 config.resolver.nodeModulesPaths = [
@@ -20,7 +38,14 @@ config.transformer = {
 config.resolver = {
   ...resolver,
   assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'),
-  sourceExts: [...resolver.sourceExts, 'svg']
+  sourceExts: [...resolver.sourceExts, 'svg'],
+  resolveRequest(context, moduleName, platform) {
+    return context.resolveRequest(
+      context,
+      workspaceSourceAliases.get(moduleName) ?? moduleName,
+      platform
+    )
+  }
 }
 
 module.exports = config

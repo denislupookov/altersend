@@ -14,6 +14,12 @@ function readMobile(path: string): string {
   return readFileSync(join(mobileRoot.pathname, path), 'utf8')
 }
 
+function readMobilePackageJson() {
+  return JSON.parse(readMobile('package.json')) as {
+    scripts: Record<string, string>
+  }
+}
+
 describe('release-gated language UI wiring', () => {
   it('forces desktop locale initialization through the active locale resolver', () => {
     const source = readDesktop('src/renderer/main.tsx')
@@ -44,5 +50,26 @@ describe('release-gated language UI wiring', () => {
     expect(settingsSource).toMatch(/\{isMultiLangEnabled && \(/)
     expect(languageSource).toContain('isMultiLangEnabled')
     expect(languageSource).toMatch(/if \(!isMultiLangEnabled\)/)
+  })
+
+  it('builds shared packages before direct mobile dev commands can start Metro', () => {
+    const { scripts } = readMobilePackageJson()
+
+    expect(scripts['build:packages']).toBeDefined()
+    expect(scripts['build:packages']).toContain('npm run build -w packages/i18n')
+    expect(scripts.prestart).toMatch(/build:packages.*bundle-bare/)
+    expect(scripts.preandroid).toMatch(/build:packages.*bundle:android/)
+    expect(scripts.preios).toMatch(/build:packages.*bundle:ios/)
+  })
+
+  it('routes mobile Metro workspace packages to source files', () => {
+    const metroSource = readMobile('metro.config.js')
+
+    expect(metroSource).toContain('workspaceSourceAliases')
+    expect(metroSource).toContain("'@altersend/i18n'")
+    expect(metroSource).toContain('packages/i18n/src/index.ts')
+    expect(metroSource).toContain("'@altersend/components'")
+    expect(metroSource).toContain('packages/components/src/index.ts')
+    expect(metroSource).toContain('resolveRequest')
   })
 })
