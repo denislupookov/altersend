@@ -1,4 +1,6 @@
 import { dispatchToTransferStore } from './store'
+import { getTransferDebugMessage, getTransferErrorCode } from './errors'
+import { TRANSFER_ERROR_CODES } from './types'
 import type { SharingStatusEvent } from '../send/draftModel'
 import type { RendererTransferEvent, TransferRPC } from '@altersend/core'
 
@@ -45,7 +47,11 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
     case 'role':
       return dispatchToTransferStore({ type: 'role_changed', role: event.role })
     case 'error':
-      return dispatchToTransferStore({ type: 'set_error', message: event.message })
+      return dispatchToTransferStore({
+        type: 'set_error',
+        code: getTransferErrorCode(event.message, TRANSFER_ERROR_CODES.transferFailed),
+        message: event.message
+      })
   }
 }
 
@@ -110,7 +116,8 @@ export function bindTransferApi(
       reportError('bindTransferApi.startP2P', err)
       dispatchToTransferStore({
         type: 'boot_failed',
-        message: err instanceof Error ? err.message : String(err)
+        code: getTransferErrorCode(err, TRANSFER_ERROR_CODES.transferFailed),
+        message: getTransferDebugMessage(err)
       })
     })
 

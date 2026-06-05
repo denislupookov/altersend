@@ -1,6 +1,8 @@
+import releaseConfig from './release.json'
+
 export const DEFAULT_LOCALE = 'en-US'
 export const SYSTEM_LOCALE_PREFERENCE = 'system'
-export const isMultiLangEnabled: boolean = false
+export const isMultiLangEnabled: boolean = releaseConfig.isMultiLangEnabled
 
 export type TextDirection = 'ltr' | 'rtl'
 export type LocaleFontFamily =

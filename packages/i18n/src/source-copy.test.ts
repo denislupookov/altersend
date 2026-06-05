@@ -27,6 +27,26 @@ const hardcodedCopyChecks = [
   {
     file: 'apps/mobile/src/transfer/receive/views/ErrorPanel.tsx',
     snippets: ['Transfer issue']
+  },
+  {
+    file: 'apps/desktop/src/renderer/pages/TransferPage/FooterBar.tsx',
+    snippets: ["{' and '}", "{'.'}"]
+  },
+  {
+    file: 'apps/desktop/src/renderer/pages/ReceivePage/ReceiveJoinView.tsx',
+    snippets: ['error.message', 's.errorMessage', 'PEER_UNREACHABLE_ERROR_CODE']
+  },
+  {
+    file: 'apps/desktop/src/renderer/pages/ReceivePage/WebcamScanView.tsx',
+    snippets: ['error.message']
+  },
+  {
+    file: 'apps/mobile/app/(tabs)/receive/index.tsx',
+    snippets: ['s.errorMessage', 'PEER_UNREACHABLE_ERROR_CODE']
+  },
+  {
+    file: 'apps/mobile/app/receive/incoming.tsx',
+    snippets: ['s.errorMessage', 'PEER_UNREACHABLE_ERROR_CODE']
   }
 ]
 

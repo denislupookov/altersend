@@ -21,7 +21,7 @@ function getDownloadStatusLabel(t: ReturnType<typeof useTranslation>['t'], row: 
     case 'saved':
       return t('receive:status.saved')
     case 'failed':
-      return row.status.message ?? t('receive:status.failed')
+      return t('errors:transfer.downloadFailed')
     case 'progress':
       return t('receive:status.percent', { percent: row.percent })
     case 'ready':
@@ -30,7 +30,7 @@ function getDownloadStatusLabel(t: ReturnType<typeof useTranslation>['t'], row: 
 }
 
 export function ReceiveConnectedView() {
-  const { t } = useTranslation(['receive', 'common'])
+  const { t } = useTranslation(['receive', 'common', 'errors'])
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const peerCount = useTransferStore((s) => s.peerCount)

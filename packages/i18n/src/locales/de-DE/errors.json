@@ -10,5 +10,12 @@
     "title": "Elektronenbrücke nicht verfügbar",
     "description": "Dieser Renderer läuft ohne die Desktop Bridge. Starten Sie AlterSend über die Desktop-App neu.",
     "status": "Bridge nicht verfügbar"
+  },
+  "transfer": {
+    "invalidTopic": "Der Verbindungscode ist ungültig.",
+    "joinFailed": "Der Sitzung konnte nicht beigetreten werden.",
+    "peerUnreachable": "Der Sender ist nicht erreichbar. Prüfen Sie den Code und versuchen Sie es erneut.",
+    "transferFailed": "Die Übertragung ist fehlgeschlagen. Versuchen Sie es erneut.",
+    "downloadFailed": "Der Download ist fehlgeschlagen. Versuchen Sie es erneut."
   }
 }

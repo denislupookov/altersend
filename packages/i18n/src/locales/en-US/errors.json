@@ -10,5 +10,12 @@
     "title": "Electron bridge unavailable",
     "description": "This renderer is running without the desktop bridge. Restart AlterSend from the desktop app.",
     "status": "Bridge unavailable"
+  },
+  "transfer": {
+    "invalidTopic": "The connection code is invalid.",
+    "joinFailed": "Could not join the session.",
+    "peerUnreachable": "Couldn't reach the sender. Check the code and try again.",
+    "transferFailed": "Transfer failed. Try again.",
+    "downloadFailed": "Download failed. Try again."
   }
 }

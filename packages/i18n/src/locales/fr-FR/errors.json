@@ -10,5 +10,12 @@
     "title": "Pont électronique indisponible",
     "description": "Ce moteur de rendu fonctionne sans le pont de bureau. Redémarrez AlterSend à partir de l'application de bureau.",
     "status": "Pont indisponible"
+  },
+  "transfer": {
+    "invalidTopic": "Le code de connexion est invalide.",
+    "joinFailed": "Impossible de rejoindre la session.",
+    "peerUnreachable": "Impossible de joindre l’expéditeur. Vérifiez le code et réessayez.",
+    "transferFailed": "Le transfert a échoué. Réessayez.",
+    "downloadFailed": "Le téléchargement a échoué. Réessayez."
   }
 }

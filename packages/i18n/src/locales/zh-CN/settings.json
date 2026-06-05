@@ -26,6 +26,6 @@
   "legal": {
     "terms": "使用条款",
     "privacy": "隐私声明",
-    "sentence": "{{terms}} 和 {{privacy}}。"
+    "sentence": "<terms>使用条款</terms>和<privacy>隐私声明</privacy>。"
   }
 }

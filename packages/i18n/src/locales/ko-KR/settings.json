@@ -26,6 +26,6 @@
   "legal": {
     "terms": "이용약관",
     "privacy": "개인 정보 보호 정책",
-    "sentence": "{{terms}} 및 {{privacy}}."
+    "sentence": "<terms>이용 약관</terms> 및 <privacy>개인정보 처리방침</privacy>."
   }
 }

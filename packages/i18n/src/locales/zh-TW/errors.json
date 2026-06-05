@@ -10,5 +10,12 @@
     "title": "電子橋不可用",
     "description": "此渲染器在沒有桌面橋的情況下運作。從桌面應用程式重新啟動 AlterSend。",
     "status": "橋接無法使用"
+  },
+  "transfer": {
+    "invalidTopic": "連線代碼無效。",
+    "joinFailed": "無法加入工作階段。",
+    "peerUnreachable": "無法連線到傳送者。請確認代碼後再試一次。",
+    "transferFailed": "傳輸失敗。請再試一次。",
+    "downloadFailed": "下載失敗。請再試一次。"
   }
 }

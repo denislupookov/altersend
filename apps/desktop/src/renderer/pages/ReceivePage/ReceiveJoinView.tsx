@@ -2,24 +2,44 @@ import { useState, type ChangeEvent } from 'react'
 import { Button, Input } from '@altersend/components'
 import { ChevronRightIcon, QrCodeIcon } from '@altersend/components/icons'
 import {
-  PEER_UNREACHABLE_ERROR_CODE,
+  getTransferErrorCode,
   isValidJoinCode,
   joinSession,
+  TRANSFER_ERROR_CODES,
+  type TransferErrorCode,
   useTransferStore
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/i18n'
 import { WebcamScanView } from './WebcamScanView'
 
+function getDisplayError(
+  t: ReturnType<typeof useTranslation>['t'],
+  code: TransferErrorCode | null
+) {
+  if (!code) return null
+  switch (code) {
+    case TRANSFER_ERROR_CODES.invalidTopic:
+      return t('receive:errors.invalidKey')
+    case TRANSFER_ERROR_CODES.joinFailed:
+      return t('errors:transfer.joinFailed')
+    case TRANSFER_ERROR_CODES.peerUnreachable:
+      return t('errors:transfer.peerUnreachable')
+    case TRANSFER_ERROR_CODES.downloadFailed:
+      return t('errors:transfer.downloadFailed')
+    case TRANSFER_ERROR_CODES.transferFailed:
+      return t('errors:transfer.transferFailed')
+  }
+}
+
 export function ReceiveJoinView() {
-  const { t } = useTranslation(['receive', 'common'])
+  const { t } = useTranslation(['receive', 'common', 'errors'])
   const [joinKey, setJoinKey] = useState('')
   const [showValidation, setShowValidation] = useState(false)
   const [isJoining, setIsJoining] = useState(false)
-  const [localError, setLocalError] = useState<string | null>(null)
+  const [localErrorCode, setLocalErrorCode] = useState<TransferErrorCode | null>(null)
   const [mode, setMode] = useState<'paste' | 'scan'>('paste')
-  const storeError = useTransferStore((s) => s.errorMessage)
-  const displayStoreError =
-    storeError === PEER_UNREACHABLE_ERROR_CODE ? t('receive:errors.unreachable') : storeError
+  const storeErrorCode = useTransferStore((s) => s.errorCode)
+  const displayStoreError = getDisplayError(t, storeErrorCode)
 
   if (mode === 'scan') {
     return <WebcamScanView onCancel={() => setMode('paste')} />
@@ -30,18 +50,18 @@ export function ReceiveJoinView() {
   const joinKeyError =
     showValidation && trimmedJoinKey.length > 0 && !isValidJoinKey
       ? t('receive:errors.invalidKey')
-      : (localError ?? displayStoreError ?? undefined)
+      : (getDisplayError(t, localErrorCode) ?? displayStoreError ?? undefined)
 
   const join = async () => {
     setShowValidation(true)
     if (!isValidJoinKey) return
     try {
       setIsJoining(true)
-      setLocalError(null)
+      setLocalErrorCode(null)
       await joinSession(trimmedJoinKey)
     } catch (error) {
       setIsJoining(false)
-      setLocalError(error instanceof Error ? error.message : t('receive:errors.joinFailed'))
+      setLocalErrorCode(getTransferErrorCode(error, TRANSFER_ERROR_CODES.joinFailed))
     }
   }
 
@@ -85,7 +105,7 @@ export function ReceiveJoinView() {
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setJoinKey(e.currentTarget.value)
             if (showValidation) setShowValidation(false)
-            if (localError) setLocalError(null)
+            if (localErrorCode) setLocalErrorCode(null)
           }}
           placeholder={t('receive:form.codePlaceholder')}
           spellCheck={false}

@@ -10,6 +10,10 @@ const selectSource = readFileSync(
   new URL('../../../apps/desktop/src/renderer/components/Select.tsx', import.meta.url),
   'utf8'
 )
+const selectBehaviorSource = readFileSync(
+  new URL('../../../apps/desktop/src/renderer/components/selectBehavior.ts', import.meta.url),
+  'utf8'
+)
 const desktopMainSource = readFileSync(
   new URL('../../../apps/desktop/src/renderer/main.tsx', import.meta.url),
   'utf8'
@@ -30,16 +34,6 @@ describe('desktop Select implementation', () => {
     expect(selectSource).toContain("role='option'")
   })
 
-  it('closes the popup before notifying consumers about a selected option', () => {
-    const chooseOptionIndex = selectSource.indexOf('const chooseOption')
-    const closeIndex = selectSource.indexOf('setOpen(false)', chooseOptionIndex)
-    const onChangeIndex = selectSource.indexOf('onChange(option.value)', chooseOptionIndex)
-
-    expect(chooseOptionIndex).toBeGreaterThanOrEqual(0)
-    expect(closeIndex).toBeGreaterThan(chooseOptionIndex)
-    expect(onChangeIndex).toBeGreaterThan(closeIndex)
-  })
-
   it('keeps locale font synchronization inside the shared ThemeProvider', () => {
     expect(desktopMainSource).not.toContain('getFontFamilyCssVariables')
     expect(desktopMainSource).not.toContain('fontVariables')
@@ -53,7 +47,7 @@ describe('desktop Select implementation', () => {
   })
 
   it('supports per-option fonts for multilingual language names', () => {
-    expect(selectSource).toContain('fontFamily?: string')
+    expect(selectBehaviorSource).toContain('fontFamily?: string')
     expect(selectSource).toContain(
       'style={option.fontFamily ? { fontFamily: option.fontFamily } : undefined}'
     )

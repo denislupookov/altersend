@@ -10,5 +10,12 @@
     "title": "Ponte elettronico non disponibile",
     "description": "Questo renderer è in esecuzione senza il bridge desktop. Riavvia AlterSend dall'app desktop.",
     "status": "Bridge non disponibile"
+  },
+  "transfer": {
+    "invalidTopic": "Il codice di connessione non è valido.",
+    "joinFailed": "Impossibile partecipare alla sessione.",
+    "peerUnreachable": "Impossibile raggiungere il mittente. Controlla il codice e riprova.",
+    "transferFailed": "Trasferimento non riuscito. Riprova.",
+    "downloadFailed": "Download non riuscito. Riprova."
   }
 }

@@ -18,6 +18,7 @@
 const fs = require('fs')
 const fsp = require('fs/promises')
 const path = require('path')
+const releaseConfig = require('../../../packages/i18n/src/release.json')
 
 const ARCH_NAMES = {
   0: 'ia32',
@@ -46,7 +47,11 @@ async function copyMacLocalizations(context) {
   const resourcesDir = path.join(context.appOutDir, `${appName}.app`, 'Contents', 'Resources')
   const entries = await safeReadDir(sourceDir)
 
-  for (const entry of entries) {
+  const localeEntries = releaseConfig.isMultiLangEnabled
+    ? entries
+    : entries.filter((entry) => entry.name === 'en.lproj')
+
+  for (const entry of localeEntries) {
     if (!entry.isDirectory() || !entry.name.endsWith('.lproj')) continue
     const targetDir = path.join(resourcesDir, entry.name)
     await fsp.mkdir(targetDir, { recursive: true })
@@ -56,7 +61,7 @@ async function copyMacLocalizations(context) {
     )
   }
 
-  console.log(`afterPack: copied ${entries.length} macOS localization dir(s)`)
+  console.log(`afterPack: copied ${localeEntries.length} macOS localization dir(s)`)
 }
 
 async function prunePrebuilds(context) {

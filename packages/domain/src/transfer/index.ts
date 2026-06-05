@@ -1,5 +1,6 @@
 export * from './types'
 export * from './reducer'
+export * from './errors'
 export * from './store'
 export * from './commands'
 export {

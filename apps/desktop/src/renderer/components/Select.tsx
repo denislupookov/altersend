@@ -1,12 +1,12 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { flushSync } from 'react-dom'
 import { ChevronDownIcon } from '@altersend/components/icons'
-
-interface SelectOption {
-  value: string
-  label: string
-  fontFamily?: string
-}
+import {
+  chooseSelectOption,
+  getInitialHighlightedIndex,
+  getNextSelectKeyboardState,
+  type SelectOption
+} from './selectBehavior'
 
 interface SelectProps {
   value: string
@@ -36,7 +36,7 @@ export function Select({
 
   useEffect(() => {
     if (!open) {
-      setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0)
+      setHighlightedIndex(getInitialHighlightedIndex(selectedIndex, options.length))
       return
     }
 
@@ -46,64 +46,49 @@ export function Select({
 
     document.addEventListener('pointerdown', handlePointerDown, true)
     return () => document.removeEventListener('pointerdown', handlePointerDown, true)
-  }, [open, selectedIndex])
+  }, [open, options.length, selectedIndex])
 
   const openListbox = (nextIndex = selectedIndex >= 0 ? selectedIndex : 0) => {
-    setHighlightedIndex(Math.max(0, Math.min(options.length - 1, nextIndex)))
+    setHighlightedIndex(getInitialHighlightedIndex(nextIndex, options.length))
     setOpen(true)
   }
 
   const chooseOption = (option: SelectOption) => {
-    flushSync(() => setOpen(false))
-    if (option.value !== value) onChange(option.value)
+    chooseSelectOption({
+      option,
+      currentValue: value,
+      close: () => flushSync(() => setOpen(false)),
+      onChange
+    })
   }
 
   const handleTriggerKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (options.length === 0) return
+    const next = getNextSelectKeyboardState({
+      key: event.key,
+      open,
+      selectedIndex,
+      highlightedIndex,
+      optionCount: options.length
+    })
 
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault()
-        if (!open) {
-          openListbox()
-        } else {
-          setHighlightedIndex((index) => Math.min(options.length - 1, index + 1))
-        }
+    if (next.preventDefault) event.preventDefault()
+
+    switch (next.action) {
+      case 'open':
+        openListbox(next.highlightedIndex)
         break
-      case 'ArrowUp':
-        event.preventDefault()
-        if (!open) {
-          openListbox()
-        } else {
-          setHighlightedIndex((index) => Math.max(0, index - 1))
-        }
-        break
-      case 'Home':
-        event.preventDefault()
-        openListbox(0)
-        break
-      case 'End':
-        event.preventDefault()
-        openListbox(options.length - 1)
-        break
-      case 'Enter':
-      case ' ':
-        event.preventDefault()
-        if (open) {
-          const highlightedOption = options[highlightedIndex]
-          if (highlightedOption) chooseOption(highlightedOption)
-        } else {
-          openListbox()
-        }
-        break
-      case 'Escape':
-        if (open) {
-          event.preventDefault()
-          setOpen(false)
-        }
-        break
-      case 'Tab':
+      case 'close':
         setOpen(false)
+        break
+      case 'highlight':
+        setHighlightedIndex(next.highlightedIndex)
+        break
+      case 'choose': {
+        const highlightedOption = options[next.highlightedIndex]
+        if (highlightedOption) chooseOption(highlightedOption)
+        break
+      }
+      case 'none':
         break
     }
   }

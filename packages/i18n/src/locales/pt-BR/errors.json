@@ -10,5 +10,12 @@
     "title": "Ponte eletrônica indisponível",
     "description": "Este renderizador está sendo executado sem a ponte da área de trabalho. Reinicie AlterSend no aplicativo de desktop.",
     "status": "Bridge indisponível"
+  },
+  "transfer": {
+    "invalidTopic": "O código de conexão é inválido.",
+    "joinFailed": "Não foi possível entrar na sessão.",
+    "peerUnreachable": "Não foi possível alcançar o remetente. Verifique o código e tente novamente.",
+    "transferFailed": "A transferência falhou. Tente novamente.",
+    "downloadFailed": "O download falhou. Tente novamente."
   }
 }

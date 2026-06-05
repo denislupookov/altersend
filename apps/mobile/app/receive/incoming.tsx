@@ -11,19 +11,34 @@ import { ErrorPanel, ReceiveIncomingView, ReceiveReconnectingView } from '@/src/
 import ConnectionLostSvg from '../../../../assets/connection-lost.svg'
 import {
   createDirectoryDownloadRequests,
-  PEER_UNREACHABLE_ERROR_CODE,
   formatFileSize,
   getDownloadTotals,
   getReceiveStep,
+  TRANSFER_ERROR_CODES,
+  type TransferErrorCode,
   type ReceiveStep,
   useTransferStore
 } from '@altersend/domain'
 import { clearSession, downloadFiles } from '@altersend/domain'
 import { Text } from '@/src/components/ThemedText'
 
-function getDisplayError(t: ReturnType<typeof useTranslation>['t'], message: string | null) {
-  if (!message) return null
-  return message === PEER_UNREACHABLE_ERROR_CODE ? t('receive:errors.unreachable') : message
+function getDisplayError(
+  t: ReturnType<typeof useTranslation>['t'],
+  code: TransferErrorCode | null
+) {
+  if (!code) return null
+  switch (code) {
+    case TRANSFER_ERROR_CODES.invalidTopic:
+      return t('receive:errors.invalidCode')
+    case TRANSFER_ERROR_CODES.joinFailed:
+      return t('errors:transfer.joinFailed')
+    case TRANSFER_ERROR_CODES.peerUnreachable:
+      return t('errors:transfer.peerUnreachable')
+    case TRANSFER_ERROR_CODES.downloadFailed:
+      return t('errors:transfer.downloadFailed')
+    case TRANSFER_ERROR_CODES.transferFailed:
+      return t('errors:transfer.transferFailed')
+  }
 }
 
 function getReceivePageCopy(
@@ -70,7 +85,7 @@ function getReceivePageCopy(
 }
 
 export default function ReceiveIncomingScreen() {
-  const { t } = useTranslation(['receive', 'common'])
+  const { t } = useTranslation(['receive', 'common', 'errors'])
   const { theme } = useTheme()
   const navigation = useNavigation()
   const router = useRouter()
@@ -79,8 +94,8 @@ export default function ReceiveIncomingScreen() {
   const role = useTransferStore((s) => s.role)
   const peerCount = useTransferStore((s) => s.peerCount)
   const isReconnecting = useTransferStore((s) => s.isReconnecting)
-  const errorMessage = useTransferStore((s) => s.errorMessage)
-  const displayError = getDisplayError(t, errorMessage)
+  const errorCode = useTransferStore((s) => s.errorCode)
+  const displayError = getDisplayError(t, errorCode)
 
   const totals = useMemo(
     () => getDownloadTotals(incomingFileOffers, receiveDownloadStates),

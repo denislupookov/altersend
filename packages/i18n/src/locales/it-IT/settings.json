@@ -26,6 +26,6 @@
   "legal": {
     "terms": "Condizioni d'uso",
     "privacy": "Informativa sulla privacy",
-    "sentence": "PLACEholder_0 e Placeholder_1."
+    "sentence": "<terms>Termini di utilizzo</terms> e <privacy>Informativa sulla privacy</privacy>."
   }
 }

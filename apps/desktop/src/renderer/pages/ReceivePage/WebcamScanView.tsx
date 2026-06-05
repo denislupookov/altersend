@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import QrScanner from 'qr-scanner'
 import { Button } from '@altersend/components'
-import { extractJoinCode, joinSession } from '@altersend/domain'
+import {
+  extractJoinCode,
+  getTransferErrorCode,
+  joinSession,
+  TRANSFER_ERROR_CODES,
+  type TransferErrorCode
+} from '@altersend/domain'
 import { useTranslation } from '@altersend/i18n'
 import { bridgeApi } from '../../api/bridgeApi'
 import { Select } from '../../components/Select'
@@ -19,8 +25,23 @@ const CAMERA_ERROR_STATES: Record<string, ScanState> = {
   OverconstrainedError: 'no-camera'
 }
 
+function getJoinError(t: ReturnType<typeof useTranslation>['t'], code: TransferErrorCode) {
+  switch (code) {
+    case TRANSFER_ERROR_CODES.invalidTopic:
+      return t('receive:errors.invalidKey')
+    case TRANSFER_ERROR_CODES.joinFailed:
+      return t('errors:transfer.joinFailed')
+    case TRANSFER_ERROR_CODES.peerUnreachable:
+      return t('errors:transfer.peerUnreachable')
+    case TRANSFER_ERROR_CODES.downloadFailed:
+      return t('errors:transfer.downloadFailed')
+    case TRANSFER_ERROR_CODES.transferFailed:
+      return t('errors:transfer.transferFailed')
+  }
+}
+
 export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
-  const { t } = useTranslation(['receive', 'common'])
+  const { t } = useTranslation(['receive', 'common', 'errors'])
   const videoRef = useRef<HTMLVideoElement>(null)
   const scannerRef = useRef<QrScanner | null>(null)
   const handledRef = useRef(false)
@@ -51,7 +72,9 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
       } catch (error) {
         if (signal.aborted) return
         handledRef.current = false
-        setErrorMessage(error instanceof Error ? error.message : t('receive:errors.joinFailed'))
+        setErrorMessage(
+          getJoinError(t, getTransferErrorCode(error, TRANSFER_ERROR_CODES.joinFailed))
+        )
         setState('scanning')
         void scannerRef.current?.start()
       }
@@ -100,9 +123,7 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
         if (mapped) {
           setState(mapped)
         } else {
-          setErrorMessage(
-            error instanceof Error ? error.message : t('receive:errors.cameraUnavailable')
-          )
+          setErrorMessage(t('receive:errors.cameraCouldNotStart'))
           setState('failed')
         }
       }

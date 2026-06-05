@@ -10,5 +10,12 @@
     "title": "전자 브리지를 사용할 수 없음",
     "description": "이 렌더러는 데스크톱 브리지 없이 실행 중입니다. 데스크톱 앱에서 AlterSend을 다시 시작하세요.",
     "status": "브리지를 사용할 수 없음"
+  },
+  "transfer": {
+    "invalidTopic": "연결 코드가 올바르지 않습니다.",
+    "joinFailed": "세션에 참가할 수 없습니다.",
+    "peerUnreachable": "보낸 사람에게 연결할 수 없습니다. 코드를 확인한 뒤 다시 시도하세요.",
+    "transferFailed": "전송에 실패했습니다. 다시 시도하세요.",
+    "downloadFailed": "다운로드에 실패했습니다. 다시 시도하세요."
   }
 }

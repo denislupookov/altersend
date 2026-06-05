@@ -13,6 +13,16 @@ export type { TransferRole }
 
 export type ConnectionState = 'disconnected' | 'joining' | 'joined' | 'peer-connected'
 
+export const TRANSFER_ERROR_CODES = {
+  peerUnreachable: 'peer_unreachable',
+  invalidTopic: 'invalid_topic',
+  joinFailed: 'join_failed',
+  transferFailed: 'transfer_failed',
+  downloadFailed: 'download_failed'
+} as const
+
+export type TransferErrorCode = (typeof TRANSFER_ERROR_CODES)[keyof typeof TRANSFER_ERROR_CODES]
+
 export interface TransferSessionState {
   topic: string
   connectionState: ConnectionState
@@ -26,18 +36,19 @@ export interface TransferSessionState {
   uploadItems: SenderUploadItem[]
   peerDownloads: Record<string, PeerDownloadEvent>
   connectedPeers: Record<string, ConnectedPeer>
+  errorCode: TransferErrorCode | null
   errorMessage: string | null
 }
 
 export type TransferAction =
   | { type: 'booted' }
-  | { type: 'boot_failed'; message: string }
+  | { type: 'boot_failed'; code?: TransferErrorCode; message: string }
   | { type: 'session_hosted'; topic: string }
   | { type: 'join_requested' }
   | { type: 'share_requested' }
-  | { type: 'join_failed'; message: string }
+  | { type: 'join_failed'; code?: TransferErrorCode; message: string }
   | { type: 'clear_session' }
-  | { type: 'set_error'; message: string }
+  | { type: 'set_error'; code?: TransferErrorCode; message: string }
   | { type: 'status_changed'; state: ConnectionState; peers?: number }
   | { type: 'role_changed'; role: TransferRole | null }
   | { type: 'apply_sharing_progress'; event: SharingStatusEvent }

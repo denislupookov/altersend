@@ -26,6 +26,6 @@
   "legal": {
     "terms": "Terms of Use",
     "privacy": "Privacy Statement",
-    "sentence": "{{terms}} and {{privacy}}."
+    "sentence": "<terms>Terms of Use</terms> and <privacy>Privacy Statement</privacy>."
   }
 }

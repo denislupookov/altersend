@@ -10,5 +10,12 @@
     "title": "Puente electrónico no disponible",
     "description": "Este renderizador se ejecuta sin el puente de escritorio. Reinicie AlterSend desde la aplicación de escritorio.",
     "status": "Puente no disponible"
+  },
+  "transfer": {
+    "invalidTopic": "El código de conexión no es válido.",
+    "joinFailed": "No se pudo unir a la sesión.",
+    "peerUnreachable": "No se pudo conectar con el remitente. Revisa el código e inténtalo de nuevo.",
+    "transferFailed": "La transferencia falló. Inténtalo de nuevo.",
+    "downloadFailed": "La descarga falló. Inténtalo de nuevo."
   }
 }

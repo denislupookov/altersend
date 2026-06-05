@@ -1,5 +1,7 @@
 import { dispatchToTransferStore, transferStore } from './store'
 import { getTransferApi, reportError } from './binding'
+import { getTransferDebugMessage, getTransferErrorCode } from './errors'
+import { TRANSFER_ERROR_CODES, type TransferErrorCode } from './types'
 import { createInitialUploadItems, getPhaseFromSelection } from '../send/draftModel'
 import type { SelectedFile } from '../send/draftTypes'
 import type {
@@ -9,10 +11,12 @@ import type {
   ShareFilesReply
 } from '@altersend/core'
 
-const errorMessage = (e: unknown): string => (e instanceof Error ? e.message : String(e))
-
-const setError = (message: string): void => {
-  dispatchToTransferStore({ type: 'set_error', message })
+const setError = (code: TransferErrorCode, error: unknown): void => {
+  dispatchToTransferStore({
+    type: 'set_error',
+    code: getTransferErrorCode(error, code),
+    message: getTransferDebugMessage(error)
+  })
 }
 
 export const clearSession = async (): Promise<void> => {
@@ -21,7 +25,7 @@ export const clearSession = async (): Promise<void> => {
     await getTransferApi().worker.disconnect()
   } catch (error) {
     reportError('clearSession', error)
-    setError(errorMessage(error))
+    setError(TRANSFER_ERROR_CODES.transferFailed, error)
   }
 }
 
@@ -32,7 +36,7 @@ export const startSendSession = async (): Promise<string> => {
     return topic
   } catch (error) {
     reportError('startSendSession', error)
-    setError(errorMessage(error))
+    setError(TRANSFER_ERROR_CODES.transferFailed, error)
     throw error
   }
 }
@@ -43,7 +47,11 @@ export const joinSession = async (topic: string): Promise<JoinReply> => {
     return await getTransferApi().worker.join(topic)
   } catch (error) {
     reportError('joinSession', error)
-    dispatchToTransferStore({ type: 'join_failed', message: errorMessage(error) })
+    dispatchToTransferStore({
+      type: 'join_failed',
+      code: getTransferErrorCode(error, TRANSFER_ERROR_CODES.joinFailed),
+      message: getTransferDebugMessage(error)
+    })
     throw error
   }
 }
@@ -55,7 +63,7 @@ export const shareFiles = async (paths: string[]): Promise<ShareFilesReply> => {
   } catch (error) {
     reportError('shareFiles', error)
     dispatchToTransferStore({ type: 'role_changed', role: null })
-    setError(errorMessage(error))
+    setError(TRANSFER_ERROR_CODES.transferFailed, error)
     throw error
   }
 }
@@ -65,7 +73,7 @@ export const downloadFiles = async (files: DownloadFileRequest[]): Promise<Downl
     return await getTransferApi().worker.downloadFiles(files)
   } catch (error) {
     reportError('downloadFiles', error)
-    setError(errorMessage(error))
+    setError(TRANSFER_ERROR_CODES.downloadFailed, error)
     throw error
   }
 }
@@ -117,6 +125,6 @@ export const continueShare = async (files: SelectedFile[]): Promise<void> => {
       type: 'set_draft_phase',
       phase: getPhaseFromSelection(files.length)
     })
-    setError(errorMessage(error))
+    setError(TRANSFER_ERROR_CODES.transferFailed, error)
   }
 }

@@ -6,9 +6,12 @@ import {
 } from '../receive/downloadModel'
 import { applySharingProgress, getPhaseFromSelection, mergeSelectedFiles } from '../send/draftModel'
 import { applyPeerDownloadEvent } from '../send/shareModel'
+import { TRANSFER_ERROR_CODES } from './types'
 import type { ConnectionState, TransferAction, TransferSessionState } from './types'
 
-export const PEER_UNREACHABLE_ERROR_CODE = 'peer_unreachable'
+export { TRANSFER_ERROR_CODES } from './types'
+
+export const PEER_UNREACHABLE_ERROR_CODE = TRANSFER_ERROR_CODES.peerUnreachable
 
 export const initialTransferSessionState: TransferSessionState = {
   topic: '',
@@ -23,7 +26,14 @@ export const initialTransferSessionState: TransferSessionState = {
   uploadItems: [],
   peerDownloads: {},
   connectedPeers: {},
+  errorCode: null,
   errorMessage: null
+}
+
+function clearError(state: TransferSessionState): TransferSessionState {
+  return state.errorCode === null && state.errorMessage === null
+    ? state
+    : { ...state, errorCode: null, errorMessage: null }
 }
 
 function mergeIncomingFileOffers(
@@ -52,6 +62,7 @@ function endSession(state: TransferSessionState): TransferSessionState {
     connectionState: 'disconnected',
     peerCount: 0,
     topic: '',
+    errorCode: null,
     errorMessage: null
   }
 }
@@ -63,9 +74,13 @@ export function transferSessionReducer(
   switch (action.type) {
     // ─── Lifecycle ────────────────────────────────────────────────
     case 'booted':
-      return state.errorMessage === null ? state : { ...state, errorMessage: null }
+      return clearError(state)
     case 'boot_failed':
-      return { ...state, errorMessage: action.message }
+      return {
+        ...state,
+        errorCode: action.code ?? TRANSFER_ERROR_CODES.transferFailed,
+        errorMessage: action.message
+      }
 
     // ─── Connection ───────────────────────────────────────────────
     case 'status_changed':
@@ -73,11 +88,17 @@ export function transferSessionReducer(
         case 'disconnected':
           return endSession(state)
         case 'joining':
-          return { ...state, connectionState: 'joining', errorMessage: null }
+          return { ...state, connectionState: 'joining', errorCode: null, errorMessage: null }
         case 'joined': {
           const peerCount = typeof action.peers === 'number' ? action.peers : state.peerCount
           const resolved: ConnectionState = peerCount > 0 ? 'peer-connected' : 'joined'
-          return { ...state, connectionState: resolved, peerCount, errorMessage: null }
+          return {
+            ...state,
+            connectionState: resolved,
+            peerCount,
+            errorCode: null,
+            errorMessage: null
+          }
         }
         case 'peer-connected': {
           const peerCount = action.peers ?? 1
@@ -86,6 +107,7 @@ export function transferSessionReducer(
             connectionState: 'peer-connected',
             peerCount,
             isReconnecting: false,
+            errorCode: null,
             errorMessage: null
           }
         }
@@ -105,12 +127,20 @@ export function transferSessionReducer(
         uploadItems: [],
         peerDownloads: {},
         connectedPeers: {},
+        errorCode: action.code ?? TRANSFER_ERROR_CODES.joinFailed,
         errorMessage: action.message
       }
 
     // ─── Send flow ────────────────────────────────────────────────
     case 'share_requested':
-      return { ...state, role: 'sender', peerDownloads: {}, connectedPeers: {}, errorMessage: null }
+      return {
+        ...state,
+        role: 'sender',
+        peerDownloads: {},
+        connectedPeers: {},
+        errorCode: null,
+        errorMessage: null
+      }
     case 'session_hosted':
       return { ...state, topic: action.topic }
     case 'add_selected_files': {
@@ -153,6 +183,7 @@ export function transferSessionReducer(
       return {
         ...state,
         uploadItems: applySharingProgress(state.uploadItems, action.event),
+        errorCode: null,
         errorMessage: null
       }
     case 'peer_download_event':
@@ -198,6 +229,7 @@ export function transferSessionReducer(
         connectedPeers: {},
         connectionState: 'joining',
         peerCount: 0,
+        errorCode: null,
         errorMessage: null
       }
     case 'transfer_ready': {
@@ -210,6 +242,7 @@ export function transferSessionReducer(
           state.receiveDownloadStates,
           incomingFileOffers
         ),
+        errorCode: null,
         errorMessage: null
       }
     }
@@ -226,10 +259,16 @@ export function transferSessionReducer(
         return {
           ...state,
           receiveDownloadStates: nextDownloadStates,
+          errorCode: TRANSFER_ERROR_CODES.downloadFailed,
           errorMessage: action.event.message ?? state.errorMessage
         }
       }
-      return { ...state, receiveDownloadStates: nextDownloadStates, errorMessage: null }
+      return {
+        ...state,
+        receiveDownloadStates: nextDownloadStates,
+        errorCode: null,
+        errorMessage: null
+      }
     }
     case 'download_routed':
       if (state.role !== 'receiver') return state
@@ -253,6 +292,7 @@ export function transferSessionReducer(
         isReconnecting: false,
         topic: '',
         connectedPeers: {},
+        errorCode: TRANSFER_ERROR_CODES.peerUnreachable,
         errorMessage: PEER_UNREACHABLE_ERROR_CODE
       }
 
@@ -274,7 +314,11 @@ export function transferSessionReducer(
           : {})
       }
     case 'set_error':
-      return { ...state, errorMessage: action.message }
+      return {
+        ...state,
+        errorCode: action.code ?? TRANSFER_ERROR_CODES.transferFailed,
+        errorMessage: action.message
+      }
 
     default: {
       const exhaustiveCheck: never = action

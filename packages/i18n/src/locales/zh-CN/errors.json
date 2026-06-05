@@ -10,5 +10,12 @@
     "title": "电子桥不可用",
     "description": "该渲染器在没有桌面桥的情况下运行。从桌面应用程序重新启动 AlterSend。",
     "status": "桥接不可用"
+  },
+  "transfer": {
+    "invalidTopic": "连接代码无效。",
+    "joinFailed": "无法加入会话。",
+    "peerUnreachable": "无法连接到发送方。请检查代码后重试。",
+    "transferFailed": "传输失败。请重试。",
+    "downloadFailed": "下载失败。请重试。"
   }
 }

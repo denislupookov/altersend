@@ -26,6 +26,6 @@
   "legal": {
     "terms": "利用規約",
     "privacy": "プライバシー声明",
-    "sentence": "{{terms}} と {{privacy}}。"
+    "sentence": "<terms>利用規約</terms> と <privacy>プライバシーステートメント</privacy>。"
   }
 }

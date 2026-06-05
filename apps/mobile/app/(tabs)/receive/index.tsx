@@ -4,10 +4,11 @@ import { useTranslation } from '@altersend/i18n'
 import { useFocusEffect, useRouter } from 'expo-router'
 import {
   JOIN_CODE_PATTERN,
-  PEER_UNREACHABLE_ERROR_CODE,
   formatFileSize,
   getDownloadTotals,
   getReceiveStep,
+  TRANSFER_ERROR_CODES,
+  type TransferErrorCode,
   type ReceiveStep,
   useTransferStore
 } from '@altersend/domain'
@@ -21,9 +22,23 @@ import {
 } from '@/src/transfer/receive'
 import { Layout } from '@/src/components'
 
-function getDisplayError(t: ReturnType<typeof useTranslation>['t'], message: string | null) {
-  if (!message) return null
-  return message === PEER_UNREACHABLE_ERROR_CODE ? t('receive:errors.unreachable') : message
+function getDisplayError(
+  t: ReturnType<typeof useTranslation>['t'],
+  code: TransferErrorCode | null
+) {
+  if (!code) return null
+  switch (code) {
+    case TRANSFER_ERROR_CODES.invalidTopic:
+      return t('receive:errors.invalidCode')
+    case TRANSFER_ERROR_CODES.joinFailed:
+      return t('errors:transfer.joinFailed')
+    case TRANSFER_ERROR_CODES.peerUnreachable:
+      return t('errors:transfer.peerUnreachable')
+    case TRANSFER_ERROR_CODES.downloadFailed:
+      return t('errors:transfer.downloadFailed')
+    case TRANSFER_ERROR_CODES.transferFailed:
+      return t('errors:transfer.transferFailed')
+  }
 }
 
 function getReceivePageCopy(
@@ -70,9 +85,9 @@ function getReceivePageCopy(
 }
 
 export default function ReceiveScreen() {
-  const { t } = useTranslation(['receive', 'common'])
+  const { t } = useTranslation(['receive', 'common', 'errors'])
   const router = useRouter()
-  const errorMessage = useTransferStore((s) => s.errorMessage)
+  const errorCode = useTransferStore((s) => s.errorCode)
   const role = useTransferStore((s) => s.role)
   const isReconnecting = useTransferStore((s) => s.isReconnecting)
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
@@ -160,7 +175,7 @@ export default function ReceiveScreen() {
       </Button>
     )
 
-  const displayError = getDisplayError(t, errorMessage)
+  const displayError = getDisplayError(t, errorCode)
   const errorPanel =
     displayError && step !== 'interrupted' ? (
       <ErrorPanel title={t('receive:errors.transferIssue')} message={displayError} />

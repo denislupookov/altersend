@@ -14,6 +14,7 @@ import {
   isMultiLangEnabled,
   normalizeLocalePreference,
   resolveActiveLocalePreference,
+  Trans,
   useTranslation,
   type LocaleOption,
   type LocalePreference
@@ -222,18 +223,26 @@ export function FooterBar({ version }: { version: string }) {
                     </div>
                     <div className='border-t border-border-primary px-5 py-4'>
                       <p className='m-0 font-medium text-[12px] text-text-muted'>
-                        <ExternalLink
-                          onPress={() => void bridgeApi.openExternalUrl(termsOfServiceUrl)}
-                        >
-                          {t('settings:legal.terms')}
-                        </ExternalLink>
-                        {' and '}
-                        <ExternalLink
-                          onPress={() => void bridgeApi.openExternalUrl(privacyPolicyUrl)}
-                        >
-                          {t('settings:legal.privacy')}
-                        </ExternalLink>
-                        {'.'}
+                        <Trans
+                          ns='settings'
+                          i18nKey='legal.sentence'
+                          components={{
+                            terms: (
+                              <ExternalLink
+                                onPress={() => void bridgeApi.openExternalUrl(termsOfServiceUrl)}
+                              >
+                                {null}
+                              </ExternalLink>
+                            ),
+                            privacy: (
+                              <ExternalLink
+                                onPress={() => void bridgeApi.openExternalUrl(privacyPolicyUrl)}
+                              >
+                                {null}
+                              </ExternalLink>
+                            )
+                          }}
+                        />
                       </p>
                     </div>
                   </>
