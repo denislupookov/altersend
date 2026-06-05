@@ -20,7 +20,7 @@ import {
   useTranslation
 } from '@altersend/i18n'
 import { Stack } from 'expo-router'
-import { StyleSheet, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
 import { LoadingScreen } from '../src/loading'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -67,7 +67,7 @@ function getFlowScreenOptions(theme: Theme, backTitle: string) {
     headerTintColor: theme.colors.colorTextPrimary,
     headerShadowVisible: false,
     headerTitle: '',
-    headerBackTitle: backTitle
+    ...(Platform.OS === 'ios' ? { headerBackTitle: backTitle } : {})
   } as const
 }
 

@@ -4,12 +4,14 @@ import {
   normalizeLocalePreference,
   resolveLocalePreference,
   useTranslation,
-  type LocalePreference
+  type LocalePreference,
+  type SupportedLocaleCode
 } from '@altersend/i18n'
 import { useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
 import {
+  getLocalePreferenceSnapshot,
   getSavedLocalePreference,
   setSavedLocalePreference
 } from '@/src/lifecycle/localePreferenceStorage'
@@ -23,7 +25,7 @@ export default function LanguageScreen() {
   const { t } = useTranslation(['settings', 'common'])
   const { theme } = useTheme()
   const router = useRouter()
-  const [preference, setPreference] = useState<LocalePreference>('system')
+  const [preference, setPreference] = useState<LocalePreference>(getLocalePreferenceSnapshot)
 
   useEffect(() => {
     let mounted = true
@@ -35,12 +37,13 @@ export default function LanguageScreen() {
     }
   }, [])
 
-  const handleSelect = (value: string) => {
+  const handleSelect = async (value: string) => {
     const next = normalizeLocalePreference(value)
+    const resolvedLocale = resolveLocalePreference(next, getMobileSystemLocales())
     setPreference(next)
-    void setSavedLocalePreference(next)
-    void changeI18nLanguage(resolveLocalePreference(next, getMobileSystemLocales()))
+    await setSavedLocalePreference(next)
     router.back()
+    scheduleLanguageChange(resolvedLocale)
   }
 
   const cardStyle = {
@@ -62,7 +65,7 @@ export default function LanguageScreen() {
               <Pressable
                 accessibilityRole='button'
                 accessibilityState={{ selected }}
-                onPress={() => handleSelect(option.preference)}
+                onPress={() => void handleSelect(option.preference)}
                 style={({ pressed }) => [
                   styles.row,
                   pressed && { backgroundColor: theme.colors.colorSurfacePrimary }
@@ -91,6 +94,19 @@ export default function LanguageScreen() {
       </View>
     </Layout>
   )
+}
+
+function scheduleLanguageChange(resolvedLocale: SupportedLocaleCode) {
+  const changeLanguage = () => {
+    void changeI18nLanguage(resolvedLocale)
+  }
+
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(changeLanguage)
+    return
+  }
+
+  requestAnimationFrame(changeLanguage)
 }
 
 const styles = StyleSheet.create({

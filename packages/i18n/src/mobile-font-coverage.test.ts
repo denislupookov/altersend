@@ -32,4 +32,47 @@ describe('mobile font coverage', () => {
 
     expect(bypasses).toEqual([])
   })
+
+  it('refreshes the Settings language row from saved preference on focus', () => {
+    const settingsSource = readFileSync(join(mobileRoot.pathname, 'app/settings.tsx'), 'utf8')
+    const storageSource = readFileSync(
+      join(mobileRoot.pathname, 'src/lifecycle/localePreferenceStorage.ts'),
+      'utf8'
+    )
+
+    expect(settingsSource).toContain('useFocusEffect')
+    expect(settingsSource).toContain('getSavedLocalePreference')
+    expect(settingsSource).toContain('getLocalePreferenceSnapshot')
+    expect(settingsSource).toContain('subscribeLocalePreference')
+    expect(settingsSource).toMatch(
+      /useState<LocalePreference>\(\s*getLocalePreferenceSnapshot\s*\)/
+    )
+    expect(settingsSource).toMatch(/subscribeLocalePreference\(setLocalePreference\)/)
+    expect(settingsSource).toMatch(/useFocusEffect\(\s*useCallback\(\(\) => \{/s)
+    expect(storageSource).toContain('export function getLocalePreferenceSnapshot')
+    expect(storageSource).toContain('export function subscribeLocalePreference')
+    expect(storageSource).toMatch(/listeners\.forEach\(\(listener\) => listener\(preference\)\)/)
+  })
+
+  it('returns from the language screen before changing the active i18n language', () => {
+    const languageSource = readFileSync(join(mobileRoot.pathname, 'app/language.tsx'), 'utf8')
+
+    expect(languageSource).toMatch(/const handleSelect = async \(value: string\) => \{/)
+    expect(languageSource).toContain('function scheduleLanguageChange')
+    expect(languageSource).toContain('requestIdleCallback')
+    expect(languageSource).not.toContain('InteractionManager')
+    expect(languageSource.indexOf('router.back()')).toBeLessThan(
+      languageSource.indexOf('changeI18nLanguage(resolvedLocale)')
+    )
+  })
+
+  it('does not send translated back titles to Android native stack headers', () => {
+    const layoutSource = readFileSync(join(mobileRoot.pathname, 'app/_layout.tsx'), 'utf8')
+    const flowOptionsMatch = layoutSource.match(/function getFlowScreenOptions\([\s\S]*?\n\}/)?.[0]
+
+    expect(layoutSource).toContain('import { Platform')
+    expect(flowOptionsMatch).toBeDefined()
+    expect(flowOptionsMatch).toContain("Platform.OS === 'ios'")
+    expect(flowOptionsMatch).toContain('headerBackTitle: backTitle')
+  })
 })

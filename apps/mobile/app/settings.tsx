@@ -1,7 +1,7 @@
 import { Image, Linking, Pressable, StyleSheet, View } from 'react-native'
 import Constants from 'expo-constants'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'expo-router'
+import { useCallback, useEffect, useState } from 'react'
+import { useFocusEffect, useRouter } from 'expo-router'
 import { LOCALE_OPTIONS, useTranslation, type LocalePreference } from '@altersend/i18n'
 import {
   discordUrl,
@@ -22,7 +22,11 @@ import {
 } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
 import brandLogo from '@/assets/images/brand-logo.png'
-import { getSavedLocalePreference } from '@/src/lifecycle/localePreferenceStorage'
+import {
+  getLocalePreferenceSnapshot,
+  getSavedLocalePreference,
+  subscribeLocalePreference
+} from '@/src/lifecycle/localePreferenceStorage'
 import {
   isCrashReportingEnabled,
   setCrashReportingEnabled
@@ -75,17 +79,25 @@ export default function SettingsScreen() {
   const router = useRouter()
   const version = Constants.expoConfig?.version ?? '0.0.0'
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
-  const [localePreference, setLocalePreference] = useState<LocalePreference>('system')
+  const [localePreference, setLocalePreference] = useState<LocalePreference>(
+    getLocalePreferenceSnapshot
+  )
 
-  useEffect(() => {
-    let mounted = true
-    void getSavedLocalePreference().then((preference) => {
-      if (mounted) setLocalePreference(preference)
-    })
-    return () => {
-      mounted = false
-    }
-  }, [])
+  useEffect(() => subscribeLocalePreference(setLocalePreference), [])
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true
+
+      void getSavedLocalePreference().then((preference) => {
+        if (active) setLocalePreference(preference)
+      })
+
+      return () => {
+        active = false
+      }
+    }, [])
+  )
 
   const handleCrashReportingToggle = (value: boolean) => {
     setCrashReporting(value)

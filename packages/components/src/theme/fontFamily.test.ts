@@ -75,6 +75,42 @@ describe('font family tokens', () => {
     }
   })
 
+  it('keeps Android TextInput away from clipped custom font metrics', () => {
+    const androidInputSource = readFileSync(
+      new URL('../components/Input/Input.android.tsx', import.meta.url),
+      'utf8'
+    )
+    const webInputSource = readFileSync(
+      new URL('../components/Input/Input.tsx', import.meta.url),
+      'utf8'
+    )
+    const getStyleBlock = (name: string, followingName: string) =>
+      androidInputSource.match(
+        new RegExp(`\\n  ${name}: \\{([\\s\\S]*?)\\n  \\},\\n  ${followingName}`)
+      )?.[1]
+
+    const fieldStyleBlock = getStyleBlock('field', 'fieldInput')
+    const iconWrapperStyleBlock = getStyleBlock('iconWrapper', 'iconSlot')
+    const inputStyleBlock = androidInputSource.match(/\n  input: \{([\s\S]*?)\n  \},\n  inputMono/)
+
+    expect(fieldStyleBlock).toBeDefined()
+    expect(fieldStyleBlock).not.toContain('height')
+    expect(fieldStyleBlock).not.toContain('overflow')
+    expect(fieldStyleBlock).toContain('minHeight: 48')
+    expect(iconWrapperStyleBlock).toBeDefined()
+    expect(iconWrapperStyleBlock).not.toContain('height')
+    expect(iconWrapperStyleBlock).not.toContain('overflow')
+    expect(iconWrapperStyleBlock).toContain('minHeight: 48')
+    expect(inputStyleBlock?.[1]).toBeDefined()
+    expect(inputStyleBlock?.[1]).not.toContain('includeFontPadding')
+    expect(inputStyleBlock?.[1]).not.toContain('lineHeight')
+    expect(inputStyleBlock?.[1]).toContain("textAlignVertical: 'center'")
+    expect(androidInputSource).toContain('underlineColorAndroid')
+    expect(androidInputSource).toContain('key={fontFamilyName}')
+    expect(webInputSource).not.toContain('includeFontPadding')
+    expect(webInputSource).not.toContain('textAlignVertical')
+  })
+
   it('does not pass CSS-quoted font family names to React Native font themes', () => {
     const webFontThemeSource = readFileSync(new URL('./fontThemes.css.ts', import.meta.url), 'utf8')
     const nativeFontThemeSource = readFileSync(
