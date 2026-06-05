@@ -10,7 +10,7 @@
   "main": "dist/electron/main.js",
   "private": true,
   "scripts": {
-    "build": "node scripts/gen-sentry-dsn.cjs && tsc -p src/tsconfig.electron.json && cp src/electron/preload.cjs dist/electron/ && vite build",
+    "build": "node scripts/gen-sentry-dsn.cjs && tsc -p src/tsconfig.electron.json && node scripts/copy-preload.cjs && vite build",
     "build:electron": "node scripts/gen-sentry-dsn.cjs && tsc -p src/tsconfig.electron.json",
     "build:renderer": "vite build",
     "typecheck": "tsc --noEmit -p src/tsconfig.electron.json && tsc --noEmit -p tsconfig.json",

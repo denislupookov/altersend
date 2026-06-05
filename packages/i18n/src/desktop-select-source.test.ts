@@ -1,6 +1,11 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
+const desktopPackageJson = JSON.parse(
+  readFileSync(new URL('../../../apps/desktop/package.json', import.meta.url), 'utf8')
+) as {
+  scripts: Record<string, string>
+}
 const selectSource = readFileSync(
   new URL('../../../apps/desktop/src/renderer/components/Select.tsx', import.meta.url),
   'utf8'
@@ -55,5 +60,17 @@ describe('desktop Select implementation', () => {
     expect(footerBarSource).toContain('getLocaleFontFamily')
     expect(footerBarSource).toContain('getFontFamilyCssVariables')
     expect(footerBarSource).toContain('fontFamily: getLocaleOptionFontFamily(option)')
+  })
+
+  it('keeps the desktop build script portable across Windows and Unix shells', () => {
+    expect(desktopPackageJson.scripts.build).not.toMatch(/\bcp\b/)
+    expect(desktopPackageJson.scripts.build).toContain('node scripts/copy-preload.cjs')
+
+    const copyScript = readFileSync(
+      new URL('../../../apps/desktop/scripts/copy-preload.cjs', import.meta.url),
+      'utf8'
+    )
+    expect(copyScript).toContain('copyFileSync')
+    expect(copyScript).toContain('mkdirSync')
   })
 })
