@@ -23,6 +23,9 @@ importers:
 
   .:
     dependencies:
+      compact-encoding:
+        specifier: 3.2.0
+        version: 3.2.0(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
       expo:
         specifier: 55.0.26
         version: 55.0.26(@babel/core@7.29.7)(@expo/dom-webview@55.0.6)(@expo/metro-runtime@55.0.11)(expo-router@55.0.16)(react-dom@19.2.0(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
@@ -296,6 +299,9 @@ importers:
         specifier: 0.0.55
         version: 0.0.55(postcss@8.5.15)(react-dom@19.2.0(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0)
     devDependencies:
+      '@babel/core':
+        specifier: 7.29.7
+        version: 7.29.7
       '@types/react':
         specifier: 19.2.16
         version: 19.2.16
@@ -372,6 +378,9 @@ importers:
       b4a:
         specifier: 1.8.1
         version: 1.8.1(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      bare-abort:
+        specifier: 2.0.13
+        version: 2.0.13
       bare-buffer:
         specifier: 3.6.1
         version: 3.6.1
@@ -381,30 +390,72 @@ importers:
       bare-dns:
         specifier: 2.1.4
         version: 2.1.4
+      bare-events:
+        specifier: 2.9.1
+        version: 2.9.1
       bare-fs:
         specifier: 4.7.2
         version: 4.7.2(bare-buffer@3.6.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      bare-hrtime:
+        specifier: 2.1.1
+        version: 2.1.1
+      bare-net:
+        specifier: 2.3.2
+        version: 2.3.2(bare-buffer@3.6.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      bare-os:
+        specifier: 3.9.1
+        version: 3.9.1
+      bare-path:
+        specifier: 3.0.1
+        version: 3.0.1
+      bare-pipe:
+        specifier: 4.2.0
+        version: 4.2.0(bare-buffer@3.6.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
       bare-process:
         specifier: 4.4.1
         version: 4.4.1(bare-buffer@3.6.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
       bare-rpc:
         specifier: 1.3.2
         version: 1.3.2(bare-buffer@3.6.1)(bare-events@2.9.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      bare-signals:
+        specifier: 4.2.0
+        version: 4.2.0
+      bare-stdio:
+        specifier: 1.0.2
+        version: 1.0.2(bare-buffer@3.6.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      bare-stream:
+        specifier: 2.13.1
+        version: 2.13.1(bare-buffer@3.6.1)(bare-events@2.9.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      bare-structured-clone:
+        specifier: 1.5.5
+        version: 1.5.5(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      bare-subprocess:
+        specifier: 6.1.0
+        version: 6.1.0(bare-buffer@3.6.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
       bare-tcp:
         specifier: 2.5.0
         version: 2.5.0(bare-buffer@3.6.1)(bare-pipe@4.2.0(bare-buffer@3.6.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0)))(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
       bare-tls:
         specifier: 3.1.7
         version: 3.1.7(bare-buffer@3.6.1)(bare-events@2.9.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      bare-tty:
+        specifier: 5.1.0
+        version: 5.1.0(bare-buffer@3.6.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      bare-url:
+        specifier: 2.4.5
+        version: 2.4.5
       bare-zlib:
         specifier: 1.4.0
         version: 1.4.0(bare-buffer@3.6.1)(bare-events@2.9.1)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
       compact-encoding:
-        specifier: 2.19.2
-        version: 2.19.2(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+        specifier: 3.2.0
+        version: 3.2.0(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
       corestore:
         specifier: 7.10.0
         version: 7.10.0(bare-buffer@3.6.1)(bare-url@2.4.5)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
+      hyperbee:
+        specifier: 2.27.3
+        version: 2.27.3(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
       hypercore-crypto:
         specifier: 3.7.0
         version: 3.7.0(bare-buffer@3.6.1)(bare-events@2.9.1)(bare-url@2.4.5)(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
@@ -4775,9 +4826,6 @@ packages:
 
   compact-encoding-net@1.3.0:
     resolution: {integrity: sha512-HIYjL3aMiSENApR691aMLngXt6rkTHb9HUkEukcx3YwIZpoMUVXHXyjBzoo9kVwC7KakooBA1RRWb46Cu6qtAQ==}
-
-  compact-encoding@2.19.2:
-    resolution: {integrity: sha512-/YjhHQE/5L4F7l5Bht69dRbP9RV6zoJPeowi8bMKQxNKe3Nh6hOY8pBGoVE9fz5GaWfEd8fWJ2aU9sB4KZuMYg==}
 
   compact-encoding@3.2.0:
     resolution: {integrity: sha512-cCe/FM8f/WuXkEVpsYEoSX3ht2tec7NSNOC8rZBv/sbdFzO3h2Z/JUmZwJQBhghKJNimJSkWM40YURhgU640jw==}
@@ -14916,12 +14964,6 @@ snapshots:
   compact-encoding-net@1.3.0(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.7))(react@19.2.7)):
     dependencies:
       compact-encoding: 3.2.0(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.7))(react@19.2.7))
-    transitivePeerDependencies:
-      - react-native-b4a
-
-  compact-encoding@2.19.2(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0)):
-    dependencies:
-      b4a: 1.8.1(react-native-b4a@0.0.4(react-native@0.83.4(@babel/core@7.29.7)(@types/react@19.2.16)(react@19.2.0))(react@19.2.0))
     transitivePeerDependencies:
       - react-native-b4a
 

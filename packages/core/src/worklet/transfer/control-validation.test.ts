@@ -156,17 +156,15 @@ describe('isValidControlMessage', () => {
       type: 'download-complete',
       transferId: 'abc',
       fileId: 'f1',
-      fileName: 'photo.jpg',
-      savedTo: '/downloads/photo.jpg'
+      fileName: 'photo.jpg'
     }
 
     it('accepts a valid message', () => {
       expect(isValidControlMessage(valid)).toBe(true)
     })
 
-    it('rejects missing savedTo', () => {
-      const { savedTo: _, ...rest } = valid
-      expect(isValidControlMessage(rest)).toBe(false)
+    it('rejects unsafe file names', () => {
+      expect(isValidControlMessage({ ...valid, fileName: '../photo.jpg' })).toBe(false)
     })
   })
 

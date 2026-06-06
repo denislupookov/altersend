@@ -26,6 +26,7 @@ Files go directly between your devices — end-to-end encrypted, no accounts, no
 - [Features](#features)
 - [Download](#download)
 - [How it works](#how-it-works)
+- [Data flow and networking](#data-flow-and-networking)
 - [For developers](#for-developers)
   - [Prerequisites](#prerequisites)
   - [Setup](#setup)
@@ -48,7 +49,7 @@ Why use WeTransfer, Dropbox, or Google Drive when you can send files directly �
 
 - **No accounts** — no signup, no login, no email address required
 - **No servers** — files transfer directly device-to-device, nothing stored in the cloud
-- **End-to-end encrypted** — only your devices can read your files, always
+- **End-to-end encrypted in transit** — files move over encrypted peer-to-peer connections, not through cloud storage
 - **No file size limit** — send a 100 MB photo or 500 GB video archive, same experience
 - **Cross-platform** — macOS, Windows, Linux, iOS, Android
 - **Works everywhere** — local network or across continents, same code path
@@ -89,6 +90,10 @@ Get the latest release from [altersend.com/download](https://altersend.com/downl
 ```
 
 Discovery uses [Hyperswarm](https://github.com/holepunchto/hyperswarm) (a DHT) — once peers find each other, no central infrastructure is involved. Transfers run over [Hyperdrive](https://github.com/holepunchto/hyperdrive): encrypted, content-addressed, resumable.
+
+## Data flow and networking
+
+For a step-by-step explanation of what data stays local, what is shared with the paired device, and what public discovery/update infrastructure may be contacted, see [docs/data-flow-and-networking.md](docs/data-flow-and-networking.md).
 
 ---
 
@@ -141,7 +146,7 @@ docs/
   architecture.md   Full system overview
 ```
 
-See [docs/architecture.md](docs/architecture.md) for data flow and inter-process boundaries.
+See [docs/architecture.md](docs/architecture.md) for architecture and inter-process boundaries, and [docs/data-flow-and-networking.md](docs/data-flow-and-networking.md) for the user-facing data and network flow.
 
 ### Tech stack
 

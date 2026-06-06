@@ -91,8 +91,7 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
       return (
         isBoundedString(v.transferId, MAX_ID_LEN) &&
         isBoundedString(v.fileId, MAX_ID_LEN) &&
-        isSafeFileName(v.fileName) &&
-        isBoundedString(v.savedTo, MAX_PATH_LEN)
+        isSafeFileName(v.fileName)
       )
     }
     case 'download-failed': {

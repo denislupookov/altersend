@@ -5,6 +5,8 @@ import { PeerControlChannel } from './control-channel'
 import type { PeerControlMessage } from './control-channel'
 import { PeerIdentityStore, type NoiseKeyPair } from './peer-identity-store'
 
+const IDENTITY_LOOKUP_TIMEOUT_MS = 500
+
 export interface PeerSession {
   socket: PeerSocket
   peerKey: string
@@ -139,10 +141,33 @@ export class TransferSwarm {
 
   async join(topicHex: string): Promise<void> {
     if (this.identityStore && !this.joinedAny) {
-      await this.swapKeyPair(await this.identityStore.getOrCreate(topicHex))
+      const keyPair = await this.getIdentityKeyPair(topicHex)
+      if (keyPair) await this.swapKeyPair(keyPair)
     }
     const topic = b4a.from(topicHex, 'hex')
     this.joinTopic(topic)
+  }
+
+  private async getIdentityKeyPair(topicHex: string): Promise<NoiseKeyPair | null> {
+    if (!this.identityStore) return null
+    const identity = this.identityStore.getOrCreate(topicHex)
+    let timeout: ReturnType<typeof setTimeout> | null = null
+    try {
+      return await Promise.race([
+        identity,
+        new Promise<null>((resolve) => {
+          timeout = setTimeout(() => resolve(null), IDENTITY_LOOKUP_TIMEOUT_MS)
+        })
+      ])
+    } catch (err) {
+      console.warn('TransferSwarm: identity lookup failed; joining with ephemeral keypair', err)
+      return null
+    } finally {
+      if (timeout) clearTimeout(timeout)
+      identity.catch((err) => {
+        console.warn('TransferSwarm: delayed identity lookup failed', err)
+      })
+    }
   }
 
   private async swapKeyPair(keyPair: NoiseKeyPair): Promise<void> {

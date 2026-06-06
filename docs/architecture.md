@@ -2,6 +2,8 @@
 
 AlterSend is a monorepo with two apps (desktop, mobile) sharing three packages (core, domain, components). All P2P networking runs in a Bare worklet process, isolated from both the UI and the host runtime.
 
+For the user-facing trust/privacy explanation of where data goes and which services may be involved, see [Data Flow and Networking](data-flow-and-networking.md).
+
 ## Repository layout
 
 ```
@@ -49,6 +51,7 @@ packages/
 The protocol layer. Runs entirely inside a **Bare worklet** — a lightweight JS runtime (Bare) spawned by the host app. This isolates P2P networking from Electron / React Native.
 
 Key modules:
+
 - `worklet/index.ts` — entrypoint; wires Bare IPC → RPC server → orchestrator
 - `worklet/transfer/orchestrator.ts` — top-level coordinator; owns session lifecycle + state and composes the three subsystems below
 - `worklet/transfer/swarm.ts` — `TransferSwarm`: Hyperswarm peer connectivity, Corestore replication, and per-peer control channels
@@ -63,6 +66,7 @@ Key modules:
 State and business logic, shared across desktop and mobile.
 
 Key modules:
+
 - `transfer/store.ts` — Zustand store
 - `transfer/reducer.ts` — pure reducer (all state transitions)
 - `transfer/binding.ts` — `bindTransferApi()` wires the store to the core worklet

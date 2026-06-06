@@ -4,21 +4,12 @@ import * as DocumentPicker from 'expo-document-picker'
 import * as ImagePicker from 'expo-image-picker'
 import {
   addSelectedFiles,
+  fileUriToPath,
   removeSelectedFile,
   useTransferStore,
   type SelectedFile
 } from '@altersend/domain'
 import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@altersend/components'
-
-function uriToFilePath(uri: string): string {
-  if (!uri.startsWith('file://')) return uri
-  const stripped = uri.slice('file://'.length)
-  try {
-    return decodeURIComponent(stripped)
-  } catch {
-    return stripped
-  }
-}
 
 export function SelectFilesView() {
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
@@ -31,14 +22,14 @@ export function SelectFilesView() {
       const result = await DocumentPicker.getDocumentAsync({
         multiple: true,
         type: '*/*',
-        copyToCacheDirectory: false
+        copyToCacheDirectory: true
       })
 
       if (result.canceled) return
 
       const normalizedFiles: SelectedFile[] = result.assets.map((asset) => ({
         name: asset.name,
-        path: uriToFilePath(asset.uri),
+        path: fileUriToPath(asset.uri),
         size: asset.size
       }))
 
@@ -65,7 +56,7 @@ export function SelectFilesView() {
 
       const normalizedFiles: SelectedFile[] = result.assets.map((asset) => ({
         name: asset.fileName ?? asset.uri.split('/').pop() ?? 'photo',
-        path: uriToFilePath(asset.uri),
+        path: fileUriToPath(asset.uri),
         size: asset.fileSize
       }))
 

@@ -3,6 +3,7 @@ const path = require('path')
 const pkg = require('./package.json')
 const appName = pkg.productName ?? pkg.name
 const { isWindows } = require('which-runtime')
+const makeMsix = process.env.ALTERSEND_MAKE_MSIX === 'true'
 
 function getWindowsKitVersion() {
   const programFiles = process.env['PROGRAMFILES(X86)'] || process.env.PROGRAMFILES
@@ -175,7 +176,7 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-msix',
-      platforms: isWindows ? ['win32'] : [],
+      platforms: isWindows && makeMsix ? ['win32'] : [],
       config: {
         appManifest: path.join(__dirname, 'out', 'manifest', 'AppxManifest.xml'),
         packageAssets: path.join(__dirname, 'build', 'msix-assets'),
@@ -214,6 +215,7 @@ module.exports = {
     },
     preMake: async () => {
       fs.rmSync(path.join(__dirname, 'out', 'make'), { recursive: true, force: true })
+      if (!makeMsix) return
 
       const sourceManifest = path.join(__dirname, 'build', 'AppxManifest.xml')
       const outManifest = path.join(__dirname, 'out', 'manifest', 'AppxManifest.xml')

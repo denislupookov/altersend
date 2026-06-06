@@ -1,0 +1,39 @@
+{
+  "appId": "com.altersend.desktop",
+  "electronVersion": "40.10.2",
+  "icon": "build/icon.ico",
+  "asar": false,
+  "directories": {
+    "output": "out"
+  },
+  "files": [
+    "dist/**/*",
+    "package.json",
+    "node_modules/**/*",
+    "!dist/**/*.map",
+    "!**/node_modules/react-native/**",
+    "!**/node_modules/react-native-*/**",
+    "!**/node_modules/@react-native/**",
+    "!**/node_modules/@expo/**",
+    "!**/node_modules/expo-*/**",
+    "!**/node_modules/metro*/**",
+    "!**/node_modules/jest*/**",
+    "!**/node_modules/@jest/**",
+    "!**/node_modules/@babel/**",
+    "!**/node_modules/babel-*/**"
+  ],
+  "win": {
+    "icon": "build/icon.ico",
+    "target": [
+      "nsis"
+    ],
+    "artifactName": "${productName}-${version}-${arch}-Setup.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true
+  },
+  "afterPack": "scripts/afterPack.cjs",
+  "electronDist": "node_modules/electron/dist"
+}

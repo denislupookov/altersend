@@ -30,7 +30,8 @@
     "pear:build:darwin:x64": "pnpm exec pear-build --package=./package.json --darwin-x64-app ./out/mac/AlterSend.app --target ../../../altersend-desktop-$npm_package_version",
     "pear:build:linux:x64": "pnpm exec pear-build --package=./package.json --linux-x64-app ./out/AlterSend-x64.AppImage --target ../../../altersend-desktop-$npm_package_version",
     "pear:build:linux:arm64": "pnpm exec pear-build --package=./package.json --linux-arm64-app ./out/AlterSend-arm64.AppImage --target ../../../altersend-desktop-$npm_package_version",
-    "pear:build:win:x64": "pnpm exec pear-build --package=./package.json --win32-x64-app ./out/AlterSend-win32-x64/AlterSend.msix --target ..\\..\\.\\altersend-desktop-%npm_package_version%"
+    "pear:build:win:x64": "pnpm exec pear-build --package=./package.json --win32-x64-app ./out/AlterSend-win32-x64/AlterSend.msix --target ..\\..\\.\\altersend-desktop-%npm_package_version%",
+    "dist:win:builder:x64": "node scripts/build-win-builder.cjs"
   },
   "dependencies": {
     "@altersend/components": "workspace:1.1.0",

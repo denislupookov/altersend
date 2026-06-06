@@ -108,9 +108,9 @@ export const continueShare = async (files: SelectedFile[]): Promise<void> => {
 
   try {
     await startSendSession()
+    dispatchToTransferStore({ type: 'set_draft_phase', phase: 'ready' })
     await shareFiles(filePaths)
     dispatchToTransferStore({ type: 'complete_all_uploads' })
-    dispatchToTransferStore({ type: 'set_draft_phase', phase: 'ready' })
   } catch (error) {
     dispatchToTransferStore({ type: 'reset_uploading_items' })
     dispatchToTransferStore({

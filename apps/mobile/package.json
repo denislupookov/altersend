@@ -21,7 +21,7 @@
     "bundle-bare": "pnpm run bundle:android && pnpm run bundle:ios",
     "typecheck": "tsc --noEmit",
     "build:apk": "eas build --platform android --profile preview",
-    "build:apk:local": "pnpm run bundle:android && cd android && ./gradlew assembleRelease"
+    "build:apk:local": "pnpm --filter @altersend/core build && pnpm exec expo prebuild --clean --platform android --non-interactive && pnpm run bundle:android && cd android && gradlew.bat assembleRelease"
   },
   "repository": {
     "type": "git",
@@ -69,6 +69,7 @@
     "react-strict-dom": "0.0.55"
   },
   "devDependencies": {
+    "@babel/core": "7.29.7",
     "@types/react": "19.2.16",
     "bare-pack": "2.0.1",
     "react-native-svg-transformer": "1.5.3",
