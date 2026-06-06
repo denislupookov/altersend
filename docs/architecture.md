@@ -49,6 +49,7 @@ packages/
 The protocol layer. Runs entirely inside a **Bare worklet** — a lightweight JS runtime (Bare) spawned by the host app. This isolates P2P networking from Electron / React Native.
 
 Key modules:
+
 - `worklet/index.ts` — entrypoint; wires Bare IPC → RPC server → orchestrator
 - `worklet/transfer/orchestrator.ts` — top-level coordinator; owns session lifecycle + state and composes the three subsystems below
 - `worklet/transfer/swarm.ts` — `TransferSwarm`: Hyperswarm peer connectivity, Corestore replication, and per-peer control channels
@@ -63,6 +64,7 @@ Key modules:
 State and business logic, shared across desktop and mobile.
 
 Key modules:
+
 - `transfer/store.ts` — Zustand store
 - `transfer/reducer.ts` — pure reducer (all state transitions)
 - `transfer/binding.ts` — `bindTransferApi()` wires the store to the core worklet
@@ -71,6 +73,10 @@ Key modules:
 ### `packages/components`
 
 Shared React components using **React Strict DOM** (works on both web and native) and Tailwind for styling. Built with Storybook for visual development.
+
+### `packages/locales`
+
+Shared multi-language (i18n) setup, consumed by both apps. Translations are JSON split by context (`common`, `send`, …) under `src/locales/<code>/`, with vanilla **i18next** initialized via **react-i18next** bindings; formatting leans on the platform `Intl` APIs. Each language declares a `productionReady` flag in its `meta.json`, and only ready languages are offered (`PICKABLE_LANGUAGES`); `resolveSupportedLocale()` normalizes any system/persisted BCP-47 tag down to a ready code. Locale preference lives in a small settings store in `packages/domain`; persistence is app-side (`localStorage` on desktop, a file on mobile). The picker UI is gated behind the `MULTI_LANG_ENABLED` release flag (currently `false`) so the app ships single-language until translations land. See `packages/locales/README.md` for the add-a-language guide.
 
 ## Transfer flow
 

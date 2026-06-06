@@ -19,7 +19,7 @@ import {
   useSettingsStore,
   changeLocale
 } from '@altersend/domain'
-import { PICKABLE_LANGUAGES } from '@altersend/locales'
+import { MULTI_LANG_ENABLED, PICKABLE_LANGUAGES } from '@altersend/locales'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
 import { Select } from '../../components/Select'
@@ -148,23 +148,25 @@ export function FooterBar({ version }: { version: string }) {
                         label='Crash reports'
                         description='Share anonymous crash data to help improve AlterSend'
                       />
-                      <div className='mt-3'>
-                        <label className='mb-2 block text-[13px] font-medium text-text-secondary'>
-                          Language
-                        </label>
-                        <Select
-                          aria-label='Language'
-                          value={locale}
-                          onChange={(value) => {
-                            changeLocale(value)
-                            setSavedLocale(value)
-                          }}
-                          options={PICKABLE_LANGUAGES.map((l) => ({
-                            value: l.code,
-                            label: l.label
-                          }))}
-                        />
-                      </div>
+                      {MULTI_LANG_ENABLED && (
+                        <div className='mt-3'>
+                          <label className='mb-2 block text-[13px] font-medium text-text-secondary'>
+                            Language
+                          </label>
+                          <Select
+                            aria-label='Language'
+                            value={locale}
+                            onChange={(value) => {
+                              changeLocale(value)
+                              setSavedLocale(value)
+                            }}
+                            options={PICKABLE_LANGUAGES.map((l) => ({
+                              value: l.code,
+                              label: l.label
+                            }))}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className='border-t border-border-primary py-1'>
                       {MENU_ITEMS.map(({ icon: Icon, label, key, ...rest }) => (

@@ -35,6 +35,14 @@ export type LanguageCode = keyof typeof REGISTRY
 
 export const DEFAULT_LANGUAGE = 'en'
 
+/**
+ * Release gate for the language-picker UI. While `false`, the in-app language
+ * selection is hidden (desktop Settings + mobile Settings) so the app stays
+ * single-language until translations ship; the i18n infrastructure stays wired
+ * underneath. Flip to `true` to expose the picker.
+ */
+export const MULTI_LANG_ENABLED = false
+
 // `dir` widens to `string` when imported from JSON, so it is narrowed here.
 function toLanguage(
   code: string,
