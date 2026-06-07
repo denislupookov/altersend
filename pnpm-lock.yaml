@@ -6,8 +6,9 @@ settings:
 
 overrides:
   '@electron/node-gyp': 10.2.0-electron.2
-  '@xmldom/xmldom': 0.9.10
   diff: 8.0.3
+  '@expo/plist>@xmldom/xmldom': 0.9.10
+  plist>@xmldom/xmldom: 0.8.11
   '@segment/ajv-human-errors>ajv': 8.20.0
   eas-cli>ajv: 8.20.0
   ajv-formats>ajv: 8.20.0
@@ -70,13 +71,13 @@ importers:
   apps/desktop:
     dependencies:
       '@altersend/components':
-        specifier: workspace:1.1.4
+        specifier: workspace:1.1.5
         version: link:../../packages/components
       '@altersend/core':
-        specifier: workspace:1.1.4
+        specifier: workspace:1.1.5
         version: link:../../packages/core
       '@altersend/domain':
-        specifier: workspace:1.1.4
+        specifier: workspace:1.1.5
         version: link:../../packages/domain
       '@sentry/electron':
         specifier: 7.13.0
@@ -200,13 +201,13 @@ importers:
   apps/mobile:
     dependencies:
       '@altersend/components':
-        specifier: workspace:1.1.4
+        specifier: workspace:1.1.5
         version: link:../../packages/components
       '@altersend/core':
-        specifier: workspace:1.1.4
+        specifier: workspace:1.1.5
         version: link:../../packages/core
       '@altersend/domain':
-        specifier: workspace:1.1.4
+        specifier: workspace:1.1.5
         version: link:../../packages/domain
       '@expo/vector-icons':
         specifier: 15.1.1
@@ -491,7 +492,7 @@ importers:
   packages/domain:
     dependencies:
       '@altersend/core':
-        specifier: workspace:1.1.4
+        specifier: workspace:1.1.5
         version: link:../core
     devDependencies:
       '@types/react':
@@ -3893,6 +3894,11 @@ packages:
 
   '@webcontainer/env@1.1.1':
     resolution: {integrity: sha512-6aN99yL695Hi9SuIk1oC88l9o0gmxL1nGWWQ/kNy81HigJ0FoaoTXpytCj6ItzgyCEwA9kF1wixsTuv5cjsgng==}
+
+  '@xmldom/xmldom@0.8.11':
+    resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
+    engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xmldom/xmldom@0.9.10':
     resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
@@ -13585,6 +13591,8 @@ snapshots:
 
   '@webcontainer/env@1.1.1': {}
 
+  '@xmldom/xmldom@0.8.11': {}
+
   '@xmldom/xmldom@0.9.10': {}
 
   '@xtuc/ieee754@1.2.0': {}
@@ -18677,13 +18685,13 @@ snapshots:
 
   plist@3.1.0:
     dependencies:
-      '@xmldom/xmldom': 0.9.10
+      '@xmldom/xmldom': 0.8.11
       base64-js: 1.5.1
       xmlbuilder: 15.1.1
 
   plist@3.1.1:
     dependencies:
-      '@xmldom/xmldom': 0.9.10
+      '@xmldom/xmldom': 0.8.11
       base64-js: 1.5.1
       xmlbuilder: 15.1.1
 

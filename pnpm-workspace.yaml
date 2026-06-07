@@ -21,8 +21,9 @@ minimumReleaseAge: 1440
 
 overrides:
   '@electron/node-gyp': '10.2.0-electron.2'
-  '@xmldom/xmldom': '0.9.10'
   'diff': '8.0.3'
+  '@expo/plist>@xmldom/xmldom': '0.9.10'
+  'plist>@xmldom/xmldom': '0.8.11'
   '@segment/ajv-human-errors>ajv': '8.20.0'
   'eas-cli>ajv': '8.20.0'
   'ajv-formats>ajv': '8.20.0'

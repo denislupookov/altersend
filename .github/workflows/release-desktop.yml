@@ -20,10 +20,13 @@ jobs:
       - name: Enable pnpm
         shell: bash
         run: |
-          npm install -g corepack@latest
-          corepack enable
-          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
-          pnpm --version
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -94,10 +97,13 @@ jobs:
       - name: Enable pnpm
         shell: bash
         run: |
-          npm install -g corepack@latest
-          corepack enable
-          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
-          pnpm --version
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -184,10 +190,13 @@ jobs:
       - name: Enable pnpm
         shell: bash
         run: |
-          npm install -g corepack@latest
-          corepack enable
-          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
-          pnpm --version
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -223,10 +232,13 @@ jobs:
       - name: Enable pnpm
         shell: bash
         run: |
-          npm install -g corepack@latest
-          corepack enable
-          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
-          pnpm --version
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -263,10 +275,13 @@ jobs:
       - name: Enable pnpm
         shell: bash
         run: |
-          npm install -g corepack@latest
-          corepack enable
-          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
-          pnpm --version
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - uses: actions/setup-java@v5
         with:
@@ -366,10 +381,13 @@ jobs:
       - name: Enable pnpm
         shell: bash
         run: |
-          npm install -g corepack@latest
-          corepack enable
-          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
-          pnpm --version
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install pear-build
         run: pnpm add -g pear-build@1.1.0
