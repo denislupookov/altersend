@@ -8,18 +8,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.5.1
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.13
-          cache: pnpm
 
-      - uses: actions/setup-java@v4
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.5.1 --activate
+
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
@@ -40,9 +40,11 @@ jobs:
       - name: Build Android APK
         run: ./gradlew assembleRelease
         working-directory: apps/mobile/android
+        env:
+          SENTRY_DISABLE_AUTO_UPLOAD: 'true'
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-apk
           path: apps/mobile/android/app/build/outputs/apk/release/*.apk
@@ -53,22 +55,33 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Read mobile version
         id: version
         run: echo "value=$(node -p "require('./apps/mobile/app.json').expo.version")" >> $GITHUB_OUTPUT
 
       - name: Download APK artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: android-apk
           path: artifacts
 
-      - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.value }}
-          name: v${{ steps.version.outputs.value }}
-          draft: true
-          files: artifacts/*.apk
+      - name: Create draft GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          shopt -s globstar nullglob
+          files=(artifacts/*.apk)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No Android APK artifacts found"
+            exit 1
+          fi
+          tag="v$VERSION"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "${files[@]}" --clobber
+          else
+            gh release create "$tag" "${files[@]}" --draft --title "$tag"
+          fi

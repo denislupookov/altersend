@@ -11,16 +11,16 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.5.1
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.13
-          cache: pnpm
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.5.1 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -74,7 +74,7 @@ jobs:
           SKIP_NOTARIZE: 'true'
 
       - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macos
           path: apps/desktop/out/**/*.dmg
@@ -82,16 +82,16 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.5.1
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.13
-          cache: pnpm
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.5.1 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -136,7 +136,7 @@ jobs:
 
       - name: Upload Windows artifacts (unsigned)
         id: upload-windows-unsigned
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-unsigned
           path: |
@@ -161,7 +161,7 @@ jobs:
 
       - name: Upload signed Windows artifacts
         if: vars.SIGNPATH_PROJECT_SLUG != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows
           path: signed-windows/**/*
@@ -169,16 +169,16 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.5.1
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.13
-          cache: pnpm
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.5.1 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -197,7 +197,7 @@ jobs:
         run: pnpm --filter @altersend/desktop dist:linux:x64
 
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux
           path: apps/desktop/out/**/*.AppImage
@@ -205,16 +205,16 @@ jobs:
   build-linux-arm64:
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.5.1
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.13
-          cache: pnpm
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.5.1 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -233,7 +233,7 @@ jobs:
         run: pnpm --filter @altersend/desktop dist:linux:arm64
 
       - name: Upload Linux arm64 artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-arm64
           path: apps/desktop/out/**/*.AppImage
@@ -242,18 +242,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.5.1
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.13
-          cache: pnpm
 
-      - uses: actions/setup-java@v4
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.5.1 --activate
+
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
@@ -274,9 +274,11 @@ jobs:
       - name: Build Android APK
         run: ./gradlew assembleRelease
         working-directory: apps/mobile/android
+        env:
+          SENTRY_DISABLE_AUTO_UPLOAD: 'true'
 
       - name: Upload Android APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-apk
           path: apps/mobile/android/app/build/outputs/apk/release/*.apk
@@ -287,9 +289,9 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.13
 
@@ -307,21 +309,28 @@ jobs:
           fi
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
 
-      - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.value }}
-          name: v${{ steps.version.outputs.value }}
-          draft: true
-          files: |
-            artifacts/**/*.dmg
-            artifacts/**/*.exe
-            artifacts/**/*.AppImage
-            artifacts/**/*.apk
+      - name: Create draft GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          shopt -s globstar nullglob
+          files=(artifacts/**/*.dmg artifacts/**/*.exe artifacts/**/*.AppImage artifacts/**/*.apk)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No release artifacts found"
+            exit 1
+          fi
+          tag="v$VERSION"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "${files[@]}" --clobber
+          else
+            gh release create "$tag" "${files[@]}" --draft --title "$tag"
+          fi
 
   pear-release:
     needs: [build-macos, build-windows, build-linux, build-linux-arm64]
@@ -329,33 +338,38 @@ jobs:
     runs-on: self-hosted
     environment: release
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Read version
         id: version
         run: echo "value=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
-          version: 11.5.1
+          node-version: 22.13
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.5.1 --activate
 
       - name: Install pear-build
         run: pnpm add -g pear-build@1.1.0
 
       - name: Download macOS artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: macos
           path: /tmp/pear-installers/macos
 
       - name: Download Linux x64 artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux
           path: /tmp/pear-installers/linux
 
       - name: Download Linux arm64 artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux-arm64
           path: /tmp/pear-installers/linux-arm64
