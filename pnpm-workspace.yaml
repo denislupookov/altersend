@@ -11,6 +11,10 @@ allowBuilds:
   electron-winstaller: true
   esbuild: true
 
+onlyBuiltDependencies:
+  - fs-xattr
+  - macos-alias
+
 minimumReleaseAge: 1440
 
 overrides:

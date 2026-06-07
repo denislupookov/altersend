@@ -44,7 +44,7 @@
     "prettier": "3.8.3",
     "typescript-eslint": "8.60.1"
   },
-  "version": "1.1.1",
+  "version": "1.1.2",
   "dependencies": {
     "compact-encoding": "3.2.0",
     "expo": "55.0.26",

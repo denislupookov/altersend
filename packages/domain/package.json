@@ -1,6 +1,6 @@
 {
   "name": "@altersend/domain",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,7 +25,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@altersend/core": "workspace:1.1.1"
+    "@altersend/core": "workspace:1.1.2"
   },
   "peerDependencies": {
     "react": "^19.0.0",
