@@ -73,7 +73,7 @@ jobs:
           name: android-apk
           path: artifacts
 
-      - name: Create draft GitHub release
+      - name: Create GitHub release
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -89,5 +89,5 @@ jobs:
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" "${files[@]}" --clobber
           else
-            gh release create "$tag" "${files[@]}" --draft --title "$tag"
+            gh release create "$tag" "${files[@]}" --title "$tag"
           fi
