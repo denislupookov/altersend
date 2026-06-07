@@ -12,23 +12,14 @@ import path from 'path'
 import { isPathSafe, type TransferMethod } from '@altersend/core'
 import type { DesktopRuntime } from './runtime.js'
 import { setReportingEnabled } from './sentry.js'
+import {
+  assertAuthorizedTransferInvocation,
+  createPickedPathRegistry,
+  isAllowedPath,
+  recordPickedPath
+} from './pathAuthorization.js'
 
-const pickedPaths = new Map<number, Set<string>>()
-
-function recordPickedPath(senderId: number, p: string) {
-  if (!pickedPaths.has(senderId)) pickedPaths.set(senderId, new Set())
-  pickedPaths.get(senderId)!.add(p)
-}
-
-function isAllowedPath(senderId: number, filePath: string): boolean {
-  const allowed = pickedPaths.get(senderId)
-  if (!allowed) return false
-  if (allowed.has(filePath)) return true
-  for (const p of allowed) {
-    if (filePath.startsWith(p + path.sep) || filePath.startsWith(p + '/')) return true
-  }
-  return false
-}
+const pickedPaths = createPickedPathRegistry()
 
 export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.on('pkg', (evt) => {
@@ -39,7 +30,8 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.handle('runtime:checkUpdated', () => !!runtime.getPear()?.updater?.updated)
   ipcMain.handle(
     'pear:worker:invoke',
-    async (_evt, specifier: string, method: TransferMethod, ...args: unknown[]) => {
+    async (evt, specifier: string, method: TransferMethod, ...args: unknown[]) => {
+      assertAuthorizedTransferInvocation(pickedPaths, evt.sender.id, method, args)
       return runtime.invokeWorker(specifier, method, ...args)
     }
   )
@@ -69,7 +61,7 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     const id = evt.sender.id
     return Promise.all(
       result.filePaths.map(async (filePath) => {
-        recordPickedPath(id, filePath)
+        recordPickedPath(pickedPaths, id, filePath, 'file', 'share')
         const fileName = path.basename(filePath)
         const fileStats = await stat(filePath)
 
@@ -96,7 +88,7 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
       return null
     }
 
-    recordPickedPath(evt.sender.id, result.filePath)
+    recordPickedPath(pickedPaths, evt.sender.id, result.filePath, 'file', 'download')
     return {
       path: result.filePath,
       name: path.basename(result.filePath)
@@ -119,7 +111,7 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
 
     const directoryPath = result.filePaths[0]
 
-    recordPickedPath(evt.sender.id, directoryPath)
+    recordPickedPath(pickedPaths, evt.sender.id, directoryPath, 'directory', 'download')
     return {
       path: directoryPath,
       name: path.basename(directoryPath)
@@ -132,14 +124,14 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
 
   ipcMain.handle('app:showInFolder', (evt, filePath: string) => {
     if (!isPathSafe(filePath)) throw new Error('Refused: path failed safety check')
-    if (!isAllowedPath(evt.sender.id, filePath))
+    if (!isAllowedPath(pickedPaths, evt.sender.id, filePath))
       throw new Error('Refused: path not from a user-approved dialog')
     shell.showItemInFolder(filePath)
   })
 
   ipcMain.handle('app:openFile', async (evt, filePath: string) => {
     if (!isPathSafe(filePath)) throw new Error('Refused: path failed safety check')
-    if (!isAllowedPath(evt.sender.id, filePath))
+    if (!isAllowedPath(pickedPaths, evt.sender.id, filePath))
       throw new Error('Refused: path not from a user-approved dialog')
     return shell.openPath(filePath)
   })

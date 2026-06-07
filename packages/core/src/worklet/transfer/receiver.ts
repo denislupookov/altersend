@@ -14,7 +14,7 @@ import {
 import type { DownloadFileRequest, DownloadFileResult } from '../rpc/protocol'
 import type { DownloaderCallbacks } from './download-events'
 
-type DownloadFileOutcome = { ok: true } | { ok: false; message: string }
+type DownloadFileOutcome = { ok: true; savedTo: string } | { ok: false; message: string }
 
 function getChunkSize(chunk: unknown): number {
   if (typeof chunk === 'string') return Buffer.byteLength(chunk)
@@ -107,7 +107,7 @@ export class TransferReceiver {
             fileId: file.fileId,
             fileName: resolvedName,
             ok: true,
-            savedTo: targetPath
+            savedTo: outcome.savedTo
           })
         } else {
           results.push({
@@ -176,7 +176,7 @@ export class TransferReceiver {
       bytesTransferred: 0
     })
 
-    await this.writeToDisk(
+    const savedTo = await this.writeToDisk(
       remoteDrive,
       file.path,
       targetPath,
@@ -200,11 +200,11 @@ export class TransferReceiver {
       fileId: file.fileId,
       fileName: resolvedName,
       sourcePath: file.path,
-      targetPath,
+      targetPath: savedTo,
       totalBytes,
       bytesTransferred: totalBytes
     })
-    return { ok: true }
+    return { ok: true, savedTo }
   }
 
   private async evictRemoteDrive(driveKey: string): Promise<void> {
@@ -288,6 +288,10 @@ export class TransferReceiver {
     return targetPath
   }
 
+  private async findUniquePartPath(targetPath: string): Promise<string> {
+    return this.findUniqueTargetPath(`${targetPath}.part`)
+  }
+
   private async writeToDisk(
     remoteDrive: Hyperdrive,
     sourcePath: string,
@@ -295,11 +299,12 @@ export class TransferReceiver {
     totalBytes: number,
     onProgress: (bytesTransferred: number) => void,
     signal?: AbortSignal
-  ): Promise<void> {
+  ): Promise<string> {
+    const finalPath = await this.findUniqueTargetPath(targetPath)
+    const partPath = await this.findUniquePartPath(finalPath)
     const { default: Localdrive } = await import('localdrive')
-    const destination = new Localdrive(getDirname(targetPath))
-    const partName = `${getFileName(targetPath)}.part`
-    const partPath = `${targetPath}.part`
+    const destination = new Localdrive(getDirname(partPath))
+    const partName = getFileName(partPath)
 
     const readStream = remoteDrive.createReadStream(sourcePath)
     const writeStream = destination.createWriteStream(`/${partName}`)
@@ -367,7 +372,7 @@ export class TransferReceiver {
     }
 
     // Outside the try/catch: a rename failure must NOT discard fully-received bytes.
-    const finalPath = await this.findUniqueTargetPath(targetPath)
     await fs.promises.rename(partPath, finalPath)
+    return finalPath
   }
 }
