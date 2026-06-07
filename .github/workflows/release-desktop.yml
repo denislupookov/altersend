@@ -1,7 +1,10 @@
-name: Release Desktop
+name: Release
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build-macos:
@@ -32,11 +35,17 @@ jobs:
           VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
-      - name: Install Apple signing certificate into a temp keychain
+      - name: Configure macOS signing
         env:
           MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
           MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
         run: |
+          if [ -z "$MAC_CERTIFICATE_BASE64" ] || [ -z "$MAC_CERTIFICATE_PASSWORD" ]; then
+            echo "macOS signing secrets are not configured; building unsigned artifacts."
+            echo "CSC_IDENTITY_AUTO_DISCOVERY=false" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
           CERT_PATH="$RUNNER_TEMP/build_certificate.p12"
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
           KEYCHAIN_PASSWORD="$(openssl rand -base64 24)"
@@ -52,17 +61,16 @@ jobs:
           security list-keychain -d user -s "$KEYCHAIN_PATH"
 
           echo "CSC_KEYCHAIN=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+          echo "CSC_NAME=Devaprime LLC" >> "$GITHUB_ENV"
 
       - name: Make macOS (arm64)
         run: pnpm --filter @altersend/desktop dist:mac:arm64
         env:
-          CSC_NAME: 'Devaprime LLC'
           SKIP_NOTARIZE: 'true'
 
       - name: Make macOS (x64)
         run: pnpm --filter @altersend/desktop dist:mac:x64
         env:
-          CSC_NAME: 'Devaprime LLC'
           SKIP_NOTARIZE: 'true'
 
       - name: Upload macOS artifacts
@@ -115,7 +123,7 @@ jobs:
           "WINDOWS_CERTIFICATE_PASSWORD=buildcert" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Make Windows
-        run: pnpm --filter @altersend/desktop dist:win:x64
+        run: pnpm --filter @altersend/desktop dist:win:builder:x64
         env:
           DEBUG: electron-windows-msix*
 
@@ -132,6 +140,7 @@ jobs:
         with:
           name: windows-unsigned
           path: |
+            apps/desktop/out/AlterSend-*-x64-Setup.exe
             apps/desktop/out/make/squirrel.windows/**/*
             apps/desktop/out/AlterSend-win32-*/**/*.msix
 
@@ -229,8 +238,51 @@ jobs:
           name: linux-arm64
           path: apps/desktop/out/**/*.AppImage
 
+  build-android-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13
+          cache: pnpm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
+
+      - name: Generate Android project
+        run: pnpm exec expo prebuild --clean --platform android --no-install
+        working-directory: apps/mobile
+
+      - name: Bundle Bare worklet for Android
+        run: pnpm --filter @altersend/mobile bundle:android
+
+      - name: Build Android APK
+        run: ./gradlew assembleRelease
+        working-directory: apps/mobile/android
+
+      - name: Upload Android APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: apps/mobile/android/app/build/outputs/apk/release/*.apk
+
   release:
-    needs: [build-macos, build-windows, build-linux, build-linux-arm64]
+    needs: [build-macos, build-windows, build-linux, build-linux-arm64, build-android-apk]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -244,6 +296,15 @@ jobs:
       - name: Read version
         id: version
         run: echo "value=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Verify tag matches package version
+        if: github.ref_type == 'tag'
+        run: |
+          EXPECTED_TAG="v${{ steps.version.outputs.value }}"
+          if [ "${{ github.ref_name }}" != "$EXPECTED_TAG" ]; then
+            echo "Tag ${{ github.ref_name }} does not match package version $EXPECTED_TAG"
+            exit 1
+          fi
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -264,6 +325,7 @@ jobs:
 
   pear-release:
     needs: [build-macos, build-windows, build-linux, build-linux-arm64]
+    if: vars.PEAR_UPGRADE_LINK != ''
     runs-on: self-hosted
     environment: release
     steps:

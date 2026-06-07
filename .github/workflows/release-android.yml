@@ -19,33 +19,33 @@ jobs:
           node-version: 22.13
           cache: pnpm
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Verify EAS CLI
-        run: pnpm exec eas --version
+      - name: Build packages
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
-      - name: Build Android APK on EAS
+      - name: Generate Android project
+        run: pnpm exec expo prebuild --clean --platform android --no-install
         working-directory: apps/mobile
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          pnpm exec eas build --platform android --profile preview --non-interactive --wait --json > build.json
-          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)
-          if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
-            echo "No build URL in EAS response"
-            cat build.json
-            exit 1
-          fi
-          VERSION=$(node -p "require('./app.json').expo.version")
-          curl -L "$BUILD_URL" -o "altersend-${VERSION}.apk"
-          ls -la altersend-*.apk
+
+      - name: Bundle Bare worklet for Android
+        run: pnpm --filter @altersend/mobile bundle:android
+
+      - name: Build Android APK
+        run: ./gradlew assembleRelease
+        working-directory: apps/mobile/android
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: apps/mobile/altersend-*.apk
+          path: apps/mobile/android/app/build/outputs/apk/release/*.apk
 
   release:
     needs: build-android-apk
@@ -68,7 +68,7 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: android-v${{ steps.version.outputs.value }}
-          name: Android v${{ steps.version.outputs.value }}
+          tag_name: v${{ steps.version.outputs.value }}
+          name: v${{ steps.version.outputs.value }}
           draft: true
           files: artifacts/*.apk
