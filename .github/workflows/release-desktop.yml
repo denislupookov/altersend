@@ -18,9 +18,12 @@ jobs:
           node-version: 22.13
 
       - name: Enable pnpm
+        shell: bash
         run: |
+          npm install -g corepack@latest
           corepack enable
-          corepack prepare pnpm@11.5.1 --activate
+          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -89,9 +92,12 @@ jobs:
           node-version: 22.13
 
       - name: Enable pnpm
+        shell: bash
         run: |
+          npm install -g corepack@latest
           corepack enable
-          corepack prepare pnpm@11.5.1 --activate
+          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -176,9 +182,12 @@ jobs:
           node-version: 22.13
 
       - name: Enable pnpm
+        shell: bash
         run: |
+          npm install -g corepack@latest
           corepack enable
-          corepack prepare pnpm@11.5.1 --activate
+          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -212,9 +221,12 @@ jobs:
           node-version: 22.13
 
       - name: Enable pnpm
+        shell: bash
         run: |
+          npm install -g corepack@latest
           corepack enable
-          corepack prepare pnpm@11.5.1 --activate
+          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -249,9 +261,12 @@ jobs:
           node-version: 22.13
 
       - name: Enable pnpm
+        shell: bash
         run: |
+          npm install -g corepack@latest
           corepack enable
-          corepack prepare pnpm@11.5.1 --activate
+          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
+          pnpm --version
 
       - uses: actions/setup-java@v5
         with:
@@ -349,9 +364,12 @@ jobs:
           node-version: 22.13
 
       - name: Enable pnpm
+        shell: bash
         run: |
+          npm install -g corepack@latest
           corepack enable
-          corepack prepare pnpm@11.5.1 --activate
+          corepack prepare "$(node -p "require('./package.json').packageManager")" --activate
+          pnpm --version
 
       - name: Install pear-build
         run: pnpm add -g pear-build@1.1.0
