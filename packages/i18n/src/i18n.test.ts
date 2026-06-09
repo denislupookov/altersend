@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { changeI18nLanguage, i18nextInstance, initI18n } from './i18n'
 
-describe('i18n runtime', () => {
+describe.sequential('i18n runtime', () => {
   it('initializes and switches languages', async () => {
     await initI18n('en-US')
     expect(i18nextInstance.language).toBe('en-US')

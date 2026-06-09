@@ -31,7 +31,7 @@ export default function LoadingPage({ progress = 0 }: LoadingPageProps) {
         </h1>
         <p className='mt-3 max-w-[420px] text-center text-[13px] leading-[1.6] text-text-secondary'>
           {taglineLines.map((line, index) => (
-            <span key={line}>
+            <span key={`${index}-${line}`}>
               {line}
               {index < taglineLines.length - 1 ? <br /> : null}
             </span>

@@ -16,16 +16,16 @@ describe('locale registry', () => {
     expect(SUPPORTED_LOCALES.map((locale) => locale.code)).toEqual([
       'en-US',
       'en-GB',
+      'de-DE',
+      'es-419',
+      'es-ES',
+      'fr-FR',
+      'it-IT',
+      'pt-BR',
       'ja-JP',
       'ko-KR',
       'zh-CN',
-      'zh-TW',
-      'fr-FR',
-      'de-DE',
-      'it-IT',
-      'pt-BR',
-      'es-419',
-      'es-ES'
+      'zh-TW'
     ])
   })
 

@@ -7,31 +7,31 @@ type FontThemeStyle = ReturnType<typeof css.createTheme>
 const latinFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: 'AlterSend Sans',
   fontFamilyDisplay: 'AlterSend Sans',
-  fontFamilyMono: 'AlterSend Sans'
+  fontFamilyMono: 'monospace'
 })
 
 const japaneseFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: 'AlterSend Sans JP',
   fontFamilyDisplay: 'AlterSend Sans JP',
-  fontFamilyMono: 'AlterSend Sans JP'
+  fontFamilyMono: 'monospace'
 })
 
 const koreanFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: 'AlterSend Sans KR',
   fontFamilyDisplay: 'AlterSend Sans KR',
-  fontFamilyMono: 'AlterSend Sans KR'
+  fontFamilyMono: 'monospace'
 })
 
 const simplifiedChineseFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: 'AlterSend Sans SC',
   fontFamilyDisplay: 'AlterSend Sans SC',
-  fontFamilyMono: 'AlterSend Sans SC'
+  fontFamilyMono: 'monospace'
 })
 
 const traditionalChineseFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: 'AlterSend Sans TC',
   fontFamilyDisplay: 'AlterSend Sans TC',
-  fontFamilyMono: 'AlterSend Sans TC'
+  fontFamilyMono: 'monospace'
 })
 
 export const fontThemeStyles = {

@@ -94,9 +94,13 @@ export default function SettingsScreen() {
     useCallback(() => {
       let active = true
 
-      void getSavedLocalePreference().then((preference) => {
-        if (active) setLocalePreference(preference)
-      })
+      void getSavedLocalePreference()
+        .then((preference) => {
+          if (active) setLocalePreference(preference)
+        })
+        .catch((error) => {
+          console.warn('Failed to load locale preference:', error)
+        })
 
       return () => {
         active = false

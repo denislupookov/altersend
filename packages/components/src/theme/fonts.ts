@@ -12,6 +12,13 @@ export interface BundledFontFamily {
 }
 
 export const DEFAULT_FONT_FAMILY_KEY: FontFamilyKey = 'latin'
+export const MONO_FONT_FAMILY_CSS =
+  'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+export const MONO_FONT_FAMILY_NATIVE = {
+  ios: 'Menlo',
+  android: 'monospace',
+  default: 'monospace'
+} as const
 
 export const BUNDLED_FONT_FAMILIES: Record<FontFamilyKey, BundledFontFamily> = {
   latin: {

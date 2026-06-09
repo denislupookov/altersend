@@ -1,4 +1,9 @@
-import { BUNDLED_FONT_FAMILIES, DEFAULT_FONT_FAMILY_KEY, type FontFamilyKey } from './fonts'
+import {
+  BUNDLED_FONT_FAMILIES,
+  DEFAULT_FONT_FAMILY_KEY,
+  MONO_FONT_FAMILY_CSS,
+  type FontFamilyKey
+} from './fonts'
 
 export interface FontFamilyCssVariables {
   '--as-font-family-sans': string
@@ -25,7 +30,7 @@ export function getFontFamilyCssVariables(fontFamily: FontFamilyKey): FontFamily
   return {
     '--as-font-family-sans': quotedCssFamily,
     '--as-font-family-display': quotedCssFamily,
-    '--as-font-family-mono': quotedCssFamily,
+    '--as-font-family-mono': MONO_FONT_FAMILY_CSS,
     fontFamily: cssFamily
   }
 }

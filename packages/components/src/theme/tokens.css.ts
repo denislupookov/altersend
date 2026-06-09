@@ -77,7 +77,7 @@ export const tokens = css.defineVars({
   lineHeightRelaxed: "1.5",
   fontFamilySans: "\"AlterSend Sans\"",
   fontFamilyDisplay: "\"AlterSend Sans\"",
-  fontFamilyMono: "\"AlterSend Sans\"",
+  fontFamilyMono: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
 });
 
 export type Tokens = typeof tokens;

@@ -121,7 +121,7 @@ export const rawTokens = {
   fontFamily: {
     fontFamilySans: "\"AlterSend Sans\"",
     fontFamilyDisplay: "\"AlterSend Sans\"",
-    fontFamilyMono: "\"AlterSend Sans\"",
+    fontFamilyMono: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
   },
 } as const;
 

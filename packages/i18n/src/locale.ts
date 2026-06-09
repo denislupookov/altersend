@@ -59,6 +59,48 @@ export const SUPPORTED_LOCALES: SupportedLocale[] = [
     fontFamily: 'latin'
   },
   {
+    code: 'de-DE',
+    englishName: 'German',
+    nativeName: 'Deutsch',
+    dir: 'ltr',
+    fontFamily: 'latin'
+  },
+  {
+    code: 'es-419',
+    englishName: 'Spanish (Latin America)',
+    nativeName: 'Español (Latinoamérica)',
+    dir: 'ltr',
+    fontFamily: 'latin'
+  },
+  {
+    code: 'es-ES',
+    englishName: 'Spanish (Spain)',
+    nativeName: 'Español (España)',
+    dir: 'ltr',
+    fontFamily: 'latin'
+  },
+  {
+    code: 'fr-FR',
+    englishName: 'French',
+    nativeName: 'Français',
+    dir: 'ltr',
+    fontFamily: 'latin'
+  },
+  {
+    code: 'it-IT',
+    englishName: 'Italian',
+    nativeName: 'Italiano',
+    dir: 'ltr',
+    fontFamily: 'latin'
+  },
+  {
+    code: 'pt-BR',
+    englishName: 'Portuguese (Brazil)',
+    nativeName: 'Português (Brasil)',
+    dir: 'ltr',
+    fontFamily: 'latin'
+  },
+  {
     code: 'ja-JP',
     englishName: 'Japanese',
     nativeName: '日本語',
@@ -85,48 +127,6 @@ export const SUPPORTED_LOCALES: SupportedLocale[] = [
     nativeName: '繁體中文',
     dir: 'ltr',
     fontFamily: 'traditionalChinese'
-  },
-  {
-    code: 'fr-FR',
-    englishName: 'French',
-    nativeName: 'Français',
-    dir: 'ltr',
-    fontFamily: 'latin'
-  },
-  {
-    code: 'de-DE',
-    englishName: 'German',
-    nativeName: 'Deutsch',
-    dir: 'ltr',
-    fontFamily: 'latin'
-  },
-  {
-    code: 'it-IT',
-    englishName: 'Italian',
-    nativeName: 'Italiano',
-    dir: 'ltr',
-    fontFamily: 'latin'
-  },
-  {
-    code: 'pt-BR',
-    englishName: 'Portuguese (Brazil)',
-    nativeName: 'Português (Brasil)',
-    dir: 'ltr',
-    fontFamily: 'latin'
-  },
-  {
-    code: 'es-419',
-    englishName: 'Spanish (Latin America)',
-    nativeName: 'Español (Latinoamérica)',
-    dir: 'ltr',
-    fontFamily: 'latin'
-  },
-  {
-    code: 'es-ES',
-    englishName: 'Spanish (Spain)',
-    nativeName: 'Español (España)',
-    dir: 'ltr',
-    fontFamily: 'latin'
   }
 ]
 

@@ -15,17 +15,17 @@ export const nativeFontFamilies = {
   "ios": {
     "fontFamilySans": "AlterSend Sans",
     "fontFamilyDisplay": "AlterSend Sans",
-    "fontFamilyMono": "AlterSend Sans"
+    "fontFamilyMono": "Menlo"
   },
   "android": {
     "fontFamilySans": "AlterSend Sans",
     "fontFamilyDisplay": "AlterSend Sans",
-    "fontFamilyMono": "AlterSend Sans"
+    "fontFamilyMono": "monospace"
   },
   "default": {
     "fontFamilySans": "AlterSend Sans",
     "fontFamilyDisplay": "AlterSend Sans",
-    "fontFamilyMono": "AlterSend Sans"
+    "fontFamilyMono": "monospace"
   }
 } as Record<
   'ios' | 'android' | 'default',

@@ -9,6 +9,7 @@ import { Layout } from '@/src/components'
 import { Text, TextInput } from '@/src/components/ThemedText'
 
 type State = 'idle' | 'sending' | 'sent' | 'error'
+const DISCORD_EMBED_COLOR = 0x5865f2
 
 async function postToDiscord(
   title: string,
@@ -26,7 +27,7 @@ async function postToDiscord(
         {
           title,
           description: message,
-          color: 0x5865f2,
+          color: DISCORD_EMBED_COLOR,
           fields: [
             { name: labels.version, value: `v${version}`, inline: true },
             { name: labels.platform, value: labels.mobile, inline: true }

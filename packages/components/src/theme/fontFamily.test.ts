@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
-import { BUNDLED_FONT_FAMILIES } from './fonts'
+import { BUNDLED_FONT_FAMILIES, MONO_FONT_FAMILY_CSS, MONO_FONT_FAMILY_NATIVE } from './fonts'
 import { getFontFamilyCssVariables } from './fontCssVariables'
 import { rawTokens } from './tokens.raw'
 import tokenSource from './tokens.json'
@@ -29,8 +29,11 @@ const osFallbackNames = [
 ]
 
 describe('font family tokens', () => {
-  it('uses bundled AlterSend font families instead of OS fallback stacks', () => {
-    for (const fontFamily of Object.values(rawTokens.fontFamily)) {
+  it('uses bundled AlterSend font families for sans and display UI text', () => {
+    for (const fontFamily of [
+      rawTokens.fontFamily.fontFamilySans,
+      rawTokens.fontFamily.fontFamilyDisplay
+    ]) {
       expect(fontFamily).toMatch(/^"AlterSend Sans/)
       expect(fontFamily).not.toContain(',')
 
@@ -38,6 +41,12 @@ describe('font family tokens', () => {
         expect(fontFamily).not.toContain(fallbackName)
       }
     }
+  })
+
+  it('uses a true monospace stack for mono UI text', () => {
+    expect(rawTokens.fontFamily.fontFamilyMono).toBe(MONO_FONT_FAMILY_CSS)
+    expect(rawTokens.fontFamily.fontFamilyMono).toContain('monospace')
+    expect(rawTokens.fontFamily.fontFamilyMono).toContain(',')
   })
 
   it('declares bundled font assets for every supported script family', () => {
@@ -92,11 +101,21 @@ describe('font family tokens', () => {
 
     expect(nativeTokenSource).toContain('export const nativeFontFamilies')
 
+    expect(tokenSource.fontFamilyNative.ios.fontFamilyMono).toBe(MONO_FONT_FAMILY_NATIVE.ios)
+    expect(tokenSource.fontFamilyNative.android.fontFamilyMono).toBe(
+      MONO_FONT_FAMILY_NATIVE.android
+    )
+    expect(tokenSource.fontFamilyNative.default.fontFamilyMono).toBe(
+      MONO_FONT_FAMILY_NATIVE.default
+    )
+
     for (const stack of Object.values(tokenSource.fontFamilyNative)) {
+      expect(stack.fontFamilySans).toMatch(/^AlterSend Sans/)
+      expect(stack.fontFamilyDisplay).toMatch(/^AlterSend Sans/)
+
       for (const fontFamily of Object.values(stack)) {
         expect(fontFamily).not.toContain(',')
         expect(fontFamily).not.toContain('"')
-        expect(fontFamily).toMatch(/^AlterSend Sans/)
       }
     }
   })
@@ -156,7 +175,12 @@ describe('font family tokens', () => {
     )
 
     expect(webFontThemeSource).toContain('fontFamilySans: \'"AlterSend Sans KR"\'')
+    expect(webFontThemeSource).toContain("fontFamilyMono:\n    'ui-monospace")
+    expect(webFontThemeSource).not.toContain('MONO_FONT_FAMILY_CSS')
     expect(nativeFontThemeSource).toContain("fontFamilySans: 'AlterSend Sans KR'")
+    expect(nativeFontThemeSource).toContain("fontFamilyMono: 'monospace'")
+    expect(nativeFontThemeSource).not.toContain('Platform.select')
+    expect(nativeFontThemeSource).not.toContain('nativeMonoFontFamily')
     expect(nativeFontThemeSource).not.toContain('fontFamilySans: \'"AlterSend Sans KR"\'')
   })
 
@@ -173,7 +197,7 @@ describe('font family tokens', () => {
       expect(getFontFamilyCssVariables(fontFamilyKey as keyof typeof expectedFamilies)).toEqual({
         '--as-font-family-sans': `"${cssFamily}"`,
         '--as-font-family-display': `"${cssFamily}"`,
-        '--as-font-family-mono': `"${cssFamily}"`,
+        '--as-font-family-mono': MONO_FONT_FAMILY_CSS,
         fontFamily: cssFamily
       })
     }

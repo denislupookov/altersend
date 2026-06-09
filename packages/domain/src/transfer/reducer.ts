@@ -265,9 +265,7 @@ export function transferSessionReducer(
       }
       return {
         ...state,
-        receiveDownloadStates: nextDownloadStates,
-        errorCode: null,
-        errorMessage: null
+        receiveDownloadStates: nextDownloadStates
       }
     }
     case 'download_routed':

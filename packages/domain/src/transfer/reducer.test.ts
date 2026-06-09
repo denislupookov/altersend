@@ -218,6 +218,41 @@ describe('transferSessionReducer — receive flow', () => {
     expect(next).toBe(state)
   })
 
+  it('receive_download_event preserves an existing transfer error on non-failed updates', () => {
+    const state = apply(make({ role: 'receiver' }), {
+      type: 'transfer_ready',
+      files: [offer('a', 'a.txt')]
+    })
+    const failed = apply(state, {
+      type: 'receive_download_event',
+      event: {
+        type: 'status',
+        state: 'download-failed',
+        transferId: 'tx-1',
+        fileId: 'a',
+        file: 'a.txt',
+        path: '/files/a.txt',
+        message: 'disk full'
+      }
+    })
+    const next = apply(failed, {
+      type: 'receive_download_event',
+      event: {
+        type: 'status',
+        state: 'downloading',
+        transferId: 'tx-1',
+        fileId: 'a',
+        file: 'a.txt',
+        path: '/files/a.txt',
+        totalBytes: 1024,
+        bytesTransferred: 512
+      }
+    })
+
+    expect(next.errorCode).toBe(TRANSFER_ERROR_CODES.downloadFailed)
+    expect(next.errorMessage).toBe('disk full')
+  })
+
   it('download_routed is a no-op when role is not receiver', () => {
     const state = make({ role: 'sender' })
     const next = apply(state, {

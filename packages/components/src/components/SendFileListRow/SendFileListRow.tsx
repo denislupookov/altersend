@@ -9,7 +9,7 @@ import { formatFileSize } from '../../utils/formatFileSize'
 export type FileRowStatusTone = 'muted' | 'active' | 'success'
 export type FileRowProgressState = 'waiting' | 'uploading' | 'completed'
 
-export interface SendFileListRowProps {
+interface SendFileListRowBaseProps {
   name: string
   size?: number
   description?: string
@@ -17,13 +17,22 @@ export interface SendFileListRowProps {
   compact?: boolean
   bare?: boolean
   disabled?: boolean
-  onRemove?: () => void
-  removeLabel?: string
-  trailing?: ReactNode
   status?: { label: string; tone?: FileRowStatusTone }
   progress?: FileRowProgressState
   progressPercent?: number
 }
+
+export type SendFileListRowProps =
+  | (SendFileListRowBaseProps & {
+      onRemove: () => void
+      removeLabel: string
+      trailing?: ReactNode
+    })
+  | (SendFileListRowBaseProps & {
+      onRemove?: undefined
+      removeLabel?: undefined
+      trailing?: ReactNode
+    })
 
 const THUMB_STYLE_BY_KIND = {
   image: styles.thumbImage,

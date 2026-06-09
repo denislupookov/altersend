@@ -55,6 +55,7 @@ const MENU_ITEMS = [
   { icon: GithubIcon, key: 'github' },
   { icon: GlobeIcon, key: 'website' }
 ] as const
+const DISCORD_EMBED_COLOR = 0x5865f2
 
 function getLocaleOptionFontFamily(option: LocaleOption): string | undefined {
   if (!option.resolvedCode) return undefined
@@ -118,7 +119,7 @@ export function FooterBar({ version }: { version: string }) {
             {
               title: t(`feedback:types.${reportType}`),
               description: reportMessage.trim(),
-              color: 0x5865f2,
+              color: DISCORD_EMBED_COLOR,
               fields: [
                 { name: t('common:labels.version'), value: `v${version}`, inline: true },
                 {
