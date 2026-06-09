@@ -1,5 +1,0 @@
-reviews:
-  path_filters:
-    - '!packages/i18n/src/locales/**'
-    - '!apps/mobile/locales/**'
-    - '!apps/desktop/build/locales/**'
