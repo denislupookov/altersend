@@ -6,31 +6,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```sh
 # Dev
-npm run dev                    # desktop (builds packages then starts Electron)
-npm run mobile:start           # mobile Metro bundler (Expo dev client)
-npm run mobile                 # build packages + launch iOS simulator
+pnpm run dev                    # desktop (builds packages then starts Electron)
+pnpm run mobile:start           # mobile Metro bundler (Expo dev client)
+pnpm run mobile                 # build packages + launch iOS simulator
 
 # Test (run from root or individual package)
-npm test                       # all packages
-npm test -w packages/core      # single package
-npx vitest run src/foo.test.ts # single file (inside packages/core or domain)
+pnpm test                       # all packages
+pnpm test -w packages/core      # single package
+pnpm exec vitest run src/foo.test.ts # single file (inside packages/core or domain)
 
 # Lint / typecheck
-npm run lint                   # ESLint across all apps + packages (max-warnings=0)
-npm run check:tokens           # fails if any raw hex/rgb color bypasses the token system
-npm run components:typecheck   # typecheck components package
+pnpm run lint                   # ESLint across all apps + packages (max-warnings=0)
+pnpm run check:tokens           # fails if any raw hex/rgb color bypasses the token system
+pnpm run components:typecheck   # typecheck components package
 
 # Build
-npm run desktop:build          # full desktop build (packages + Electron)
-npm run components:build       # packages/components only
-npm run components:storybook   # Storybook on port 6100
+pnpm run desktop:build          # full desktop build (packages + Electron)
+pnpm run components:build       # packages/components only
+pnpm run components:storybook   # Storybook on port 6100
 
 # Multi-peer local testing (separate Electron instances sharing same machine)
-npm run desktop:dev:peer2
-npm run desktop:dev:peer3
+pnpm run desktop:dev:peer2
+pnpm run desktop:dev:peer3
 ```
 
-Packages **must build in order**: `core` → `domain` → `components` → app. The top-level `npm run dev` / `desktop:build` scripts handle this automatically.
+Packages **must build in order**: `core` → `domain` → `components` → app. The top-level `pnpm run dev` / `desktop:build` scripts handle this automatically.
 
 ## Architecture
 
@@ -84,13 +84,13 @@ IPC chain: `Renderer → contextBridge → ipcMain → Bare worklet IPC → orch
 
 ### Mobile app (apps/mobile)
 
-The Bare worklet bundle is compiled separately before each run (`bare-pack`). `npm run mobile:start` preruns `bundle-bare` automatically. On first setup run `npm run mobile:setup` (iOS) which also installs CocoaPods.
+The Bare worklet bundle is compiled separately before each run (`bare-pack`). `pnpm run mobile:start` preruns `bundle-bare` automatically. On first setup run `pnpm run mobile:setup` (iOS) which also installs CocoaPods.
 
 ## Design token system
 
 **Raw color literals are banned** in `apps/**` and `packages/components/**`.
 
-- ESLint (`npm run lint`) and `npm run check:tokens` both enforce this.
+- ESLint (`pnpm run lint`) and `pnpm run check:tokens` both enforce this.
 - Use Tailwind utilities (`bg-success`, `border-info`), StyleX tokens (`tokens.colorXxx`), or `theme.colors.colorXxx` for RN inline styles.
 - For opacity variants: `withAlpha(token, alpha)` (RN) or Tailwind opacity utilities (`bg-success/12`).
 - The only allowed exceptions are files under `packages/components/src/theme/` — that is the source of truth.

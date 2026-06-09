@@ -2,8 +2,8 @@
   "expo": {
     "name": "AlterSend",
     "slug": "altersend",
-    "version": "1.1.0",
-    "newArchEnabled": true,
+    "version": "1.1.5",
+    "newArchEnabled": false,
     "orientation": "portrait",
     "scheme": "altersend",
     "icon": "./assets/images/icon.png",

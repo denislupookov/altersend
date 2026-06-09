@@ -10,38 +10,48 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Format
-        run: npm run format:check
+        run: pnpm run format:check
 
       - name: Check design tokens
-        run: npm run check:tokens
+        run: pnpm run check:tokens
 
       - name: Knip (unused files / deps / exports)
-        run: npm run knip
+        run: pnpm run knip
 
       - name: Build packages
-        run: npm run build --workspaces --if-present
+        run: pnpm run build
 
       - name: Type-check
         run: |
-          npm run typecheck -w packages/core
-          npm run typecheck -w packages/domain
-          npm run typecheck -w packages/components
-          npm run typecheck -w apps/desktop
-          npm run typecheck -w apps/mobile
+          pnpm --filter @altersend/core typecheck
+          pnpm --filter @altersend/domain typecheck
+          pnpm --filter @altersend/components typecheck
+          pnpm --filter @altersend/desktop typecheck
+          pnpm --filter @altersend/mobile typecheck
 
       - name: Test
-        run: npm test --workspaces --if-present
+        run: pnpm test

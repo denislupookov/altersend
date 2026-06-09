@@ -7,21 +7,21 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "npm run desktop:dev",
-    "mobile": "npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components && npm run ios -w apps/mobile",
-    "mobile:setup": "npm run build -w packages/core && npm run setup:ios -w apps/mobile",
-    "mobile:start": "npm start -w apps/mobile",
-    "desktop:dev": "npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components && npm start -w apps/desktop",
-    "desktop:dev:peer2": "npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components && npm run start:peer2 -w apps/desktop",
-    "desktop:dev:peer3": "npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components && npm run start:peer3 -w apps/desktop",
-    "desktop:build": "npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components && npm run build -w apps/desktop",
-    "components:build": "npm run build -w packages/components",
-    "domain:build": "npm run build -w packages/domain",
-    "components:typecheck": "npm run typecheck -w packages/components",
-    "components:storybook": "npm run storybook -w packages/components",
-    "components:build-storybook": "npm run build-storybook -w packages/components",
-    "build": "npm run build --workspaces --if-present",
-    "test": "npm test --workspaces --if-present",
+    "dev": "pnpm run desktop:dev",
+    "mobile": "pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build && pnpm --filter @altersend/mobile ios",
+    "mobile:setup": "pnpm --filter @altersend/core build && pnpm --filter @altersend/mobile bundle:ios && pnpm --filter @altersend/mobile pods:install",
+    "mobile:start": "pnpm --filter @altersend/mobile start",
+    "desktop:dev": "pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build && pnpm --filter @altersend/desktop start",
+    "desktop:dev:peer2": "pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build && pnpm --filter @altersend/desktop start:peer2",
+    "desktop:dev:peer3": "pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build && pnpm --filter @altersend/desktop start:peer3",
+    "desktop:build": "pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build && pnpm --filter @altersend/desktop build",
+    "components:build": "pnpm --filter @altersend/components build",
+    "domain:build": "pnpm --filter @altersend/domain build",
+    "components:typecheck": "pnpm --filter @altersend/components typecheck",
+    "components:storybook": "pnpm --filter @altersend/components storybook",
+    "components:build-storybook": "pnpm --filter @altersend/components build-storybook",
+    "build": "pnpm run desktop:build",
+    "test": "pnpm -r --if-present test",
     "lint": "eslint apps packages --max-warnings=0",
     "format": "prettier --write \"apps/**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\" \"packages/**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"apps/**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\" \"packages/**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
@@ -33,27 +33,24 @@
   "lint-staged": {
     "{apps,packages}/**/*.{ts,tsx,js,jsx}": "eslint --no-warn-ignored --max-warnings=0"
   },
-  "overrides": {
-    "postcss": "^8.5.15",
-    "xcode": {
-      "uuid": "^11.1.1"
-    }
-  },
   "devDependencies": {
-    "eslint": "^9.39.4",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-unused-imports": "^4.4.1",
-    "husky": "^9.1.7",
-    "knip": "^6.14.1",
-    "lint-staged": "^16.4.0",
-    "prettier": "^3.0.0",
-    "typescript-eslint": "^8.59.2"
+    "eas-cli": "20.0.0",
+    "eslint": "9.39.4",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-unused-imports": "4.4.1",
+    "husky": "9.1.7",
+    "knip": "6.15.0",
+    "lint-staged": "16.4.0",
+    "prettier": "3.8.3",
+    "typescript-eslint": "8.60.1"
   },
-  "version": "1.1.0",
+  "version": "1.1.5",
   "dependencies": {
-    "expo": "~55.0.15",
+    "compact-encoding": "3.2.0",
+    "expo": "55.0.26",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.4"
-  }
+  },
+  "packageManager": "pnpm@11.5.1"
 }

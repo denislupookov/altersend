@@ -51,7 +51,6 @@ export interface DownloadComplete {
   transferId: string
   fileId: string
   fileName: string
-  savedTo: string
 }
 
 export interface DownloadFailed {

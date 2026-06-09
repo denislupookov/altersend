@@ -4,14 +4,11 @@ import { useShareIntent } from 'expo-share-intent'
 import {
   clearSession,
   continueShare,
+  fileUriToPath,
   replaceSelectedFiles,
   useTransferStore,
   type SelectedFile
 } from '@altersend/domain'
-
-function toFilePath(path: string): string {
-  return path.startsWith('file://') ? path.slice('file://'.length) : path
-}
 
 export function ShareIntentHandler() {
   const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent()
@@ -21,7 +18,7 @@ export function ShareIntentHandler() {
 
     const files: SelectedFile[] = shareIntent.files.map((f) => ({
       name: f.fileName ?? f.path.split('/').pop() ?? 'file',
-      path: toFilePath(f.path),
+      path: fileUriToPath(f.path),
       size: f.size ?? undefined
     }))
 

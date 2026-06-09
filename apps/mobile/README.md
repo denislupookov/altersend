@@ -6,16 +6,16 @@ React Native / Expo app for peer-to-peer file transfer on iOS and Android.
 
 ```sh
 # From repo root
-npm install
+pnpm install
 
 # Start Metro bundler
-npm run mobile:start
+pnpm run mobile:start
 
 # iOS (requires Xcode on macOS)
-npm run mobile -w apps/mobile
+pnpm --filter @altersend/mobile ios
 
 # Android (requires Android Studio)
-cd apps/mobile && npm run android
+pnpm --filter @altersend/mobile android
 ```
 
 ## Architecture
@@ -39,7 +39,7 @@ eas build --profile production --platform ios
 eas build --profile production --platform android   # AAB for Play Store
 
 # Local APK for QA (no Sentry source-map upload)
-SENTRY_DISABLE_AUTO_UPLOAD=true npm run build:apk:local
+SENTRY_DISABLE_AUTO_UPLOAD=true pnpm run build:apk:local
 ```
 
 ### Required secrets
@@ -84,5 +84,5 @@ Local Gradle builds (`./gradlew assembleRelease`) still use the debug keystore f
 `ios/` and `android/` are not tracked — they are generated from `app.json`. After changing `app.json`, `Info.plist`-relevant plugin config, or upgrading Expo SDK:
 
 ```sh
-npx expo prebuild --clean
+pnpm exec expo prebuild --clean
 ```

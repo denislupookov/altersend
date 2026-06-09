@@ -1,0 +1,39 @@
+packages:
+  - 'packages/*'
+  - 'apps/*'
+
+saveExact: true
+
+allowBuilds:
+  '@sentry/cli': true
+  dtrace-provider: false
+  electron: true
+  electron-winstaller: true
+  esbuild: true
+  fs-xattr: true
+  macos-alias: true
+
+onlyBuiltDependencies:
+  - fs-xattr
+  - macos-alias
+
+minimumReleaseAge: 1440
+
+overrides:
+  '@electron/node-gyp': '10.2.0-electron.2'
+  'diff': '8.0.3'
+  '@expo/plist>@xmldom/xmldom': '0.9.10'
+  'plist>@xmldom/xmldom': '0.8.11'
+  '@segment/ajv-human-errors>ajv': '8.20.0'
+  'eas-cli>ajv': '8.20.0'
+  'ajv-formats>ajv': '8.20.0'
+  'eas-cli>minimatch': '5.1.8'
+  'node-forge': '1.4.0'
+  'tar': '7.5.16'
+  'tmp': '0.2.7'
+  'uuid': '11.1.1'
+  'xcode>uuid': '11.1.1'
+  'yaml': '2.9.0'
+
+publicHoistPattern:
+  - '*'

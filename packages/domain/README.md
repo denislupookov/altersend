@@ -7,13 +7,13 @@ Used by both the mobile and desktop apps so they share one source of truth for t
 ## Install
 
 ```sh
-npm install @altersend/domain
+pnpm install @altersend/domain
 ```
 
 Peer dependencies (you must install these in your app):
 
 ```sh
-npm install react zustand
+pnpm install react zustand
 ```
 
 ## Quick start

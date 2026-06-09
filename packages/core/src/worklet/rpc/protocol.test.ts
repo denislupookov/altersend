@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest'
+import c from 'compact-encoding'
 import { encodeRPCPayload, decodeRPCPayload, encodeRPCSuccess, encodeRPCError } from './protocol'
+
+describe('RPC frame codec dependencies', () => {
+  it('provides the optionalBuffer codec required by bare-rpc request frames', () => {
+    const compact = c as { optionalBuffer?: unknown }
+
+    expect(typeof compact.optionalBuffer).toBe('object')
+  })
+})
 
 describe('encodeRPCPayload', () => {
   it('serialises objects', () => {

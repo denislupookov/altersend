@@ -93,7 +93,7 @@ Input that comes from peers (control messages) and from the renderer (download r
 ## Building
 
 ```sh
-npm run build
+pnpm run build
 ```
 
 Bundles via `tsup` (see `tsup.config.ts`) into `dist/`. Three entry points: `index` (host-side public API), `client/worker-client` (RPC wrapper), and `worklet/index` (the Bare worklet entry).
@@ -101,7 +101,7 @@ Bundles via `tsup` (see `tsup.config.ts`) into `dist/`. Three entry points: `ind
 ## Testing
 
 ```sh
-npm test
+pnpm test
 ```
 
 Pure-function tests covering the wire protocol, file-name and path-safety validation, and hex-key validation. The orchestrator / sender / receiver modules don't yet have integration tests — that's a tracked gap.

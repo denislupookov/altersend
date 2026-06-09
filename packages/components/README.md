@@ -47,14 +47,14 @@ import { LockIcon } from '@altersend/components/icons'
 ## Install
 
 ```sh
-npm install @altersend/components
+pnpm install @altersend/components
 ```
 
 Peer dependencies you must install in your app:
 
 ```sh
-npm install react react-dom lucide-react        # web
-npm install react react-native lucide-react-native  # native
+pnpm install react react-dom lucide-react        # web
+pnpm install react react-native lucide-react-native  # native
 ```
 
 ## Quick start
@@ -98,7 +98,7 @@ Rules for new components in this package:
 Local component development:
 
 ```sh
-npm run storybook
+pnpm run storybook
 ```
 
 ## License

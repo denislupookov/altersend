@@ -8,40 +8,52 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
+      - name: Build packages
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
-      - name: Build Android APK on EAS
+      - name: Generate Android project
+        run: pnpm exec expo prebuild --clean --platform android --no-install
         working-directory: apps/mobile
+
+      - name: Bundle Bare worklet for Android
+        run: pnpm --filter @altersend/mobile bundle:android
+
+      - name: Build Android APK
+        run: ./gradlew assembleRelease
+        working-directory: apps/mobile/android
         env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          eas build --platform android --profile preview --non-interactive --wait --json > build.json
-          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)
-          if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
-            echo "No build URL in EAS response"
-            cat build.json
-            exit 1
-          fi
-          VERSION=$(node -p "require('./app.json').expo.version")
-          curl -L "$BUILD_URL" -o "altersend-${VERSION}.apk"
-          ls -la altersend-*.apk
+          SENTRY_DISABLE_AUTO_UPLOAD: 'true'
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-apk
-          path: apps/mobile/altersend-*.apk
+          path: apps/mobile/android/app/build/outputs/apk/release/*.apk
 
   release:
     needs: build-android-apk
@@ -49,22 +61,33 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Read mobile version
         id: version
         run: echo "value=$(node -p "require('./apps/mobile/app.json').expo.version")" >> $GITHUB_OUTPUT
 
       - name: Download APK artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: android-apk
           path: artifacts
 
-      - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: android-v${{ steps.version.outputs.value }}
-          name: Android v${{ steps.version.outputs.value }}
-          draft: true
-          files: artifacts/*.apk
+      - name: Create GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          shopt -s globstar nullglob
+          files=(artifacts/*.apk)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No Android APK artifacts found"
+            exit 1
+          fi
+          tag="v$VERSION"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "${files[@]}" --clobber
+          else
+            gh release create "$tag" "${files[@]}" --title "$tag"
+          fi

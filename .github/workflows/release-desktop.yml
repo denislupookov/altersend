@@ -1,43 +1,57 @@
-name: Release Desktop
+name: Release
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build-macos:
     runs-on: macos-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
       - name: Build desktop app
-        run: npm run build -w apps/desktop
+        run: pnpm --filter @altersend/desktop build
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
-      - name: Prune dev dependencies before packaging
-        run: |
-          npm prune --omit=dev
-          npm install electron@40.2.1 electron-builder@26.8.1 @electron/notarize@2.2.1 --no-save
-
-      - name: Install Apple signing certificate into a temp keychain
+      - name: Configure macOS signing
         env:
           MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
           MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
         run: |
+          if [ -z "$MAC_CERTIFICATE_BASE64" ] || [ -z "$MAC_CERTIFICATE_PASSWORD" ]; then
+            echo "macOS signing secrets are not configured; building unsigned artifacts."
+            echo "CSC_IDENTITY_AUTO_DISCOVERY=false" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
           CERT_PATH="$RUNNER_TEMP/build_certificate.p12"
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
           KEYCHAIN_PASSWORD="$(openssl rand -base64 24)"
@@ -53,21 +67,20 @@ jobs:
           security list-keychain -d user -s "$KEYCHAIN_PATH"
 
           echo "CSC_KEYCHAIN=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+          echo "CSC_NAME=Devaprime LLC" >> "$GITHUB_ENV"
 
       - name: Make macOS (arm64)
-        run: npm run dist:mac:arm64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:mac:arm64
         env:
-          CSC_NAME: "Devaprime LLC"
-          SKIP_NOTARIZE: "true"
+          SKIP_NOTARIZE: 'true'
 
       - name: Make macOS (x64)
-        run: npm run dist:mac:x64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:mac:x64
         env:
-          CSC_NAME: "Devaprime LLC"
-          SKIP_NOTARIZE: "true"
+          SKIP_NOTARIZE: 'true'
 
       - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macos
           path: apps/desktop/out/**/*.dmg
@@ -75,22 +88,32 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
       - name: Build desktop app
         shell: bash
-        run: npm run build -w apps/desktop
+        run: pnpm --filter @altersend/desktop build
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
@@ -112,7 +135,7 @@ jobs:
           "WINDOWS_CERTIFICATE_PASSWORD=buildcert" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Make Windows
-        run: npm run dist:win:x64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:win:builder:x64
         env:
           DEBUG: electron-windows-msix*
 
@@ -125,10 +148,11 @@ jobs:
 
       - name: Upload Windows artifacts (unsigned)
         id: upload-windows-unsigned
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-unsigned
           path: |
+            apps/desktop/out/AlterSend-*-x64-Setup.exe
             apps/desktop/out/make/squirrel.windows/**/*
             apps/desktop/out/AlterSend-win32-*/**/*.msix
 
@@ -149,7 +173,7 @@ jobs:
 
       - name: Upload signed Windows artifacts
         if: vars.SIGNPATH_PROJECT_SLUG != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows
           path: signed-windows/**/*
@@ -157,31 +181,41 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
       - name: Build desktop app
-        run: npm run build -w apps/desktop
+        run: pnpm --filter @altersend/desktop build
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Make Linux
-        run: npm run dist:linux:x64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:linux:x64
 
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux
           path: apps/desktop/out/**/*.AppImage
@@ -189,92 +223,189 @@ jobs:
   build-linux-arm64:
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22.13
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
 
       - name: Build desktop app
-        run: npm run build -w apps/desktop
+        run: pnpm --filter @altersend/desktop build
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           VITE_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Make Linux (arm64)
-        run: npm run dist:linux:arm64 -w apps/desktop
+        run: pnpm --filter @altersend/desktop dist:linux:arm64
 
       - name: Upload Linux arm64 artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-arm64
           path: apps/desktop/out/**/*.AppImage
 
+  build-android-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.13
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm --filter @altersend/core build && pnpm --filter @altersend/domain build && pnpm --filter @altersend/components build
+
+      - name: Generate Android project
+        run: pnpm exec expo prebuild --clean --platform android --no-install
+        working-directory: apps/mobile
+
+      - name: Bundle Bare worklet for Android
+        run: pnpm --filter @altersend/mobile bundle:android
+
+      - name: Build Android APK
+        run: ./gradlew assembleRelease
+        working-directory: apps/mobile/android
+        env:
+          SENTRY_DISABLE_AUTO_UPLOAD: 'true'
+
+      - name: Upload Android APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-apk
+          path: apps/mobile/android/app/build/outputs/apk/release/*.apk
+
   release:
-    needs: [build-macos, build-windows, build-linux, build-linux-arm64]
+    needs: [build-macos, build-windows, build-linux, build-linux-arm64, build-android-apk]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.13
 
       - name: Read version
         id: version
         run: echo "value=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
+      - name: Verify tag matches package version
+        if: github.ref_type == 'tag'
+        run: |
+          EXPECTED_TAG="v${{ steps.version.outputs.value }}"
+          if [ "${{ github.ref_name }}" != "$EXPECTED_TAG" ]; then
+            echo "Tag ${{ github.ref_name }} does not match package version $EXPECTED_TAG"
+            exit 1
+          fi
+
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
 
-      - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.value }}
-          name: v${{ steps.version.outputs.value }}
-          draft: true
-          files: |
-            artifacts/**/*.dmg
-            artifacts/**/*.exe
-            artifacts/**/*.AppImage
-            artifacts/**/*.apk
+      - name: Create GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          shopt -s globstar nullglob
+          files=(artifacts/**/*.dmg artifacts/**/*.exe artifacts/**/*.AppImage artifacts/**/*.apk)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No release artifacts found"
+            exit 1
+          fi
+          tag="v$VERSION"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "${files[@]}" --clobber
+          else
+            gh release create "$tag" "${files[@]}" --title "$tag"
+          fi
 
   pear-release:
     needs: [build-macos, build-windows, build-linux, build-linux-arm64]
+    if: vars.PEAR_UPGRADE_LINK != ''
     runs-on: self-hosted
     environment: release
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Read version
         id: version
         run: echo "value=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.13
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          package_manager="$(node -p "require('./package.json').packageManager")"
+          shim_dir="$RUNNER_TEMP/corepack-shims"
+          mkdir -p "$shim_dir"
+          npm exec --yes corepack@0.34.7 -- prepare "$package_manager" --activate
+          npm exec --yes corepack@0.34.7 -- enable pnpm --install-directory "$shim_dir"
+          echo "$shim_dir" >> "$GITHUB_PATH"
+          "$shim_dir/pnpm" --version
+
       - name: Install pear-build
-        run: npm install -g pear-build@1.1.0
+        run: pnpm add -g pear-build@1.1.0
 
       - name: Download macOS artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: macos
           path: /tmp/pear-installers/macos
 
       - name: Download Linux x64 artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux
           path: /tmp/pear-installers/linux
 
       - name: Download Linux arm64 artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux-arm64
           path: /tmp/pear-installers/linux-arm64
@@ -315,7 +446,6 @@ jobs:
           cp "$APPIMAGE_ARM" /tmp/AlterSend.AppImage
           pear-build --package "$PKG" --linux-arm64-app /tmp/AlterSend.AppImage --target "$TARGET"
           rm /tmp/AlterSend.AppImage
-
 
       - name: Stage and release to Pear DHT
         run: |

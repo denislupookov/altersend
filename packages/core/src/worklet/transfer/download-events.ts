@@ -64,7 +64,6 @@ export function createPeerDownloadStatusEvent(
     peer: session.peerKey,
     file: message.fileName,
     path: 'path' in message ? message.path : undefined,
-    savedTo: 'savedTo' in message ? message.savedTo : undefined,
     transferId: message.transferId,
     fileId: message.fileId,
     totalBytes: 'totalBytes' in message ? message.totalBytes : undefined,
@@ -100,8 +99,7 @@ export function createDownloadCompleteMessage(event: DownloadLifecycleEvent): Do
     type: 'download-complete',
     transferId: event.transferId,
     fileId: event.fileId,
-    fileName: event.fileName,
-    savedTo: event.targetPath
+    fileName: event.fileName
   }
 }
 

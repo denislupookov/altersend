@@ -6,16 +6,16 @@ Electron app for peer-to-peer file transfer on macOS, Windows, and Linux.
 
 ```sh
 # From repo root
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 To run a second peer locally (for testing transfers between two instances):
 
 ```sh
-npm run desktop:dev:peer2
+pnpm run desktop:dev:peer2
 # or
-npm run desktop:dev:peer3
+pnpm run desktop:dev:peer3
 ```
 
 ## Architecture
@@ -37,16 +37,16 @@ Renderer ─── IPC (preload) ─── Main ─── IPC ─── Bare wor
 
 ```sh
 # macOS — arm64 and x64 are separate builds (no universal)
-npm run dist:mac:arm64 -w apps/desktop
-npm run dist:mac:x64   -w apps/desktop
+pnpm --filter @altersend/desktop dist:mac:arm64
+pnpm --filter @altersend/desktop dist:mac:x64
 
 # Windows — Squirrel (.exe) + MSIX
-npm run dist:win:x64   -w apps/desktop
-npm run dist:win:arm64 -w apps/desktop
+pnpm --filter @altersend/desktop dist:win:x64
+pnpm --filter @altersend/desktop dist:win:arm64
 
 # Linux — AppImage
-npm run dist:linux:x64   -w apps/desktop
-npm run dist:linux:arm64 -w apps/desktop
+pnpm --filter @altersend/desktop dist:linux:x64
+pnpm --filter @altersend/desktop dist:linux:arm64
 ```
 
 Installers land in `apps/desktop/out/`. For macOS local dev builds (no notarization), use `dist:mac:arm64:dev` / `dist:mac:x64:dev`.

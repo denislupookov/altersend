@@ -1,6 +1,6 @@
 {
   "name": "@altersend/components",
-  "version": "1.1.0",
+  "version": "1.1.5",
   "private": true,
   "type": "module",
   "description": "Shared AlterSend UI theme and React Strict DOM setup",
@@ -35,21 +35,21 @@
   "author": "AlterSend",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/denislupookov/altersend.git"
+    "url": "https://github.com/denislupookov/altersend.git"
   },
   "sideEffects": false,
   "scripts": {
     "generate-tokens": "node scripts/generate-tokens.mjs",
-    "build": "npm run generate-tokens && tsc --project tsconfig.build.json && node scripts/fix-esm-imports.mjs",
-    "typecheck": "npm run generate-tokens && tsc --noEmit",
+    "build": "pnpm run generate-tokens && tsc --project tsconfig.build.json && node scripts/fix-esm-imports.mjs",
+    "typecheck": "pnpm run generate-tokens && tsc --noEmit",
     "storybook": "storybook dev -p 6100",
     "build-storybook": "storybook build"
   },
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "lucide-react": "*",
-    "lucide-react-native": "*"
+    "lucide-react": "1.17.0",
+    "lucide-react-native": "1.17.0"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -63,20 +63,22 @@
     }
   },
   "dependencies": {
-    "react-strict-dom": "^0.0.55"
+    "react-strict-dom": "0.0.55"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.10",
-    "@storybook/addon-a11y": "^10.2.13",
-    "@storybook/addon-docs": "^10.2.13",
-    "@storybook/react-vite": "^10.2.13",
-    "@stylexjs/babel-plugin": "^0.15.4",
-    "@types/react": "^19.2.14",
-    "@vitejs/plugin-react": "^5.2.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "storybook": "^10.2.13",
-    "typescript": "^5.9.3",
-    "vite": "^8.0.5"
+    "@babel/core": "7.29.7",
+    "@storybook/addon-a11y": "10.4.2",
+    "@storybook/addon-docs": "10.4.2",
+    "@storybook/react-vite": "10.4.2",
+    "@stylexjs/babel-plugin": "0.15.4",
+    "@types/babel__core": "7.20.5",
+    "@types/react": "19.2.16",
+    "@vitejs/plugin-react": "5.2.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-native-svg": "15.15.3",
+    "storybook": "10.4.2",
+    "typescript": "5.9.3",
+    "vite": "8.0.16"
   }
 }

@@ -1,5 +1,5 @@
 import { app } from 'electron'
-import squirrelStartup from 'electron-squirrel-startup'
+import { createRequire } from 'module'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { initSentry } from './sentry.js'
@@ -7,7 +7,26 @@ import { registerIpcHandlers } from './ipc.js'
 import { createDesktopRuntime } from './runtime.js'
 import { createMainWindow, sendToAllWindows } from './window.js'
 
-if (squirrelStartup) {
+const require = createRequire(import.meta.url)
+
+function isModuleNotFoundError(err: unknown): boolean {
+  if (typeof err !== 'object' || err === null || !('code' in err)) return false
+  return err.code === 'MODULE_NOT_FOUND'
+}
+
+function handleSquirrelStartup(): boolean {
+  if (process.platform !== 'win32') return false
+  if (!process.argv.some((arg) => arg.startsWith('--squirrel-'))) return false
+
+  try {
+    return Boolean(require('electron-squirrel-startup'))
+  } catch (err) {
+    if (isModuleNotFoundError(err)) return false
+    throw err
+  }
+}
+
+if (handleSquirrelStartup()) {
   // Squirrel.Windows install/update/uninstall: shortcuts are handled at import, just quit
   app.quit()
 } else {

@@ -21,7 +21,7 @@ function kebab(key) {
   return key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
 }
 
-const header = `// AUTO-GENERATED — do not edit directly.\n// Source: src/theme/tokens.json  |  Generator: scripts/generate-tokens.mjs\n// Run \`npm run generate-tokens\` to update.\n`;
+const header = `// AUTO-GENERATED — do not edit directly.\n// Source: src/theme/tokens.json  |  Generator: scripts/generate-tokens.mjs\n// Run \`pnpm run generate-tokens\` to update.\n`;
 const darkColorEntries = Object.entries(colors.dark);
 const lightColorEntries = Object.entries(colors.light);
 const spaceEntries = Object.entries(space);
@@ -127,7 +127,7 @@ ${lightColorEntries.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).j
 
 const tailwindThemeCss = `/* AUTO-GENERATED — do not edit directly. */
 /* Source: src/theme/tokens.json  |  Generator: scripts/generate-tokens.mjs */
-/* Run \`npm run generate-tokens\` to update. */
+/* Run \`pnpm run generate-tokens\` to update. */
 
 :root,
 [data-theme='dark'] {
