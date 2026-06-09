@@ -75,6 +75,26 @@ describe('mobile font coverage', () => {
     )
   })
 
+  it('renders language picker options with per-locale fonts', () => {
+    const languageSource = readFileSync(join(mobileRoot.pathname, 'app/language.tsx'), 'utf8')
+
+    expect(languageSource).toContain('BUNDLED_FONT_FAMILIES')
+    expect(languageSource).toContain('getLocaleFontFamily')
+    expect(languageSource).toContain('getOptionNativeNameFontFamily')
+    expect(languageSource).toContain('fontFamily: getOptionNativeNameFontFamily(option)')
+    expect(languageSource).toContain('fontFamily: BUNDLED_FONT_FAMILIES.latin.cssFamily')
+  })
+
+  it('keeps language picker row text metrics explicit for CJK option fonts', () => {
+    const languageSource = readFileSync(join(mobileRoot.pathname, 'app/language.tsx'), 'utf8')
+
+    expect(languageSource).toMatch(/label:\s*\{[^}]*fontSize:\s*15,[^}]*lineHeight:\s*20/s)
+    expect(languageSource).toMatch(/hint:\s*\{[^}]*fontSize:\s*12,[^}]*lineHeight:\s*16/s)
+    expect(languageSource).toMatch(/label:\s*\{[^}]*includeFontPadding:\s*false/s)
+    expect(languageSource).toMatch(/hint:\s*\{[^}]*includeFontPadding:\s*false/s)
+    expect(languageSource).not.toMatch(/label:\s*\{[^}]*fontWeight:\s*'500'/s)
+  })
+
   it('does not send translated back titles to Android native stack headers', () => {
     const layoutSource = readFileSync(join(mobileRoot.pathname, 'app/_layout.tsx'), 'utf8')
     const flowOptionsMatch = layoutSource.match(/function getFlowScreenOptions\([\s\S]*?\n\}/)?.[0]

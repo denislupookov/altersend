@@ -46,6 +46,10 @@ describe('font family tokens', () => {
   it('uses a true monospace stack for mono UI text', () => {
     expect(rawTokens.fontFamily.fontFamilyMono).toBe(MONO_FONT_FAMILY_CSS)
     expect(rawTokens.fontFamily.fontFamilyMono).toContain('monospace')
+    expect(rawTokens.fontFamily.fontFamilyMono).toContain('"SFMono-Regular"')
+    expect(rawTokens.fontFamily.fontFamilyMono).toContain('"Menlo"')
+    expect(rawTokens.fontFamily.fontFamilyMono).toContain('"Monaco"')
+    expect(rawTokens.fontFamily.fontFamilyMono).toContain('"Consolas"')
     expect(rawTokens.fontFamily.fontFamilyMono).toContain(',')
   })
 
@@ -175,7 +179,7 @@ describe('font family tokens', () => {
     )
 
     expect(webFontThemeSource).toContain('fontFamilySans: \'"AlterSend Sans KR"\'')
-    expect(webFontThemeSource).toContain("fontFamilyMono:\n    'ui-monospace")
+    expect(webFontThemeSource).toContain('fontFamilyMono:\n    \'ui-monospace, "SFMono-Regular"')
     expect(webFontThemeSource).not.toContain('MONO_FONT_FAMILY_CSS')
     expect(nativeFontThemeSource).toContain("fontFamilySans: 'AlterSend Sans KR'")
     expect(nativeFontThemeSource).toContain("fontFamilyMono: 'monospace'")

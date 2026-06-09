@@ -1,14 +1,16 @@
 import {
   LOCALE_OPTIONS,
   changeI18nLanguage,
+  getLocaleFontFamily,
   isMultiLangEnabled,
   normalizeLocalePreference,
   resolveActiveLocalePreference,
   useTranslation,
+  type LocaleOption,
   type LocalePreference,
   type SupportedLocaleCode
 } from '@altersend/i18n'
-import { useTheme } from '@altersend/components'
+import { BUNDLED_FONT_FAMILIES, useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
 import {
@@ -80,11 +82,27 @@ export default function LanguageScreen() {
                 ]}
               >
                 <View style={styles.rowText}>
-                  <Text style={[styles.label, { color: theme.colors.colorTextPrimary }]}>
+                  <Text
+                    style={[
+                      styles.label,
+                      {
+                        color: theme.colors.colorTextPrimary,
+                        fontFamily: getOptionNativeNameFontFamily(option)
+                      }
+                    ]}
+                  >
                     {option.nativeName ?? t('common:labels.systemDefault')}
                   </Text>
                   {option.nativeName ? (
-                    <Text style={[styles.hint, { color: theme.colors.colorTextMuted }]}>
+                    <Text
+                      style={[
+                        styles.hint,
+                        {
+                          color: theme.colors.colorTextMuted,
+                          fontFamily: BUNDLED_FONT_FAMILIES.latin.cssFamily
+                        }
+                      ]}
+                    >
                       {option.label}
                     </Text>
                   ) : null}
@@ -117,6 +135,11 @@ function scheduleLanguageChange(resolvedLocale: SupportedLocaleCode) {
   requestAnimationFrame(changeLanguage)
 }
 
+function getOptionNativeNameFontFamily(option: LocaleOption) {
+  if (!option.resolvedCode) return undefined
+  return BUNDLED_FONT_FAMILIES[getLocaleFontFamily(option.resolvedCode)].cssFamily
+}
+
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
@@ -137,10 +160,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 15,
-    fontWeight: '500'
+    includeFontPadding: false,
+    lineHeight: 20
   },
   hint: {
-    fontSize: 12
+    fontSize: 12,
+    includeFontPadding: false,
+    lineHeight: 16
   },
   divider: {
     height: StyleSheet.hairlineWidth,

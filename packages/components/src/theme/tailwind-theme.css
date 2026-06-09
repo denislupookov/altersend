@@ -76,7 +76,7 @@
   --as-line-height-relaxed: 1.5;
   --as-font-family-sans: "AlterSend Sans";
   --as-font-family-display: "AlterSend Sans";
-  --as-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --as-font-family-mono: ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
 }
 
 [data-theme='light'] {

@@ -8,35 +8,35 @@ const latinFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: '"AlterSend Sans"',
   fontFamilyDisplay: '"AlterSend Sans"',
   fontFamilyMono:
-    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+    'ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace'
 })
 
 const japaneseFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: '"AlterSend Sans JP"',
   fontFamilyDisplay: '"AlterSend Sans JP"',
   fontFamilyMono:
-    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+    'ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace'
 })
 
 const koreanFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: '"AlterSend Sans KR"',
   fontFamilyDisplay: '"AlterSend Sans KR"',
   fontFamilyMono:
-    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+    'ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace'
 })
 
 const simplifiedChineseFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: '"AlterSend Sans SC"',
   fontFamilyDisplay: '"AlterSend Sans SC"',
   fontFamilyMono:
-    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+    'ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace'
 })
 
 const traditionalChineseFontThemeStyle = css.createTheme(tokens, {
   fontFamilySans: '"AlterSend Sans TC"',
   fontFamilyDisplay: '"AlterSend Sans TC"',
   fontFamilyMono:
-    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+    'ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace'
 })
 
 export const fontThemeStyles = {
