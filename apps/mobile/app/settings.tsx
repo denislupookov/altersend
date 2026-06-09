@@ -268,14 +268,16 @@ const styles = StyleSheet.create({
   },
   rowText: {
     flex: 1,
-    gap: 2
+    gap: 0
   },
   rowLabel: {
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
+    lineHeight: 18
   },
   rowHint: {
-    fontSize: 12
+    fontSize: 12,
+    lineHeight: 16
   },
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -300,10 +302,12 @@ const styles = StyleSheet.create({
   },
   brandName: {
     fontSize: 13,
-    fontWeight: '600'
+    fontWeight: '600',
+    lineHeight: 18
   },
   brandTagline: {
-    fontSize: 12
+    fontSize: 12,
+    lineHeight: 16
   },
   versionChip: {
     paddingHorizontal: 8,

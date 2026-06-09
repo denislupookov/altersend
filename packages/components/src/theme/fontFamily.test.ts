@@ -55,7 +55,33 @@ describe('font family tokens', () => {
       expect(
         existsSync(new URL(`../../../../assets/fonts/${font.assetFileName}`, import.meta.url))
       ).toBe(true)
+
+      if (font.boldAssetFileName) {
+        expect(font.boldAssetFileName).toMatch(/\.(ttf|otf)$/)
+        expect(
+          existsSync(new URL(`../../../../assets/fonts/${font.boldAssetFileName}`, import.meta.url))
+        ).toBe(true)
+      }
     }
+  })
+
+  it('uses static regular and bold CJK font assets for native weight rendering', () => {
+    expect(BUNDLED_FONT_FAMILIES.japanese).toMatchObject({
+      assetFileName: 'NotoSans-JP-Regular.ttf',
+      boldAssetFileName: 'NotoSans-JP-Bold.ttf'
+    })
+    expect(BUNDLED_FONT_FAMILIES.korean).toMatchObject({
+      assetFileName: 'NotoSans-KR-Regular.ttf',
+      boldAssetFileName: 'NotoSans-KR-Bold.ttf'
+    })
+    expect(BUNDLED_FONT_FAMILIES.simplifiedChinese).toMatchObject({
+      assetFileName: 'NotoSans-SC-Regular.ttf',
+      boldAssetFileName: 'NotoSans-SC-Bold.ttf'
+    })
+    expect(BUNDLED_FONT_FAMILIES.traditionalChinese).toMatchObject({
+      assetFileName: 'NotoSans-TC-Regular.ttf',
+      boldAssetFileName: 'NotoSans-TC-Bold.ttf'
+    })
   })
 
   it('keeps native UI font stacks compatible with React Native', () => {

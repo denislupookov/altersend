@@ -155,6 +155,79 @@
             ]
           }
         }
+      ],
+      [
+        "expo-font",
+        {
+          "ios": {
+            "fonts": [
+              "../../assets/fonts/NotoSans-JP-Regular.ttf",
+              "../../assets/fonts/NotoSans-JP-Bold.ttf",
+              "../../assets/fonts/NotoSans-KR-Regular.ttf",
+              "../../assets/fonts/NotoSans-KR-Bold.ttf",
+              "../../assets/fonts/NotoSans-SC-Regular.ttf",
+              "../../assets/fonts/NotoSans-SC-Bold.ttf",
+              "../../assets/fonts/NotoSans-TC-Regular.ttf",
+              "../../assets/fonts/NotoSans-TC-Bold.ttf"
+            ]
+          },
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "AlterSend Sans JP",
+                "fontDefinitions": [
+                  {
+                    "path": "../../assets/fonts/NotoSans-JP-Regular.ttf",
+                    "weight": 400
+                  },
+                  {
+                    "path": "../../assets/fonts/NotoSans-JP-Bold.ttf",
+                    "weight": 700
+                  }
+                ]
+              },
+              {
+                "fontFamily": "AlterSend Sans KR",
+                "fontDefinitions": [
+                  {
+                    "path": "../../assets/fonts/NotoSans-KR-Regular.ttf",
+                    "weight": 400
+                  },
+                  {
+                    "path": "../../assets/fonts/NotoSans-KR-Bold.ttf",
+                    "weight": 700
+                  }
+                ]
+              },
+              {
+                "fontFamily": "AlterSend Sans SC",
+                "fontDefinitions": [
+                  {
+                    "path": "../../assets/fonts/NotoSans-SC-Regular.ttf",
+                    "weight": 400
+                  },
+                  {
+                    "path": "../../assets/fonts/NotoSans-SC-Bold.ttf",
+                    "weight": 700
+                  }
+                ]
+              },
+              {
+                "fontFamily": "AlterSend Sans TC",
+                "fontDefinitions": [
+                  {
+                    "path": "../../assets/fonts/NotoSans-TC-Regular.ttf",
+                    "weight": 400
+                  },
+                  {
+                    "path": "../../assets/fonts/NotoSans-TC-Bold.ttf",
+                    "weight": 700
+                  }
+                ]
+              }
+            ]
+          }
+        }
       ]
     ],
     "extra": {

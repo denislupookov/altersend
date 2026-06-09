@@ -8,6 +8,7 @@ export type FontFamilyKey =
 export interface BundledFontFamily {
   cssFamily: string
   assetFileName: string
+  boldAssetFileName?: string
 }
 
 export const DEFAULT_FONT_FAMILY_KEY: FontFamilyKey = 'latin'
@@ -19,18 +20,22 @@ export const BUNDLED_FONT_FAMILIES: Record<FontFamilyKey, BundledFontFamily> = {
   },
   japanese: {
     cssFamily: 'AlterSend Sans JP',
-    assetFileName: 'NotoSans-JP.ttf'
+    assetFileName: 'NotoSans-JP-Regular.ttf',
+    boldAssetFileName: 'NotoSans-JP-Bold.ttf'
   },
   korean: {
     cssFamily: 'AlterSend Sans KR',
-    assetFileName: 'NotoSans-KR.ttf'
+    assetFileName: 'NotoSans-KR-Regular.ttf',
+    boldAssetFileName: 'NotoSans-KR-Bold.ttf'
   },
   simplifiedChinese: {
     cssFamily: 'AlterSend Sans SC',
-    assetFileName: 'NotoSans-SC.ttf'
+    assetFileName: 'NotoSans-SC-Regular.ttf',
+    boldAssetFileName: 'NotoSans-SC-Bold.ttf'
   },
   traditionalChinese: {
     cssFamily: 'AlterSend Sans TC',
-    assetFileName: 'NotoSans-TC.ttf'
+    assetFileName: 'NotoSans-TC-Regular.ttf',
+    boldAssetFileName: 'NotoSans-TC-Bold.ttf'
   }
 } as const

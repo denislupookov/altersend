@@ -1,39 +1,71 @@
 @font-face {
-  font-family: "AlterSend Sans";
-  src: url("../../../../assets/fonts/NotoSans-Latin.ttf") format("truetype");
+  font-family: 'AlterSend Sans';
+  src: url('../../../../assets/fonts/NotoSans-Latin.ttf') format('truetype');
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "AlterSend Sans JP";
-  src: url("../../../../assets/fonts/NotoSans-JP.ttf") format("truetype");
+  font-family: 'AlterSend Sans JP';
+  src: url('../../../../assets/fonts/NotoSans-JP-Regular.ttf') format('truetype');
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 100 500;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "AlterSend Sans KR";
-  src: url("../../../../assets/fonts/NotoSans-KR.ttf") format("truetype");
+  font-family: 'AlterSend Sans JP';
+  src: url('../../../../assets/fonts/NotoSans-JP-Bold.ttf') format('truetype');
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 600 900;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "AlterSend Sans SC";
-  src: url("../../../../assets/fonts/NotoSans-SC.ttf") format("truetype");
+  font-family: 'AlterSend Sans KR';
+  src: url('../../../../assets/fonts/NotoSans-KR-Regular.ttf') format('truetype');
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 100 500;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "AlterSend Sans TC";
-  src: url("../../../../assets/fonts/NotoSans-TC.ttf") format("truetype");
+  font-family: 'AlterSend Sans KR';
+  src: url('../../../../assets/fonts/NotoSans-KR-Bold.ttf') format('truetype');
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 600 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AlterSend Sans SC';
+  src: url('../../../../assets/fonts/NotoSans-SC-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AlterSend Sans SC';
+  src: url('../../../../assets/fonts/NotoSans-SC-Bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 600 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AlterSend Sans TC';
+  src: url('../../../../assets/fonts/NotoSans-TC-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AlterSend Sans TC';
+  src: url('../../../../assets/fonts/NotoSans-TC-Bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 600 900;
   font-display: swap;
 }

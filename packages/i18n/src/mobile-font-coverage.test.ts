@@ -54,6 +54,15 @@ describe('mobile font coverage', () => {
     expect(storageSource).toMatch(/listeners\.forEach\(\(listener\) => listener\(preference\)\)/)
   })
 
+  it('keeps Settings paired row text metrics explicit for CJK fonts', () => {
+    const settingsSource = readFileSync(join(mobileRoot.pathname, 'app/settings.tsx'), 'utf8')
+
+    expect(settingsSource).toMatch(/rowLabel:\s*\{[^}]*fontSize:\s*14,[^}]*lineHeight:\s*18/s)
+    expect(settingsSource).toMatch(/rowHint:\s*\{[^}]*fontSize:\s*12,[^}]*lineHeight:\s*16/s)
+    expect(settingsSource).toMatch(/brandName:\s*\{[^}]*fontSize:\s*13,[^}]*lineHeight:\s*18/s)
+    expect(settingsSource).toMatch(/brandTagline:\s*\{[^}]*fontSize:\s*12,[^}]*lineHeight:\s*16/s)
+  })
+
   it('returns from the language screen before changing the active i18n language', () => {
     const languageSource = readFileSync(join(mobileRoot.pathname, 'app/language.tsx'), 'utf8')
 
@@ -74,5 +83,37 @@ describe('mobile font coverage', () => {
     expect(flowOptionsMatch).toBeDefined()
     expect(flowOptionsMatch).toContain("Platform.OS === 'ios'")
     expect(flowOptionsMatch).toContain('headerBackTitle: backTitle')
+  })
+
+  it('registers CJK font weights through Expo and the runtime font loader', () => {
+    const appJson = JSON.parse(readFileSync(join(mobileRoot.pathname, 'app.json'), 'utf8')) as {
+      expo: { plugins: unknown[] }
+    }
+    const fontLoaderSource = readFileSync(
+      join(mobileRoot.pathname, 'src/theme/useAlterSendFonts.ts'),
+      'utf8'
+    )
+
+    const expoFontPlugin = appJson.expo.plugins.find(
+      (plugin) => Array.isArray(plugin) && plugin[0] === 'expo-font'
+    )
+
+    expect(expoFontPlugin).toBeDefined()
+    expect(JSON.stringify(expoFontPlugin)).toContain('NotoSans-JP-Regular.ttf')
+    expect(JSON.stringify(expoFontPlugin)).toContain('NotoSans-JP-Bold.ttf')
+    expect(JSON.stringify(expoFontPlugin)).toContain('NotoSans-KR-Regular.ttf')
+    expect(JSON.stringify(expoFontPlugin)).toContain('NotoSans-KR-Bold.ttf')
+    expect(JSON.stringify(expoFontPlugin)).toContain('NotoSans-SC-Regular.ttf')
+    expect(JSON.stringify(expoFontPlugin)).toContain('NotoSans-SC-Bold.ttf')
+    expect(JSON.stringify(expoFontPlugin)).toContain('NotoSans-TC-Regular.ttf')
+    expect(JSON.stringify(expoFontPlugin)).toContain('NotoSans-TC-Bold.ttf')
+    expect(fontLoaderSource).toContain('NotoSans-JP-Regular.ttf')
+    expect(fontLoaderSource).toContain('NotoSans-JP-Bold.ttf')
+    expect(fontLoaderSource).toContain('NotoSans-KR-Regular.ttf')
+    expect(fontLoaderSource).toContain('NotoSans-KR-Bold.ttf')
+    expect(fontLoaderSource).toContain('NotoSans-SC-Regular.ttf')
+    expect(fontLoaderSource).toContain('NotoSans-SC-Bold.ttf')
+    expect(fontLoaderSource).toContain('NotoSans-TC-Regular.ttf')
+    expect(fontLoaderSource).toContain('NotoSans-TC-Bold.ttf')
   })
 })
