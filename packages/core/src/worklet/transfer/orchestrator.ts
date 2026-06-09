@@ -20,6 +20,8 @@ import type {
   DownloadFilesReply,
   HostReply,
   JoinReply,
+  RememberVoteInput,
+  RememberVoteReply,
   ShareFileRequest,
   ShareFilesReply,
   TransferRPC
@@ -50,6 +52,9 @@ import { PeerIdentityStore } from './peer-identity-store'
 import { TransferSender } from './sender'
 import { TransferSwarm, type PeerSession } from './swarm'
 import { isValidHexKey } from './utils'
+import { DeviceIdentityStore } from '../identity/device-identity-store'
+import { RememberedPeerStore } from '../peers/store'
+import { RememberCoordinator } from '../peers/remember-coordinator'
 
 function createTransferId(): string {
   return crypto.randomBytes(16).toString('hex')
@@ -97,6 +102,10 @@ export class TransferOrchestrator implements TransferRPC {
   private suspended: boolean = false
   private inflightAbort: AbortController | null = null
 
+  private readonly deviceIdentityStore: DeviceIdentityStore
+  private readonly rememberedStore: RememberedPeerStore
+  private readonly remember: RememberCoordinator
+
   constructor(
     emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void,
     storageRoot: string,
@@ -105,6 +114,8 @@ export class TransferOrchestrator implements TransferRPC {
     this.emitIPC = emitIPC
     this.storageRoot = storageRoot
     this.initStorage()
+    this.deviceIdentityStore = new DeviceIdentityStore(identityRoot)
+    this.rememberedStore = new RememberedPeerStore(identityRoot)
     const identityStore = new PeerIdentityStore(identityRoot)
     this.swarm = new TransferSwarm(
       {
@@ -128,6 +139,12 @@ export class TransferOrchestrator implements TransferRPC {
       },
       { identityStore }
     )
+    this.remember = new RememberCoordinator({
+      deviceIdentityStore: this.deviceIdentityStore,
+      rememberedStore: this.rememberedStore,
+      broadcast: (message) => this.swarm.broadcast(message),
+      emit: (event) => this.emitIPC(event)
+    })
   }
 
   private initStorage(): void {
@@ -160,14 +177,28 @@ export class TransferOrchestrator implements TransferRPC {
     if (this.activeTransferReady) session.controlChannel.send(this.activeTransferReady)
   }
 
+  rememberVote(input: RememberVoteInput): Promise<RememberVoteReply> {
+    return this.remember.vote(input)
+  }
+
   private onPeerDisconnected(peerKey: string | null, remainingCount: number): void {
     if (peerKey) {
+      this.remember.onPeerDisconnected(peerKey)
       this.sendStatus('peer-disconnected', { peer: peerKey, peers: remainingCount })
     }
     this.sendStatus(remainingCount > 0 ? 'peer-connected' : 'joined', { peers: remainingCount })
   }
 
   private onControlMessage(message: PeerControlMessage, session: PeerSession): void {
+    if (message.type === 'pairing-info') {
+      this.remember.handlePairingInfo(message, session)
+      return
+    }
+    if (message.type === 'remember-vote') {
+      this.remember.handleRememberVote(message, session.peerKey)
+      return
+    }
+
     if (message.type === 'transfer-start' || message.type === 'transfer-ready') {
       if (this.role !== 'receiver') {
         console.warn(`TransferOrchestrator: dropping inbound ${message.type} in role=${this.role}`)
@@ -396,6 +427,7 @@ export class TransferOrchestrator implements TransferRPC {
   async disconnect(): Promise<DisconnectReply> {
     this.suspended = true
     this.abortInFlight()
+    this.remember.reset()
     try {
       this.activeTransfer = null
       this.activeTransferReady = null
@@ -439,6 +471,7 @@ export class TransferOrchestrator implements TransferRPC {
 
   async destroy(): Promise<void> {
     this.abortInFlight()
+    this.remember.reset()
     this.activeTransfer = null
     this.activeTransferReady = null
     this.currentTopic = null

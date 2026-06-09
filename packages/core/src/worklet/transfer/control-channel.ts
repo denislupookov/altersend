@@ -2,6 +2,7 @@ import Protomux, { type ProtomuxMessage } from 'protomux'
 import type { PeerSocket } from 'hyperswarm'
 import c from 'compact-encoding'
 import { isValidControlMessage } from './control-validation'
+import type { DeviceType } from '../identity/device-identity-store'
 
 export const PROTOCOL_VERSION = 1
 
@@ -62,6 +63,21 @@ export interface DownloadFailed {
   message: string
 }
 
+export interface PairingInfo {
+  type: 'pairing-info'
+  devicePubkey: string
+  displayName: string
+  deviceType: DeviceType
+  capabilities: { canBackground: boolean }
+}
+
+export interface RememberVote {
+  type: 'remember-vote'
+  transferId: string
+  vote: 'remember' | 'no'
+  isMine: boolean
+}
+
 export type PeerControlMessage =
   | TransferStart
   | TransferReady
@@ -69,6 +85,8 @@ export type PeerControlMessage =
   | DownloadProgress
   | DownloadComplete
   | DownloadFailed
+  | PairingInfo
+  | RememberVote
 
 type PeerControlHandler = (message: PeerControlMessage) => void
 

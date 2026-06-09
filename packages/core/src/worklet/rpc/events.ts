@@ -1,3 +1,5 @@
+import type { RememberedPeer } from '../peers/remembered-peer'
+
 export type TransferStatus =
   | 'peer-connected'
   | 'peer-disconnected'
@@ -62,7 +64,24 @@ export interface ErrorEvent {
   code?: TransferErrorCode
 }
 
-export type TransferIPCMessage = ReadyEvent | TopicEvent | StatusEvent | RoleEvent | ErrorEvent
+export interface RememberConfirmedEvent {
+  type: 'remember-confirmed'
+  peer: RememberedPeer
+}
+
+export interface RememberDeclinedEvent {
+  type: 'remember-declined'
+  transferId: string
+}
+
+export type TransferIPCMessage =
+  | ReadyEvent
+  | TopicEvent
+  | StatusEvent
+  | RoleEvent
+  | ErrorEvent
+  | RememberConfirmedEvent
+  | RememberDeclinedEvent
 
 export function createReadyEvent(): ReadyEvent {
   return { type: 'ready' }
@@ -81,6 +100,14 @@ export function createStatusEvent(
 
 export function createRoleEvent(role: TransferRole | null): RoleEvent {
   return { type: 'role', role }
+}
+
+export function createRememberConfirmedEvent(peer: RememberedPeer): RememberConfirmedEvent {
+  return { type: 'remember-confirmed', peer }
+}
+
+export function createRememberDeclinedEvent(transferId: string): RememberDeclinedEvent {
+  return { type: 'remember-declined', transferId }
 }
 
 export function createErrorEvent(message: string, code?: TransferErrorCode): ErrorEvent {

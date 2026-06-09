@@ -1,16 +1,9 @@
 import b4a from 'b4a'
 import fs from 'bare-fs'
 import crypto from 'hypercore-crypto'
+import { DEVICE_TYPES, type DeviceType } from './device-type'
 
-export type DeviceType = 'desktop' | 'laptop' | 'phone' | 'tablet' | 'unknown'
-
-const DEVICE_TYPES: ReadonlySet<DeviceType> = new Set([
-  'desktop',
-  'laptop',
-  'phone',
-  'tablet',
-  'unknown'
-])
+export type { DeviceType }
 
 export interface DeviceIdentity {
   publicKey: Uint8Array

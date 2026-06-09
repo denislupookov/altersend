@@ -1,4 +1,5 @@
-import { isSafeFileName } from './utils'
+import { isSafeFileName, isValidHexKey } from './utils'
+import { isDeviceType } from '../identity/device-type'
 import {
   PROTOCOL_VERSION,
   type DownloadComplete,
@@ -6,6 +7,8 @@ import {
   type DownloadProgress,
   type DownloadRequest,
   type FileOffer,
+  type PairingInfo,
+  type RememberVote,
   type PeerControlMessage,
   type TransferReady,
   type TransferStart
@@ -15,6 +18,7 @@ const MAX_ID_LEN = 128
 const MAX_PATH_LEN = 4096
 const MAX_MESSAGE_LEN = 1024
 const MAX_FILES_PER_TRANSFER = 10_000
+const MAX_DISPLAY_NAME_LEN = 256
 
 function isBoundedString(x: unknown, maxLen: number): x is string {
   return typeof x === 'string' && x.length > 0 && x.length <= maxLen
@@ -102,6 +106,25 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
         isBoundedString(v.fileId, MAX_ID_LEN) &&
         isSafeFileName(v.fileName) &&
         isBoundedString(v.message, MAX_MESSAGE_LEN)
+      )
+    }
+    case 'pairing-info': {
+      const v = x as Partial<PairingInfo>
+      return (
+        isValidHexKey(v.devicePubkey) &&
+        isBoundedString(v.displayName, MAX_DISPLAY_NAME_LEN) &&
+        isDeviceType(v.deviceType) &&
+        !!v.capabilities &&
+        typeof v.capabilities === 'object' &&
+        typeof v.capabilities.canBackground === 'boolean'
+      )
+    }
+    case 'remember-vote': {
+      const v = x as Partial<RememberVote>
+      return (
+        isBoundedString(v.transferId, MAX_ID_LEN) &&
+        (v.vote === 'remember' || v.vote === 'no') &&
+        typeof v.isMine === 'boolean'
       )
     }
     default:

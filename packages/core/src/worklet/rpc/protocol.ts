@@ -3,6 +3,8 @@ import type { FileOffer, PeerControlMessage } from '../transfer/control-channel'
 import type {
   ErrorEvent,
   ReadyEvent,
+  RememberConfirmedEvent,
+  RememberDeclinedEvent,
   RoleEvent,
   StatusEvent,
   TransferErrorCode,
@@ -58,6 +60,16 @@ export interface DisconnectReply {
   state: 'disconnected'
 }
 
+export interface RememberVoteInput {
+  transferId: string
+  vote: 'remember' | 'no'
+  isMine: boolean
+}
+
+export interface RememberVoteReply {
+  ok: true
+}
+
 export interface RPCErrorPayload {
   code: 'BAD_REQUEST' | 'UNKNOWN_COMMAND' | 'INTERNAL_ERROR'
   message: string
@@ -77,7 +89,13 @@ interface RPCErrorResponse {
 export type RPCResponse<T> = RPCSuccessPayload<T> | RPCErrorResponse
 
 type WorkerReadyEvent = ReadyEvent
-export type RendererTransferEvent = StatusEvent | ErrorEvent | RoleEvent | PeerControlMessage
+export type RendererTransferEvent =
+  | StatusEvent
+  | ErrorEvent
+  | RoleEvent
+  | RememberConfirmedEvent
+  | RememberDeclinedEvent
+  | PeerControlMessage
 export type WorkerTransferEvent = WorkerReadyEvent | RendererTransferEvent
 export type IncomingFileOffer = FileOffer
 
@@ -88,6 +106,7 @@ export interface TransferRPC {
   downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply>
   disconnect(): Promise<DisconnectReply>
   closePeers(): Promise<void>
+  rememberVote(input: RememberVoteInput): Promise<RememberVoteReply>
 }
 
 export class BadRequestError extends Error {

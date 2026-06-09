@@ -1,12 +1,17 @@
+declare function setTimeout(callback: () => void, ms: number): unknown
+declare function clearTimeout(handle: unknown): void
+
 declare module 'hypercore-crypto' {
   export function randomBytes(n: number): Buffer
   export function discoveryKey(topic: Uint8Array): Uint8Array
   export function keyPair(seed?: Uint8Array): { publicKey: Uint8Array; secretKey: Uint8Array }
+  export function hash(data: Uint8Array | Uint8Array[], out?: Uint8Array): Uint8Array
 
   const _default: {
     randomBytes: typeof randomBytes
     discoveryKey: typeof discoveryKey
     keyPair: typeof keyPair
+    hash: typeof hash
   }
   export default _default
 }
@@ -87,6 +92,7 @@ declare module 'hyperswarm' {
     publicKey: Uint8Array
   }
   export interface PeerSocket {
+    handshakeHash: Uint8Array | null
     on(event: 'close', cb: () => void): this
     on(event: 'error', cb: (err: Error) => void): this
     destroy(err?: Error): void

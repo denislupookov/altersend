@@ -9,6 +9,7 @@ export interface PeerSession {
   socket: PeerSocket
   peerKey: string
   controlChannel: PeerControlChannel
+  handshakeHash: Uint8Array | null
 }
 
 export interface TransferSwarmCallbacks {
@@ -93,7 +94,7 @@ export class TransferSwarm {
       return
     }
 
-    session = { socket, peerKey, controlChannel }
+    session = { socket, peerKey, controlChannel, handshakeHash: socket.handshakeHash ?? null }
     this.peerSessions.set(socket, session)
     this.callbacks.onPeerConnected(session)
 
