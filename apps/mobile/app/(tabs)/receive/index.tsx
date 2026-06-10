@@ -95,7 +95,7 @@ export default function ReceiveScreen() {
   const title = step === 'join' ? 'Receive' : copy.title
   const description =
     step === 'join'
-      ? "Scan a sender's QR or paste their 64-character code to start streaming."
+      ? "Scan or import a sender's QR, or paste their 64-character code to start streaming."
       : copy.description
 
   const footer =

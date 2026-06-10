@@ -1,8 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from 'react-native'
-import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera'
+import {
+  CameraView,
+  scanFromURLAsync,
+  useCameraPermissions,
+  type BarcodeScanningResult
+} from 'expo-camera'
+import * as ImagePicker from 'expo-image-picker'
 import { Button, useTheme, withAlpha } from '@altersend/components'
-import { ArrowLeftIcon, QrCodeIcon } from '@altersend/components/icons'
+import { ArrowLeftIcon, ImageIcon, QrCodeIcon } from '@altersend/components/icons'
 import { useNavigation, useRouter } from 'expo-router'
 import { extractJoinCode, useTransferStore } from '@altersend/domain'
 import { joinSession } from '@altersend/domain'
@@ -65,9 +71,9 @@ export default function ReceiveScanScreen() {
   const canAskAgain = permission?.canAskAgain ?? true
   const canScan = cameraGranted && !isResolving && role === null
 
-  const handleBarcodeScanned = useCallback(
-    async ({ data }: BarcodeScanningResult) => {
-      if (!canScan || scanLockRef.current) {
+  const resolveCode = useCallback(
+    async (data: string, invalidHint: string) => {
+      if (scanLockRef.current || role !== null) {
         return
       }
 
@@ -79,7 +85,7 @@ export default function ReceiveScanScreen() {
           invalidScanAtRef.current = now
           toast.show({
             title: 'Unsupported QR code',
-            hint: 'Scan an AlterSend connection code.',
+            hint: invalidHint,
             durationMs: 2500
           })
         }
@@ -97,13 +103,50 @@ export default function ReceiveScanScreen() {
         setIsResolving(false)
         toast.show({
           title: 'Couldn’t join session',
-          hint: 'Try scanning again or paste the code manually.',
+          hint: 'Try again or paste the code manually.',
           durationMs: 3500
         })
       }
     },
-    [canScan, goBack, toast]
+    [goBack, role, toast]
   )
+
+  const handleBarcodeScanned = useCallback(
+    ({ data }: BarcodeScanningResult) => {
+      if (!canScan) return
+      void resolveCode(data, 'Scan an AlterSend connection code.')
+    },
+    [canScan, resolveCode]
+  )
+
+  const importFromImage = useCallback(async () => {
+    if (scanLockRef.current || role !== null) {
+      return
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      quality: 1
+    })
+    const asset = result.canceled ? null : result.assets[0]
+    if (!asset) return
+
+    try {
+      const [scan] = await scanFromURLAsync(asset.uri, ['qr'])
+      if (!scan) {
+        toast.show({
+          title: 'No QR code found',
+          hint: 'Pick an image that shows an AlterSend QR code.',
+          durationMs: 2500
+        })
+        return
+      }
+      await resolveCode(scan.data, 'That image isn’t an AlterSend connection code.')
+    } catch (error) {
+      console.warn('ReceiveScanScreen: importFromImage failed', error)
+      toast.show({ title: 'Couldn’t read that image', durationMs: 2500 })
+    }
+  }, [resolveCode, role, toast])
 
   const permissionCopy = useMemo(() => {
     if (!permission) {
@@ -121,9 +164,9 @@ export default function ReceiveScanScreen() {
     }
 
     return {
-      title: 'Scan QR code',
+      title: 'Scan or import QR',
       description:
-        'Center the sender’s QR code inside the frame. AlterSend will connect automatically.'
+        'Center the sender’s QR in the frame, or import a saved image. AlterSend connects automatically.'
     }
   }, [cameraGranted, permission])
 
@@ -159,7 +202,7 @@ export default function ReceiveScanScreen() {
             Enable camera access
           </Text>
           <Text style={[styles.noticeText, { color: theme.colors.colorTextSecondary }]}>
-            You only need this to scan the sender’s QR code. You can still go back and paste the
+            The camera is only needed to scan a QR. You can also import a saved image or paste the
             code manually.
           </Text>
           <Button
@@ -169,6 +212,15 @@ export default function ReceiveScanScreen() {
             width='full'
           >
             {permissionButtonLabel}
+          </Button>
+          <Button
+            icon={<ImageIcon size={18} />}
+            onClick={() => void importFromImage()}
+            size='lg'
+            variant='secondary'
+            width='full'
+          >
+            Import from image
           </Button>
           <Button onClick={goBack} size='lg' variant='secondary' width='full'>
             Use pasted code instead
@@ -280,13 +332,24 @@ export default function ReceiveScanScreen() {
               </View>
             ) : null}
           </View>
+
+          <Button
+            disabled={!canScan}
+            icon={<ImageIcon size={18} />}
+            onClick={() => void importFromImage()}
+            size='lg'
+            variant='secondary'
+            width='full'
+          >
+            Import from image
+          </Button>
         </View>
       )}
     </Layout>
   )
 }
 
-const FRAME_SIZE = 220
+const FRAME_SIZE = 280
 const CORNER_SIZE = 28
 const CORNER_STROKE = 4
 

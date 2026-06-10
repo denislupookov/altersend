@@ -49,10 +49,10 @@ export function ReceiveJoinView({
           </View>
           <View style={styles.qrText}>
             <Text style={[styles.qrTitle, { color: theme.colors.colorTextPrimary }]}>
-              Scan QR code
+              Scan or import QR
             </Text>
             <Text style={[styles.qrSubtitle, { color: theme.colors.colorTextSecondary }]}>
-              Use camera to read sender&apos;s QR
+              Use the camera, or import a saved image
             </Text>
           </View>
           <ChevronRightIcon size={18} color={theme.colors.colorTextMuted} />

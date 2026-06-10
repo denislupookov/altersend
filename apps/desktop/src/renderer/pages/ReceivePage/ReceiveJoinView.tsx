@@ -48,9 +48,11 @@ export function ReceiveJoinView() {
           <QrCodeIcon size={18} />
         </span>
         <span className='min-w-0 flex-1'>
-          <span className='block text-[13.5px] font-semibold text-text-primary'>Scan QR code</span>
+          <span className='block text-[13.5px] font-semibold text-text-primary'>
+            Scan or import QR
+          </span>
           <span className='block text-[12px] leading-snug text-text-muted'>
-            Use the webcam to read the sender’s QR
+            Use the webcam, or import a saved QR image
           </span>
         </span>
         <span className='shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5'>

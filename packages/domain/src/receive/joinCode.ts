@@ -6,6 +6,10 @@ export function buildJoinUrl(topic: string): string {
   return `${JOIN_URL_SCHEME}://join/${topic}`
 }
 
+export function buildInviteText(topic: string): string {
+  return `Join my file transfer on AlterSend:\n${buildJoinUrl(topic)}`
+}
+
 export function isValidJoinCode(value: string): boolean {
   return JOIN_CODE_PATTERN.test(value.trim())
 }

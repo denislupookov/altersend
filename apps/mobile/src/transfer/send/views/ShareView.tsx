@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, Share, StyleSheet, Text, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import {
+  buildInviteText,
   formatFileSize,
   getPeerListEntries,
   senderKeepOpenHint,
@@ -39,6 +40,7 @@ export function ShareView() {
       await Clipboard.setStringAsync(topic)
       setIsKeyCopied(true)
       toast.show({ title: 'Copied to clipboard' })
+      await Share.share({ message: buildInviteText(topic) })
     } catch (error) {
       console.error(error)
     }

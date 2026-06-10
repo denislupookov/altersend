@@ -21,6 +21,7 @@ const CAMERA_ERROR_STATES: Record<string, ScanState> = {
 export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const scannerRef = useRef<QrScanner | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const handledRef = useRef(false)
   const [state, setState] = useState<ScanState>('starting')
   const [cameras, setCameras] = useState<QrScanner.Camera[]>([])
@@ -129,6 +130,43 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
     }
   }
 
+  const importImage = async (file: File) => {
+    if (handledRef.current) return
+    setErrorMessage(null)
+
+    let data: string
+    try {
+      const result = await QrScanner.scanImage(file, { returnDetailedScanResult: true })
+      data = result.data
+    } catch {
+      setErrorMessage('No QR code found in that image.')
+      return
+    }
+
+    const joinCode = extractJoinCode(data)
+    if (!joinCode) {
+      setErrorMessage('That image isn’t an AlterSend connection code.')
+      return
+    }
+
+    if (handledRef.current) return
+    handledRef.current = true
+
+    const blockedStates: ScanState[] = ['denied', 'no-camera', 'failed']
+    const resumeState: ScanState = blockedStates.includes(state) ? state : 'scanning'
+    void scannerRef.current?.stop()
+    setState('connecting')
+
+    try {
+      await joinSession(joinCode)
+    } catch (error) {
+      handledRef.current = false
+      setErrorMessage(error instanceof Error ? error.message : 'Could not join the session.')
+      setState(resumeState)
+      if (resumeState === 'scanning') void scannerRef.current?.start()
+    }
+  }
+
   const blockedMessages: Partial<Record<ScanState, { title: string; hint: string }>> = {
     denied: {
       title: 'Camera access blocked',
@@ -147,13 +185,27 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
 
   return (
     <div className='flex h-full w-full min-w-0 flex-col overflow-y-auto pr-1'>
+      <input
+        ref={fileInputRef}
+        accept='image/*'
+        className='hidden'
+        onChange={(e) => {
+          const file = e.currentTarget.files?.[0]
+          e.currentTarget.value = ''
+          if (file) void importImage(file)
+        }}
+        type='file'
+      />
       {blocked ? (
         <div className='mx-auto w-full max-w-[400px] rounded-[16px] border border-border-primary bg-background-subtle p-5'>
           <span className='block text-[15px] font-semibold text-text-primary'>{blocked.title}</span>
           <p className='m-0 mt-1.5 text-[13px] leading-relaxed text-text-muted'>{blocked.hint}</p>
-          <div className='mt-4 flex items-center gap-2.5'>
+          <div className='mt-4 flex flex-wrap items-center gap-2.5'>
             <Button onClick={retry} size='sm' variant='primary'>
               Try again
+            </Button>
+            <Button onClick={() => fileInputRef.current?.click()} size='sm' variant='secondary'>
+              Import image
             </Button>
             <Button onClick={onCancel} size='sm' variant='secondary'>
               Paste code instead
@@ -198,7 +250,8 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
 
           <div className='flex min-w-0 flex-1 flex-col gap-4'>
             <p className='m-0 text-[13px] leading-relaxed text-text-muted'>
-              Point the sender’s QR code at the webcam — AlterSend connects automatically.
+              Center the sender’s QR in the frame, or import a saved image. AlterSend connects
+              automatically.
             </p>
 
             {errorMessage ? (
@@ -228,7 +281,10 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
               </div>
             ) : null}
 
-            <div className='flex'>
+            <div className='flex flex-wrap gap-2.5'>
+              <Button onClick={() => fileInputRef.current?.click()} size='sm' variant='secondary'>
+                Import image
+              </Button>
               <Button onClick={onCancel} size='sm' variant='secondary'>
                 Paste code instead
               </Button>
