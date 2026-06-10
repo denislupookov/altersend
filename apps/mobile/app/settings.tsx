@@ -7,10 +7,9 @@ import {
   privacyPolicyUrl,
   supportEmail,
   termsOfServiceUrl,
-  websiteUrl,
-  useSettingsStore
+  websiteUrl
 } from '@altersend/domain'
-import { MULTI_LANG_ENABLED, getLanguage } from '@altersend/locales'
+import { MULTI_LANG_ENABLED, getLanguage, useTranslation } from '@altersend/locales'
 import { ToggleSwitch, useTheme } from '@altersend/components'
 import {
   AlertCircleIcon,
@@ -73,7 +72,8 @@ export default function SettingsScreen() {
   const router = useRouter()
   const version = Constants.expoConfig?.version ?? '0.0.0'
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
-  const locale = useSettingsStore((s) => s.locale)
+  const { i18n } = useTranslation()
+  const locale = i18n.language
 
   const handleCrashReportingToggle = (value: boolean) => {
     setCrashReporting(value)

@@ -8,16 +8,16 @@ import {
 import type { Theme } from '@altersend/components'
 import {
   bindTransferApi,
-  changeLocale,
   startBackgroundReconnectEffect,
   startPeerWatchdog,
   useSimulatedLoading
 } from '@altersend/domain'
+import { changeLocale, getInitialLocale } from '@altersend/locales'
 import { Stack } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
 import * as SplashScreen from 'expo-splash-screen'
-import { getLocales } from 'expo-localization'
+
 
 SplashScreen.preventAutoHideAsync().catch(() => {})
 import { LoadingScreen } from '../src/loading'
@@ -98,14 +98,8 @@ export default function RootLayout() {
       try {
         const savedLocale = await getSavedLocale()
         if (!isMounted) return
-        if (savedLocale) {
-          await changeLocale(savedLocale)
-        } else {
-          const locales = getLocales()
-          if (locales && locales.length > 0) {
-            await changeLocale(locales[0].languageTag)
-          }
-        }
+        const preference = savedLocale || 'system'
+        await changeLocale(getInitialLocale(preference))
       } catch (err) {
         console.warn(err)
       } finally {

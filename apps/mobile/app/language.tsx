@@ -1,7 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
-import { changeLocale, useSettingsStore } from '@altersend/domain'
-import { PICKABLE_LANGUAGES } from '@altersend/locales'
+import { PICKABLE_LANGUAGES, changeLocale, useTranslation, type LocalePreference } from '@altersend/locales'
 import { useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
@@ -10,12 +9,17 @@ import { setSavedLocale } from '@/src/lifecycle/localeStorage'
 export default function LanguageScreen() {
   const { theme } = useTheme()
   const router = useRouter()
-  const locale = useSettingsStore((s) => s.locale)
+  const { i18n } = useTranslation()
+  const locale = i18n.language
 
-  const handleSelect = (code: string) => {
-    changeLocale(code)
-    setSavedLocale(code)
-    router.back()
+  const handleSelect = async (code: string) => {
+    try {
+      await changeLocale(code as LocalePreference)
+      void setSavedLocale(code as LocalePreference)
+      router.back()
+    } catch (err) {
+      console.warn('Failed to change language', err)
+    }
   }
 
   const cardStyle = {

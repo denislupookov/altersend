@@ -1,4 +1,5 @@
 import { Directory, File, Paths } from 'expo-file-system'
+import type { LocalePreference } from '@altersend/locales'
 
 const DIRNAME = 'altersend'
 const FILENAME = 'locale.txt'
@@ -9,18 +10,18 @@ function getLocaleFile(): File | null {
   return new File(new Directory(documentDirectory, DIRNAME), FILENAME)
 }
 
-export async function getSavedLocale(): Promise<string | null> {
+export async function getSavedLocale(): Promise<LocalePreference | null> {
   try {
     const file = getLocaleFile()
     if (!file?.exists) return null
     const content = await file.text()
-    return typeof content === 'string' ? content.trim() || null : null
+    return (content.trim() || null) as LocalePreference | null
   } catch {
     return null
   }
 }
 
-export async function setSavedLocale(locale: string): Promise<void> {
+export async function setSavedLocale(locale: LocalePreference): Promise<void> {
   try {
     const documentDirectory = Paths.document
     if (!documentDirectory?.uri) return
