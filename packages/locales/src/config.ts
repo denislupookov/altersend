@@ -1,11 +1,11 @@
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import common from './locales/en/common.json'
-import send from './locales/en/send.json'
+import common from './locales/en-US/common.json'
+import send from './locales/en-US/send.json'
 import { getInitialLocale } from './utils'
 
 const resources = {
-  en: {
+  'en-US': {
     common,
     send
   }
@@ -19,7 +19,7 @@ void i18next
   .init({
     resources,
     lng: getInitialLocale(),
-    fallbackLng: 'en',
+    fallbackLng: 'en-US',
     ns: ['common', 'send'],
     defaultNS: 'common',
     interpolation: { escapeValue: false },

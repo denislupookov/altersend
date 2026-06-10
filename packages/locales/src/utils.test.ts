@@ -4,29 +4,29 @@ import { getInitialLocale, resolveSupportedLocale } from './utils'
 
 describe('resolveSupportedLocale', () => {
   it('returns an exact production-ready match', () => {
-    expect(resolveSupportedLocale('en')).toBe('en')
+    expect(resolveSupportedLocale('en-US')).toBe('en-US')
   })
 
   it('matches case-insensitively', () => {
-    expect(resolveSupportedLocale('EN')).toBe('en')
+    expect(resolveSupportedLocale('EN-US')).toBe('en-US')
   })
 
   it('matches a regional tag by its primary subtag', () => {
-    expect(resolveSupportedLocale('en-US')).toBe('en')
-    expect(resolveSupportedLocale('en-GB')).toBe('en')
+    expect(resolveSupportedLocale('en')).toBe('en-US')
+    expect(resolveSupportedLocale('en-GB')).toBe('en-US')
   })
 
   it('falls back to English for not-yet-ready languages', () => {
     // pt-BR is registered but not production-ready, so it must not be selected.
-    expect(resolveSupportedLocale('pt-BR')).toBe('en')
-    expect(resolveSupportedLocale('pt-PT')).toBe('en')
+    expect(resolveSupportedLocale('pt-BR')).toBe('en-US')
+    expect(resolveSupportedLocale('pt-PT')).toBe('en-US')
   })
 
   it('falls back to English for unsupported or empty input', () => {
-    expect(resolveSupportedLocale('de-DE')).toBe('en')
-    expect(resolveSupportedLocale('')).toBe('en')
-    expect(resolveSupportedLocale(null)).toBe('en')
-    expect(resolveSupportedLocale(undefined)).toBe('en')
+    expect(resolveSupportedLocale('de-DE')).toBe('en-US')
+    expect(resolveSupportedLocale('')).toBe('en-US')
+    expect(resolveSupportedLocale(null)).toBe('en-US')
+    expect(resolveSupportedLocale(undefined)).toBe('en-US')
   })
 })
 

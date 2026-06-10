@@ -1,4 +1,4 @@
-import enMeta from './locales/en/meta.json'
+import enMeta from './locales/en-US/meta.json'
 import ptBrMeta from './locales/pt-BR/meta.json'
 
 export type TextDirection = 'ltr' | 'rtl'
@@ -27,13 +27,15 @@ export interface Language extends LanguageMeta {
  * self-contained folder.
  */
 const REGISTRY = {
-  en: enMeta,
+  'en-US': enMeta,
   'pt-BR': ptBrMeta
 }
 
-export type LanguageCode = keyof typeof REGISTRY
+export type SupportedLanguageCode = keyof typeof REGISTRY
 
-export const DEFAULT_LANGUAGE = 'en'
+export type LocalePreference = 'system' | SupportedLanguageCode
+
+export const DEFAULT_LANGUAGE = 'en-US'
 
 /**
  * Release gate for the language-picker UI. While `false`, the in-app language

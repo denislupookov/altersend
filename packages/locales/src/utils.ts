@@ -1,4 +1,4 @@
-import { DEFAULT_LANGUAGE, PICKABLE_LANGUAGES } from './languages'
+import { DEFAULT_LANGUAGE, PICKABLE_LANGUAGES, type LocalePreference } from './languages'
 
 /**
  * Best-effort detection of the user's preferred UI language as a raw BCP-47
@@ -41,7 +41,25 @@ export function resolveSupportedLocale(tag: string | null | undefined): string {
   return DEFAULT_LANGUAGE
 }
 
-/** Production-ready locale to boot with, derived from system preference. */
-export function getInitialLocale(): string {
-  return resolveSupportedLocale(getSystemPreferredLocale())
+import i18nextInstance from './config'
+
+/** Production-ready locale to boot with, derived from system preference or user choice. */
+export function getInitialLocale(preference: LocalePreference | 'system' = 'system'): string {
+  if (preference === 'system') return resolveSupportedLocale(getSystemPreferredLocale())
+  return resolveSupportedLocale(preference)
+}
+
+/**
+ * Switches the active language. The requested tag is normalized to a
+ * production-ready code (so a stale/persisted/unsupported value can never put
+ * the app in an undefined locale state) and i18next is told to change language.
+ */
+export const changeLocale = async (locale: string): Promise<void> => {
+  const resolved = resolveSupportedLocale(locale)
+  try {
+    await i18nextInstance.changeLanguage(resolved)
+  } catch (error) {
+    console.error('Failed to change language:', error)
+    throw error
+  }
 }

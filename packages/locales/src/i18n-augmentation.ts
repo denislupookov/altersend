@@ -1,5 +1,5 @@
-import common from './locales/en/common.json'
-import send from './locales/en/send.json'
+import common from './locales/en-US/common.json'
+import send from './locales/en-US/send.json'
 
 /**
  * Shape of the bundled English resources, used as the source of truth for
