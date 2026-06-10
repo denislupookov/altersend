@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom/client'
 import { CrashScreen, ErrorBoundary, ThemeProvider, ThemeType } from '@altersend/components'
 import {
   bindTransferApi,
-  changeLocale,
   startBackgroundReconnectEffect,
   startPeerWatchdog
 } from '@altersend/domain'
+import { changeLocale, getInitialLocale } from '@altersend/locales'
 import App from './App.js'
 import { bridgeApi, hasBridge } from './api/bridgeApi'
 import { startDeepLinkHandler } from './lifecycle/deepLinkHandler'
@@ -29,8 +29,12 @@ if (hasBridge()) {
 }
 
 async function bootstrap() {
-  const savedLocale = getSavedLocale()
-  if (savedLocale) await changeLocale(savedLocale)
+  const savedLocale = getSavedLocale() || 'system'
+  try {
+    await changeLocale(getInitialLocale(savedLocale))
+  } catch (err) {
+    console.warn('Failed to bootstrap locale', err)
+  }
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

@@ -15,11 +15,9 @@ import {
   githubUrl,
   privacyPolicyUrl,
   termsOfServiceUrl,
-  websiteUrl,
-  useSettingsStore,
-  changeLocale
+  websiteUrl
 } from '@altersend/domain'
-import { MULTI_LANG_ENABLED, PICKABLE_LANGUAGES } from '@altersend/locales'
+import { MULTI_LANG_ENABLED, PICKABLE_LANGUAGES, useTranslation, changeLocale, type LocalePreference } from '@altersend/locales'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
 import { Select } from '../../components/Select'
@@ -50,7 +48,8 @@ export function FooterBar({ version }: { version: string }) {
   const [reportMessage, setReportMessage] = useState('')
   const [reportState, setReportState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
-  const locale = useSettingsStore((s) => s.locale)
+  const { i18n } = useTranslation()
+  const locale = i18n.language
 
   const handleCrashReportingToggle = (next: boolean) => {
     setCrashReporting(next)
@@ -156,9 +155,13 @@ export function FooterBar({ version }: { version: string }) {
                           <Select
                             aria-label='Language'
                             value={locale}
-                            onChange={(value) => {
-                              changeLocale(value)
-                              setSavedLocale(value)
+                            onChange={async (value) => {
+                              try {
+                                await changeLocale(value as LocalePreference)
+                                setSavedLocale(value as LocalePreference)
+                              } catch (err) {
+                                console.warn('Failed to change language', err)
+                              }
                             }}
                             options={PICKABLE_LANGUAGES.map((l) => ({
                               value: l.code,
