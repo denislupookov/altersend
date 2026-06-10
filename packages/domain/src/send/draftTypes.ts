@@ -2,6 +2,7 @@ export interface SelectedFile {
   name: string
   path: string
   size?: number
+  isTemporary?: boolean
 }
 
 export type SenderUploadStatus = 'waiting' | 'uploading' | 'completed'

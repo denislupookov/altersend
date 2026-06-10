@@ -39,7 +39,8 @@ export function SelectFilesView() {
       const normalizedFiles: SelectedFile[] = result.assets.map((asset) => ({
         name: asset.name,
         path: uriToFilePath(asset.uri),
-        size: asset.size
+        size: asset.size,
+        isTemporary: true
       }))
 
       if (normalizedFiles.length > 0) {
@@ -66,7 +67,8 @@ export function SelectFilesView() {
       const normalizedFiles: SelectedFile[] = result.assets.map((asset) => ({
         name: asset.fileName ?? asset.uri.split('/').pop() ?? 'photo',
         path: uriToFilePath(asset.uri),
-        size: asset.fileSize
+        size: asset.fileSize,
+        isTemporary: true
       }))
 
       if (normalizedFiles.length > 0) {

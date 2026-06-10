@@ -6,6 +6,7 @@ import type {
   DownloadFileRequest,
   DownloadFilesReply,
   JoinReply,
+  ShareFileRequest,
   ShareFilesReply
 } from '@altersend/core'
 
@@ -48,10 +49,10 @@ export const joinSession = async (topic: string): Promise<JoinReply> => {
   }
 }
 
-export const shareFiles = async (paths: string[]): Promise<ShareFilesReply> => {
+export const shareFiles = async (files: ShareFileRequest[]): Promise<ShareFilesReply> => {
   dispatchToTransferStore({ type: 'share_requested' })
   try {
-    return await getTransferApi().worker.shareFiles(paths)
+    return await getTransferApi().worker.shareFiles(files)
   } catch (error) {
     reportError('shareFiles', error)
     dispatchToTransferStore({ type: 'role_changed', role: null })
@@ -99,7 +100,10 @@ export const clearSenderFlow = (): void => {
 export const continueShare = async (files: SelectedFile[]): Promise<void> => {
   if (files.length === 0) return
 
-  const filePaths = files.map((file) => file.path)
+  const fileRequests: ShareFileRequest[] = files.map((file) => ({
+    path: file.path,
+    isTemporary: file.isTemporary
+  }))
   dispatchToTransferStore({
     type: 'init_upload_items',
     items: createInitialUploadItems(files)
@@ -108,7 +112,7 @@ export const continueShare = async (files: SelectedFile[]): Promise<void> => {
 
   try {
     await startSendSession()
-    await shareFiles(filePaths)
+    await shareFiles(fileRequests)
     dispatchToTransferStore({ type: 'complete_all_uploads' })
     dispatchToTransferStore({ type: 'set_draft_phase', phase: 'ready' })
   } catch (error) {

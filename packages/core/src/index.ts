@@ -20,7 +20,8 @@ export type {
   DownloadFilesReply,
   DisconnectReply,
   DownloadFileRequest,
-  DownloadFileResult
+  DownloadFileResult,
+  ShareFileRequest
 } from './worklet/rpc/protocol'
 
 export type { TransferStatus } from './worklet/rpc/events'
