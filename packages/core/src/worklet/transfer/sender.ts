@@ -1,4 +1,5 @@
 import crypto from 'hypercore-crypto'
+import fs from 'bare-fs'
 import b4a from 'b4a'
 import Localdrive from 'localdrive'
 import MirrorDrive from 'mirror-drive'
@@ -105,6 +106,7 @@ export class TransferSender {
       if (signal?.aborted) throw new AbortError()
       onStaging(file)
       await this.importToDrive(file.sourceDrive, file.sourcePath)
+      await this.tryDeleteIfInCache(file.inputPath)
       offers.push({
         id: createFileId(),
         transferId,
@@ -124,5 +126,16 @@ export class TransferSender {
       prune: false
     })
     await mirror.done()
+  }
+
+  private async tryDeleteIfInCache(filePath: string): Promise<void> {
+    // Only target Expo DocumentPicker or ImagePicker cache directories to prevent accidental data loss
+    const isExpoCache = /\/(cache|Caches)\/(DocumentPicker|ImagePicker)\//i.test(filePath)
+    if (!isExpoCache) return
+    try {
+      await fs.promises.unlink(filePath)
+    } catch (err) {
+      console.warn(`TransferSender: failed to delete cached file ${filePath}`, err)
+    }
   }
 }
