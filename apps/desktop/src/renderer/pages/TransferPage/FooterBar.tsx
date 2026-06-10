@@ -17,7 +17,13 @@ import {
   termsOfServiceUrl,
   websiteUrl
 } from '@altersend/domain'
-import { MULTI_LANG_ENABLED, PICKABLE_LANGUAGES, useTranslation, changeLocale, type LocalePreference } from '@altersend/locales'
+import {
+  MULTI_LANG_ENABLED,
+  PICKABLE_LANGUAGES,
+  useTranslation,
+  changeLocale,
+  type LocalePreference
+} from '@altersend/locales'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
 import { Select } from '../../components/Select'

@@ -1,6 +1,11 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
-import { PICKABLE_LANGUAGES, changeLocale, useTranslation, type LocalePreference } from '@altersend/locales'
+import {
+  PICKABLE_LANGUAGES,
+  changeLocale,
+  useTranslation,
+  type LocalePreference
+} from '@altersend/locales'
 import { useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { Layout } from '@/src/components'

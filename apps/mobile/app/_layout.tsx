@@ -18,7 +18,6 @@ import { StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
 import * as SplashScreen from 'expo-splash-screen'
 
-
 SplashScreen.preventAutoHideAsync().catch(() => {})
 import { LoadingScreen } from '../src/loading'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
