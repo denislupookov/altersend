@@ -2,15 +2,15 @@
   "slides": {
     "direct": {
       "title": "Arquivos, diretamente entre dispositivos.",
-      "description": "Um dispositivo envia, o outro recebe. Um pequeno código os conecta para que os arquivos possam ser transmitidos diretamente."
+      "description": "Um dispositivo envia, o outro recebe. Um código simples os conecta para que os arquivos possam ser transferidos diretamente."
     },
     "keepOpen": {
       "title": "Mantenha os dois aplicativos abertos.",
-      "description": "Os arquivos são transmitidos diretamente entre dispositivos — não há nuvem. Fechar ou colocar o aplicativo em segundo plano cancelará a transferência."
+      "description": "Os arquivos são transferidos diretamente entre os dispositivos — sem uso de nuvem. Fechar ou colocar o aplicativo em segundo plano cancelará a transferência."
     },
     "encrypted": {
       "title": "Criptografado de ponta a ponta.",
-      "description": "Sem servidores, sem cópias, sem intermediários. Seus arquivos viajam ponto a ponto entre você e o destinatário.",
+      "description": "Sem servidores, sem cópias, sem intermediários. Seus arquivos vão diretamente de você para o destinatário.",
       "link": "Leia nossa política de privacidade"
     }
   }

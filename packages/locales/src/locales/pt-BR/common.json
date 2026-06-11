@@ -3,7 +3,7 @@
     "name": "AlterSend",
     "tagline": "Transferência de arquivos ponto a ponto",
     "welcome": "Bem-vindo ao AlterSend",
-    "loadingTagline": "Os arquivos passam diretamente entre seus dispositivos.\nSem servidores, sem cópias, sem intermediários."
+    "loadingTagline": "Seus arquivos vão direto de um dispositivo para o outro.\nSem servidores. Sem cópias. Sem intermediários."
   },
   "actions": {
     "back": "Voltar",
@@ -20,7 +20,7 @@
     "endSession": "Encerrar sessão",
     "restart": "Reiniciar",
     "tryAgain": "Tentar novamente",
-    "dismiss": "Dispensar",
+    "dismiss": "Descartar",
     "openSettings": "Abrir configurações",
     "update": "Atualizar",
     "downloadAll": "Baixar tudo",
@@ -35,8 +35,8 @@
     "transferMode": "Modo de transferência",
     "version": "Versão",
     "platform": "Plataforma",
-    "desktop": "Área de trabalho",
-    "mobile": "Móvel",
+    "desktop": "Desktop",
+    "mobile": "Celular",
     "send": "Enviar",
     "receive": "Receber",
     "connectionCode": "Código de conexão"

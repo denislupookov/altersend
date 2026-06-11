@@ -3,12 +3,12 @@
     "tabTitle": "Receber",
     "join": {
       "title": "Receber arquivos",
-      "description": "Insira um código de conexão de 64 caracteres do remetente para transmitir seus arquivos.",
+      "description": "Insira um código de conexão de 64 caracteres do remetente para receber seus arquivos.",
       "mobileDescription": "Escaneie ou importe o QR do remetente, ou cole o código de 64 caracteres para iniciar a transferência."
     },
     "connecting": {
       "title": "Conectando",
-      "description": "Estabelecer uma sessão segura com o remetente."
+      "description": "Estabelecendo uma sessão segura com o remetente."
     },
     "incomingTransfer": {
       "title": "Arquivos disponíveis",
@@ -32,7 +32,7 @@
     },
     "handshake": {
       "title": "Conexão em andamento",
-      "description": "Concluindo o handshake seguro com o remetente."
+      "description": "Concluindo a conexão segura com o remetente."
     },
     "sessionEnded": {
       "title": "Sessão encerrada",
@@ -50,11 +50,11 @@
     "orPasteCode": "ou cole o código"
   },
   "actions": {
-    "scanQr": "Digitalizar código QR",
+    "scanQr": "Escanear código QR",
     "allowCamera": "Permitir câmera",
     "downloadAll": "Baixar tudo",
     "view": "Ver",
-    "play": "Jogar",
+    "play": "Reproduzir",
     "open": "Abrir",
     "scanQrHint": "Use a webcam para ler o QR do remetente",
     "downloadingPercent": "Baixando {{percent}}%",
@@ -74,9 +74,9 @@
     "joinFailed": "Não foi possível ingressar na sessão.",
     "unreachable": "Não foi possível entrar em contato com o remetente. Verifique o código e tente novamente.",
     "unsupportedQrTitle": "Código QR incompatível",
-    "unsupportedQrHint": "Digitalize um código de conexão AlterSend.",
+    "unsupportedQrHint": "Escaneie um código de conexão do AlterSend.",
     "mobileJoinFailedTitle": "Não foi possível entrar na sessão",
-    "mobileJoinFailedHint": "Tente digitalizar novamente ou cole o código manualmente.",
+    "mobileJoinFailedHint": "Tente escanear novamente ou cole o código manualmente.",
     "cameraUnavailable": "Câmera indisponível.",
     "cameraCouldNotStart": "A câmera não pôde ser iniciada. Cole o código de conexão.",
     "downloadFailed": "Falha",
@@ -89,16 +89,16 @@
   },
   "camera": {
     "preparingTitle": "Preparando câmera",
-    "preparingDescription": "Verificando o acesso à câmera para que você possa ler o código QR do remetente.",
+    "preparingDescription": "Verificando o acesso à câmera para que você possa escanear o código QR do remetente.",
     "accessNeededTitle": "Acesso à câmera necessário",
-    "accessNeededDescription": "Permita o acesso da câmera para digitalizar o código QR de conexão de um remetente.",
-    "scanTitle": "Digitalizar código QR",
-    "scanDescription": "Centralize o código QR do remetente dentro do quadro. AlterSend se conectará automaticamente.",
-    "desktopHint": "Aponte o código QR do remetente para a webcam – AlterSend se conecta automaticamente.",
+    "accessNeededDescription": "Permita o acesso à câmera para escanear o código QR de conexão de um remetente.",
+    "scanTitle": "Escanear código QR",
+    "scanDescription": "Centralize o código QR do remetente dentro do quadro. O AlterSend se conectará automaticamente.",
+    "desktopHint": "Aponte o código QR do remetente para a webcam – o AlterSend se conecta automaticamente.",
     "blockedTitle": "Acesso à câmera bloqueado",
-    "blockedHint": "Permita o acesso à câmera para AlterSend nas configurações do sistema e tente novamente. Você também pode colar o código.",
+    "blockedHint": "Permita o acesso à câmera para o AlterSend nas configurações do sistema e tente novamente. Você também pode colar o código.",
     "noneTitle": "Nenhuma câmera encontrada",
-    "noneHint": "Conecte uma webcam para digitalizar ou cole o código de conexão.",
+    "noneHint": "Conecte uma webcam para escanear ou cole o código de conexão.",
     "unavailableTitle": "Câmera indisponível",
     "starting": "Iniciando a câmera…",
     "enableTitle": "Ativar acesso à câmera",
@@ -114,17 +114,17 @@
     "ready": "Pronto",
     "saved": "Salvo",
     "failed": "Falha",
-    "downloadingPercent": "Fazendo download de {{percent}}%",
+    "downloadingPercent": "Baixando {{percent}}%",
     "percent": "{{percent}}%",
     "waitingForFiles": "Aguardando arquivos do remetente…"
   },
   "summary": {
-    "receivedCount_one": "{{completed}} do arquivo {{count}} recebido",
+    "receivedCount_one": "{{completed}} de {{count}} arquivo recebido",
     "receivedCount_other": "{{completed}} de {{count}} arquivos recebidos",
-    "savedToPhotos_one": "Salvo em fotos",
-    "savedToPhotos_other": "{{count}} salvo em Fotos",
-    "savedInFiles_one": "Salvo em arquivos",
-    "savedInFiles_other": "{{count}} salvo em Arquivos",
+    "savedToPhotos_one": "Salvo em Fotos",
+    "savedToPhotos_other": "{{count}} salvos em Fotos",
+    "savedInFiles_one": "Salvo em Arquivos",
+    "savedInFiles_other": "{{count}} salvos em Arquivos",
     "tapToView": "Toque para visualizar",
     "saved": "salvo",
     "savedToLocation": "salvo em {{location}}",

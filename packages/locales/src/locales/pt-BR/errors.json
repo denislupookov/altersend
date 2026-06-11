@@ -1,15 +1,15 @@
 {
   "crash": {
     "title": "Algo deu errado",
-    "desktopDescription": "AlterSend ocorreu um erro inesperado e precisa ser reiniciado. O trabalhador de transferência pode estar em um estado inconsistente, portanto, reiniciar é a opção mais segura.",
-    "mobileDescription": "AlterSend ocorreu um erro inesperado. Tente novamente ou feche e reabra o aplicativo se o problema persistir.",
-    "restartAlterSend": "Reinicie AlterSend",
+    "desktopDescription": "O AlterSend encontrou um erro inesperado e precisa ser reiniciado. O serviço de transferência pode estar instável — reiniciar é a opção mais segura.",
+    "mobileDescription": "O AlterSend encontrou um erro inesperado. Tente novamente ou feche e reabra o aplicativo se o problema persistir.",
+    "restartAlterSend": "Reiniciar o AlterSend",
     "tryAgain": "Tente novamente"
   },
   "bridgeUnavailable": {
-    "title": "Ponte eletrônica indisponível",
-    "description": "Este renderizador está sendo executado sem a ponte da área de trabalho. Reinicie AlterSend no aplicativo de desktop.",
-    "status": "Bridge indisponível"
+    "title": "Ponte de conexão P2P indisponível",
+    "description": "Esta janela está sendo executada sem a ponte de conexão P2P. Reinicie o AlterSend pelo aplicativo desktop.",
+    "status": "Ponte P2P indisponível"
   },
   "transfer": {
     "invalidTopic": "O código de conexão é inválido.",

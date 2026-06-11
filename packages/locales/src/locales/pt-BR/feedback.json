@@ -1,19 +1,19 @@
 {
-  "title": "Comentários",
+  "title": "Feedback",
   "types": {
     "bug": "Relatório de bug",
-    "feature": "Solicitação de recurso",
+    "feature": "Sugestão de funcionalidade",
     "general": "Geral"
   },
   "placeholders": {
     "bug": "Descreva o que aconteceu e como reproduzi-lo…",
     "desktopBug": "Descreva o que deu errado…",
-    "feature": "O que você gostaria de ver em AlterSend?",
+    "feature": "O que você gostaria de ver no AlterSend?",
     "desktopFeature": "O que você gostaria de ver?",
-    "general": "Compartilhe seus pensamentos…"
+    "general": "Conte o que você acha…"
   },
   "actions": {
-    "send": "Enviar comentários",
+    "send": "Enviar feedback",
     "sending": "Enviando…"
   },
   "states": {

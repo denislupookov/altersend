@@ -1,8 +1,8 @@
 {
   "permissions": {
-    "camera": "AlterSend usa sua câmera para digitalizar códigos de conexão QR.",
-    "localNetwork": "AlterSend usa sua rede local para descobrir dispositivos próximos para transferência de arquivos ponto a ponto.",
-    "photoRead": "AlterSend lê sua biblioteca de fotos para que você possa escolher fotos e vídeos para enviar para outro dispositivo.",
-    "photoSave": "AlterSend salva imagens e vídeos recebidos em sua biblioteca de fotos."
+    "camera": "O AlterSend usa sua câmera para escanear códigos QR de conexão.",
+    "localNetwork": "O AlterSend usa a rede local para encontrar dispositivos próximos e transferir arquivos diretamente.",
+    "photoRead": "O AlterSend acessa sua biblioteca de fotos para que você possa escolher fotos e vídeos para enviar para outro dispositivo.",
+    "photoSave": "O AlterSend salva as imagens e vídeos recebidos na sua biblioteca de fotos."
   }
 }

@@ -1,7 +1,7 @@
 {
   "title": "Configurações",
   "languageTitle": "Idioma",
-  "languageHint": "Escolha o idioma usado por AlterSend.",
+  "languageHint": "Escolha o idioma usado pelo AlterSend.",
   "sections": {
     "privacy": "Privacidade",
     "support": "Suporte",
@@ -12,15 +12,15 @@
     "description": "Compartilhe dados anônimos de falhas para ajudar a melhorar o AlterSend"
   },
   "rows": {
-    "feedback": "Comentários",
-    "feedbackHint": "Relate um problema ou sugira um recurso",
+    "feedback": "Feedback",
+    "feedbackHint": "Relate um problema ou sugira uma funcionalidade",
     "discord": "Discord",
     "discordHint": "Junte-se à comunidade",
     "contact": "Contate-nos",
     "privacyPolicy": "Política de privacidade",
-    "privacyPolicyHint": "Como AlterSend trata seus dados",
+    "privacyPolicyHint": "Como o AlterSend trata seus dados",
     "terms": "Termos de serviço",
-    "termsHint": "Regras para usar AlterSend",
+    "termsHint": "Regras para usar o AlterSend",
     "website": "Site"
   },
   "legal": {

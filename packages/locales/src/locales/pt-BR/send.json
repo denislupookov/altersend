@@ -18,10 +18,10 @@
     }
   },
   "actions": {
-    "sendFiles_one": "Enviar arquivo {{count}}",
-    "sendFiles_other": "Enviar arquivos {{count}}",
+    "sendFiles_one": "Enviar {{count}} arquivo",
+    "sendFiles_other": "Enviar {{count}} arquivos",
     "addFiles": "Adicionar arquivos",
-    "addMoreFiles": "Adicione mais arquivos",
+    "addMoreFiles": "Adicionar mais arquivos",
     "dragAndDrop": "Arraste e solte",
     "clear": "Limpar",
     "endSession": "Encerrar sessão",
@@ -30,26 +30,26 @@
     "pickFiles": "Arquivos"
   },
   "status": {
-    "waitingForPeer": "Esperando pelo colega",
-    "peerConnected": "Ponto conectado",
-    "uploadComplete": "Carregamento concluído",
-    "uploadingFiles": "Fazendo upload de arquivos",
+    "waitingForPeer": "Aguardando destinatário",
+    "peerConnected": "Destinatário conectado",
+    "uploadComplete": "Envio concluído",
+    "uploadingFiles": "Enviando arquivos",
     "uploaded": "Enviado",
-    "uploading": "Fazendo upload…",
-    "waiting": "Esperando",
+    "uploading": "Enviando…",
+    "waiting": "Aguardando",
     "failed": "Falha",
     "downloaded": "Baixado",
     "disconnected": "Desconectado",
     "online": "On-line",
     "downloading": "Baixando",
-    "downloadingPercent": "Fazendo download de {{percent}}%"
+    "downloadingPercent": "Baixando {{percent}}%"
   },
   "connection": {
     "placeholder": "Gerando chave segura…",
     "copyLabel": "Copiar código de conexão",
     "showQrLabel": "Mostrar código QR",
     "qrCodeLabel": "Código QR para chave de conexão",
-    "qrModalDescription": "Abra AlterSend em outro dispositivo e leia este código",
+    "qrModalDescription": "Abra o AlterSend em outro dispositivo e escaneie este código",
     "copiedToast": "Copiado para a área de transferência",
     "scanToConnect": "Escaneie para conectar",
     "orScan": "ou escaneie",
@@ -73,7 +73,7 @@
     "completedDone_other": "{{count}} concluídos",
     "devices": "Dispositivos",
     "connectedCount_one": "{{count}} conectado",
-    "connectedCount_other": "{{count}} conectado"
+    "connectedCount_other": "{{count}} conectados"
   },
   "dropzone": {
     "addMoreDescription": "ou clique para <link>adicionar mais</link>",
