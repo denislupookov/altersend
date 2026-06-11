@@ -73,7 +73,7 @@ Key modules:
 
 Shared React components using **React Strict DOM** (works on both web and native) and Tailwind for styling. Built with Storybook for visual development.
 
-### `packages/i18n`
+### `packages/locales`
 
 Shared internationalization package used by desktop and mobile. It owns supported locale metadata, locale preference resolution, i18next initialization, and bundled translation catalogs. The app-facing language UI is currently release-gated by `isMultiLangEnabled = false`; while disabled, desktop and mobile hide language pickers and force the active locale to `en-US`. See [i18n.md](i18n.md) for catalog structure and translation workflow.
 

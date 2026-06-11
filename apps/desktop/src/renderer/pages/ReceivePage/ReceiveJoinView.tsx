@@ -9,7 +9,7 @@ import {
   type TransferErrorCode,
   useTransferStore
 } from '@altersend/domain'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { WebcamScanView } from './WebcamScanView'
 
 function getDisplayError(
@@ -78,10 +78,10 @@ export function ReceiveJoinView() {
         </span>
         <span className='min-w-0 flex-1'>
           <span className='block text-[13.5px] font-semibold text-text-primary'>
-            {t('receive:actions.scanQr')}
+            {t('receive:actions.scanOrImportQr')}
           </span>
           <span className='block text-[12px] leading-snug text-text-muted'>
-            {t('receive:actions.scanQrHint')}
+            {t('receive:actions.scanOrImportQrHintDesktop')}
           </span>
         </span>
         <span className='shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5'>

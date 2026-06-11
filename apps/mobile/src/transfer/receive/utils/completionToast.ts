@@ -1,6 +1,6 @@
 import { Linking, Platform } from 'react-native'
 import type { SaveDestination } from '@altersend/domain'
-import { i18nextInstance } from '@altersend/i18n'
+import { i18nextInstance } from '@altersend/locales'
 import type { ShowToastInput } from '@/src/components/Toast'
 
 interface BuildCompletionToastInput {

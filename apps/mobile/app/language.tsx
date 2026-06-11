@@ -9,7 +9,7 @@ import {
   type LocaleOption,
   type LocalePreference,
   type SupportedLocaleCode
-} from '@altersend/i18n'
+} from '@altersend/locales'
 import { BUNDLED_FONT_FAMILIES, useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { Layout } from '@/src/components'

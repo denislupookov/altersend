@@ -21,7 +21,7 @@ const workspaceSourceAliases = new Map([
     '@altersend/components/theme/raw',
     path.resolve(monorepoRoot, 'packages/components/src/theme/tokens.raw.ts')
   ],
-  ['@altersend/i18n', path.resolve(monorepoRoot, 'packages/i18n/src/index.ts')]
+  ['@altersend/locales', path.resolve(monorepoRoot, 'packages/locales/src/index.ts')]
 ])
 
 config.watchFolders = [monorepoRoot]

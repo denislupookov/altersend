@@ -1,9 +1,13 @@
 export const JOIN_CODE_PATTERN = /^[a-fA-F0-9]{64}$/
 
-export const JOIN_URL_SCHEME = 'com.altersend.mobile'
+export const JOIN_URL_SCHEME = 'altersend'
 
 export function buildJoinUrl(topic: string): string {
   return `${JOIN_URL_SCHEME}://join/${topic}`
+}
+
+export function buildInviteText(topic: string): string {
+  return topic
 }
 
 export function isValidJoinCode(value: string): boolean {

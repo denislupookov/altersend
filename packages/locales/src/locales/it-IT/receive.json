@@ -4,7 +4,7 @@
     "join": {
       "title": "Ricevi file",
       "description": "Inserisci un codice di connessione di 64 caratteri dal mittente per eseguire lo streaming dei suoi file.",
-      "mobileDescription": "Scansiona il QR di un mittente o incolla il suo codice di 64 caratteri per avviare lo streaming."
+      "mobileDescription": "Scansiona o importa il QR del mittente, oppure incolla il codice di 64 caratteri per avviare il trasferimento."
     },
     "connecting": {
       "title": "Connessione",
@@ -61,7 +61,12 @@
     "downloadAllWithSize": "Scarica tutto ({{size}})",
     "showInFinder": "Mostra nel Finder",
     "backToHome": "Torna alla home",
-    "viewPhotos": "Visualizza foto"
+    "viewPhotos": "Visualizza foto",
+    "scanOrImportQr": "Scansiona o importa QR",
+    "scanOrImportQrHintDesktop": "Usa la webcam o importa un’immagine QR salvata",
+    "scanOrImportQrHintMobile": "Usa la fotocamera o importa un’immagine salvata",
+    "importImage": "Importa immagine",
+    "importFromImage": "Importa da immagine"
   },
   "errors": {
     "invalidCode": "Inserisci un codice esadecimale valido di 64 caratteri.",
@@ -76,7 +81,11 @@
     "cameraCouldNotStart": "Non è stato possibile avviare la fotocamera. Incolla invece il codice di connessione.",
     "downloadFailed": "Fallito",
     "didntArrive": "Non è arrivato",
-    "transferIssue": "Problema di trasferimento"
+    "transferIssue": "Problema di trasferimento",
+    "imageNoQrTitle": "Nessun codice QR trovato",
+    "imageNoQrHint": "Scegli un’immagine che mostri un codice QR AlterSend.",
+    "imageUnsupportedQrHint": "Questa immagine non è un codice di connessione AlterSend.",
+    "imageReadFailedTitle": "Impossibile leggere questa immagine"
   },
   "camera": {
     "preparingTitle": "Preparazione della fotocamera",
@@ -95,7 +104,11 @@
     "enableTitle": "Abilita l'accesso alla fotocamera",
     "enableDescription": "Serve solo per scansionare il QR del mittente. Puoi anche tornare indietro e incollare il codice manualmente.",
     "usePastedCode": "Usa invece il codice incollato",
-    "joiningDescription": "Accesso alla sessione del mittente."
+    "joiningDescription": "Accesso alla sessione del mittente.",
+    "scanImportTitle": "Scansiona o importa QR",
+    "scanImportDescription": "Centra il QR del mittente nel riquadro oppure importa un’immagine salvata. AlterSend si connette automaticamente.",
+    "desktopImportHint": "Centra il QR del mittente nel riquadro oppure importa un’immagine salvata. AlterSend si connette automaticamente.",
+    "enableImportDescription": "La fotocamera serve solo per scansionare un QR. Puoi anche importare un’immagine salvata o incollare il codice manualmente."
   },
   "status": {
     "ready": "Pronto",

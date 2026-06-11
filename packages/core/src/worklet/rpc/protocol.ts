@@ -26,6 +26,11 @@ export interface JoinReply {
   state: 'joined'
 }
 
+export interface ShareFileRequest {
+  path: string
+  isTemporary?: boolean
+}
+
 export interface ShareFilesReply {
   acceptedFiles: number
 }
@@ -71,7 +76,7 @@ export type IncomingFileOffer = FileOffer
 export interface TransferRPC {
   host(): Promise<HostReply>
   join(topic: string): Promise<JoinReply>
-  shareFiles(paths: string[]): Promise<ShareFilesReply>
+  shareFiles(files: ShareFileRequest[]): Promise<ShareFilesReply>
   downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply>
   disconnect(): Promise<DisconnectReply>
   closePeers(): Promise<void>

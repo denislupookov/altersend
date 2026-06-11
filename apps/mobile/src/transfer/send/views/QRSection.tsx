@@ -4,7 +4,7 @@ import QRCode from 'react-native-qrcode-svg'
 import { buildJoinUrl } from '@altersend/domain'
 import { Input, useTheme } from '@altersend/components'
 import { CheckIcon, CopyIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
 interface QRSectionProps {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import {
   addSelectedFiles,
   normalizeSelectedFiles,

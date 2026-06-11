@@ -2,7 +2,7 @@ import {
   SYSTEM_LOCALE_PREFERENCE,
   normalizeLocalePreference,
   type LocalePreference
-} from '@altersend/i18n'
+} from '@altersend/locales'
 
 const KEY = 'altersend.locale.preference'
 

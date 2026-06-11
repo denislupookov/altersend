@@ -1,4 +1,5 @@
 import crypto from 'hypercore-crypto'
+import fs from 'bare-fs'
 import b4a from 'b4a'
 import Localdrive from 'localdrive'
 import MirrorDrive from 'mirror-drive'
@@ -12,6 +13,8 @@ export interface ScannedFile {
   sourcePath: string
   sourceDrive: Localdrive
   size: number
+  isTemporary?: boolean
+  alreadyStaged?: boolean
 }
 
 export interface ScanResult {
@@ -47,14 +50,15 @@ export class TransferSender {
     return b4a.toString(this.drive.key, 'hex')
   }
 
-  async scanFiles(paths: string[]): Promise<ScanResult> {
+  async scanFiles(requests: { path: string; isTemporary?: boolean }[]): Promise<ScanResult> {
     const files: ScannedFile[] = []
     const errors: string[] = []
     let totalBytes = 0
 
     const driveByDir = new Map<string, Localdrive>()
 
-    for (const path of paths) {
+    for (const req of requests) {
+      const path = req.path
       const fileName = getFileName(path)
       const sourcePath = `/${fileName}`
       const dir = getDirname(path)
@@ -68,13 +72,35 @@ export class TransferSender {
       const entry = await sourceDrive.entry(sourcePath)
 
       if (!entry?.value?.blob) {
+        const existingEntry = await this.drive.entry(sourcePath)
+        if (existingEntry?.value?.blob) {
+          const size = existingEntry.value.blob.byteLength
+          totalBytes += size
+          files.push({
+            fileName,
+            inputPath: path,
+            sourcePath,
+            sourceDrive,
+            size,
+            isTemporary: req.isTemporary,
+            alreadyStaged: true
+          })
+          continue
+        }
         errors.push(`Could not read file: ${fileName}`)
         continue
       }
 
       const size = entry.value.blob.byteLength
       totalBytes += size
-      files.push({ fileName, inputPath: path, sourcePath, sourceDrive, size })
+      files.push({
+        fileName,
+        inputPath: path,
+        sourcePath,
+        sourceDrive,
+        size,
+        isTemporary: req.isTemporary
+      })
     }
 
     return { files, totalBytes, errors }
@@ -104,7 +130,12 @@ export class TransferSender {
       // Per-file granularity — MirrorDrive in flight is not abortable.
       if (signal?.aborted) throw new AbortError()
       onStaging(file)
-      await this.importToDrive(file.sourceDrive, file.sourcePath)
+      if (!file.alreadyStaged) {
+        await this.importToDrive(file.sourceDrive, file.sourcePath)
+        if (file.isTemporary) {
+          await this.tryDeleteFile(file.inputPath)
+        }
+      }
       offers.push({
         id: createFileId(),
         transferId,
@@ -124,5 +155,13 @@ export class TransferSender {
       prune: false
     })
     await mirror.done()
+  }
+
+  private async tryDeleteFile(filePath: string): Promise<void> {
+    try {
+      await fs.promises.unlink(filePath)
+    } catch (err) {
+      console.warn(`TransferSender: failed to delete temporary file ${filePath}`, err)
+    }
   }
 }

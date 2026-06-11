@@ -1,4 +1,4 @@
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { LockIcon } from '@altersend/components/icons'
 
 interface TopicCopyButtonProps {

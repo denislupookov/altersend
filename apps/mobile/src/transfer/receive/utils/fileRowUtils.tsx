@@ -2,7 +2,7 @@ import React from 'react'
 import { Pressable, StyleSheet } from 'react-native'
 import { getFileKind, useTheme } from '@altersend/components'
 import { formatFileSize, type DownloadItemState } from '@altersend/domain'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
 type Translate = ReturnType<typeof useTranslation>['t']

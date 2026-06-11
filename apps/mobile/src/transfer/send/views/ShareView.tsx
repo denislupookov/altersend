@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, Share, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import type { PeerListCardEntry } from '@altersend/components'
 import {
+  buildInviteText,
   formatFileSize,
   getPeerListEntries,
   type PeerListEntry,
@@ -11,7 +12,7 @@ import {
 } from '@altersend/domain'
 import { Disclosure, PeerListCard, SendFileListRow, useTheme } from '@altersend/components'
 import { AlertCircleIcon, FolderIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { useToast } from '@/src/components/Toast'
 import { QRSection } from './QRSection'
 import { Text } from '@/src/components/ThemedText'
@@ -92,6 +93,7 @@ export function ShareView() {
       await Clipboard.setStringAsync(topic)
       setIsKeyCopied(true)
       toast.show({ title: t('send:connection.copiedToast') })
+      await Share.share({ message: buildInviteText(topic) })
     } catch (error) {
       console.error(error)
     }

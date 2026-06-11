@@ -9,7 +9,7 @@ import {
   type SelectedFile
 } from '@altersend/domain'
 import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 
 function uriToFilePath(uri: string): string {
   if (!uri.startsWith('file://')) return uri
@@ -33,7 +33,7 @@ export function SelectFilesView() {
       const result = await DocumentPicker.getDocumentAsync({
         multiple: true,
         type: '*/*',
-        copyToCacheDirectory: false
+        copyToCacheDirectory: true
       })
 
       if (result.canceled) return
@@ -41,7 +41,8 @@ export function SelectFilesView() {
       const normalizedFiles: SelectedFile[] = result.assets.map((asset) => ({
         name: asset.name,
         path: uriToFilePath(asset.uri),
-        size: asset.size
+        size: asset.size,
+        isTemporary: true
       }))
 
       if (normalizedFiles.length > 0) {
@@ -68,7 +69,8 @@ export function SelectFilesView() {
       const normalizedFiles: SelectedFile[] = result.assets.map((asset) => ({
         name: asset.fileName ?? asset.uri.split('/').pop() ?? 'photo',
         path: uriToFilePath(asset.uri),
-        size: asset.fileSize
+        size: asset.fileSize,
+        isTemporary: true
       }))
 
       if (normalizedFiles.length > 0) {

@@ -1,5 +1,5 @@
 import { useTheme } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { ArrowUp, X } from 'lucide-react-native'
 import { Linking, Platform, Pressable, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

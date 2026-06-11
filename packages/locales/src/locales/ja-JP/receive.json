@@ -4,7 +4,7 @@
     "join": {
       "title": "ファイルを受信",
       "description": "送信側の64文字の接続コードを入力してファイルを受信します。",
-      "mobileDescription": "送信側のQRをスキャンするか64文字のコードを貼り付けて受信を開始します。"
+      "mobileDescription": "送信側のQRをスキャンまたは画像から読み込むか、64文字のコードを貼り付けて受信を開始します。"
     },
     "connecting": {
       "title": "接続中",
@@ -61,7 +61,12 @@
     "downloadAllWithSize": "すべてダウンロード（{{size}}）",
     "showInFinder": "Finder で表示",
     "backToHome": "ホームに戻る",
-    "viewPhotos": "写真を表示"
+    "viewPhotos": "写真を表示",
+    "scanOrImportQr": "QRをスキャンまたは読み込み",
+    "scanOrImportQrHintDesktop": "Webカメラを使うか、保存済みのQR画像を読み込みます",
+    "scanOrImportQrHintMobile": "カメラを使うか、保存済み画像を読み込みます",
+    "importImage": "画像を読み込む",
+    "importFromImage": "画像から読み込む"
   },
   "errors": {
     "invalidCode": "有効な64文字の16進コードを入力してください。",
@@ -76,7 +81,11 @@
     "cameraCouldNotStart": "カメラを開始できませんでした。コードを貼り付けてください。",
     "downloadFailed": "失敗",
     "didntArrive": "未着",
-    "transferIssue": "転送の問題"
+    "transferIssue": "転送の問題",
+    "imageNoQrTitle": "QRコードが見つかりません",
+    "imageNoQrHint": "AlterSend のQRコードが写っている画像を選択してください。",
+    "imageUnsupportedQrHint": "この画像は AlterSend の接続コードではありません。",
+    "imageReadFailedTitle": "画像を読み取れませんでした"
   },
   "camera": {
     "preparingTitle": "カメラを準備中",
@@ -95,7 +104,11 @@
     "enableTitle": "カメラアクセスを有効にする",
     "enableDescription": "送信者の QR コードを読み取るためだけに使用します。戻ってコードを手動で貼り付けることもできます。",
     "usePastedCode": "代わりに貼り付けたコードを使う",
-    "joiningDescription": "送信者のセッションに参加しています。"
+    "joiningDescription": "送信者のセッションに参加しています。",
+    "scanImportTitle": "QRをスキャンまたは読み込み",
+    "scanImportDescription": "送信側のQRを枠内に合わせるか、保存済み画像を読み込んでください。AlterSend が自動で接続します。",
+    "desktopImportHint": "送信側のQRを枠内に合わせるか、保存済み画像を読み込んでください。AlterSend が自動で接続します。",
+    "enableImportDescription": "カメラはQRをスキャンするためだけに使用します。保存済み画像の読み込みやコードの貼り付けもできます。"
   },
   "status": {
     "ready": "準備完了",

@@ -18,7 +18,7 @@
 const fs = require('fs')
 const fsp = require('fs/promises')
 const path = require('path')
-const releaseConfig = require('../../../packages/i18n/src/release.json')
+const releaseConfig = require('../../../packages/locales/src/release.json')
 
 const ARCH_NAMES = {
   0: 'ia32',

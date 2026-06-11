@@ -18,7 +18,7 @@ import {
   useTranslation,
   type LocaleOption,
   type LocalePreference
-} from '@altersend/i18n'
+} from '@altersend/locales'
 import {
   AlertCircleIcon,
   ArrowLeftIcon,

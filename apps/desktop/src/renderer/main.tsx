@@ -7,7 +7,7 @@ import {
   isSupportedLocaleCode,
   resolveActiveLocalePreference,
   useTranslation
-} from '@altersend/i18n'
+} from '@altersend/locales'
 import {
   bindTransferApi,
   startBackgroundReconnectEffect,
@@ -71,9 +71,14 @@ if (hasBridge()) {
 }
 
 async function bootstrap() {
-  await initI18n(
-    resolveActiveLocalePreference(getSavedLocalePreference(), getDesktopSystemLocales())
-  )
+  try {
+    await initI18n(
+      resolveActiveLocalePreference(getSavedLocalePreference(), getDesktopSystemLocales())
+    )
+  } catch (error) {
+    captureException(error)
+    console.warn('Failed to bootstrap locale', error)
+  }
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

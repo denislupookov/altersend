@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Button, SendFileListRow } from '@altersend/components'
 import { CheckIcon, FolderIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import {
   clearSession,
   formatFileSize,

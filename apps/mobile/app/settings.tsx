@@ -7,7 +7,7 @@ import {
   isMultiLangEnabled,
   useTranslation,
   type LocalePreference
-} from '@altersend/i18n'
+} from '@altersend/locales'
 import {
   discordUrl,
   privacyPolicyUrl,

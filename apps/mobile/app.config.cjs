@@ -1,5 +1,5 @@
 const appJson = require('./app.json')
-const releaseConfig = require('../../packages/i18n/src/release.json')
+const releaseConfig = require('../../packages/locales/src/release.json')
 
 const DEFAULT_LOCALE = 'en-US'
 

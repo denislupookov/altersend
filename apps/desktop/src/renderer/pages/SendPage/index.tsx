@@ -1,5 +1,5 @@
 import { Button } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import {
   clearSenderFlow,
   continueShare,

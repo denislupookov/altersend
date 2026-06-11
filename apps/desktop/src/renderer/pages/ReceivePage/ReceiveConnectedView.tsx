@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Button, SendFileListRow } from '@altersend/components'
 import { DownloadIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
 import {
   clearSession,

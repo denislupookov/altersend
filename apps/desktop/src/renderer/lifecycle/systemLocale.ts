@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE } from '@altersend/i18n'
+import { DEFAULT_LOCALE } from '@altersend/locales'
 
 export function getDesktopSystemLocales(): string[] {
   if (typeof navigator === 'undefined') return [DEFAULT_LOCALE]

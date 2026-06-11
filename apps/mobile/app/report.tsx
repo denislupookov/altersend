@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button, FeedbackTypeSelector, useTheme } from '@altersend/components'
 import { SendIcon } from '@altersend/components/icons'
 import type { FeedbackType } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { Layout } from '@/src/components'
 import { Text, TextInput } from '@/src/components/ThemedText'
 

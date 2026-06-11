@@ -9,7 +9,7 @@ import {
 } from '@altersend/domain'
 import { Disclosure, PeerListCard, SendFileListRow } from '@altersend/components'
 import { AlertCircleIcon, FolderIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { QRModal } from '../../components/QRModal'
 import { ConnectionCard } from './ConnectionCard'
 

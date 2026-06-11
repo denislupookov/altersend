@@ -18,6 +18,7 @@ import type {
   DownloadFilesReply,
   HostReply,
   JoinReply,
+  ShareFileRequest,
   ShareFilesReply,
   TransferRPC
 } from '../rpc/protocol'
@@ -293,8 +294,8 @@ export class TransferOrchestrator implements TransferRPC {
     return { state: 'joined' }
   }
 
-  async shareFiles(paths: string[]): Promise<ShareFilesReply> {
-    if (!Array.isArray(paths) || paths.length === 0) {
+  async shareFiles(requests: ShareFileRequest[]): Promise<ShareFilesReply> {
+    if (!Array.isArray(requests) || requests.length === 0) {
       throw new BadRequestError('Missing files to share')
     }
     if (this.suspended) {
@@ -308,7 +309,7 @@ export class TransferOrchestrator implements TransferRPC {
     await this.readyPromise
 
     try {
-      const { files, totalBytes, errors } = await this.stager.scanFiles(paths)
+      const { files, totalBytes, errors } = await this.stager.scanFiles(requests)
       for (const error of errors) this.sendError(error)
 
       if (files.length === 0) {

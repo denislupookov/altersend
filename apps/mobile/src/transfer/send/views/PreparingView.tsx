@@ -6,7 +6,7 @@ import {
   useTransferStore
 } from '@altersend/domain'
 import { SendFileListRow, useTheme } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
 export function PreparingView() {

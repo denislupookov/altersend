@@ -1,6 +1,6 @@
 import { useTheme } from '@altersend/components'
 import { SettingsIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { BlurView } from 'expo-blur'
 import { PropsWithChildren } from 'react'
 import { View, StyleSheet, ScrollView, Pressable, Platform } from 'react-native'

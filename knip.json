@@ -6,7 +6,7 @@
       "project": ["scripts/**/*.{js,cjs,mjs}"],
       "ignoreDependencies": [
         "expo",
-        "react-dom",
+        "react-dom"
       ]
     },
     "packages/core": {
@@ -15,7 +15,7 @@
     "packages/domain": {
       "entry": ["src/**/*.test.ts"]
     },
-    "packages/i18n": {
+    "packages/locales": {
       "entry": ["src/**/*.test.ts"],
       "project": ["src/**/*.{ts,tsx}"]
     },
@@ -53,14 +53,10 @@
         "hyperdrive",
         "hyperswarm",
         "pear-runtime-updater",
-        "tailwindcss",
         "@electron-forge/maker-dmg",
         "@electron-forge/maker-msix",
         "@electron-forge/maker-squirrel",
         "app-builder-lib"
-      ],
-      "ignoreUnresolved": [
-        "^\\./sentry-dsn\\.gen\\.js$"
       ],
       "ignoreBinaries": [
         "electron-builder.mac.json",

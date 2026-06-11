@@ -2,7 +2,7 @@ import {
   SYSTEM_LOCALE_PREFERENCE,
   normalizeLocalePreference,
   type LocalePreference
-} from '@altersend/i18n'
+} from '@altersend/locales'
 import { Directory, File, Paths } from 'expo-file-system'
 
 const DIRNAME = 'altersend'

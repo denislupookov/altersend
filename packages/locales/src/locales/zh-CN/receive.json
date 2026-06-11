@@ -4,7 +4,7 @@
     "join": {
       "title": "接收文件",
       "description": "输入发件人提供的 64 个字符的连接代码以传输其文件。",
-      "mobileDescription": "扫描发件人的 QR 或粘贴其 64 字符代码以开始流式传输。"
+      "mobileDescription": "扫描或导入发送方的二维码，或粘贴 64 字符代码以开始接收。"
     },
     "connecting": {
       "title": "正在连接",
@@ -61,7 +61,12 @@
     "downloadAllWithSize": "全部下载（{{size}}）",
     "showInFinder": "在 Finder 中显示",
     "backToHome": "返回首页",
-    "viewPhotos": "查看照片"
+    "viewPhotos": "查看照片",
+    "scanOrImportQr": "扫描或导入二维码",
+    "scanOrImportQrHintDesktop": "使用摄像头，或导入已保存的二维码图片",
+    "scanOrImportQrHintMobile": "使用相机，或导入已保存的图片",
+    "importImage": "导入图片",
+    "importFromImage": "从图片导入"
   },
   "errors": {
     "invalidCode": "输入有效的 64 字符十六进制代码。",
@@ -76,7 +81,11 @@
     "cameraCouldNotStart": "相机无法启动。请改为粘贴连接代码。",
     "downloadFailed": "失败",
     "didntArrive": "没有到达",
-    "transferIssue": "转账问题"
+    "transferIssue": "转账问题",
+    "imageNoQrTitle": "未找到二维码",
+    "imageNoQrHint": "请选择包含 AlterSend 二维码的图片。",
+    "imageUnsupportedQrHint": "这张图片不是 AlterSend 连接码。",
+    "imageReadFailedTitle": "无法读取该图片"
   },
   "camera": {
     "preparingTitle": "准备相机",
@@ -95,7 +104,11 @@
     "enableTitle": "启用摄像头访问",
     "enableDescription": "仅用于扫描发送者的二维码。你也可以返回并手动粘贴代码。",
     "usePastedCode": "改用粘贴的代码",
-    "joiningDescription": "正在加入发送者的会话。"
+    "joiningDescription": "正在加入发送者的会话。",
+    "scanImportTitle": "扫描或导入二维码",
+    "scanImportDescription": "将发送方二维码置于框内，或导入已保存的图片。AlterSend 会自动连接。",
+    "desktopImportHint": "将发送方二维码置于框内，或导入已保存的图片。AlterSend 会自动连接。",
+    "enableImportDescription": "相机仅用于扫描二维码。你也可以导入已保存的图片或手动粘贴代码。"
   },
   "status": {
     "ready": "准备好了",

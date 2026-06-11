@@ -1,5 +1,5 @@
 import { SendFileListRow } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import {
   getOverallProgress,
   getProgressState,

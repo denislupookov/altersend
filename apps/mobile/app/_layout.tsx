@@ -18,10 +18,11 @@ import {
   isSupportedLocaleCode,
   resolveActiveLocalePreference,
   useTranslation
-} from '@altersend/i18n'
+} from '@altersend/locales'
 import { Stack } from 'expo-router'
 import { Platform, StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
+import * as SplashScreen from 'expo-splash-screen'
 import { LoadingScreen } from '../src/loading'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { mobileApi } from '../src/api/mobileApi'
@@ -35,6 +36,8 @@ import { getMobileSystemLocales } from '../src/lifecycle/systemLocale'
 import { ShareIntentHandler } from '../src/lifecycle/ShareIntentHandler'
 import { startPhotosCopyEffect } from '../src/transfer/receive'
 import { initSentry, captureException } from '../src/sentry'
+
+SplashScreen.preventAutoHideAsync().catch(() => {})
 
 initSentry()
 bindTransferApi(mobileApi, {
@@ -144,9 +147,15 @@ export default function RootLayout() {
   useEffect(() => {
     let mounted = true
     async function initializeLocale() {
-      const preference = await getSavedLocalePreference()
-      await initI18n(resolveActiveLocalePreference(preference, getMobileSystemLocales()))
-      if (mounted) setI18nReady(true)
+      try {
+        const preference = await getSavedLocalePreference()
+        await initI18n(resolveActiveLocalePreference(preference, getMobileSystemLocales()))
+      } catch (error) {
+        captureException(error)
+        console.warn('Failed to initialize locale:', error)
+      } finally {
+        if (mounted) setI18nReady(true)
+      }
     }
 
     void initializeLocale()
@@ -154,6 +163,12 @@ export default function RootLayout() {
       mounted = false
     }
   }, [])
+
+  useEffect(() => {
+    if (i18nReady && fontsLoaded) {
+      SplashScreen.hideAsync().catch(console.warn)
+    }
+  }, [fontsLoaded, i18nReady])
 
   if (fontError) throw fontError
   if (!i18nReady || !fontsLoaded) return null

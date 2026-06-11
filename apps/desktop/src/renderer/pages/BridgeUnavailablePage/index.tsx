@@ -1,4 +1,4 @@
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import logo from '../../../../../../assets/logo.png'
 
 export default function BridgeUnavailablePage() {

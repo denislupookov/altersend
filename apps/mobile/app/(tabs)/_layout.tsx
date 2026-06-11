@@ -1,7 +1,7 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 
 export default function TabLayout() {
   const { t } = useTranslation(['common'])

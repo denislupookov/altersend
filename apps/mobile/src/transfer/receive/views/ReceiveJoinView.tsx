@@ -2,7 +2,7 @@ import React from 'react'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { Button, Input, useTheme, withAlpha } from '@altersend/components'
 import { ChevronRightIcon, QrCodeIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
 interface ReceiveJoinViewProps {
@@ -52,10 +52,10 @@ export function ReceiveJoinView({
           </View>
           <View style={styles.qrText}>
             <Text style={[styles.qrTitle, { color: theme.colors.colorTextPrimary }]}>
-              {t('receive:actions.scanQr')}
+              {t('receive:actions.scanOrImportQr')}
             </Text>
             <Text style={[styles.qrSubtitle, { color: theme.colors.colorTextSecondary }]}>
-              {t('receive:actions.scanQrHint')}
+              {t('receive:actions.scanOrImportQrHintMobile')}
             </Text>
           </View>
           <ChevronRightIcon size={18} color={theme.colors.colorTextMuted} />

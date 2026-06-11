@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Button, ExternalLink, PaginationDots, useTheme } from '@altersend/components'
 import { onboardingSlides, type OnboardingSlide, type OnboardingSlideKind } from '@altersend/domain'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { useRouter } from 'expo-router'
 import {
   FlatList,

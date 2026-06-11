@@ -2,7 +2,7 @@ import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import { SendFileListRow, useTheme } from '@altersend/components'
 import { getDownloadRowDisplay, getOfferKey, useTransferStore } from '@altersend/domain'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
 export function ReceiveIncomingView() {

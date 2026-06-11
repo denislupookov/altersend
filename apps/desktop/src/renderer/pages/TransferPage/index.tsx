@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@altersend/components'
 import { clearSession, useTransferStore } from '@altersend/domain'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { FooterBar } from './FooterBar'
 import { ReceivePage, SendPage } from '..'
 

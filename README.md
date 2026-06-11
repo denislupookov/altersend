@@ -138,7 +138,7 @@ packages/
   core/       P2P protocol — Hyperswarm, Hyperdrive, RPC
   domain/     State management — Zustand store, business logic
   components/ Cross-platform UI — React Strict DOM + Tailwind
-  i18n/       Shared locale metadata, i18next setup, and catalogs
+  locales/   Shared locale metadata, i18next setup, and catalogs
 docs/
   architecture.md   Full system overview
   i18n.md           Translation workflow and locale coverage
@@ -148,7 +148,7 @@ See [docs/architecture.md](docs/architecture.md) for data flow and inter-process
 
 ### Internationalization
 
-Desktop and mobile share locale resolution, metadata, and translation catalogs through `@altersend/i18n`. Multi-language UI is currently release-gated by `isMultiLangEnabled = false`, which hides language pickers and keeps the active app locale at `en-US` until the feature is ready to ship. See [docs/i18n.md](docs/i18n.md) for the translation workflow.
+Desktop and mobile share locale resolution, metadata, and translation catalogs through `@altersend/locales`. Multi-language UI is currently release-gated by `isMultiLangEnabled = false`, which hides language pickers and keeps the active app locale at `en-US` until the feature is ready to ship. See [docs/i18n.md](docs/i18n.md) for the translation workflow.
 
 ### Tech stack
 

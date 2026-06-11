@@ -4,7 +4,7 @@
     "join": {
       "title": "파일 받기",
       "description": "파일을 스트리밍하려면 보낸 사람으로부터 64자 연결 코드를 입력하세요.",
-      "mobileDescription": "스트리밍을 시작하려면 발신자의 QR을 스캔하거나 64자 코드를 붙여넣으세요."
+      "mobileDescription": "발신자의 QR을 스캔하거나 가져오거나 64자 코드를 붙여넣어 전송을 시작하세요."
     },
     "connecting": {
       "title": "연결 중",
@@ -61,7 +61,12 @@
     "downloadAllWithSize": "모두 다운로드({{size}})",
     "showInFinder": "Finder에서 보기",
     "backToHome": "홈으로 돌아가기",
-    "viewPhotos": "사진 보기"
+    "viewPhotos": "사진 보기",
+    "scanOrImportQr": "QR 스캔 또는 가져오기",
+    "scanOrImportQrHintDesktop": "웹캠을 사용하거나 저장된 QR 이미지를 가져옵니다",
+    "scanOrImportQrHintMobile": "카메라를 사용하거나 저장된 이미지를 가져옵니다",
+    "importImage": "이미지 가져오기",
+    "importFromImage": "이미지에서 가져오기"
   },
   "errors": {
     "invalidCode": "유효한 64자의 16진수 코드를 입력하세요.",
@@ -76,7 +81,11 @@
     "cameraCouldNotStart": "카메라를 시작할 수 없습니다. 대신 연결 코드를 붙여넣으세요.",
     "downloadFailed": "실패",
     "didntArrive": "도착하지 않았습니다",
-    "transferIssue": "전송 문제"
+    "transferIssue": "전송 문제",
+    "imageNoQrTitle": "QR 코드를 찾을 수 없습니다",
+    "imageNoQrHint": "AlterSend QR 코드가 보이는 이미지를 선택하세요.",
+    "imageUnsupportedQrHint": "이 이미지는 AlterSend 연결 코드가 아닙니다.",
+    "imageReadFailedTitle": "이미지를 읽을 수 없습니다"
   },
   "camera": {
     "preparingTitle": "카메라 준비 중",
@@ -95,7 +104,11 @@
     "enableTitle": "카메라 접근 허용",
     "enableDescription": "보내는 사람의 QR 코드를 스캔할 때만 필요합니다. 돌아가서 코드를 직접 붙여넣을 수도 있습니다.",
     "usePastedCode": "대신 붙여넣은 코드 사용",
-    "joiningDescription": "보내는 사람의 세션에 참여하는 중입니다."
+    "joiningDescription": "보내는 사람의 세션에 참여하는 중입니다.",
+    "scanImportTitle": "QR 스캔 또는 가져오기",
+    "scanImportDescription": "발신자의 QR을 프레임 안에 맞추거나 저장된 이미지를 가져오세요. AlterSend가 자동으로 연결합니다.",
+    "desktopImportHint": "발신자의 QR을 프레임 안에 맞추거나 저장된 이미지를 가져오세요. AlterSend가 자동으로 연결합니다.",
+    "enableImportDescription": "카메라는 QR을 스캔할 때만 필요합니다. 저장된 이미지를 가져오거나 코드를 직접 붙여넣을 수도 있습니다."
   },
   "status": {
     "ready": "준비",

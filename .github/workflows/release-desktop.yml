@@ -19,7 +19,7 @@ jobs:
         run: npm ci
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: npm run build -w packages/core && npm run build -w packages/locales && npm run build -w packages/domain && npm run build -w packages/components
 
       - name: Build desktop app
         run: npm run build -w apps/desktop
@@ -86,7 +86,7 @@ jobs:
         run: npm ci
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: npm run build -w packages/core && npm run build -w packages/locales && npm run build -w packages/domain && npm run build -w packages/components
 
       - name: Build desktop app
         shell: bash
@@ -168,7 +168,7 @@ jobs:
         run: npm ci
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: npm run build -w packages/core && npm run build -w packages/locales && npm run build -w packages/domain && npm run build -w packages/components
 
       - name: Build desktop app
         run: npm run build -w apps/desktop
@@ -200,7 +200,7 @@ jobs:
         run: npm ci
 
       - name: Build packages
-        run: npm run build -w packages/core && npm run build -w packages/domain && npm run build -w packages/components
+        run: npm run build -w packages/core && npm run build -w packages/locales && npm run build -w packages/domain && npm run build -w packages/components
 
       - name: Build desktop app
         run: npm run build -w apps/desktop

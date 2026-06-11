@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { View } from 'react-native'
 import { Button } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { Layout } from '@/src/components'
 import { SelectFilesView } from '@/src/transfer/send'
 import { usePathname, useRouter } from 'expo-router'

@@ -1,6 +1,6 @@
 import { buildJoinUrl } from '@altersend/domain'
 import { QrCodeIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { QRCode } from '../../components/QRCode'
 import { TopicCopyButton } from './TopicCopyButton'
 

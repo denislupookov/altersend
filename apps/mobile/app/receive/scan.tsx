@@ -1,9 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, Linking, Pressable, StyleSheet, View } from 'react-native'
-import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera'
+import {
+  CameraView,
+  scanFromURLAsync,
+  useCameraPermissions,
+  type BarcodeScanningResult
+} from 'expo-camera'
+import * as ImagePicker from 'expo-image-picker'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { ArrowLeftIcon, QrCodeIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { useNavigation, useRouter } from 'expo-router'
 import { extractJoinCode, useTransferStore } from '@altersend/domain'
 import { joinSession } from '@altersend/domain'
@@ -68,9 +74,9 @@ export default function ReceiveScanScreen() {
   const canAskAgain = permission?.canAskAgain ?? true
   const canScan = cameraGranted && !isResolving && role === null
 
-  const handleBarcodeScanned = useCallback(
-    async ({ data }: BarcodeScanningResult) => {
-      if (!canScan || scanLockRef.current) {
+  const resolveCode = useCallback(
+    async (data: string, invalidHint: string) => {
+      if (scanLockRef.current || role !== null) {
         return
       }
 
@@ -82,7 +88,7 @@ export default function ReceiveScanScreen() {
           invalidScanAtRef.current = now
           toast.show({
             title: t('receive:errors.unsupportedQrTitle'),
-            hint: t('receive:errors.unsupportedQrHint'),
+            hint: invalidHint,
             durationMs: 2500
           })
         }
@@ -105,8 +111,45 @@ export default function ReceiveScanScreen() {
         })
       }
     },
-    [canScan, goBack, t, toast]
+    [goBack, role, t, toast]
   )
+
+  const handleBarcodeScanned = useCallback(
+    ({ data }: BarcodeScanningResult) => {
+      if (!canScan) return
+      void resolveCode(data, t('receive:errors.unsupportedQrHint'))
+    },
+    [canScan, resolveCode, t]
+  )
+
+  const importFromImage = useCallback(async () => {
+    if (scanLockRef.current || role !== null) {
+      return
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      quality: 1
+    })
+    const asset = result.canceled ? null : result.assets[0]
+    if (!asset) return
+
+    try {
+      const [scan] = await scanFromURLAsync(asset.uri, ['qr'])
+      if (!scan) {
+        toast.show({
+          title: t('receive:errors.imageNoQrTitle'),
+          hint: t('receive:errors.imageNoQrHint'),
+          durationMs: 2500
+        })
+        return
+      }
+      await resolveCode(scan.data, t('receive:errors.imageUnsupportedQrHint'))
+    } catch (error) {
+      console.warn('ReceiveScanScreen: importFromImage failed', error)
+      toast.show({ title: t('receive:errors.imageReadFailedTitle'), durationMs: 2500 })
+    }
+  }, [resolveCode, role, t, toast])
 
   const permissionCopy = useMemo(() => {
     if (!permission) {
@@ -124,8 +167,8 @@ export default function ReceiveScanScreen() {
     }
 
     return {
-      title: t('receive:camera.scanTitle'),
-      description: t('receive:camera.scanDescription')
+      title: t('receive:camera.scanImportTitle'),
+      description: t('receive:camera.scanImportDescription')
     }
   }, [cameraGranted, permission, t])
 
@@ -163,7 +206,7 @@ export default function ReceiveScanScreen() {
             {t('receive:camera.enableTitle')}
           </Text>
           <Text style={[styles.noticeText, { color: theme.colors.colorTextSecondary }]}>
-            {t('receive:camera.enableDescription')}
+            {t('receive:camera.enableImportDescription')}
           </Text>
           <Button
             onClick={() => void handlePermissionAction()}
@@ -172,6 +215,9 @@ export default function ReceiveScanScreen() {
             width='full'
           >
             {permissionButtonLabel}
+          </Button>
+          <Button onClick={() => void importFromImage()} size='lg' variant='secondary' width='full'>
+            {t('receive:actions.importFromImage')}
           </Button>
           <Button onClick={goBack} size='lg' variant='secondary' width='full'>
             {t('receive:camera.usePastedCode')}
@@ -283,13 +329,23 @@ export default function ReceiveScanScreen() {
               </View>
             ) : null}
           </View>
+
+          <Button
+            disabled={!canScan}
+            onClick={() => void importFromImage()}
+            size='lg'
+            variant='secondary'
+            width='full'
+          >
+            {t('receive:actions.importFromImage')}
+          </Button>
         </View>
       )}
     </Layout>
   )
 }
 
-const FRAME_SIZE = 220
+const FRAME_SIZE = 280
 const CORNER_SIZE = 28
 const CORNER_STROKE = 4
 

@@ -1,5 +1,5 @@
 import { useTheme } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { Image, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import LoadingSvg from '../../../../assets/loading.svg'

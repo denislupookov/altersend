@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { buildJoinUrl } from '@altersend/domain'
 import { CloseIcon } from '@altersend/components/icons'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { QRCode } from './QRCode'
 
 interface QRModalProps {

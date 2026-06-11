@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE } from '@altersend/i18n'
+import { DEFAULT_LOCALE } from '@altersend/locales'
 import { getLocales } from 'expo-localization'
 
 export function getMobileSystemLocales(): string[] {

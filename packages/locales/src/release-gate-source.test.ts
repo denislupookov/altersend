@@ -56,7 +56,7 @@ describe('release-gated language UI wiring', () => {
     const { scripts } = readMobilePackageJson()
 
     expect(scripts['build:packages']).toBeDefined()
-    expect(scripts['build:packages']).toContain('npm run build -w packages/i18n')
+    expect(scripts['build:packages']).toContain('npm run build -w packages/locales')
     expect(scripts.prestart).toMatch(/build:packages.*bundle-bare/)
     expect(scripts.preandroid).toMatch(/build:packages.*bundle:android/)
     expect(scripts.preios).toMatch(/build:packages.*bundle:ios/)
@@ -66,8 +66,8 @@ describe('release-gated language UI wiring', () => {
     const metroSource = readMobile('metro.config.js')
 
     expect(metroSource).toContain('workspaceSourceAliases')
-    expect(metroSource).toContain("'@altersend/i18n'")
-    expect(metroSource).toContain('packages/i18n/src/index.ts')
+    expect(metroSource).toContain("'@altersend/locales'")
+    expect(metroSource).toContain('packages/locales/src/index.ts')
     expect(metroSource).toContain("'@altersend/components'")
     expect(metroSource).toContain('packages/components/src/index.ts')
     expect(metroSource).toContain('resolveRequest')

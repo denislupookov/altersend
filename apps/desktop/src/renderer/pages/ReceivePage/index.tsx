@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Button } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { TransferStatusPanel, TransferCardFrame } from '../../components/TransferPrimitives'
 import { ReceiveCompleteView } from './ReceiveCompleteView'
 import { ReceiveConnectedView } from './ReceiveConnectedView'

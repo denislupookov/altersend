@@ -4,7 +4,7 @@
     "join": {
       "title": "Receive files",
       "description": "Enter a 64-character connection code from the sender to stream their files.",
-      "mobileDescription": "Scan a sender's QR or paste their 64-character code to start streaming."
+      "mobileDescription": "Scan or import a sender's QR, or paste their 64-character code to start streaming."
     },
     "connecting": {
       "title": "Connecting",
@@ -61,7 +61,12 @@
     "downloadAllWithSize": "Download all ({{size}})",
     "showInFinder": "Show in Finder",
     "backToHome": "Back to home",
-    "viewPhotos": "View Photos"
+    "viewPhotos": "View Photos",
+    "scanOrImportQr": "Scan or import QR",
+    "scanOrImportQrHintDesktop": "Use the webcam, or import a saved QR image",
+    "scanOrImportQrHintMobile": "Use the camera, or import a saved image",
+    "importImage": "Import image",
+    "importFromImage": "Import from image"
   },
   "errors": {
     "invalidCode": "Enter a valid 64-character hex code.",
@@ -76,7 +81,11 @@
     "cameraCouldNotStart": "The camera could not be started. Paste the connection code instead.",
     "downloadFailed": "Failed",
     "didntArrive": "Didn't arrive",
-    "transferIssue": "Transfer issue"
+    "transferIssue": "Transfer issue",
+    "imageNoQrTitle": "No QR code found",
+    "imageNoQrHint": "Pick an image that shows an AlterSend QR code.",
+    "imageUnsupportedQrHint": "That image isn’t an AlterSend connection code.",
+    "imageReadFailedTitle": "Couldn’t read that image"
   },
   "camera": {
     "preparingTitle": "Preparing camera",
@@ -95,7 +104,11 @@
     "enableTitle": "Enable camera access",
     "enableDescription": "You only need this to scan the sender's QR code. You can still go back and paste the code manually.",
     "usePastedCode": "Use pasted code instead",
-    "joiningDescription": "Joining the sender's session."
+    "joiningDescription": "Joining the sender's session.",
+    "scanImportTitle": "Scan or import QR",
+    "scanImportDescription": "Centre the sender’s QR in the frame, or import a saved image. AlterSend connects automatically.",
+    "desktopImportHint": "Centre the sender’s QR in the frame, or import a saved image. AlterSend connects automatically.",
+    "enableImportDescription": "The camera is only needed to scan a QR. You can also import a saved image or paste the code manually."
   },
   "status": {
     "ready": "Ready",

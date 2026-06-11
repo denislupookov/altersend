@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Button } from '@altersend/components'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { useRouter } from 'expo-router'
 import { clearSession } from '@altersend/domain'
 import { mobileApi } from '@/src/api/mobileApi'

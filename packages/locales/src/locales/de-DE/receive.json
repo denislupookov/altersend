@@ -4,7 +4,7 @@
     "join": {
       "title": "Dateien empfangen",
       "description": "Geben Sie einen 64-stelligen Verbindungscode vom Absender ein, um dessen Dateien zu streamen.",
-      "mobileDescription": "Scannen Sie den QR eines Absenders oder fügen Sie seinen 64-stelligen Code ein, um mit dem Streaming zu beginnen."
+      "mobileDescription": "Scanne oder importiere den QR-Code des Senders oder füge den 64-Zeichen-Code ein, um die Übertragung zu starten."
     },
     "connecting": {
       "title": "Verbinden",
@@ -61,7 +61,12 @@
     "downloadAllWithSize": "Alle herunterladen ({{size}})",
     "showInFinder": "Im Finder anzeigen",
     "backToHome": "Zur Startseite",
-    "viewPhotos": "Fotos ansehen"
+    "viewPhotos": "Fotos ansehen",
+    "scanOrImportQr": "QR scannen oder importieren",
+    "scanOrImportQrHintDesktop": "Webcam verwenden oder ein gespeichertes QR-Bild importieren",
+    "scanOrImportQrHintMobile": "Kamera verwenden oder ein gespeichertes Bild importieren",
+    "importImage": "Bild importieren",
+    "importFromImage": "Aus Bild importieren"
   },
   "errors": {
     "invalidCode": "Geben Sie einen gültigen 64-stelligen Hex-Code ein.",
@@ -76,7 +81,11 @@
     "cameraCouldNotStart": "Die Kamera konnte nicht gestartet werden. Fügen Sie stattdessen den Verbindungscode ein.",
     "downloadFailed": "Fehlgeschlagen",
     "didntArrive": "Nicht angekommen",
-    "transferIssue": "Übertragungsproblem"
+    "transferIssue": "Übertragungsproblem",
+    "imageNoQrTitle": "Kein QR-Code gefunden",
+    "imageNoQrHint": "Wähle ein Bild aus, das einen AlterSend-QR-Code zeigt.",
+    "imageUnsupportedQrHint": "Dieses Bild ist kein AlterSend-Verbindungscode.",
+    "imageReadFailedTitle": "Dieses Bild konnte nicht gelesen werden"
   },
   "camera": {
     "preparingTitle": "Kamera vorbereiten",
@@ -95,7 +104,11 @@
     "enableTitle": "Kamerazugriff aktivieren",
     "enableDescription": "Dies wird nur zum Scannen des QR-Codes des Senders benötigt. Du kannst auch zurückgehen und den Code manuell einfügen.",
     "usePastedCode": "Stattdessen eingefügten Code verwenden",
-    "joiningDescription": "Tritt der Sitzung des Senders bei."
+    "joiningDescription": "Tritt der Sitzung des Senders bei.",
+    "scanImportTitle": "QR scannen oder importieren",
+    "scanImportDescription": "Richte den QR-Code des Senders im Rahmen aus oder importiere ein gespeichertes Bild. AlterSend verbindet automatisch.",
+    "desktopImportHint": "Richte den QR-Code des Senders im Rahmen aus oder importiere ein gespeichertes Bild. AlterSend verbindet automatisch.",
+    "enableImportDescription": "Die Kamera wird nur zum Scannen eines QR-Codes benötigt. Du kannst auch ein gespeichertes Bild importieren oder den Code manuell einfügen."
   },
   "status": {
     "ready": "Bereit",

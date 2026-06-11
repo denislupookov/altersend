@@ -4,7 +4,7 @@
     "join": {
       "title": "接收文件",
       "description": "輸入寄件者提供的 64 個字元的連接代碼以傳輸其檔案。",
-      "mobileDescription": "掃描寄件者的 QR 或貼上其 64 字元代碼以開始串流。"
+      "mobileDescription": "掃描或匯入傳送方的 QR，或貼上 64 字元代碼開始接收。"
     },
     "connecting": {
       "title": "正在連接",
@@ -61,7 +61,12 @@
     "downloadAllWithSize": "全部下載（{{size}}）",
     "showInFinder": "在 Finder 中顯示",
     "backToHome": "返回首頁",
-    "viewPhotos": "查看照片"
+    "viewPhotos": "查看照片",
+    "scanOrImportQr": "掃描或匯入 QR",
+    "scanOrImportQrHintDesktop": "使用網路攝影機，或匯入已儲存的 QR 圖片",
+    "scanOrImportQrHintMobile": "使用相機，或匯入已儲存的圖片",
+    "importImage": "匯入圖片",
+    "importFromImage": "從圖片匯入"
   },
   "errors": {
     "invalidCode": "輸入有效的 64 字元十六進位代碼。",
@@ -76,7 +81,11 @@
     "cameraCouldNotStart": "相機無法啟動。請改為貼上連接代碼。",
     "downloadFailed": "失敗",
     "didntArrive": "沒有到達",
-    "transferIssue": "轉帳問題"
+    "transferIssue": "轉帳問題",
+    "imageNoQrTitle": "找不到 QR 碼",
+    "imageNoQrHint": "請選擇包含 AlterSend QR 碼的圖片。",
+    "imageUnsupportedQrHint": "這張圖片不是 AlterSend 連線代碼。",
+    "imageReadFailedTitle": "無法讀取該圖片"
   },
   "camera": {
     "preparingTitle": "準備相機",
@@ -95,7 +104,11 @@
     "enableTitle": "啟用相機存取",
     "enableDescription": "僅用於掃描傳送者的 QR 代碼。你也可以返回並手動貼上代碼。",
     "usePastedCode": "改用貼上的代碼",
-    "joiningDescription": "正在加入傳送者的工作階段。"
+    "joiningDescription": "正在加入傳送者的工作階段。",
+    "scanImportTitle": "掃描或匯入 QR",
+    "scanImportDescription": "將傳送方的 QR 對準框內，或匯入已儲存的圖片。AlterSend 會自動連線。",
+    "desktopImportHint": "將傳送方的 QR 對準框內，或匯入已儲存的圖片。AlterSend 會自動連線。",
+    "enableImportDescription": "相機僅用於掃描 QR。你也可以匯入已儲存的圖片或手動貼上代碼。"
   },
   "status": {
     "ready": "準備好了",

@@ -1,6 +1,6 @@
 import { ArrowUp, X } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from '@altersend/i18n'
+import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../api/bridgeApi'
 
 export function UpdateBanner({ ready }: { ready: boolean }) {
