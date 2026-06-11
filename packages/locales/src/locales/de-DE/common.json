@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "Peer-to-Peer-Dateiübertragung",
+    "tagline": "Direkte Dateiübertragung",
     "welcome": "Willkommen bei AlterSend",
     "loadingTagline": "Dateien werden direkt zwischen deinen Geräten übertragen.\nKeine Server, keine Kopien, keine Vermittler."
   },
@@ -20,7 +20,7 @@
     "endSession": "Sitzung beenden",
     "restart": "Neu starten",
     "tryAgain": "Erneut versuchen",
-    "dismiss": "Entlassen",
+    "dismiss": "Schließen",
     "openSettings": "Einstellungen öffnen",
     "update": "Aktualisieren",
     "downloadAll": "Alles herunterladen",
@@ -36,7 +36,7 @@
     "version": "Versionsnummer",
     "platform": "Plattform",
     "desktop": "Desktop-App",
-    "mobile": "Mobil",
+    "mobile": "Mobilgerät",
     "send": "Senden",
     "receive": "Empfangen",
     "connectionCode": "Verbindungscode"

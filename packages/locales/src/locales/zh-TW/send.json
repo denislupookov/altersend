@@ -18,8 +18,8 @@
     }
   },
   "actions": {
-    "sendFiles_one": "發送 {{count}} 文件",
-    "sendFiles_other": "發送 {{count}} 個文件",
+    "sendFiles_one": "傳送 {{count}} 個檔案",
+    "sendFiles_other": "傳送 {{count}} 個檔案",
     "addFiles": "新增文件",
     "addMoreFiles": "新增更多文件",
     "dragAndDrop": "拖放",
@@ -30,8 +30,8 @@
     "pickFiles": "文件"
   },
   "status": {
-    "waitingForPeer": "等待同伴",
-    "peerConnected": "對等連接",
+    "waitingForPeer": "等待接收方",
+    "peerConnected": "接收方已連線",
     "uploadComplete": "上傳完成",
     "uploadingFiles": "上傳文件",
     "uploaded": "已上傳",
@@ -72,8 +72,8 @@
     "completedDone_one": "{{count}} 個已完成",
     "completedDone_other": "{{count}} 個已完成",
     "devices": "裝置",
-    "connectedCount_one": "{{count}} 已连接",
-    "connectedCount_other": "{{count}} 已连接"
+    "connectedCount_one": "{{count}} 台裝置已連線",
+    "connectedCount_other": "{{count}} 台裝置已連線"
   },
   "dropzone": {
     "addMoreDescription": "或點擊<link>繼續新增</link>",

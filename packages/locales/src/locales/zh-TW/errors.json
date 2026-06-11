@@ -1,15 +1,15 @@
 {
   "crash": {
     "title": "出了點問題",
-    "desktopDescription": "AlterSend 遇到意外錯誤，需要重新啟動。 Transfer Worker 可能處於不一致的狀態，因此重新啟動是最安全的選擇。",
+    "desktopDescription": "AlterSend 遇到意外錯誤，需要重新啟動。傳輸服務可能不穩定，因此重新啟動是最安全的選擇。",
     "mobileDescription": "AlterSend 遇到意外錯誤。請重試，或者如果問題仍然存在，請關閉並重新開啟應用程式。",
-    "restartAlterSend": "重新啟動AlterSend",
+    "restartAlterSend": "重新啟動 AlterSend",
     "tryAgain": "再試一次"
   },
   "bridgeUnavailable": {
-    "title": "電子橋不可用",
-    "description": "此渲染器在沒有桌面橋的情況下運作。從桌面應用程式重新啟動 AlterSend。",
-    "status": "橋接無法使用"
+    "title": "桌面連線無法使用",
+    "description": "此視窗未連接到桌面應用程式。請從桌面應用程式重新啟動 AlterSend。",
+    "status": "桌面連線無法使用"
   },
   "transfer": {
     "invalidTopic": "連線代碼無效。",

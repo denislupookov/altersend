@@ -1,15 +1,15 @@
 {
   "crash": {
     "title": "Qualcosa è andato storto",
-    "desktopDescription": "AlterSend ha riscontrato un errore imprevisto ed è necessario riavviarlo. L'operatore trasferito potrebbe trovarsi in uno stato incoerente, quindi un riavvio è l'opzione più sicura.",
+    "desktopDescription": "AlterSend ha riscontrato un errore imprevisto ed è necessario riavviarlo. Il servizio di trasferimento potrebbe essere instabile, quindi un riavvio è l'opzione più sicura.",
     "mobileDescription": "AlterSend ha riscontrato un errore imprevisto. Riprova oppure chiudi e riapri l'app se il problema persiste.",
     "restartAlterSend": "Riavvia AlterSend",
     "tryAgain": "Riprova"
   },
   "bridgeUnavailable": {
-    "title": "Ponte elettronico non disponibile",
-    "description": "Questo renderer è in esecuzione senza il bridge desktop. Riavvia AlterSend dall'app desktop.",
-    "status": "Bridge non disponibile"
+    "title": "Connessione desktop non disponibile",
+    "description": "Questa finestra non è collegata all'app desktop. Riavvia AlterSend dall'app desktop.",
+    "status": "Connessione desktop non disponibile"
   },
   "transfer": {
     "invalidTopic": "Il codice di connessione non è valido.",

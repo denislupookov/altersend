@@ -2,7 +2,7 @@
   "ios": {
     "CFBundleDisplayName": "AlterSend",
     "NSCameraUsageDescription": "AlterSend utilise votre caméra pour scanner les codes de connexion QR.",
-    "NSLocalNetworkUsageDescription": "AlterSend utilise votre réseau local pour découvrir les appareils à proximité pour le transfert de fichiers peer-to-peer.",
+    "NSLocalNetworkUsageDescription": "AlterSend utilise votre réseau local pour trouver les appareils à proximité et transférer des fichiers directement.",
     "NSPhotoLibraryUsageDescription": "AlterSend lit votre photothèque afin que vous puissiez sélectionner des photos et des vidéos à envoyer vers un autre appareil.",
     "NSPhotoLibraryAddUsageDescription": "AlterSend enregistre les images et vidéos reçues dans votre photothèque."
   },

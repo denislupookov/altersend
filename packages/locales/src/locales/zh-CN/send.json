@@ -18,7 +18,7 @@
     }
   },
   "actions": {
-    "sendFiles_one": "发送 {{count}} 文件",
+    "sendFiles_one": "发送 {{count}} 个文件",
     "sendFiles_other": "发送 {{count}} 个文件",
     "addFiles": "添加文件",
     "addMoreFiles": "添加更多文件",
@@ -30,8 +30,8 @@
     "pickFiles": "文件"
   },
   "status": {
-    "waitingForPeer": "等待同伴",
-    "peerConnected": "对等连接",
+    "waitingForPeer": "等待接收方",
+    "peerConnected": "接收方已连接",
     "uploadComplete": "上传完成",
     "uploadingFiles": "上传文件",
     "uploaded": "已上传",
@@ -72,8 +72,8 @@
     "completedDone_one": "{{count}} 个已完成",
     "completedDone_other": "{{count}} 个已完成",
     "devices": "设备",
-    "connectedCount_one": "{{count}} 已连接",
-    "connectedCount_other": "{{count}} 已连接"
+    "connectedCount_one": "{{count}} 台设备已连接",
+    "connectedCount_other": "{{count}} 台设备已连接"
   },
   "dropzone": {
     "addMoreDescription": "或点击<link>继续添加</link>",

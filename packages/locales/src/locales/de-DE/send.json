@@ -18,8 +18,8 @@
     }
   },
   "actions": {
-    "sendFiles_one": "Datei {{count}} senden",
-    "sendFiles_other": "Senden Sie {{count}} Dateien",
+    "sendFiles_one": "{{count}} Datei senden",
+    "sendFiles_other": "{{count}} Dateien senden",
     "addFiles": "Dateien hinzufügen",
     "addMoreFiles": "Fügen Sie weitere Dateien hinzu",
     "dragAndDrop": "Ziehen und ablegen",
@@ -30,8 +30,8 @@
     "pickFiles": "Dateien"
   },
   "status": {
-    "waitingForPeer": "Warten auf Gleichgesinnte",
-    "peerConnected": "Peer verbunden",
+    "waitingForPeer": "Warten auf Empfänger",
+    "peerConnected": "Empfänger verbunden",
     "uploadComplete": "Hochladen abgeschlossen",
     "uploadingFiles": "Hochladen von Dateien",
     "uploaded": "Hochgeladen",

@@ -1,7 +1,7 @@
 {
   "permissions": {
     "camera": "AlterSend verwendet Ihre Kamera, um QR-Verbindungscodes zu scannen.",
-    "localNetwork": "AlterSend nutzt Ihr lokales Netzwerk, um Geräte in der Nähe für die Peer-to-Peer-Dateiübertragung zu erkennen.",
+    "localNetwork": "AlterSend nutzt Ihr lokales Netzwerk, um Geräte in der Nähe zu finden und Dateien direkt zu übertragen.",
     "photoRead": "AlterSend liest Ihre Fotobibliothek, sodass Sie Fotos und Videos auswählen und an ein anderes Gerät senden können.",
     "photoSave": "AlterSend speichert empfangene Bilder und Videos in Ihrer Fotobibliothek."
   }

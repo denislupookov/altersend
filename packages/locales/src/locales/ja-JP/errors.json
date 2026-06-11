@@ -1,15 +1,15 @@
 {
   "crash": {
     "title": "問題が発生しました",
-    "desktopDescription": "AlterSend で予期しないエラーが発生したため再起動が必要です。転送ワーカーが不整合な状態の可能性があるため、再起動が最も安全です。",
+    "desktopDescription": "AlterSend で予期しないエラーが発生したため再起動が必要です。転送サービスが不安定な状態の可能性があるため、再起動が最も安全です。",
     "mobileDescription": "AlterSend で予期しないエラーが発生しました。再試行するか、問題が続く場合はアプリを閉じて開き直してください。",
     "restartAlterSend": "AlterSend を再起動",
     "tryAgain": "再試行"
   },
   "bridgeUnavailable": {
-    "title": "Electron ブリッジを利用できません",
-    "description": "このレンダラーはデスクトップブリッジなしで実行されています。デスクトップアプリから AlterSend を再起動してください。",
-    "status": "ブリッジを利用できません"
+    "title": "デスクトップ接続を利用できません",
+    "description": "この画面はデスクトップアプリに接続されていません。デスクトップアプリから AlterSend を再起動してください。",
+    "status": "デスクトップ接続を利用できません"
   },
   "transfer": {
     "invalidTopic": "接続コードが無効です。",

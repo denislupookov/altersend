@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "피어 투 피어 파일 전송",
+    "tagline": "기기 간 직접 파일 전송",
     "welcome": "AlterSend에 오신 것을 환영합니다",
     "loadingTagline": "파일은 기기 간에 직접 이동합니다.\n서버도 복사본도 중간자도 없습니다."
   },
@@ -35,7 +35,7 @@
     "transferMode": "전송 모드",
     "version": "버전",
     "platform": "플랫폼",
-    "desktop": "데스크탑",
+    "desktop": "데스크톱",
     "mobile": "모바일",
     "send": "보내기",
     "receive": "받기",

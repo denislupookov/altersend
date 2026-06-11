@@ -10,7 +10,7 @@
     },
     "encrypted": {
       "title": "Crittografato end-to-end.",
-      "description": "Nessun server, nessuna copia, nessun intermediario. I tuoi file viaggiano peer-to-peer tra te e il destinatario.",
+      "description": "Nessun server, nessuna copia, nessun intermediario. I tuoi file vengono trasferiti direttamente tra te e il destinatario.",
       "link": "Leggi la nostra politica sulla privacy"
     }
   }

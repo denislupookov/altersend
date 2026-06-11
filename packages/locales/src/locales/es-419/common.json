@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "Transferencia de archivos punto a punto",
+    "tagline": "Transferencia directa de archivos",
     "welcome": "Te damos la bienvenida a AlterSend",
     "loadingTagline": "Los archivos viajan directamente entre tus dispositivos.\nSin servidores, sin copias, sin intermediarios."
   },
@@ -35,8 +35,8 @@
     "transferMode": "Modo de transferencia",
     "version": "Versión",
     "platform": "Plataforma",
-    "desktop": "Escritorio",
-    "mobile": "Móvil",
+    "desktop": "Desktop",
+    "mobile": "Celular",
     "send": "Enviar",
     "receive": "Recibir",
     "connectionCode": "Código de conexión"

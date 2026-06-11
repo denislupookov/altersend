@@ -2,7 +2,7 @@
   "ios": {
     "CFBundleDisplayName": "AlterSend",
     "NSCameraUsageDescription": "AlterSend は接続QRコードをスキャンするためにカメラを使用します。",
-    "NSLocalNetworkUsageDescription": "AlterSend はピアツーピア転送のため近くの端末を検出する目的でローカルネットワークを使用します。",
+    "NSLocalNetworkUsageDescription": "AlterSend は近くの端末を検出し、ファイルを直接転送するためにローカルネットワークを使用します。",
     "NSPhotoLibraryUsageDescription": "AlterSend は別の端末へ送信する写真や動画を選ぶためフォトライブラリを読み取ります。",
     "NSPhotoLibraryAddUsageDescription": "AlterSend は受信した画像や動画をフォトライブラリに保存します。"
   },

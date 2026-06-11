@@ -30,8 +30,8 @@
     "pickFiles": "ファイル"
   },
   "status": {
-    "waitingForPeer": "相手を待機中",
-    "peerConnected": "相手が接続済み",
+    "waitingForPeer": "受信者を待機中",
+    "peerConnected": "受信者が接続済み",
     "uploadComplete": "アップロード完了",
     "uploadingFiles": "ファイルをアップロード中",
     "uploaded": "アップロード済み",
@@ -72,8 +72,8 @@
     "completedDone_one": "{{count}} 個完了",
     "completedDone_other": "{{count}} 個完了",
     "devices": "デバイス",
-    "connectedCount_one": "{{count}} が接続されました",
-    "connectedCount_other": "{{count}} が接続されました"
+    "connectedCount_one": "{{count}} 台接続済み",
+    "connectedCount_other": "{{count}} 台接続済み"
   },
   "dropzone": {
     "addMoreDescription": "またはクリックして<link>さらに追加</link>",

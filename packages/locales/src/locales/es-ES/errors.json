@@ -1,15 +1,15 @@
 {
   "crash": {
     "title": "algo salió mal",
-    "desktopDescription": "AlterSend sufrió un error inesperado y necesita reiniciarse. El trabajador transferido puede estar en un estado inconsistente, por lo que reiniciar es la opción más segura.",
+    "desktopDescription": "AlterSend encontró un error inesperado y necesita reiniciarse. El servicio de transferencia puede estar inestable, por lo que reiniciar es la opción más segura.",
     "mobileDescription": "AlterSend encontró un error inesperado. Inténtalo de nuevo o cierra y vuelve a abrir la aplicación si el problema persiste.",
     "restartAlterSend": "Reiniciar AlterSend",
     "tryAgain": "Inténtalo de nuevo"
   },
   "bridgeUnavailable": {
-    "title": "Puente electrónico no disponible",
-    "description": "Este renderizador se ejecuta sin el puente de escritorio. Reinicie AlterSend desde la aplicación de escritorio.",
-    "status": "Puente no disponible"
+    "title": "Conexión de escritorio no disponible",
+    "description": "Esta ventana no está conectada a la app de escritorio. Reinicia AlterSend desde la app de escritorio.",
+    "status": "Conexión de escritorio no disponible"
   },
   "transfer": {
     "invalidTopic": "El código de conexión no es válido.",

@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "ピアツーピアのファイル転送",
+    "tagline": "端末間の直接ファイル転送",
     "welcome": "AlterSend へようこそ",
     "loadingTagline": "ファイルは端末間で直接転送されます。\nサーバーもコピーも仲介もありません。"
   },
@@ -36,7 +36,7 @@
     "version": "バージョン",
     "platform": "プラットフォーム",
     "desktop": "デスクトップ",
-    "mobile": "モバイル",
+    "mobile": "モバイル端末",
     "send": "送信",
     "receive": "受信",
     "connectionCode": "接続コード"

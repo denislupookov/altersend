@@ -1,15 +1,15 @@
 {
   "crash": {
     "title": "Quelque chose s'est mal passé",
-    "desktopDescription": "AlterSend a rencontré une erreur inattendue et doit redémarrer. Le travailleur de transfert peut être dans un état incohérent, un redémarrage est donc l'option la plus sûre.",
+    "desktopDescription": "AlterSend a rencontré une erreur inattendue et doit redémarrer. Le service de transfert peut être instable, un redémarrage est donc l'option la plus sûre.",
     "mobileDescription": "AlterSend a rencontré une erreur inattendue. Réessayez ou fermez et rouvrez l'application si le problème persiste.",
     "restartAlterSend": "Redémarrez AlterSend",
     "tryAgain": "Réessayez"
   },
   "bridgeUnavailable": {
-    "title": "Pont électronique indisponible",
-    "description": "Ce moteur de rendu fonctionne sans le pont de bureau. Redémarrez AlterSend à partir de l'application de bureau.",
-    "status": "Pont indisponible"
+    "title": "Connexion de bureau indisponible",
+    "description": "Cette fenêtre n'est pas connectée à l'application de bureau. Redémarrez AlterSend depuis l'application de bureau.",
+    "status": "Connexion de bureau indisponible"
   },
   "transfer": {
     "invalidTopic": "Le code de connexion est invalide.",

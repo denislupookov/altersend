@@ -7,9 +7,9 @@
     "tryAgain": "Tente novamente"
   },
   "bridgeUnavailable": {
-    "title": "Ponte de conexão P2P indisponível",
-    "description": "Esta janela está sendo executada sem a ponte de conexão P2P. Reinicie o AlterSend pelo aplicativo desktop.",
-    "status": "Ponte P2P indisponível"
+    "title": "Conexão com o desktop indisponível",
+    "description": "Esta janela não está conectada ao aplicativo desktop. Reinicie o AlterSend pelo aplicativo desktop.",
+    "status": "Conexão com o desktop indisponível"
   },
   "transfer": {
     "invalidTopic": "O código de conexão é inválido.",

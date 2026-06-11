@@ -1,7 +1,7 @@
 {
   "title": "设置",
   "languageTitle": "语言",
-  "languageHint": "选择AlterSend 使用的语言。",
+  "languageHint": "选择 AlterSend 使用的语言。",
   "sections": {
     "privacy": "隐私",
     "support": "支持",

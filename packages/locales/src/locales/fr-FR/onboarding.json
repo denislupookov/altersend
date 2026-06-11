@@ -10,7 +10,7 @@
     },
     "encrypted": {
       "title": "Chiffré de bout en bout.",
-      "description": "Pas de serveurs, pas de copies, pas d'intermédiaires. Vos fichiers voyagent en peer-to-peer entre vous et le destinataire.",
+      "description": "Pas de serveurs, pas de copies, pas d'intermédiaires. Vos fichiers sont transférés directement entre vous et le destinataire.",
       "link": "Lire notre politique de confidentialité"
     }
   }

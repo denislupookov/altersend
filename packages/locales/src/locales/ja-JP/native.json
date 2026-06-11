@@ -1,7 +1,7 @@
 {
   "permissions": {
     "camera": "AlterSend は接続QRコードをスキャンするためにカメラを使用します。",
-    "localNetwork": "AlterSend はピアツーピア転送のため近くの端末を検出する目的でローカルネットワークを使用します。",
+    "localNetwork": "AlterSend は近くの端末を検出し、ファイルを直接転送するためにローカルネットワークを使用します。",
     "photoRead": "AlterSend は別の端末へ送信する写真や動画を選ぶためフォトライブラリを読み取ります。",
     "photoSave": "AlterSend は受信した画像や動画をフォトライブラリに保存します。"
   }

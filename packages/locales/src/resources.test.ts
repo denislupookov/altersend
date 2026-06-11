@@ -44,6 +44,7 @@ const identicalValueAllowList = new Set([
 ])
 
 const identicalKeyAllowList = new Set([
+  'common.files.count_one',
   'common.labels.desktop',
   'settings.rows.feedback',
   'feedback.title'
@@ -112,7 +113,11 @@ describe('translation resources', () => {
         for (const entry of flattenStringEntries(RESOURCES[locale.code][namespace])) {
           const sourceValue = sourceByPath.get(entry.path)
           const key = `${String(namespace)}.${entry.path}`
-          if (sourceValue && entry.value === sourceValue && !canMatchEnglishSource(key, sourceValue)) {
+          if (
+            sourceValue &&
+            entry.value === sourceValue &&
+            !canMatchEnglishSource(key, sourceValue)
+          ) {
             identicalEntries.push(`${key}: ${entry.value}`)
           }
         }

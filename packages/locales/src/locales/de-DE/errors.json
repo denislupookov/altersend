@@ -1,15 +1,15 @@
 {
   "crash": {
     "title": "Etwas ist schief gelaufen",
-    "desktopDescription": "AlterSend ist auf einen unerwarteten Fehler gestoßen und muss neu gestartet werden. Der Transfer-Worker befindet sich möglicherweise in einem inkonsistenten Zustand, daher ist ein Neustart die sicherste Option.",
+    "desktopDescription": "AlterSend ist auf einen unerwarteten Fehler gestoßen und muss neu gestartet werden. Der Übertragungsdienst ist möglicherweise instabil, daher ist ein Neustart die sicherste Option.",
     "mobileDescription": "AlterSend hat einen unerwarteten Fehler festgestellt. Versuchen Sie es erneut oder schließen Sie die App und öffnen Sie sie erneut, wenn das Problem weiterhin besteht.",
     "restartAlterSend": "Starten Sie AlterSend neu",
     "tryAgain": "Versuchen Sie es erneut"
   },
   "bridgeUnavailable": {
-    "title": "Elektronenbrücke nicht verfügbar",
-    "description": "Dieser Renderer läuft ohne die Desktop Bridge. Starten Sie AlterSend über die Desktop-App neu.",
-    "status": "Bridge nicht verfügbar"
+    "title": "Desktop-Verbindung nicht verfügbar",
+    "description": "Dieses Fenster ist nicht mit der Desktop-App verbunden. Starten Sie AlterSend über die Desktop-App neu.",
+    "status": "Desktop-Verbindung nicht verfügbar"
   },
   "transfer": {
     "invalidTopic": "Der Verbindungscode ist ungültig.",

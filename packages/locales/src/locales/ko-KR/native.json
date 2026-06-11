@@ -1,8 +1,8 @@
 {
   "permissions": {
-    "camera": "AlterSend은(는) 카메라를 사용하여 연결 QR 코드를 스캔합니다.",
-    "localNetwork": "AlterSend은 P2P 파일 전송을 위해 로컬 네트워크를 사용하여 주변 기기를 검색합니다.",
-    "photoRead": "AlterSend은 사진 라이브러리를 읽어 다른 기기로 보낼 사진과 동영상을 선택할 수 있습니다.",
-    "photoSave": "AlterSend은 수신된 이미지와 동영상을 사진 라이브러리에 저장합니다."
+    "camera": "AlterSend가 카메라를 사용하여 연결 QR 코드를 스캔합니다.",
+    "localNetwork": "AlterSend가 로컬 네트워크를 사용하여 주변 기기를 찾고 파일을 직접 전송합니다.",
+    "photoRead": "AlterSend가 사진 보관함에 접근하여 다른 기기로 보낼 사진과 동영상을 선택할 수 있습니다.",
+    "photoSave": "AlterSend가 받은 이미지와 동영상을 사진 보관함에 저장합니다."
   }
 }

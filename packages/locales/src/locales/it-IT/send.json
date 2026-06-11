@@ -18,8 +18,8 @@
     }
   },
   "actions": {
-    "sendFiles_one": "Invia il file {{count}}",
-    "sendFiles_other": "Invia file {{count}}",
+    "sendFiles_one": "Invia {{count}} file",
+    "sendFiles_other": "Invia {{count}} file",
     "addFiles": "Aggiungi file",
     "addMoreFiles": "Aggiungi più file",
     "dragAndDrop": "Trascina e rilascia",
@@ -30,8 +30,8 @@
     "pickFiles": "File"
   },
   "status": {
-    "waitingForPeer": "In attesa del pari",
-    "peerConnected": "Pari connesso",
+    "waitingForPeer": "In attesa del destinatario",
+    "peerConnected": "Destinatario connesso",
     "uploadComplete": "Caricamento completato",
     "uploadingFiles": "Caricamento file",
     "uploaded": "Caricato",
@@ -72,8 +72,8 @@
     "completedDone_one": "{{count}} completato",
     "completedDone_other": "{{count}} completati",
     "devices": "Dispositivi",
-    "connectedCount_one": "PLACEholder_0 connesso",
-    "connectedCount_other": "PLACEholder_0 connesso"
+    "connectedCount_one": "{{count}} connesso",
+    "connectedCount_other": "{{count}} connessi"
   },
   "dropzone": {
     "addMoreDescription": "oppure fai clic per <link>aggiungerne altri</link>",
@@ -86,6 +86,6 @@
     "browseLink": "sfogliare"
   },
   "files": {
-    "removeLabel": "Rimuovi PLACEholder_0"
+    "removeLabel": "Rimuovi {{name}}"
   }
 }

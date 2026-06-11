@@ -18,8 +18,8 @@
     }
   },
   "actions": {
-    "sendFiles_one": "{{count}} 파일 보내기",
-    "sendFiles_other": "{{count}} 파일 보내기",
+    "sendFiles_one": "{{count}}개 파일 보내기",
+    "sendFiles_other": "{{count}}개 파일 보내기",
     "addFiles": "파일 추가",
     "addMoreFiles": "더 많은 파일 추가",
     "dragAndDrop": "드래그 앤 드롭",
@@ -30,8 +30,8 @@
     "pickFiles": "파일"
   },
   "status": {
-    "waitingForPeer": "동료를 기다리는 중",
-    "peerConnected": "피어 연결됨",
+    "waitingForPeer": "수신자를 기다리는 중",
+    "peerConnected": "수신자 연결됨",
     "uploadComplete": "업로드 완료",
     "uploadingFiles": "파일 업로드",
     "uploaded": "업로드됨",
@@ -49,7 +49,7 @@
     "copyLabel": "연결 코드 복사",
     "showQrLabel": "QR 코드 표시",
     "qrCodeLabel": "연결 키에 대한 QR 코드",
-    "qrModalDescription": "다른 기기에서 AlterSend을 열고 이 코드를 스캔하세요.",
+    "qrModalDescription": "다른 기기에서 AlterSend를 열고 이 코드를 스캔하세요.",
     "copiedToast": "클립보드에 복사됨",
     "scanToConnect": "스캔하여 연결",
     "orScan": "또는 스캔",
@@ -72,8 +72,8 @@
     "completedDone_one": "{{count}}개 완료",
     "completedDone_other": "{{count}}개 완료",
     "devices": "장치",
-    "connectedCount_one": "{{count}}이(가) 연결되었습니다.",
-    "connectedCount_other": "{{count}}이(가) 연결되었습니다."
+    "connectedCount_one": "{{count}}대 연결됨",
+    "connectedCount_other": "{{count}}대 연결됨"
   },
   "dropzone": {
     "addMoreDescription": "또는 클릭하여 <link>더 추가</link>",

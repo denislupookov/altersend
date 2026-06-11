@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "Transfert de fichiers pair à pair",
+    "tagline": "Transfert direct de fichiers",
     "welcome": "Bienvenue dans AlterSend",
     "loadingTagline": "Les fichiers passent directement entre vos appareils.\nAucun serveur, aucune copie, aucun intermédiaire."
   },
@@ -20,7 +20,7 @@
     "endSession": "Terminer la session",
     "restart": "Redémarrer",
     "tryAgain": "Réessayer",
-    "dismiss": "Rejeter",
+    "dismiss": "Fermer",
     "openSettings": "Ouvrir les paramètres",
     "update": "Mettre à jour",
     "downloadAll": "Téléchargez tout",
@@ -35,7 +35,7 @@
     "transferMode": "Mode de transfert",
     "version": "Version de l’app",
     "platform": "Plateforme",
-    "desktop": "Bureau",
+    "desktop": "Ordinateur",
     "mobile": "Appareil mobile",
     "send": "Envoyer",
     "receive": "Recevoir",

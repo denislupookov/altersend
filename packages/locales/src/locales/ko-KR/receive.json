@@ -54,7 +54,7 @@
     "allowCamera": "카메라 허용",
     "downloadAll": "모두 다운로드",
     "view": "보기",
-    "play": "플레이",
+    "play": "재생",
     "open": "열기",
     "scanQrHint": "웹캠으로 보내는 사람의 QR을 읽습니다",
     "downloadingPercent": "다운로드 중 {{percent}}%",
@@ -93,8 +93,8 @@
     "accessNeededTitle": "카메라 액세스가 필요합니다",
     "accessNeededDescription": "발신자의 연결 QR 코드를 스캔하려면 카메라 액세스를 허용하세요.",
     "scanTitle": "QR 코드 스캔",
-    "scanDescription": "발신자의 QR 코드를 프레임 중앙에 배치하세요. AlterSend이 자동으로 연결됩니다.",
-    "desktopHint": "보낸 사람의 QR 코드를 웹캠에 연결하면 AlterSend이 자동으로 연결됩니다.",
+    "scanDescription": "보낸 사람의 QR 코드를 프레임 중앙에 맞추세요. AlterSend가 자동으로 연결됩니다.",
+    "desktopHint": "보낸 사람의 QR 코드를 웹캠에 비추면 AlterSend가 자동으로 연결됩니다.",
     "blockedTitle": "카메라 액세스가 차단되었습니다.",
     "blockedHint": "시스템 설정에서 AlterSend에 대한 카메라 액세스를 허용한 후 다시 시도하세요. 대신 코드를 붙여넣을 수도 있습니다.",
     "noneTitle": "카메라를 찾을 수 없습니다.",
@@ -119,18 +119,18 @@
     "waitingForFiles": "보내는 사람의 파일을 기다리는 중…"
   },
   "summary": {
-    "receivedCount_one": "{{count}} 파일 중 {{completed}}을(를) 받았습니다.",
+    "receivedCount_one": "{{count}}개 파일 중 {{completed}}개를 받았습니다.",
     "receivedCount_other": "{{count}}개 파일 중 {{completed}}개를 받았습니다.",
-    "savedToPhotos_one": "포토에 저장됨",
-    "savedToPhotos_other": "{{count}}이(가) 포토에 저장되었습니다.",
+    "savedToPhotos_one": "사진 앱에 저장됨",
+    "savedToPhotos_other": "{{count}}개를 사진 앱에 저장했습니다.",
     "savedInFiles_one": "파일에 저장됨",
-    "savedInFiles_other": "{{count}}이(가) 파일에 저장되었습니다.",
+    "savedInFiles_other": "{{count}}개를 파일에 저장했습니다.",
     "tapToView": "보려면 탭하세요.",
     "saved": "저장됨",
     "savedToLocation": "{{location}}에 저장됨",
     "receivedProgress": "{{count}}개 중 {{completed}}개 수신됨",
     "senderLeftBeforeFinishing": "완료되기 전에 보내는 사람이 나갔습니다.",
-    "filesSaved_one": "파일 {{count}}개 저장됨",
-    "filesSaved_other": "파일 {{count}}개 저장됨"
+    "filesSaved_one": "{{count}}개 파일 저장됨",
+    "filesSaved_other": "{{count}}개 파일 저장됨"
   }
 }

@@ -54,7 +54,7 @@
     "allowCamera": "Kamera zulassen",
     "downloadAll": "Alles herunterladen",
     "view": "Ansicht",
-    "play": "Spielen",
+    "play": "Wiedergeben",
     "open": "Offen",
     "scanQrHint": "Lies den QR-Code des Senders mit der Webcam",
     "downloadingPercent": "Wird heruntergeladen {{percent}} %",

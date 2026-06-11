@@ -10,7 +10,7 @@
     },
     "encrypted": {
       "title": "Ende-zu-Ende verschlüsselt.",
-      "description": "Keine Server, keine Kopien, keine Zwischenhändler. Ihre Dateien werden Peer-to-Peer zwischen Ihnen und dem Empfänger übertragen.",
+      "description": "Keine Server, keine Kopien, keine Zwischenhändler. Ihre Dateien werden direkt zwischen Ihnen und dem Empfänger übertragen.",
       "link": "Lesen Sie unsere Datenschutzbestimmungen"
     }
   }

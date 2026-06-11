@@ -18,8 +18,8 @@
     }
   },
   "actions": {
-    "sendFiles_one": "Enviar archivo {{count}}",
-    "sendFiles_other": "Enviar archivos {{count}}",
+    "sendFiles_one": "Enviar {{count}} archivo",
+    "sendFiles_other": "Enviar {{count}} archivos",
     "addFiles": "Agregar archivos",
     "addMoreFiles": "Agregar más archivos",
     "dragAndDrop": "Arrastrar y soltar",
@@ -30,8 +30,8 @@
     "pickFiles": "Archivos"
   },
   "status": {
-    "waitingForPeer": "esperando a un compañero",
-    "peerConnected": "Par conectado",
+    "waitingForPeer": "Esperando al destinatario",
+    "peerConnected": "Destinatario conectado",
     "uploadComplete": "Subida completa",
     "uploadingFiles": "Subiendo archivos",
     "uploaded": "subido",
@@ -73,7 +73,7 @@
     "completedDone_other": "{{count}} completados",
     "devices": "Dispositivos",
     "connectedCount_one": "{{count}} conectado",
-    "connectedCount_other": "{{count}} conectado"
+    "connectedCount_other": "{{count}} conectados"
   },
   "dropzone": {
     "addMoreDescription": "o haz clic para <link>añadir más</link>",
