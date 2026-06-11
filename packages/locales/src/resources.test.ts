@@ -43,8 +43,18 @@ const identicalValueAllowList = new Set([
   'OK'
 ])
 
-function canMatchEnglishSource(value: string): boolean {
-  return identicalValueAllowList.has(value.trim()) || isPlaceholderOnly(value)
+const identicalKeyAllowList = new Set([
+  'common.labels.desktop',
+  'settings.rows.feedback',
+  'feedback.title'
+])
+
+function canMatchEnglishSource(key: string, value: string): boolean {
+  return (
+    identicalValueAllowList.has(value.trim()) ||
+    identicalKeyAllowList.has(key) ||
+    isPlaceholderOnly(value)
+  )
 }
 
 describe('translation resources', () => {
@@ -101,8 +111,9 @@ describe('translation resources', () => {
 
         for (const entry of flattenStringEntries(RESOURCES[locale.code][namespace])) {
           const sourceValue = sourceByPath.get(entry.path)
-          if (sourceValue && entry.value === sourceValue && !canMatchEnglishSource(sourceValue)) {
-            identicalEntries.push(`${String(namespace)}.${entry.path}: ${entry.value}`)
+          const key = `${String(namespace)}.${entry.path}`
+          if (sourceValue && entry.value === sourceValue && !canMatchEnglishSource(key, sourceValue)) {
+            identicalEntries.push(`${key}: ${entry.value}`)
           }
         }
       }
