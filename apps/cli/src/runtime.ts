@@ -34,6 +34,7 @@ export async function createCliRuntime(storagePath?: string, onEvent?: EventCall
         : path.join(os.homedir(), 'AppData', 'Local', 'AlterSend')
   }
 
+  // TODO: generate CLI-specific upgrade link when the CLI gets its own release channel
   const pear = new PearRuntime({
     name: 'AlterSend',
     dir,
