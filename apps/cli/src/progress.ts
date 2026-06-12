@@ -15,11 +15,12 @@ let finalised = false
 export function writeProgress(state: ProgressState, label: string): void {
   if (finalised) return
   const now = Date.now()
-  const pct = state.total > 0 ? Math.round((state.current / state.total) * 100) : 0
-  if (now - lastWrite < THROTTLE_MS && pct === lastPct) return
+  const safeCurrent = state.total > 0 ? Math.min(Math.max(state.current, 0), state.total) : 0
+  const safePct = state.total > 0 ? Math.min(100, Math.max(0, Math.floor((safeCurrent / state.total) * 100))) : 0
+  if (now - lastWrite < THROTTLE_MS && safePct === lastPct) return
   lastWrite = now
-  lastPct = pct
-  if (pct === 100) finalised = true
+  lastPct = safePct
+  if (state.total > 0 && state.current >= state.total) finalised = true
   process.stdout.write('\r' + formatLine(state, label))
 }
 
@@ -45,21 +46,22 @@ function formatSize(bytes: number): string {
 export function formatLine(state: ProgressState | null, label: string): string {
   if (!state) return ''
   const { file, current, total } = state
-  const pct = total > 0 ? Math.round((current / total) * 100) : 0
-  const filled = Math.round((pct / 100) * PROGRESS_CHARS)
+  const safeCurrent = total > 0 ? Math.min(Math.max(current, 0), total) : 0
+  const safePct = total > 0 ? Math.min(100, Math.max(0, Math.floor((safeCurrent / total) * 100))) : 0
+  const filled = Math.min(PROGRESS_CHARS, Math.max(0, Math.round((safePct / 100) * PROGRESS_CHARS)))
   const bar = '█'.repeat(filled) + '░'.repeat(PROGRESS_CHARS - filled)
 
   const maxWidth = process.stdout.columns || MIN_WIDTH
 
   const labelPart = `${label} "`
   const barPart = `[${bar}] `
-  const pctPart = `${pct}% (`
+  const pctPart = `${safePct}% (`
   const sizePart = `/${formatSize(total)})`
 
   const baseLen = labelPart.length + barPart.length + pctPart.length + sizePart.length
   const maxFileLen = Math.max(1, maxWidth - baseLen - 1)
   const truncatedFile = truncate(file, maxFileLen)
 
-  const line = `${labelPart}${truncatedFile}" ${barPart}${pctPart}${formatSize(current)}${sizePart}`
+  const line = `${labelPart}${truncatedFile}" ${barPart}${pctPart}${formatSize(safeCurrent)}${sizePart}`
   return line.length > maxWidth ? line.slice(0, maxWidth) : line
 }

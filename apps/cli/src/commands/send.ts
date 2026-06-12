@@ -77,8 +77,11 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
   process.on('SIGINT', async () => {
     if (interrupted) return
     interrupted = true
-    await client.disconnect()
-    exitDeferred()
+    try {
+      await client.disconnect()
+    } finally {
+      exitDeferred()
+    }
   })
 
   try {

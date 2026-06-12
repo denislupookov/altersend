@@ -87,7 +87,7 @@ function extractFilesFromRest(items: string[]): string[] {
         i++
         continue
       }
-      i += 2
+      i++
       continue
     }
     files.push(item)

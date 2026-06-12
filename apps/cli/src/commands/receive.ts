@@ -110,8 +110,11 @@ export async function receive(joinCode: string, options: { output?: string; stor
   process.on('SIGINT', async () => {
     if (interrupted) return
     interrupted = true
-    await runtime.client.disconnect()
-    exitDeferred()
+    try {
+      await runtime.client.disconnect()
+    } finally {
+      exitDeferred()
+    }
   })
 
   try {

@@ -5,7 +5,6 @@ import PearRuntime from 'pear-runtime'
 import { type WorkerClient, type RendererTransferEvent } from '@altersend/core'
 import { isMac, isLinux } from 'which-runtime'
 import { createRequire } from 'module'
-import fs from 'node:fs/promises'
 
 const _require = createRequire(__filename)
 
@@ -16,7 +15,7 @@ if (pkg.upgrade.includes('REPLACE_WITH')) {
   throw new Error(
     'apps/cli/package.json#upgrade is a placeholder. ' +
       'Run `npx pear init` in apps/cli/, paste the resulting pear:// link, ' +
-      'then rebuild. See docs/CLI_RELEASING.md for details.'
+      'then rebuild.'
   )
 }
 
@@ -29,11 +28,11 @@ export interface CliRuntimeInstance {
 }
 
 function getWorkerEntryPath(): string {
-  return path.join(__dirname, '../../../node_modules/@altersend/core/dist/worklet/index.js')
+  return require.resolve('@altersend/core/dist/worklet/index.js')
 }
 
 function getWorkerClientPath(): string {
-  return path.join(__dirname, '../../../node_modules/@altersend/core/dist/client/worker-client.js')
+  return require.resolve('@altersend/core/dist/client/worker-client.js')
 }
 
 function getDefaultStorage(): string {
@@ -43,16 +42,6 @@ function getDefaultStorage(): string {
       ? path.join(os.homedir(), '.config', 'AlterSend')
       : path.join(os.homedir(), 'AppData', 'Local', 'AlterSend')
   return base
-}
-
-async function isStorageLocked(storagePath: string): Promise<boolean> {
-  try {
-    const lockPath = path.join(storagePath, 'app-storage', 'core', 'db', 'LOCK')
-    await fs.access(lockPath)
-    return true
-  } catch {
-    return false
-  }
 }
 
 function makeTempStorage(): string {
@@ -65,14 +54,7 @@ export async function createCliRuntime(
   onEvent?: EventCallback,
   updates = true
 ): Promise<CliRuntimeInstance> {
-  let dir: string
-  if (storagePath) {
-    dir = storagePath
-  } else {
-    const defaultPath = getDefaultStorage()
-    const locked = await isStorageLocked(defaultPath)
-    dir = locked ? makeTempStorage() : defaultPath
-  }
+  let dir = storagePath ?? getDefaultStorage()
 
   const pear = new PearRuntime({
     name: 'AlterSend',
@@ -91,10 +73,30 @@ export async function createCliRuntime(
     ) => WorkerClient
   }
 
-  const worker = pear.run(workerPath, [`--storage=${pear.storage}`])
-  const client = createClient(worker, { onEvent })
+  let worker = pear.run(workerPath, [`--storage=${pear.storage}`])
+  let client = createClient(worker, { onEvent })
 
-  await client.ready
+  try {
+    await client.ready
+  } catch (err) {
+    worker.destroy()
+    const msg = err instanceof Error ? err.message : String(err)
+    if (msg.includes('LOCK') || msg.includes('lock') || msg.includes('storage')) {
+      dir = makeTempStorage()
+      const fallbackPear = new PearRuntime({
+        name: 'AlterSend',
+        dir,
+        version: pkg.version,
+        upgrade: pkg.upgrade,
+        updates
+      })
+      worker = fallbackPear.run(workerPath, [`--storage=${fallbackPear.storage}`])
+      client = createClient(worker, { onEvent })
+      await client.ready
+    } else {
+      throw err
+    }
+  }
 
   return {
     client,

@@ -42,6 +42,7 @@ export async function update(options: { storage?: string; updates?: boolean }): 
     runtime.destroy()
     process.exit(0)
   } catch (err) {
+    runtime?.destroy()
     console.error('Error applying update:', err instanceof Error ? err.message : String(err))
     process.exit(1)
   }

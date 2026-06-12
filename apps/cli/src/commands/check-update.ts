@@ -43,6 +43,7 @@ export async function checkUpdate(options: { storage?: string; updates?: boolean
     runtime.destroy()
     process.exit(0)
   } catch (err) {
+    runtime?.destroy()
     console.error('Error checking for updates:', err instanceof Error ? err.message : String(err))
     process.exit(1)
   }
