@@ -66,7 +66,6 @@ Get the latest release from [altersend.com/download](https://altersend.com/downl
 | **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.altersend.mobile) · [APK](https://github.com/denislupookov/altersend/releases/latest) |
 | **iOS** | [App Store](https://apps.apple.com/us/app/altersend-file-transfer/id6772496271) |
 
-> **macOS `.dmg`** — signed with our Developer ID but not yet notarized by Apple, so macOS will show "AlterSend cannot be opened because the developer cannot be verified" on first launch. **Right-click the app → Open → Open** to bypass Gatekeeper (one time only). Notarization is in progress.
 
 > **Windows `.exe`** — not yet signed, so Windows will show "Windows protected your PC" on first run. Click **More info → Run anyway** to install. The Microsoft Store version is signed and avoids this warning.
 
