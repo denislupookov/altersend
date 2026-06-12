@@ -19,7 +19,7 @@ export function writeProgress(state: ProgressState, label: string): void {
   lastWrite = now
   lastPct = pct
   if (pct === 100) finalised = true
-  process.stdout.write('\x1b[2K\r' + formatLine(state, label))
+  process.stdout.write('\r' + formatLine(state, label))
 }
 
 export function clearProgress(): void {
@@ -45,5 +45,7 @@ export function formatLine(state: ProgressState | null, label: string): string {
     : current < 1024 * 1024
       ? `${(current / 1024).toFixed(1)} KB`
       : `${(current / (1024 * 1024)).toFixed(1)} MB`
-  return `${label} "${file}" [${bar}] ${pct}% (${transferred}/${size})`
+  const width = process.stdout.columns || 80
+  const line = `${label} "${file}" [${bar}] ${pct}% (${transferred}/${size})`
+  return line.padEnd(width, ' ')
 }
