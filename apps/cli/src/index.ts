@@ -3,9 +3,6 @@
 import { command, flag, arg, description, summary, sloppy } from 'paparam'
 import { send } from './commands/send'
 import { receive } from './commands/receive'
-import { status } from './commands/status'
-import { cancel } from './commands/cancel'
-import { disconnect } from './commands/disconnect'
 import { peek } from './commands/peek'
 import { checkUpdate } from './commands/check-update'
 import { update } from './commands/update'
@@ -30,10 +27,6 @@ const receiveCmd = command(
   flag('--storage <path>', 'custom storage path'),
   noUpdates
 )
-
-const statusCmd = command('status', summary('Show transfer status'), flag('--storage <path>', 'custom storage path'), noUpdates)
-const cancelCmd = command('cancel', summary('Abort in-progress transfer'), flag('--storage <path>', 'custom storage path'), noUpdates)
-const disconnectCmd = command('disconnect', summary('End session gracefully'), flag('--storage <path>', 'custom storage path'), noUpdates)
 
 const peekCmd = command(
   'peek',
@@ -65,9 +58,6 @@ const cli = command(
   sloppy({ flags: true, args: true }),
   sendCmd,
   receiveCmd,
-  statusCmd,
-  cancelCmd,
-  disconnectCmd,
   peekCmd,
   checkUpdateCmd,
   updateCmd
@@ -113,12 +103,6 @@ if (name === 'send') {
   send(files, { qr: !!flags.qr, temp: !!flags.temp, storage: flags.storage as string | undefined, updates })
 } else if (name === 'receive') {
   receive(positionals[0] || restItems[0], { output: flags.output as string | undefined, storage: flags.storage as string | undefined, updates })
-} else if (name === 'status') {
-  status({ storage: flags.storage as string | undefined, updates })
-} else if (name === 'cancel') {
-  cancel({ storage: flags.storage as string | undefined, updates })
-} else if (name === 'disconnect') {
-  disconnect({ storage: flags.storage as string | undefined, updates })
 } else if (name === 'peek') {
   peek(positionals[0] || restItems[0], { storage: flags.storage as string | undefined, updates })
 } else if (name === 'check-update') {

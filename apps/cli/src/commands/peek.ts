@@ -40,10 +40,14 @@ export async function peek(joinCode: string, options: { storage?: string; update
 
   const { client, destroy } = await createCliRuntime(options.storage, onEvent, options.updates)
 
+  const exitDeferred = () => {
+    destroy()
+    setTimeout(() => process.exit(0), 0)
+  }
+
   process.on('SIGINT', async () => {
     await client.disconnect()
-    destroy()
-    process.exit(0)
+    exitDeferred()
   })
 
   try {
@@ -52,15 +56,11 @@ export async function peek(joinCode: string, options: { storage?: string; update
     console.log('Connected! Waiting for file offers...')
 
     await new Promise<void>((resolve) => {
-      const checkDone = setInterval(() => {}, 1000)
-      process.on('SIGINT', () => {
-        clearInterval(checkDone)
-        resolve()
-      })
+      process.on('SIGINT', () => resolve())
     })
 
     await client.disconnect()
-    destroy()
+    exitDeferred()
   } catch (err) {
     console.error('Error:', err instanceof Error ? err.message : String(err))
     destroy()
