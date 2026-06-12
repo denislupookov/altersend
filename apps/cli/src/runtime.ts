@@ -35,11 +35,12 @@ export async function createCliRuntime(storagePath?: string, onEvent?: EventCall
   }
 
   // TODO: generate CLI-specific upgrade link when the CLI gets its own release channel
+  // The desktop's upgrade link is used here as a placeholder; PearRuntime requires it even with updates disabled
   const pear = new PearRuntime({
     name: 'AlterSend',
     dir,
     version: '1.2.0',
-    upgrade: 'pear://REDACTED_KEY',
+    upgrade: process.env.ALTERSEND_UPGRADE_LINK || 'pear://0000000000000000000000000000000000000000000000000000000000000000',
     updates: false
   })
 
