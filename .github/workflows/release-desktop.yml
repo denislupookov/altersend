@@ -298,23 +298,41 @@ jobs:
           TARGET="$HOME/altersend-desktop-$VERSION"
           PKG="$GITHUB_WORKSPACE/apps/desktop/package.json"
 
+          # Each app is staged twice into the same drive: under the extensioned name
+          # (AlterSend.app / AlterSend.AppImage) for fixed clients, and under the bare
+          # name (AlterSend) so legacy v1.1 installs — which look for
+          # /by-arch/<host>/app/AlterSend — can still find the update. Drop the bare
+          # alias once the v1.1 fleet is gone.
+
           cp -r /tmp/pear-apps/AlterSend-arm64.app /tmp/pear-apps/AlterSend.app
           pear-build --package "$PKG" --darwin-arm64-app /tmp/pear-apps/AlterSend.app --target "$TARGET"
           rm -rf /tmp/pear-apps/AlterSend.app
+          cp -r /tmp/pear-apps/AlterSend-arm64.app /tmp/pear-apps/AlterSend
+          pear-build --package "$PKG" --darwin-arm64-app /tmp/pear-apps/AlterSend --target "$TARGET"
+          rm -rf /tmp/pear-apps/AlterSend
 
           cp -r /tmp/pear-apps/AlterSend-x64.app /tmp/pear-apps/AlterSend.app
           pear-build --package "$PKG" --darwin-x64-app /tmp/pear-apps/AlterSend.app --target "$TARGET"
           rm -rf /tmp/pear-apps/AlterSend.app
+          cp -r /tmp/pear-apps/AlterSend-x64.app /tmp/pear-apps/AlterSend
+          pear-build --package "$PKG" --darwin-x64-app /tmp/pear-apps/AlterSend --target "$TARGET"
+          rm -rf /tmp/pear-apps/AlterSend
 
           APPIMAGE=$(find /tmp/pear-installers/linux -name "*.AppImage" | head -1)
           cp "$APPIMAGE" /tmp/AlterSend.AppImage
           pear-build --package "$PKG" --linux-x64-app /tmp/AlterSend.AppImage --target "$TARGET"
           rm /tmp/AlterSend.AppImage
+          cp "$APPIMAGE" /tmp/AlterSend
+          pear-build --package "$PKG" --linux-x64-app /tmp/AlterSend --target "$TARGET"
+          rm /tmp/AlterSend
 
           APPIMAGE_ARM=$(find /tmp/pear-installers/linux-arm64 -name "*.AppImage" | head -1)
           cp "$APPIMAGE_ARM" /tmp/AlterSend.AppImage
           pear-build --package "$PKG" --linux-arm64-app /tmp/AlterSend.AppImage --target "$TARGET"
           rm /tmp/AlterSend.AppImage
+          cp "$APPIMAGE_ARM" /tmp/AlterSend
+          pear-build --package "$PKG" --linux-arm64-app /tmp/AlterSend --target "$TARGET"
+          rm /tmp/AlterSend
 
 
       - name: Stage and release to Pear DHT

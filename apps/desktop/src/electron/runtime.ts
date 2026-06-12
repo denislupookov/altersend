@@ -116,8 +116,9 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
           : path.join(os.homedir(), 'AppData', 'Local', productName)
     }
 
+    const extension = isLinux ? '.AppImage' : isMac ? '.app' : '.msix'
     const instance: PearRuntimeInstance = new PearRuntime({
-      name: productName,
+      name: `${productName}${extension}`,
       dir,
       app: appPath,
       updates,
