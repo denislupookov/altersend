@@ -5,6 +5,11 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 
 export async function send(files: string[], options: { qr?: boolean; temp?: boolean; storage?: string }): Promise<void> {
+  if (files.length === 0) {
+    console.error('No files specified. Usage: altersend send <files>...')
+    process.exit(2)
+  }
+
   const resolvedFiles = files.map((f) => path.resolve(f))
 
   for (const file of resolvedFiles) {

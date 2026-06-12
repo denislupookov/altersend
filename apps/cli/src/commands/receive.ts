@@ -1,5 +1,6 @@
 import { createCliRuntime, type EventCallback } from '../runtime.js'
 import { isValidJoinCode, extractJoinCode } from '../joinCode.js'
+import type { RendererTransferEvent, DownloadFileRequest } from '@altersend/core'
 import fs from 'node:fs/promises'
 
 export async function receive(joinCode: string, options: { output?: string; storage?: string }): Promise<void> {
@@ -12,7 +13,36 @@ export async function receive(joinCode: string, options: { output?: string; stor
   const outputDir = options.output ?? './altersend-downloads'
   await fs.mkdir(outputDir, { recursive: true })
 
-  const onEvent: EventCallback = (event) => {
+  let clientRef: Awaited<ReturnType<typeof createCliRuntime>>['client'] | null = null
+
+  const onEvent: EventCallback = (event: RendererTransferEvent) => {
+    if (event.type === 'transfer-ready') {
+      const offers = event.files
+      console.log(`Received ${offers.length} file offer(s):`)
+      for (const f of offers) {
+        console.log(`  - ${f.name} (${f.size} bytes)`)
+      }
+
+      const downloads: DownloadFileRequest[] = offers.map((f) => ({
+        transferId: f.transferId,
+        fileId: f.id,
+        driveKey: f.driveKey,
+        path: f.path,
+        name: f.name,
+        size: f.size,
+        targetDir: outputDir
+      }))
+
+      if (clientRef) {
+        clientRef
+          .downloadFiles(downloads)
+          .catch((err) => {
+            console.error('Download failed:', err instanceof Error ? err.message : String(err))
+          })
+      }
+      return
+    }
+
     if (event.type === 'status') {
       if (event.state === 'peer-connected') {
         console.log(`Peer connected (${event.peers} peer[s])`)
@@ -32,17 +62,18 @@ export async function receive(joinCode: string, options: { output?: string; stor
     }
   }
 
-  const { client, destroy } = await createCliRuntime(options.storage, onEvent)
+  const runtime = await createCliRuntime(options.storage, onEvent)
+  clientRef = runtime.client
 
   process.on('SIGINT', async () => {
-    await client.disconnect()
-    destroy()
+    await runtime.client.disconnect()
+    runtime.destroy()
     process.exit(0)
   })
 
   try {
     console.log('Connecting to peer...')
-    await client.join(code)
+    await runtime.client.join(code)
     console.log('Connected! Waiting for files...')
 
     await new Promise<void>((resolve) => {
@@ -56,7 +87,7 @@ export async function receive(joinCode: string, options: { output?: string; stor
     })
   } catch (err) {
     console.error('Error:', err instanceof Error ? err.message : String(err))
-    destroy()
+    runtime.destroy()
     process.exit(1)
   }
 }
