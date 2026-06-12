@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { command, flag, arg, rest as restArg, description, summary, sloppy } from 'paparam'
+import { command, flag, arg, description, summary, sloppy } from 'paparam'
 import { send } from './commands/send'
 import { receive } from './commands/receive'
 import { status } from './commands/status'
@@ -13,36 +13,38 @@ import { update } from './commands/update'
 const sendCmd = command(
   'send',
   summary('Share files'),
-  restArg('<files>'),
-  flag('--qr', 'display QR code'),
-  flag('--temp', 'delete files after transfer')
+  sloppy({ flags: true, args: true })
 )
 
 const receiveCmd = command(
   'receive',
   summary('Receive files'),
   arg('<join-code>'),
-  flag('--output <dir>', 'download directory')
+  flag('--output <dir>', 'download directory'),
+  flag('--storage <path>', 'custom storage path')
 )
 
-const statusCmd = command('status', summary('Show transfer status'))
-const cancelCmd = command('cancel', summary('Abort in-progress transfer'))
-const disconnectCmd = command('disconnect', summary('End session gracefully'))
+const statusCmd = command('status', summary('Show transfer status'), flag('--storage <path>', 'custom storage path'))
+const cancelCmd = command('cancel', summary('Abort in-progress transfer'), flag('--storage <path>', 'custom storage path'))
+const disconnectCmd = command('disconnect', summary('End session gracefully'), flag('--storage <path>', 'custom storage path'))
 
 const peekCmd = command(
   'peek',
   summary('Preview files without downloading'),
-  arg('<join-code>')
+  arg('<join-code>'),
+  flag('--storage <path>', 'custom storage path')
 )
 
 const checkUpdateCmd = command(
   'check-update',
-  summary('Check for available updates')
+  summary('Check for available updates'),
+  flag('--storage <path>', 'custom storage path')
 )
 
 const updateCmd = command(
   'update',
-  summary('Apply a staged update')
+  summary('Apply a staged update'),
+  flag('--storage <path>', 'custom storage path')
 )
 
 const cli = command(
@@ -66,13 +68,38 @@ if (!result) process.exit(0)
 
 const name = result.name
 const flags = result.flags
-const restFiles = result.rest
+const restItems = result.rest || []
 const positionals = result.positionals
 
+function extractFilesFromRest(items: string[]): string[] {
+  const files: string[] = []
+  let i = 0
+  while (i < items.length) {
+    const item = items[i]
+    if (item.startsWith('--')) {
+      const flagName = item.includes('=') ? item.split('=')[0] : item
+      if (flagName === '--qr' || flagName === '--temp' || flagName === '--no-qr' || flagName === '--no-temp') {
+        i++
+        continue
+      }
+      if (item.includes('=')) {
+        i++
+        continue
+      }
+      i += 2
+      continue
+    }
+    files.push(item)
+    i++
+  }
+  return files
+}
+
 if (name === 'send') {
-  send(restFiles, { qr: !!flags.qr, temp: !!flags.temp, storage: flags.storage as string | undefined })
+  const files = extractFilesFromRest(restItems)
+  send(files, { qr: !!flags.qr, temp: !!flags.temp, storage: flags.storage as string | undefined })
 } else if (name === 'receive') {
-  receive(positionals[0] || restFiles[0], { output: flags.output as string | undefined, storage: flags.storage as string | undefined })
+  receive(positionals[0] || restItems[0], { output: flags.output as string | undefined, storage: flags.storage as string | undefined })
 } else if (name === 'status') {
   status({ storage: flags.storage as string | undefined })
 } else if (name === 'cancel') {
@@ -80,7 +107,7 @@ if (name === 'send') {
 } else if (name === 'disconnect') {
   disconnect({ storage: flags.storage as string | undefined })
 } else if (name === 'peek') {
-  peek(positionals[0] || restFiles[0], { storage: flags.storage as string | undefined })
+  peek(positionals[0] || restItems[0], { storage: flags.storage as string | undefined })
 } else if (name === 'check-update') {
   checkUpdate({ storage: flags.storage as string | undefined })
 } else if (name === 'update') {
