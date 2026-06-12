@@ -2,7 +2,7 @@ import { createCliRuntime } from '../runtime.js'
 
 export async function status(_options: Record<string, unknown>): Promise<void> {
   try {
-    const { client, destroy } = await createCliRuntime()
+    const { client: _client, destroy } = await createCliRuntime()
     console.log('Checking transfer status...')
     destroy()
   } catch (err) {

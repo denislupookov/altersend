@@ -7,6 +7,8 @@ import { status } from './commands/status'
 import { cancel } from './commands/cancel'
 import { disconnect } from './commands/disconnect'
 import { peek } from './commands/peek'
+import { checkUpdate } from './commands/check-update'
+import { update } from './commands/update'
 
 const sendCmd = command(
   'send',
@@ -33,6 +35,16 @@ const peekCmd = command(
   arg('<join-code>')
 )
 
+const checkUpdateCmd = command(
+  'check-update',
+  summary('Check for available updates')
+)
+
+const updateCmd = command(
+  'update',
+  summary('Apply a staged update')
+)
+
 const cli = command(
   'altersend',
   description('P2P file transfer CLI'),
@@ -43,7 +55,9 @@ const cli = command(
   statusCmd,
   cancelCmd,
   disconnectCmd,
-  peekCmd
+  peekCmd,
+  checkUpdateCmd,
+  updateCmd
 )
 
 const result = cli.parse()
@@ -67,4 +81,8 @@ if (name === 'send') {
   disconnect({ storage: flags.storage as string | undefined })
 } else if (name === 'peek') {
   peek(positionals[0] || restFiles[0], { storage: flags.storage as string | undefined })
+} else if (name === 'check-update') {
+  checkUpdate({ storage: flags.storage as string | undefined })
+} else if (name === 'update') {
+  update({ storage: flags.storage as string | undefined })
 }
