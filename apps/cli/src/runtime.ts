@@ -1,9 +1,11 @@
 import os from 'os'
 import path from 'path'
+import crypto from 'crypto'
 import PearRuntime from 'pear-runtime'
 import { type WorkerClient, type RendererTransferEvent } from '@altersend/core'
 import { isMac, isLinux } from 'which-runtime'
 import { createRequire } from 'module'
+import fs from 'node:fs/promises'
 
 const _require = createRequire(__filename)
 
@@ -34,6 +36,30 @@ function getWorkerClientPath(): string {
   return path.join(__dirname, '../../../node_modules/@altersend/core/dist/client/worker-client.js')
 }
 
+function getDefaultStorage(): string {
+  const base = isMac
+    ? path.join(os.homedir(), 'Library', 'Application Support', 'AlterSend')
+    : isLinux
+      ? path.join(os.homedir(), '.config', 'AlterSend')
+      : path.join(os.homedir(), 'AppData', 'Local', 'AlterSend')
+  return base
+}
+
+async function isStorageLocked(storagePath: string): Promise<boolean> {
+  try {
+    const lockPath = path.join(storagePath, 'app-storage', 'core', 'db', 'LOCK')
+    await fs.access(lockPath)
+    return true
+  } catch {
+    return false
+  }
+}
+
+function makeTempStorage(): string {
+  const id = crypto.randomUUID()
+  return path.join(os.tmpdir(), `altersend-${id}`)
+}
+
 export async function createCliRuntime(
   storagePath?: string,
   onEvent?: EventCallback,
@@ -43,11 +69,9 @@ export async function createCliRuntime(
   if (storagePath) {
     dir = storagePath
   } else {
-    dir = isMac
-      ? path.join(os.homedir(), 'Library', 'Application Support', 'AlterSend')
-      : isLinux
-        ? path.join(os.homedir(), '.config', 'AlterSend')
-        : path.join(os.homedir(), 'AppData', 'Local', 'AlterSend')
+    const defaultPath = getDefaultStorage()
+    const locked = await isStorageLocked(defaultPath)
+    dir = locked ? makeTempStorage() : defaultPath
   }
 
   const pear = new PearRuntime({
