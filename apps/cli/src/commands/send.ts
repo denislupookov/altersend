@@ -1,20 +1,11 @@
-import { createCliRuntime } from '../runtime.js'
+import { createCliRuntime, type EventCallback } from '../runtime.js'
 import { displayQR } from '../qr.js'
-import { isValidJoinCode } from '@altersend/domain'
 import { isPathSafe } from '@altersend/core'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
 export async function send(files: string[], options: { qr?: boolean; temp?: boolean; storage?: string }): Promise<void> {
-  const resolvedFiles: string[] = []
-  for (const file of files) {
-    if (file.includes('*') || file.includes('?')) {
-      const matches = await fs.glob(file)
-      resolvedFiles.push(...matches)
-    } else {
-      resolvedFiles.push(path.resolve(file))
-    }
-  }
+  const resolvedFiles = files.map((f) => path.resolve(f))
 
   for (const file of resolvedFiles) {
     if (!isPathSafe(file)) {
@@ -29,7 +20,27 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
     }
   }
 
-  const { client, destroy } = await createCliRuntime(options.storage)
+  const onEvent: EventCallback = (event) => {
+    if (event.type === 'status') {
+      if (event.state === 'peer-connected') {
+        console.log(`Peer connected (${event.peers} peer[s])`)
+      } else if (event.state === 'sharing' && event.file) {
+        console.log(`Sharing "${event.file}"...`)
+      } else if (event.state === 'peer-download-progress' && event.file) {
+        console.log(`Peer downloading "${event.file}" (${event.bytesTransferred}/${event.totalBytes})`)
+      } else if (event.state === 'peer-downloaded' && event.file) {
+        console.log(`Peer downloaded "${event.file}"`)
+      } else if (event.state === 'peer-disconnected') {
+        console.log('Peer disconnected')
+      } else if (event.state === 'disconnected') {
+        console.log('Transfer complete!')
+      }
+    } else if (event.type === 'error') {
+      console.error(`Error: ${event.message}`)
+    }
+  }
+
+  const { client, destroy } = await createCliRuntime(options.storage, onEvent)
 
   process.on('SIGINT', async () => {
     await client.disconnect()
@@ -51,25 +62,15 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
     }))
     await client.shareFiles(shareRequests)
 
-    client.onEvent = (event) => {
-      if (event.type === 'status') {
-        if (event.state === 'peer-connected') {
-          console.log(`Peer connected (${event.peers} peer[s])`)
-        } else if (event.state === 'sharing') {
-          console.log(`Sharing "${event.file}"...`)
-        } else if (event.state === 'peer-download-progress' && event.file) {
-          console.log(`Peer downloading "${event.file}" (${event.bytesTransferred}/${event.totalBytes})`)
-        } else if (event.state === 'peer-downloaded' && event.file) {
-          console.log(`Peer downloaded "${event.file}"`)
-        } else if (event.state === 'peer-disconnected') {
-          console.log('Peer disconnected')
-        } else if (event.state === 'disconnected') {
-          console.log('Transfer complete!')
-        }
-      } else if (event.type === 'error') {
-        console.error(`Error: ${event.message}`)
-      }
-    }
+    await new Promise<void>((resolve) => {
+      const checkDone = setInterval(() => {
+        // Keep alive until ctrl+c
+      }, 1000)
+      process.on('SIGINT', () => {
+        clearInterval(checkDone)
+        resolve()
+      })
+    })
   } catch (err) {
     console.error('Error:', err instanceof Error ? err.message : String(err))
     destroy()

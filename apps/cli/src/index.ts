@@ -14,17 +14,17 @@ const cli = command('altersend').fullDescription('P2P file transfer CLI').add(
   flag('--version', 'show version')
 )
 
-cli.command('send').description('Share files').argument('<files>...').add(flag('--qr', 'display QR code'), flag('--temp', 'delete files after transfer')).action(send)
+cli.command('send').description('Share files').argument('<files>...').add(flag('--qr', 'display QR code'), flag('--temp', 'delete files after transfer')).action(send as (...args: unknown[]) => unknown)
 
-cli.command('receive').description('Receive files').argument('<join-code>').add(flag('--output <dir>', 'download directory')).action(receive)
+cli.command('receive').description('Receive files').argument('<join-code>').add(flag('--output <dir>', 'download directory')).action(receive as (...args: unknown[]) => unknown)
 
-cli.command('status').description('Show transfer status').action(status)
+cli.command('status').description('Show transfer status').action(status as (...args: unknown[]) => unknown)
 
-cli.command('cancel').description('Abort in-progress transfer').action(cancel)
+cli.command('cancel').description('Abort in-progress transfer').action(cancel as (...args: unknown[]) => unknown)
 
-cli.command('disconnect').description('End session gracefully').action(disconnect)
+cli.command('disconnect').description('End session gracefully').action(disconnect as (...args: unknown[]) => unknown)
 
-cli.command('peek').description('Preview files without downloading').argument('<join-code>').action(peek)
+cli.command('peek').description('Preview files without downloading').argument('<join-code>').action(peek as (...args: unknown[]) => unknown)
 
 sloppy({ flags: true, args: true })(cli)
 

@@ -2,7 +2,7 @@ import os from 'os'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import PearRuntime from 'pear-runtime'
-import { createTransferWorkerClient, type WorkerClient, type RendererTransferEvent } from '@altersend/core'
+import { type WorkerClient, type RendererTransferEvent } from '@altersend/core'
 import { isMac, isLinux } from 'which-runtime'
 import { createRequire } from 'module'
 
@@ -10,29 +10,20 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const _require = createRequire(import.meta.url)
 
+export type EventCallback = (event: RendererTransferEvent) => void
+
 interface WorkerHandle {
   destroy: () => void
   stdout: {
     on: (event: 'data', cb: (chunk: unknown) => void) => void
     removeListener: (event: 'data', cb: (chunk: unknown) => void) => void
   }
-  stderr: {
+stderr: {
     on: (event: 'data', cb: (chunk: unknown) => void) => void
     removeListener: (event: 'data', cb: (chunk: unknown) => void) => void
   }
   on: (event: 'error', cb: (err: Error) => void) => void
   once: (event: 'exit', cb: (code: number) => void) => void
-}
-
-export interface CliRuntime {
-  storage: string
-  run: (path: string, args: string[]) => WorkerHandle
-  updater: {
-    updated: boolean
-    on: (event: 'updating' | 'updated', cb: () => void | Promise<void>) => void
-    removeListener: (event: 'updating' | 'updated', cb: () => void | Promise<void>) => void
-    applyUpdate: () => Promise<void>
-  }
 }
 
 export interface CliRuntimeInstance {
@@ -48,7 +39,7 @@ function getWorkerClientPath(): string {
   return path.join(__dirname, '../../node_modules/@altersend/core/dist/client/worker-client.js')
 }
 
-export async function createCliRuntime(storagePath?: string): Promise<CliRuntimeInstance> {
+export async function createCliRuntime(storagePath?: string, onEvent?: EventCallback): Promise<CliRuntimeInstance> {
   let dir: string
   if (storagePath) {
     dir = storagePath
@@ -76,7 +67,7 @@ export async function createCliRuntime(storagePath?: string): Promise<CliRuntime
   }
 
   const worker = pear.run(workerPath, [`--storage=${pear.storage}`])
-  const client = createClient(worker)
+  const client = createClient(worker, { onEvent })
 
   await client.ready
 
