@@ -20,20 +20,24 @@ export async function update(options: { storage?: string; updates?: boolean }): 
       process.exit(0)
     }
 
-    await new Promise<void>((resolve) => {
+    await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         runtime?.pear.updater.removeListener('updated', onUpdated)
         console.log(`Already up to date (v${pkg.version}).`)
         resolve()
       }, CHECK_TIMEOUT_MS)
 
-      const onUpdated = async () => {
+      const onUpdated = () => {
         clearTimeout(timeout)
         runtime?.pear.updater.removeListener('updated', onUpdated)
-        await runtime!.pear.updater.applyUpdate()
-        console.log('Update applied. Run \'altersend ...\' again to use the new version.')
-        runtime?.destroy()
-        resolve()
+        void runtime!.pear.updater
+          .applyUpdate()
+          .then(() => {
+            console.log('Update applied. Run \'altersend ...\' again to use the new version.')
+            runtime?.destroy()
+            resolve()
+          })
+          .catch(reject)
       }
 
       runtime!.pear.updater.on('updated', onUpdated)
