@@ -7,11 +7,23 @@ import { createRequire } from 'module'
 
 const _require = createRequire(__filename)
 
+const pkgPath = path.join(__dirname, '..', 'package.json')
+const pkg = _require(pkgPath) as { version: string; upgrade: string }
+
+if (pkg.upgrade.includes('REPLACE_WITH')) {
+  throw new Error(
+    'apps/cli/package.json#upgrade is a placeholder. ' +
+      'Run `npx pear init` in apps/cli/, paste the resulting pear:// link, ' +
+      'then rebuild. See docs/CLI_RELEASING.md for details.'
+  )
+}
+
 export type EventCallback = (event: RendererTransferEvent) => void
 
 export interface CliRuntimeInstance {
   client: WorkerClient
   destroy: () => void
+  pear: PearRuntime
 }
 
 function getWorkerEntryPath(): string {
@@ -22,7 +34,10 @@ function getWorkerClientPath(): string {
   return path.join(__dirname, '../../../node_modules/@altersend/core/dist/client/worker-client.js')
 }
 
-export async function createCliRuntime(storagePath?: string, onEvent?: EventCallback): Promise<CliRuntimeInstance> {
+export async function createCliRuntime(
+  storagePath?: string,
+  onEvent?: EventCallback
+): Promise<CliRuntimeInstance> {
   let dir: string
   if (storagePath) {
     dir = storagePath
@@ -34,14 +49,12 @@ export async function createCliRuntime(storagePath?: string, onEvent?: EventCall
         : path.join(os.homedir(), 'AppData', 'Local', 'AlterSend')
   }
 
-  // TODO: generate CLI-specific upgrade link when the CLI gets its own release channel
-  // The desktop's upgrade link is used here as a placeholder; PearRuntime requires it even with updates disabled
   const pear = new PearRuntime({
     name: 'AlterSend',
     dir,
-    version: '1.2.0',
-    upgrade: process.env.ALTERSEND_UPGRADE_LINK || 'pear://0000000000000000000000000000000000000000000000000000000000000000',
-    updates: false
+    version: pkg.version,
+    upgrade: pkg.upgrade,
+    updates: true
   })
 
   const workerClientPath = getWorkerClientPath()
@@ -62,6 +75,7 @@ export async function createCliRuntime(storagePath?: string, onEvent?: EventCall
     client,
     destroy: () => {
       worker.destroy()
-    }
+    },
+    pear
   }
 }

@@ -3,6 +3,14 @@ declare module 'pear-runtime' {
     constructor(options: Record<string, unknown>)
     storage: string
     run(path: string, args: string[]): WorkerHandle
+    updater: PearUpdater
+  }
+
+  interface PearUpdater {
+    updated: boolean
+    on(event: 'updating' | 'updated', cb: () => void | Promise<void>): void
+    removeListener(event: 'updating' | 'updated', cb: () => void | Promise<void>): void
+    applyUpdate(): Promise<void>
   }
 
   interface WorkerHandle {
