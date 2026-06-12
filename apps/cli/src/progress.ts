@@ -9,19 +9,23 @@ const THROTTLE_MS = 100
 
 let lastWrite = 0
 let lastPct = -1
+let finalised = false
 
 export function writeProgress(state: ProgressState, label: string): void {
+  if (finalised) return
   const now = Date.now()
   const pct = state.total > 0 ? Math.round((state.current / state.total) * 100) : 0
   if (now - lastWrite < THROTTLE_MS && pct === lastPct) return
   lastWrite = now
   lastPct = pct
+  if (pct === 100) finalised = true
   process.stdout.write(formatLine(state, label))
 }
 
 export function clearProgress(): void {
   lastWrite = 0
   lastPct = -1
+  finalised = false
   process.stdout.write('\r' + ' '.repeat(process.stdout.columns || 80) + '\r')
 }
 

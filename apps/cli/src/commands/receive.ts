@@ -44,11 +44,15 @@ export async function receive(joinCode: string, options: { output?: string; stor
         clientRef
           .downloadFiles(downloads)
           .then(() => {
-            console.log('All files downloaded. Disconnecting...')
-            clientRef!.disconnect()
+            if (!interrupted) {
+              console.log('All files downloaded. Disconnecting...')
+              clientRef!.disconnect()
+            }
           })
           .catch((err) => {
-            console.error('Download failed:', err instanceof Error ? err.message : String(err))
+            if (!interrupted) {
+              console.error('Download failed:', err instanceof Error ? err.message : String(err))
+            }
           })
       }
       return
