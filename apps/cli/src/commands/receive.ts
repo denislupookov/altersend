@@ -21,9 +21,11 @@ export async function receive(joinCode: string, options: { output?: string; stor
   })
 
   let interrupted = false
+  let gotTransfer = false
 
   const onEvent: EventCallback = (event: RendererTransferEvent) => {
     if (event.type === 'transfer-ready') {
+      gotTransfer = true
       const offers = event.files
       console.log(`Received ${offers.length} file offer(s):`)
       for (const f of offers) {
@@ -73,6 +75,8 @@ export async function receive(joinCode: string, options: { output?: string; stor
         if (interrupted) {
           clearProgress()
           console.log('Transfer cancelled.')
+        } else if (!gotTransfer) {
+          console.log('Connection failed or no sender.')
         } else {
           console.log('Sender cancelled the transfer.')
         }
@@ -81,6 +85,8 @@ export async function receive(joinCode: string, options: { output?: string; stor
         if (interrupted) {
           clearProgress()
           console.log('Transfer cancelled.')
+        } else if (!gotTransfer) {
+          console.log('Connection closed.')
         } else {
           console.log('Transfer complete!')
         }
@@ -111,9 +117,16 @@ export async function receive(joinCode: string, options: { output?: string; stor
   try {
     console.log('Connecting to peer...')
     await runtime.client.join(code)
-    console.log('Connected! Waiting for files...')
+    console.log('Joined network, waiting for sender...')
+
+    const hintTimer = setTimeout(() => {
+      if (!gotTransfer && !interrupted) {
+        console.log('(still waiting, sender may not be connected...)')
+      }
+    }, 10000)
 
     await donePromise
+    clearTimeout(hintTimer)
     process.removeAllListeners('SIGINT')
     runtime.destroy()
     process.exit(0)
