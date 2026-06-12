@@ -32,11 +32,13 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
   })
 
   let interrupted = false
+  let peerConnected = false
   let currentProgress: ProgressState | null = null
 
   const onEvent: EventCallback = (event) => {
     if (event.type === 'status') {
       if (event.state === 'peer-connected') {
+        peerConnected = true
         console.log(`Peer connected (${event.peers} peer[s])`)
       } else if (event.state === 'sharing' && event.file) {
         console.log(`Sharing "${event.file}"...`)
@@ -57,7 +59,12 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
         }
         done()
       } else if (event.state === 'disconnected') {
-        console.log('Transfer complete!')
+        if (interrupted) {
+          clearLine()
+          console.log('Transfer cancelled.')
+        } else {
+          console.log('Transfer complete!')
+        }
         done()
       }
     } else if (event.type === 'error') {
@@ -91,6 +98,12 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
       path: file,
       isTemporary: options.temp
     }))
+
+    while (!peerConnected && !interrupted) {
+      await new Promise((r) => setTimeout(r, 100))
+    }
+
+    if (interrupted) return
     await client.shareFiles(shareRequests)
 
     await donePromise
