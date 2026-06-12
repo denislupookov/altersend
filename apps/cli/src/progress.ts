@@ -45,5 +45,5 @@ export function formatLine(state: ProgressState | null, label: string): string {
     : current < 1024 * 1024
       ? `${(current / 1024).toFixed(1)} KB`
       : `${(current / (1024 * 1024)).toFixed(1)} MB`
-  return `\r${label} "${file}" [${bar}] ${pct}% (${transferred}/${size})`
+  return `\x1b[2K\r${label} "${file}" [${bar}] ${pct}% (${transferred}/${size})`
 }
