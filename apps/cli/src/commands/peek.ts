@@ -53,12 +53,17 @@ export async function peek(joinCode: string, options: { storage?: string; update
   try {
     console.log('Connecting to peer...')
     await client.join(code)
-    console.log('Connected! Waiting for file offers...')
+    console.log('Joined network, waiting for sender...')
+
+    const hintTimer = setTimeout(() => {
+      console.log('(still waiting, sender may not be connected...)')
+    }, 10000)
 
     await new Promise<void>((resolve) => {
       process.on('SIGINT', () => resolve())
     })
 
+    clearTimeout(hintTimer)
     await client.disconnect()
     exitDeferred()
   } catch (err) {
