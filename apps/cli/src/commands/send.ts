@@ -51,8 +51,6 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
         if (interrupted) {
           clearProgress()
           console.log('Transfer cancelled.')
-        } else {
-          console.log('Transfer complete!')
         }
         done()
       } else if (event.state === 'disconnected') {
@@ -60,7 +58,7 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
           clearProgress()
           console.log('Transfer cancelled.')
         } else {
-          console.log('Transfer complete!')
+          console.log('Connection closed.')
         }
         done()
       }

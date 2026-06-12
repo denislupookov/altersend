@@ -69,6 +69,8 @@ export async function receive(joinCode: string, options: { output?: string; stor
         if (interrupted) {
           clearProgress()
           console.log('Transfer cancelled.')
+        } else {
+          console.log('Sender cancelled the transfer.')
         }
         done()
       } else if (event.state === 'disconnected') {
@@ -81,7 +83,9 @@ export async function receive(joinCode: string, options: { output?: string; stor
         done()
       }
     } else if (event.type === 'error') {
-      console.error(`Error: ${event.message}`)
+      if (!interrupted) {
+        console.error(`Error: ${event.message}`)
+      }
     }
   }
 
