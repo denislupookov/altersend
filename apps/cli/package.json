@@ -2,7 +2,7 @@
   "name": "@altersend/cli",
   "version": "1.2.0",
   "description": "CLI for AlterSend P2P file transfer",
-  "upgrade": "pear://REPLACE_WITH_PEAR_INIT_OUTPUT",
+  "upgrade": "pear://56qdfnt8tjywe14k7t6yhts6e9dppo7cupn4ot1ez95su3j3er6o",
   "bin": {
     "altersend": "./dist/index.js"
   },
