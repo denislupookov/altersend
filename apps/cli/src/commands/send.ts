@@ -1,6 +1,6 @@
 import { createCliRuntime, type EventCallback } from '../runtime.js'
 import { displayQR } from '../qr.js'
-import { formatLine, clearLine, type ProgressState } from '../progress.js'
+import { writeProgress, clearProgress } from '../progress.js'
 import { isPathSafe } from '@altersend/core'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -33,7 +33,6 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
 
   let interrupted = false
   let peerConnected = false
-  let currentProgress: ProgressState | null = null
 
   const onEvent: EventCallback = (event) => {
     if (event.type === 'status') {
@@ -43,16 +42,14 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
       } else if (event.state === 'sharing' && event.file) {
         console.log(`Sharing "${event.file}"...`)
       } else if (event.state === 'peer-download-progress' && event.file && event.totalBytes) {
-        currentProgress = { file: event.file, current: event.bytesTransferred ?? 0, total: event.totalBytes }
-        process.stdout.write(formatLine(currentProgress, 'Peer downloading'))
+        writeProgress({ file: event.file, current: event.bytesTransferred ?? 0, total: event.totalBytes }, 'Peer downloading')
       } else if (event.state === 'peer-downloaded' && event.file) {
-        currentProgress = null
-        clearLine()
+        clearProgress()
         console.log(`Peer downloaded "${event.file}"`)
       } else if (event.state === 'peer-disconnected') {
         console.log('Peer disconnected')
         if (interrupted) {
-          clearLine()
+          clearProgress()
           console.log('Transfer cancelled.')
         } else {
           console.log('Transfer complete!')
@@ -60,7 +57,7 @@ export async function send(files: string[], options: { qr?: boolean; temp?: bool
         done()
       } else if (event.state === 'disconnected') {
         if (interrupted) {
-          clearLine()
+          clearProgress()
           console.log('Transfer cancelled.')
         } else {
           console.log('Transfer complete!')

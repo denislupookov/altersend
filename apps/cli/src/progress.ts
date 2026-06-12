@@ -5,6 +5,25 @@ export interface ProgressState {
 }
 
 const PROGRESS_CHARS = 20
+const THROTTLE_MS = 100
+
+let lastWrite = 0
+let lastPct = -1
+
+export function writeProgress(state: ProgressState, label: string): void {
+  const now = Date.now()
+  const pct = state.total > 0 ? Math.round((state.current / state.total) * 100) : 0
+  if (now - lastWrite < THROTTLE_MS && pct === lastPct) return
+  lastWrite = now
+  lastPct = pct
+  process.stdout.write(formatLine(state, label))
+}
+
+export function clearProgress(): void {
+  lastWrite = 0
+  lastPct = -1
+  process.stdout.write('\r' + ' '.repeat(process.stdout.columns || 80) + '\r')
+}
 
 export function formatLine(state: ProgressState | null, label: string): string {
   if (!state) return ''
@@ -23,8 +42,4 @@ export function formatLine(state: ProgressState | null, label: string): string {
       ? `${(current / 1024).toFixed(1)} KB`
       : `${(current / (1024 * 1024)).toFixed(1)} MB`
   return `\r${label} "${file}" [${bar}] ${pct}% (${transferred}/${size})`
-}
-
-export function clearLine(): void {
-  process.stdout.write('\r' + ' '.repeat(process.stdout.columns || 80) + '\r')
 }

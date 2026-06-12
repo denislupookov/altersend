@@ -1,6 +1,6 @@
 import { createCliRuntime, type EventCallback } from '../runtime.js'
 import { isValidJoinCode, extractJoinCode } from '../joinCode.js'
-import { formatLine, clearLine, type ProgressState } from '../progress.js'
+import { writeProgress, clearProgress } from '../progress.js'
 import type { RendererTransferEvent, DownloadFileRequest } from '@altersend/core'
 import fs from 'node:fs/promises'
 
@@ -21,7 +21,6 @@ export async function receive(joinCode: string, options: { output?: string; stor
   })
 
   let interrupted = false
-  let currentProgress: ProgressState | null = null
 
   const onEvent: EventCallback = (event: RendererTransferEvent) => {
     if (event.type === 'transfer-ready') {
@@ -61,18 +60,20 @@ export async function receive(joinCode: string, options: { output?: string; stor
       } else if (event.state === 'downloading' && event.file) {
         console.log(`Downloading "${event.file}"...`)
       } else if (event.state === 'download-progress' && event.file && event.totalBytes) {
-        currentProgress = { file: event.file, current: event.bytesTransferred ?? 0, total: event.totalBytes }
-        process.stdout.write(formatLine(currentProgress, 'Downloading'))
+        writeProgress({ file: event.file, current: event.bytesTransferred ?? 0, total: event.totalBytes }, 'Downloading')
       } else if (event.state === 'downloaded' && event.savedTo) {
-        currentProgress = null
-        clearLine()
+        clearProgress()
         console.log(`Saved: ${event.savedTo}`)
       } else if (event.state === 'peer-disconnected') {
         console.log('Peer disconnected')
+        if (interrupted) {
+          clearProgress()
+          console.log('Transfer cancelled.')
+        }
         done()
       } else if (event.state === 'disconnected') {
         if (interrupted) {
-          clearLine()
+          clearProgress()
           console.log('Transfer cancelled.')
         } else {
           console.log('Transfer complete!')
