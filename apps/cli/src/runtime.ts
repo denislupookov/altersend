@@ -1,30 +1,13 @@
 import os from 'os'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import PearRuntime from 'pear-runtime'
 import { type WorkerClient, type RendererTransferEvent } from '@altersend/core'
 import { isMac, isLinux } from 'which-runtime'
 import { createRequire } from 'module'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const _require = createRequire(import.meta.url)
+const _require = createRequire(__filename)
 
 export type EventCallback = (event: RendererTransferEvent) => void
-
-interface WorkerHandle {
-  destroy: () => void
-  stdout: {
-    on: (event: 'data', cb: (chunk: unknown) => void) => void
-    removeListener: (event: 'data', cb: (chunk: unknown) => void) => void
-  }
-stderr: {
-    on: (event: 'data', cb: (chunk: unknown) => void) => void
-    removeListener: (event: 'data', cb: (chunk: unknown) => void) => void
-  }
-  on: (event: 'error', cb: (err: Error) => void) => void
-  once: (event: 'exit', cb: (code: number) => void) => void
-}
 
 export interface CliRuntimeInstance {
   client: WorkerClient
@@ -61,7 +44,7 @@ export async function createCliRuntime(storagePath?: string, onEvent?: EventCall
   const workerPath = getWorkerEntryPath()
   const { createTransferWorkerClient: createClient } = _require(workerClientPath) as {
     createTransferWorkerClient: (
-      worker: WorkerHandle,
+      worker: unknown,
       options?: { onEvent?: (event: RendererTransferEvent) => void }
     ) => WorkerClient
   }

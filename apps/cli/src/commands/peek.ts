@@ -1,5 +1,5 @@
 import { createCliRuntime, type EventCallback } from '../runtime.js'
-import { isValidJoinCode, extractJoinCode } from '@altersend/domain'
+import { isValidJoinCode, extractJoinCode } from '../joinCode.js'
 
 export async function peek(joinCode: string, options: { storage?: string }): Promise<void> {
   const code = extractJoinCode(joinCode)

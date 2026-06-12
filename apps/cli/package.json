@@ -2,7 +2,6 @@
   "name": "@altersend/cli",
   "version": "1.2.0",
   "description": "CLI for AlterSend P2P file transfer",
-  "type": "module",
   "bin": {
     "altersend": "./dist/index.js"
   },
@@ -15,7 +14,6 @@
   },
   "dependencies": {
     "@altersend/core": "1.2.0",
-    "@altersend/domain": "1.2.0",
     "b4a": "^1.8.0",
     "paparam": "^1.10.0",
     "pear-runtime": "^1.1.1",

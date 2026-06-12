@@ -1,5 +1,5 @@
 import { createCliRuntime, type EventCallback } from '../runtime.js'
-import { isValidJoinCode, extractJoinCode } from '@altersend/domain'
+import { isValidJoinCode, extractJoinCode } from '../joinCode.js'
 import fs from 'node:fs/promises'
 
 export async function receive(joinCode: string, options: { output?: string; storage?: string }): Promise<void> {

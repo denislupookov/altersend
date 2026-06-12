@@ -1,32 +1,69 @@
 #!/usr/bin/env node
 
-import { command, flag, sloppy } from 'paparam'
-import { send } from './commands/send.js'
-import { receive } from './commands/receive.js'
-import { status } from './commands/status.js'
-import { cancel } from './commands/cancel.js'
-import { disconnect } from './commands/disconnect.js'
-import { peek } from './commands/peek.js'
+import { command, flag, arg, description, summary, sloppy } from 'paparam'
+import { send } from './commands/send'
+import { receive } from './commands/receive'
+import { status } from './commands/status'
+import { cancel } from './commands/cancel'
+import { disconnect } from './commands/disconnect'
+import { peek } from './commands/peek'
 
-const cli = command('altersend').fullDescription('P2P file transfer CLI').add(
-  flag('--storage <path>', 'custom storage path'),
-  flag('--help', 'show help'),
-  flag('--version', 'show version')
+const sendCmd = command(
+  'send',
+  summary('Share files'),
+  arg('<files>...'),
+  flag('--qr', 'display QR code'),
+  flag('--temp', 'delete files after transfer')
 )
 
-cli.command('send').description('Share files').argument('<files>...').add(flag('--qr', 'display QR code'), flag('--temp', 'delete files after transfer')).action(send as (...args: unknown[]) => unknown)
+const receiveCmd = command(
+  'receive',
+  summary('Receive files'),
+  arg('<join-code>'),
+  flag('--output <dir>', 'download directory')
+)
 
-cli.command('receive').description('Receive files').argument('<join-code>').add(flag('--output <dir>', 'download directory')).action(receive as (...args: unknown[]) => unknown)
+const statusCmd = command('status', summary('Show transfer status'))
+const cancelCmd = command('cancel', summary('Abort in-progress transfer'))
+const disconnectCmd = command('disconnect', summary('End session gracefully'))
 
-cli.command('status').description('Show transfer status').action(status as (...args: unknown[]) => unknown)
+const peekCmd = command(
+  'peek',
+  summary('Preview files without downloading'),
+  arg('<join-code>')
+)
 
-cli.command('cancel').description('Abort in-progress transfer').action(cancel as (...args: unknown[]) => unknown)
-
-cli.command('disconnect').description('End session gracefully').action(disconnect as (...args: unknown[]) => unknown)
-
-cli.command('peek').description('Preview files without downloading').argument('<join-code>').action(peek as (...args: unknown[]) => unknown)
-
-sloppy({ flags: true, args: true })(cli)
+const cli = command(
+  'altersend',
+  description('P2P file transfer CLI'),
+  flag('--storage <path>', 'custom storage path'),
+  sloppy({ flags: true, args: true }),
+  sendCmd,
+  receiveCmd,
+  statusCmd,
+  cancelCmd,
+  disconnectCmd,
+  peekCmd
+)
 
 const args = process.argv.slice(2)
-cli.parse(args)
+const result = cli.parse(args)
+
+if (!result) process.exit(0)
+
+const name = result.name
+const argv = result.argv
+
+if (name === 'send') {
+  send(argv.positionals.slice(1), { qr: !!argv.flags.qr, temp: !!argv.flags.temp, storage: argv.flags.storage as string | undefined })
+} else if (name === 'receive') {
+  receive(argv.positionals[1], { output: argv.flags.output as string | undefined, storage: argv.flags.storage as string | undefined })
+} else if (name === 'status') {
+  status({ storage: argv.flags.storage as string | undefined })
+} else if (name === 'cancel') {
+  cancel({ storage: argv.flags.storage as string | undefined })
+} else if (name === 'disconnect') {
+  disconnect({ storage: argv.flags.storage as string | undefined })
+} else if (name === 'peek') {
+  peek(argv.positionals[1], { storage: argv.flags.storage as string | undefined })
+}

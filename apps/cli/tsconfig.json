@@ -3,10 +3,11 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "module": "ESNext",
+    "module": "CommonJS",
     "target": "ES2020",
-    "moduleResolution": "Bundler",
-    "skipLibCheck": true
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "esModuleInterop": true
   },
   "include": ["src/**/*", "src/**/*.d.ts"]
 }
