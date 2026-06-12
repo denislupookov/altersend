@@ -56,7 +56,7 @@ export async function createCliRuntime(
 ): Promise<CliRuntimeInstance> {
   let dir = storagePath ?? getDefaultStorage()
 
-  const pear = new PearRuntime({
+  let pear = new PearRuntime({
     name: 'AlterSend',
     dir,
     version: pkg.version,
@@ -93,6 +93,7 @@ export async function createCliRuntime(
       worker = fallbackPear.run(workerPath, [`--storage=${fallbackPear.storage}`])
       client = createClient(worker, { onEvent })
       await client.ready
+      pear = fallbackPear
     } else {
       throw err
     }
