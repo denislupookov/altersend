@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { command, flag, arg, description, summary, sloppy } from 'paparam'
+import { command, flag, arg, rest as restArg, description, summary, sloppy } from 'paparam'
 import { send } from './commands/send'
 import { receive } from './commands/receive'
 import { status } from './commands/status'
@@ -11,7 +11,7 @@ import { peek } from './commands/peek'
 const sendCmd = command(
   'send',
   summary('Share files'),
-  arg('<files>...'),
+  restArg('<files>'),
   flag('--qr', 'display QR code'),
   flag('--temp', 'delete files after transfer')
 )
@@ -46,24 +46,25 @@ const cli = command(
   peekCmd
 )
 
-const args = process.argv.slice(2)
-const result = cli.parse(args)
+const result = cli.parse()
 
 if (!result) process.exit(0)
 
 const name = result.name
-const argv = result.argv
+const flags = result.flags
+const restFiles = result.rest
+const positionals = result.positionals
 
 if (name === 'send') {
-  send(argv.positionals.slice(1), { qr: !!argv.flags.qr, temp: !!argv.flags.temp, storage: argv.flags.storage as string | undefined })
+  send(restFiles, { qr: !!flags.qr, temp: !!flags.temp, storage: flags.storage as string | undefined })
 } else if (name === 'receive') {
-  receive(argv.positionals[1], { output: argv.flags.output as string | undefined, storage: argv.flags.storage as string | undefined })
+  receive(positionals[0] || restFiles[0], { output: flags.output as string | undefined, storage: flags.storage as string | undefined })
 } else if (name === 'status') {
-  status({ storage: argv.flags.storage as string | undefined })
+  status({ storage: flags.storage as string | undefined })
 } else if (name === 'cancel') {
-  cancel({ storage: argv.flags.storage as string | undefined })
+  cancel({ storage: flags.storage as string | undefined })
 } else if (name === 'disconnect') {
-  disconnect({ storage: argv.flags.storage as string | undefined })
+  disconnect({ storage: flags.storage as string | undefined })
 } else if (name === 'peek') {
-  peek(argv.positionals[1], { storage: argv.flags.storage as string | undefined })
+  peek(positionals[0] || restFiles[0], { storage: flags.storage as string | undefined })
 }

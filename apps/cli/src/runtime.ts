@@ -15,11 +15,11 @@ export interface CliRuntimeInstance {
 }
 
 function getWorkerEntryPath(): string {
-  return path.join(__dirname, '../../node_modules/@altersend/core/dist/worklet/index.js')
+  return path.join(__dirname, '../../../node_modules/@altersend/core/dist/worklet/index.js')
 }
 
 function getWorkerClientPath(): string {
-  return path.join(__dirname, '../../node_modules/@altersend/core/dist/client/worker-client.js')
+  return path.join(__dirname, '../../../node_modules/@altersend/core/dist/client/worker-client.js')
 }
 
 export async function createCliRuntime(storagePath?: string, onEvent?: EventCallback): Promise<CliRuntimeInstance> {
@@ -37,7 +37,9 @@ export async function createCliRuntime(storagePath?: string, onEvent?: EventCall
   const pear = new PearRuntime({
     name: 'AlterSend',
     dir,
-    version: '1.2.0'
+    version: '1.2.0',
+    upgrade: 'pear://REDACTED_KEY',
+    updates: false
   })
 
   const workerClientPath = getWorkerClientPath()
