@@ -7,16 +7,16 @@ const pkg = _require(path.join(__dirname, '..', '..', 'package.json')) as { vers
 
 const CHECK_TIMEOUT_MS = 5000
 
-export async function checkUpdate(_options: Record<string, unknown>): Promise<void> {
+export async function checkUpdate(options: { storage?: string; updates?: boolean }): Promise<void> {
   let runtime: Awaited<ReturnType<typeof createCliRuntime>> | null = null
 
   try {
-    runtime = await createCliRuntime()
+    runtime = await createCliRuntime(options.storage, undefined, options.updates)
 
     if (runtime.pear.updater.updated) {
       console.log('Update available. Run \'altersend update\' to apply.')
       runtime.destroy()
-      return
+      process.exit(0)
     }
 
     await new Promise<void>((resolve) => {
@@ -30,7 +30,7 @@ export async function checkUpdate(_options: Record<string, unknown>): Promise<vo
         runtime?.pear.updater.removeListener('updated', onUpdated)
         console.log('Update available. Run \'altersend update\' to apply.')
         runtime?.destroy()
-        resolve()
+        process.exit(0)
       }
 
       runtime!.pear.updater.on('updated', onUpdated)
@@ -41,6 +41,7 @@ export async function checkUpdate(_options: Record<string, unknown>): Promise<vo
     }
 
     runtime.destroy()
+    process.exit(0)
   } catch (err) {
     console.error('Error checking for updates:', err instanceof Error ? err.message : String(err))
     process.exit(1)

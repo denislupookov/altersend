@@ -1,8 +1,8 @@
 import { createCliRuntime } from '../runtime.js'
 
-export async function disconnect(_options: Record<string, unknown>): Promise<void> {
+export async function disconnect(options: { storage?: string; updates?: boolean }): Promise<void> {
   try {
-    const { client, destroy } = await createCliRuntime()
+    const { client, destroy } = await createCliRuntime(options.storage, undefined, options.updates)
     await client.closePeers()
     console.log('Disconnected.')
     destroy()

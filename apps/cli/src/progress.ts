@@ -1,0 +1,30 @@
+export interface ProgressState {
+  file: string
+  current: number
+  total: number
+}
+
+const PROGRESS_CHARS = 20
+
+export function formatLine(state: ProgressState | null, label: string): string {
+  if (!state) return ''
+  const { file, current, total } = state
+  const pct = total > 0 ? Math.round((current / total) * 100) : 0
+  const filled = Math.round((pct / 100) * PROGRESS_CHARS)
+  const bar = '█'.repeat(filled) + '░'.repeat(PROGRESS_CHARS - filled)
+  const size = total < 1024
+    ? `${total} B`
+    : total < 1024 * 1024
+      ? `${(total / 1024).toFixed(1)} KB`
+      : `${(total / (1024 * 1024)).toFixed(1)} MB`
+  const transferred = current < 1024
+    ? `${current} B`
+    : current < 1024 * 1024
+      ? `${(current / 1024).toFixed(1)} KB`
+      : `${(current / (1024 * 1024)).toFixed(1)} MB`
+  return `\r${label} "${file}" [${bar}] ${pct}% (${transferred}/${size})`
+}
+
+export function clearLine(): void {
+  process.stdout.write('\r' + ' '.repeat(process.stdout.columns || 80) + '\r')
+}

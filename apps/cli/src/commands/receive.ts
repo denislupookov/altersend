@@ -1,9 +1,10 @@
 import { createCliRuntime, type EventCallback } from '../runtime.js'
 import { isValidJoinCode, extractJoinCode } from '../joinCode.js'
+import { formatLine, clearLine, type ProgressState } from '../progress.js'
 import type { RendererTransferEvent, DownloadFileRequest } from '@altersend/core'
 import fs from 'node:fs/promises'
 
-export async function receive(joinCode: string, options: { output?: string; storage?: string }): Promise<void> {
+export async function receive(joinCode: string, options: { output?: string; storage?: string; updates?: boolean }): Promise<void> {
   const code = extractJoinCode(joinCode)
   if (!code || !isValidJoinCode(code)) {
     console.error('Invalid join code. Must be 64 hex characters.')
@@ -14,6 +15,13 @@ export async function receive(joinCode: string, options: { output?: string; stor
   await fs.mkdir(outputDir, { recursive: true })
 
   let clientRef: Awaited<ReturnType<typeof createCliRuntime>>['client'] | null = null
+  let done: () => void
+  const donePromise = new Promise<void>((resolve) => {
+    done = resolve
+  })
+
+  let interrupted = false
+  let currentProgress: ProgressState | null = null
 
   const onEvent: EventCallback = (event: RendererTransferEvent) => {
     if (event.type === 'transfer-ready') {
@@ -36,6 +44,10 @@ export async function receive(joinCode: string, options: { output?: string; stor
       if (clientRef) {
         clientRef
           .downloadFiles(downloads)
+          .then(() => {
+            console.log('All files downloaded. Disconnecting...')
+            clientRef!.disconnect()
+          })
           .catch((err) => {
             console.error('Download failed:', err instanceof Error ? err.message : String(err))
           })
@@ -48,27 +60,43 @@ export async function receive(joinCode: string, options: { output?: string; stor
         console.log(`Peer connected (${event.peers} peer[s])`)
       } else if (event.state === 'downloading' && event.file) {
         console.log(`Downloading "${event.file}"...`)
-      } else if (event.state === 'download-progress' && event.file) {
-        console.log(`Downloading "${event.file}" (${event.bytesTransferred}/${event.totalBytes})`)
+      } else if (event.state === 'download-progress' && event.file && event.totalBytes) {
+        currentProgress = { file: event.file, current: event.bytesTransferred ?? 0, total: event.totalBytes }
+        process.stdout.write(formatLine(currentProgress, 'Downloading'))
       } else if (event.state === 'downloaded' && event.savedTo) {
+        currentProgress = null
+        clearLine()
         console.log(`Saved: ${event.savedTo}`)
       } else if (event.state === 'peer-disconnected') {
         console.log('Peer disconnected')
+        done()
       } else if (event.state === 'disconnected') {
-        console.log('Transfer complete!')
+        if (interrupted) {
+          clearLine()
+          console.log('Transfer cancelled.')
+        } else {
+          console.log('Transfer complete!')
+        }
+        done()
       }
     } else if (event.type === 'error') {
       console.error(`Error: ${event.message}`)
     }
   }
 
-  const runtime = await createCliRuntime(options.storage, onEvent)
+  const runtime = await createCliRuntime(options.storage, onEvent, options.updates)
   clientRef = runtime.client
 
-  process.on('SIGINT', async () => {
-    await runtime.client.disconnect()
+  const exitDeferred = () => {
     runtime.destroy()
-    process.exit(0)
+    setTimeout(() => process.exit(0), 0)
+  }
+
+  process.on('SIGINT', async () => {
+    if (interrupted) return
+    interrupted = true
+    await runtime.client.disconnect()
+    exitDeferred()
   })
 
   try {
@@ -76,15 +104,10 @@ export async function receive(joinCode: string, options: { output?: string; stor
     await runtime.client.join(code)
     console.log('Connected! Waiting for files...')
 
-    await new Promise<void>((resolve) => {
-      const checkDone = setInterval(() => {
-        // Keep alive until ctrl+c
-      }, 1000)
-      process.on('SIGINT', () => {
-        clearInterval(checkDone)
-        resolve()
-      })
-    })
+    await donePromise
+    process.removeAllListeners('SIGINT')
+    runtime.destroy()
+    process.exit(0)
   } catch (err) {
     console.error('Error:', err instanceof Error ? err.message : String(err))
     runtime.destroy()

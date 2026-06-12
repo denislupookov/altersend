@@ -36,7 +36,8 @@ function getWorkerClientPath(): string {
 
 export async function createCliRuntime(
   storagePath?: string,
-  onEvent?: EventCallback
+  onEvent?: EventCallback,
+  updates = true
 ): Promise<CliRuntimeInstance> {
   let dir: string
   if (storagePath) {
@@ -54,7 +55,7 @@ export async function createCliRuntime(
     dir,
     version: pkg.version,
     upgrade: pkg.upgrade,
-    updates: true
+    updates
   })
 
   const workerClientPath = getWorkerClientPath()

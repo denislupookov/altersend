@@ -1,19 +1,33 @@
 import { createCliRuntime, type EventCallback } from '../runtime.js'
 import { isValidJoinCode, extractJoinCode } from '../joinCode.js'
+import type { RendererTransferEvent } from '@altersend/core'
 
-export async function peek(joinCode: string, options: { storage?: string }): Promise<void> {
+export async function peek(joinCode: string, options: { storage?: string; updates?: boolean }): Promise<void> {
   const code = extractJoinCode(joinCode)
   if (!code || !isValidJoinCode(code)) {
     console.error('Invalid join code. Must be 64 hex characters.')
     process.exit(2)
   }
 
-  const onEvent: EventCallback = (event) => {
+  const onEvent: EventCallback = (event: RendererTransferEvent) => {
+    if (event.type === 'transfer-ready') {
+      const offers = event.files
+      console.log(`\n${offers.length} file(s) offered:`)
+      for (const f of offers) {
+        const size = f.size < 1024
+          ? `${f.size} B`
+          : f.size < 1024 * 1024
+            ? `${(f.size / 1024).toFixed(1)} KB`
+            : `${(f.size / (1024 * 1024)).toFixed(1)} MB`
+        console.log(`  ${f.name} (${size})`)
+      }
+      console.log('\nDisconnecting...')
+      return
+    }
+
     if (event.type === 'status') {
       if (event.state === 'peer-connected') {
         console.log(`Peer connected (${event.peers} peer[s])`)
-      } else if (event.state === 'joined') {
-        console.log('Waiting for file offers...')
       } else if (event.state === 'peer-disconnected') {
         console.log('Peer disconnected')
       } else if (event.state === 'disconnected') {
@@ -24,7 +38,7 @@ export async function peek(joinCode: string, options: { storage?: string }): Pro
     }
   }
 
-  const { client, destroy } = await createCliRuntime(options.storage, onEvent)
+  const { client, destroy } = await createCliRuntime(options.storage, onEvent, options.updates)
 
   process.on('SIGINT', async () => {
     await client.disconnect()
@@ -44,6 +58,9 @@ export async function peek(joinCode: string, options: { storage?: string }): Pro
         resolve()
       })
     })
+
+    await client.disconnect()
+    destroy()
   } catch (err) {
     console.error('Error:', err instanceof Error ? err.message : String(err))
     destroy()

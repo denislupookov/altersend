@@ -1,8 +1,8 @@
 import { createCliRuntime } from '../runtime.js'
 
-export async function cancel(_options: Record<string, unknown>): Promise<void> {
+export async function cancel(options: { storage?: string; updates?: boolean }): Promise<void> {
   try {
-    const { client: _client, destroy } = await createCliRuntime()
+    const { client: _client, destroy } = await createCliRuntime(options.storage, undefined, options.updates)
     console.log('Cancelling transfer...')
     destroy()
   } catch (err) {
