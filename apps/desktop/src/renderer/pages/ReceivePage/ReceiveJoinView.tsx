@@ -2,6 +2,7 @@ import { useState, type ChangeEvent } from 'react'
 import { Button, Input } from '@altersend/components'
 import { ChevronRightIcon, QrCodeIcon } from '@altersend/components/icons'
 import {
+  getDisplayError,
   getTransferErrorCode,
   isValidJoinCode,
   joinSession,
@@ -12,25 +13,6 @@ import {
 import { useTranslation } from '@altersend/locales'
 import { WebcamScanView } from './WebcamScanView'
 
-function getDisplayError(
-  t: ReturnType<typeof useTranslation>['t'],
-  code: TransferErrorCode | null
-) {
-  if (!code) return null
-  switch (code) {
-    case TRANSFER_ERROR_CODES.invalidTopic:
-      return t('receive:errors.invalidKey')
-    case TRANSFER_ERROR_CODES.joinFailed:
-      return t('errors:transfer.joinFailed')
-    case TRANSFER_ERROR_CODES.peerUnreachable:
-      return t('errors:transfer.peerUnreachable')
-    case TRANSFER_ERROR_CODES.downloadFailed:
-      return t('errors:transfer.downloadFailed')
-    case TRANSFER_ERROR_CODES.transferFailed:
-      return t('errors:transfer.transferFailed')
-  }
-}
-
 export function ReceiveJoinView() {
   const { t } = useTranslation(['receive', 'common', 'errors'])
   const [joinKey, setJoinKey] = useState('')
@@ -39,7 +21,9 @@ export function ReceiveJoinView() {
   const [localErrorCode, setLocalErrorCode] = useState<TransferErrorCode | null>(null)
   const [mode, setMode] = useState<'paste' | 'scan'>('paste')
   const storeErrorCode = useTransferStore((s) => s.errorCode)
-  const displayStoreError = getDisplayError(t, storeErrorCode)
+  const displayStoreError = getDisplayError(t, storeErrorCode, {
+    invalidTopicKey: 'receive:errors.invalidKey'
+  })
 
   if (mode === 'scan') {
     return <WebcamScanView onCancel={() => setMode('paste')} />
@@ -50,7 +34,9 @@ export function ReceiveJoinView() {
   const joinKeyError =
     showValidation && trimmedJoinKey.length > 0 && !isValidJoinKey
       ? t('receive:errors.invalidKey')
-      : (getDisplayError(t, localErrorCode) ?? displayStoreError ?? undefined)
+      : (getDisplayError(t, localErrorCode, { invalidTopicKey: 'receive:errors.invalidKey' }) ??
+        displayStoreError ??
+        undefined)
 
   const join = async () => {
     setShowValidation(true)

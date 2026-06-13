@@ -1,11 +1,18 @@
 import b4a from 'b4a'
 import type { FileOffer, PeerControlMessage } from '../transfer/control-channel'
-import type { ErrorEvent, ReadyEvent, RoleEvent, StatusEvent, TransferRole } from './events'
+import type {
+  ErrorEvent,
+  ReadyEvent,
+  RoleEvent,
+  StatusEvent,
+  TransferErrorCode,
+  TransferRole
+} from './events'
 import { API, API_BY_VALUE } from './commands'
 import type { TransferMethod } from './commands'
 
 export { API, API_BY_VALUE }
-export type { TransferRole, TransferMethod }
+export type { TransferErrorCode, TransferRole, TransferMethod }
 
 export interface DownloadFileRequest {
   transferId: string
@@ -54,6 +61,7 @@ export interface DisconnectReply {
 export interface RPCErrorPayload {
   code: 'BAD_REQUEST' | 'UNKNOWN_COMMAND' | 'INTERNAL_ERROR'
   message: string
+  transferErrorCode?: TransferErrorCode
 }
 
 interface RPCSuccessPayload<T> {
@@ -83,9 +91,12 @@ export interface TransferRPC {
 }
 
 export class BadRequestError extends Error {
-  constructor(message: string) {
+  transferErrorCode?: TransferErrorCode
+
+  constructor(message: string, transferErrorCode?: TransferErrorCode) {
     super(message)
     this.name = 'BadRequestError'
+    this.transferErrorCode = transferErrorCode
   }
 }
 
@@ -123,13 +134,15 @@ export function encodeRPCSuccess<T>(value: T): string {
 
 export function encodeRPCError(
   message: string,
-  code: RPCErrorPayload['code'] = 'INTERNAL_ERROR'
+  code: RPCErrorPayload['code'] = 'INTERNAL_ERROR',
+  transferErrorCode?: TransferErrorCode
 ): string {
   return encodeRPCPayload({
     ok: false,
     error: {
       code,
-      message
+      message,
+      ...(transferErrorCode ? { transferErrorCode } : {})
     }
   })
 }

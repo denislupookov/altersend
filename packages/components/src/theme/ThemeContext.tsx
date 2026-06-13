@@ -4,7 +4,7 @@ import { darkTheme } from './themes/dark'
 import { lightTheme } from './themes/light'
 import { darkThemeStyle } from './themes/dark.css'
 import { lightThemeStyle } from './themes/light.css'
-import { BUNDLED_FONT_FAMILIES, DEFAULT_FONT_FAMILY_KEY, type FontFamilyKey } from './fonts'
+import { DEFAULT_FONT_FAMILY_KEY, getNativeFontFamilyName, type FontFamilyKey } from './fonts'
 import { getFontFamilyCssVariables, type FontFamilyCssVariables } from './fontCssVariables'
 import { fontThemeStyles } from './fontThemes.css'
 import type { Theme } from './types'
@@ -34,13 +34,6 @@ function getThemeStyle(type: ThemeType) {
 
 function getFontThemeStyle(fontFamily: FontFamilyKey) {
   return fontThemeStyles[fontFamily] ?? fontThemeStyles[DEFAULT_FONT_FAMILY_KEY]
-}
-
-function getFontFamilyName(fontFamily: FontFamilyKey) {
-  return (
-    BUNDLED_FONT_FAMILIES[fontFamily]?.cssFamily ??
-    BUNDLED_FONT_FAMILIES[DEFAULT_FONT_FAMILY_KEY].cssFamily
-  )
 }
 
 const FONT_CUSTOM_PROPERTIES = [
@@ -87,7 +80,7 @@ interface ThemeContextValue {
   theme: Theme
   themeType: ThemeType
   fontFamily: FontFamilyKey
-  fontFamilyName: string
+  fontFamilyName: string | undefined
   setTheme: (theme: ThemeType) => void
 }
 
@@ -95,7 +88,7 @@ const ThemeContext = createContext<ThemeContextValue>({
   theme: darkTheme,
   themeType: ThemeType.Dark,
   fontFamily: DEFAULT_FONT_FAMILY_KEY,
-  fontFamilyName: BUNDLED_FONT_FAMILIES[DEFAULT_FONT_FAMILY_KEY].cssFamily,
+  fontFamilyName: getNativeFontFamilyName(DEFAULT_FONT_FAMILY_KEY),
   setTheme: () => {}
 })
 
@@ -122,7 +115,7 @@ export function ThemeProvider({
   const [themeType, setThemeType] = useState<ThemeType>(initialTheme)
   const themeStyle = getThemeStyle(themeType)
   const fontThemeStyle = getFontThemeStyle(fontFamily)
-  const fontFamilyName = getFontFamilyName(fontFamily)
+  const fontFamilyName = getNativeFontFamilyName(fontFamily)
   const fontRootStyle = useMemo(() => getFontFamilyCssVariables(fontFamily), [fontFamily])
 
   useEffect(() => {

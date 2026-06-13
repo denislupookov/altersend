@@ -10,7 +10,7 @@ import {
   type LocalePreference,
   type SupportedLocaleCode
 } from '@altersend/locales'
-import { BUNDLED_FONT_FAMILIES, useTheme } from '@altersend/components'
+import { getNativeFontFamilyName, useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
 import {
@@ -98,8 +98,7 @@ export default function LanguageScreen() {
                       style={[
                         styles.hint,
                         {
-                          color: theme.colors.colorTextMuted,
-                          fontFamily: BUNDLED_FONT_FAMILIES.latin.cssFamily
+                          color: theme.colors.colorTextMuted
                         }
                       ]}
                     >
@@ -137,7 +136,7 @@ function scheduleLanguageChange(resolvedLocale: SupportedLocaleCode) {
 
 function getOptionNativeNameFontFamily(option: LocaleOption) {
   if (!option.resolvedCode) return undefined
-  return BUNDLED_FONT_FAMILIES[getLocaleFontFamily(option.resolvedCode)].cssFamily
+  return getNativeFontFamilyName(getLocaleFontFamily(option.resolvedCode))
 }
 
 const styles = StyleSheet.create({

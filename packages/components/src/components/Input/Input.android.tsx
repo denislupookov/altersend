@@ -57,6 +57,7 @@ export function Input({
     : isFocused
       ? theme.colors.colorFocusRing
       : theme.colors.colorBorderPrimary
+  const fontFamilyStyle = fontFamilyName ? { fontFamily: fontFamilyName } : null
 
   const handleChangeText = (text: string) => {
     onChangeText?.(text)
@@ -80,7 +81,7 @@ export function Input({
       accessibilityState={{ disabled }}
       editable={!disabled && !readOnly}
       id={inputId}
-      key={fontFamilyName}
+      key={fontFamilyName ?? 'system'}
       onBlur={handleBlur}
       onChangeText={handleChangeText}
       onFocus={handleFocus}
@@ -89,9 +90,9 @@ export function Input({
       style={[
         styles.input,
         {
-          color: textColor,
-          fontFamily: fontFamilyName
+          color: textColor
         },
+        fontFamilyStyle,
         mono && styles.inputMono,
         !useWrapper && styles.fieldInput
       ]}
@@ -102,9 +103,7 @@ export function Input({
   return (
     <View style={styles.root}>
       {label ? (
-        <Text
-          style={[styles.label, { color: theme.colors.colorTextMuted, fontFamily: fontFamilyName }]}
-        >
+        <Text style={[styles.label, { color: theme.colors.colorTextMuted }, fontFamilyStyle]}>
           {label}
         </Text>
       ) : null}
@@ -146,9 +145,9 @@ export function Input({
           style={[
             styles.hint,
             {
-              color: error ? theme.colors.colorDanger : theme.colors.colorTextMuted,
-              fontFamily: fontFamilyName
-            }
+              color: error ? theme.colors.colorDanger : theme.colors.colorTextMuted
+            },
+            fontFamilyStyle
           ]}
         >
           {error ?? description}

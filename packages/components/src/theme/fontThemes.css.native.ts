@@ -1,12 +1,20 @@
 import { css } from 'react-strict-dom'
+import { Platform } from 'react-native'
 import { tokens } from './tokens.css'
 import type { FontFamilyKey } from './fonts'
 
 type FontThemeStyle = ReturnType<typeof css.createTheme>
 
+const nativeSystemFontFamily =
+  Platform.select({
+    ios: 'System',
+    android: 'sans-serif',
+    default: 'sans-serif'
+  }) ?? 'sans-serif'
+
 const latinFontThemeStyle = css.createTheme(tokens, {
-  fontFamilySans: 'AlterSend Sans',
-  fontFamilyDisplay: 'AlterSend Sans',
+  fontFamilySans: nativeSystemFontFamily,
+  fontFamilyDisplay: nativeSystemFontFamily,
   fontFamilyMono: 'monospace'
 })
 

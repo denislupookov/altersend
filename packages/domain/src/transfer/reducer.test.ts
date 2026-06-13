@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-  PEER_UNREACHABLE_ERROR_CODE,
   TRANSFER_ERROR_CODES,
   initialTransferSessionState,
   transferSessionReducer
@@ -143,7 +142,7 @@ describe('transferSessionReducer — peer_unreachable', () => {
     expect(next.connectionState).toBe('disconnected')
     expect(next.topic).toBe('')
     expect(next.errorCode).toBe(TRANSFER_ERROR_CODES.peerUnreachable)
-    expect(next.errorMessage).toBe(PEER_UNREACHABLE_ERROR_CODE)
+    expect(next.errorMessage).toBeNull()
   })
 })
 

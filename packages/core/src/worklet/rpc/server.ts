@@ -1,5 +1,5 @@
 import RPC, { type RPCRequest } from 'bare-rpc'
-import { createErrorEvent } from './events'
+import { createErrorEvent, TRANSFER_ERROR_CODES } from './events'
 import {
   API_BY_VALUE,
   BadRequestError,
@@ -30,7 +30,7 @@ export function createTransferWorkerRPCServer(
       if (err instanceof BadRequestError || err instanceof AbortError) return null
       const failure = toError(err)
       console.error('Core: Command queue error', failure)
-      emitEvent(createErrorEvent(failure.message))
+      emitEvent(createErrorEvent(failure.message, TRANSFER_ERROR_CODES.transferFailed))
       return null
     })
     return next
@@ -53,7 +53,7 @@ export function createTransferWorkerRPCServer(
       req.reply(encodeRPCSuccess(reply))
     } catch (err: unknown) {
       if (err instanceof BadRequestError) {
-        req.reply(encodeRPCError(err.message, 'BAD_REQUEST'))
+        req.reply(encodeRPCError(err.message, 'BAD_REQUEST', err.transferErrorCode))
         return
       }
       if (err instanceof AbortError) {

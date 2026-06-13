@@ -1,46 +1,25 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
-import { BUNDLED_FONT_FAMILIES, MONO_FONT_FAMILY_CSS, MONO_FONT_FAMILY_NATIVE } from './fonts'
+import {
+  BUNDLED_FONT_FAMILIES,
+  LATIN_FONT_FAMILY_CSS,
+  MONO_FONT_FAMILY_CSS,
+  MONO_FONT_FAMILY_NATIVE,
+  getNativeFontFamilyName
+} from './fonts'
 import { getFontFamilyCssVariables } from './fontCssVariables'
 import { rawTokens } from './tokens.raw'
 import tokenSource from './tokens.json'
 
-const osFallbackNames = [
-  'SF Pro Text',
-  'SF Pro Display',
-  'Segoe UI',
-  'Apple SD Gothic Neo',
-  'Malgun Gothic',
-  'Noto Sans CJK KR',
-  'Noto Sans KR',
-  'Hiragino Sans',
-  'Yu Gothic',
-  'PingFang SC',
-  'PingFang TC',
-  'Microsoft YaHei',
-  'Microsoft JhengHei',
-  'Helvetica Neue',
-  'Arial',
-  'sans-serif',
-  'System',
-  'Menlo',
-  'monospace'
-]
-
 describe('font family tokens', () => {
-  it('uses bundled AlterSend font families for sans and display UI text', () => {
-    for (const fontFamily of [
-      rawTokens.fontFamily.fontFamilySans,
-      rawTokens.fontFamily.fontFamilyDisplay
-    ]) {
-      expect(fontFamily).toMatch(/^"AlterSend Sans/)
-      expect(fontFamily).not.toContain(',')
-
-      for (const fallbackName of osFallbackNames) {
-        expect(fontFamily).not.toContain(fallbackName)
-      }
-    }
+  it('uses the native Latin stack for default sans and display UI text', () => {
+    expect(rawTokens.fontFamily.fontFamilySans).toBe(LATIN_FONT_FAMILY_CSS)
+    expect(rawTokens.fontFamily.fontFamilyDisplay).toBe(
+      '"SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif'
+    )
+    expect(rawTokens.fontFamily.fontFamilySans).not.toContain('AlterSend Sans')
+    expect(rawTokens.fontFamily.fontFamilyDisplay).not.toContain('AlterSend Sans')
   })
 
   it('uses a true monospace stack for mono UI text', () => {
@@ -53,7 +32,7 @@ describe('font family tokens', () => {
     expect(rawTokens.fontFamily.fontFamilyMono).toContain(',')
   })
 
-  it('declares bundled font assets for every supported script family', () => {
+  it('declares bundled font assets only for CJK script families', () => {
     expect(Object.keys(BUNDLED_FONT_FAMILIES).sort()).toEqual([
       'japanese',
       'korean',
@@ -61,8 +40,10 @@ describe('font family tokens', () => {
       'simplifiedChinese',
       'traditionalChinese'
     ])
+    expect(BUNDLED_FONT_FAMILIES.latin.assetFileName).toBeUndefined()
+    expect(getNativeFontFamilyName('latin')).toBeUndefined()
 
-    for (const font of Object.values(BUNDLED_FONT_FAMILIES)) {
+    for (const font of Object.values(BUNDLED_FONT_FAMILIES).filter((item) => item.assetFileName)) {
       expect(font.cssFamily).toMatch(/^AlterSend Sans/)
       expect(font.assetFileName).toMatch(/\.(ttf|otf)$/)
       expect(
@@ -112,11 +93,12 @@ describe('font family tokens', () => {
     expect(tokenSource.fontFamilyNative.default.fontFamilyMono).toBe(
       MONO_FONT_FAMILY_NATIVE.default
     )
+    expect(tokenSource.fontFamilyNative.ios.fontFamilySans).toBe('System')
+    expect(tokenSource.fontFamilyNative.ios.fontFamilyDisplay).toBe('System')
+    expect(tokenSource.fontFamilyNative.android.fontFamilySans).toBe('sans-serif')
+    expect(tokenSource.fontFamilyNative.android.fontFamilyDisplay).toBe('sans-serif')
 
     for (const stack of Object.values(tokenSource.fontFamilyNative)) {
-      expect(stack.fontFamilySans).toMatch(/^AlterSend Sans/)
-      expect(stack.fontFamilyDisplay).toMatch(/^AlterSend Sans/)
-
       for (const fontFamily of Object.values(stack)) {
         expect(fontFamily).not.toContain(',')
         expect(fontFamily).not.toContain('"')
@@ -155,7 +137,8 @@ describe('font family tokens', () => {
     expect(inputStyleBlock?.[1]).not.toContain('lineHeight')
     expect(inputStyleBlock?.[1]).toContain("textAlignVertical: 'center'")
     expect(androidInputSource).toContain('underlineColorAndroid')
-    expect(androidInputSource).toContain('key={fontFamilyName}')
+    expect(androidInputSource).toContain("key={fontFamilyName ?? 'system'}")
+    expect(androidInputSource).toContain('fontFamilyStyle = fontFamilyName ?')
     expect(webInputSource).not.toContain('includeFontPadding')
     expect(webInputSource).not.toContain('textAlignVertical')
   })
@@ -183,14 +166,13 @@ describe('font family tokens', () => {
     expect(webFontThemeSource).not.toContain('MONO_FONT_FAMILY_CSS')
     expect(nativeFontThemeSource).toContain("fontFamilySans: 'AlterSend Sans KR'")
     expect(nativeFontThemeSource).toContain("fontFamilyMono: 'monospace'")
-    expect(nativeFontThemeSource).not.toContain('Platform.select')
     expect(nativeFontThemeSource).not.toContain('nativeMonoFontFamily')
     expect(nativeFontThemeSource).not.toContain('fontFamilySans: \'"AlterSend Sans KR"\'')
   })
 
   it('exposes Korean CSS variables for Tailwind and plain DOM text', () => {
     const expectedFamilies = {
-      latin: 'AlterSend Sans',
+      latin: LATIN_FONT_FAMILY_CSS,
       japanese: 'AlterSend Sans JP',
       korean: 'AlterSend Sans KR',
       simplifiedChinese: 'AlterSend Sans SC',
@@ -198,9 +180,10 @@ describe('font family tokens', () => {
     } as const
 
     for (const [fontFamilyKey, cssFamily] of Object.entries(expectedFamilies)) {
+      const expectedFamily = fontFamilyKey === 'latin' ? cssFamily : `"${cssFamily}"`
       expect(getFontFamilyCssVariables(fontFamilyKey as keyof typeof expectedFamilies)).toEqual({
-        '--as-font-family-sans': `"${cssFamily}"`,
-        '--as-font-family-display': `"${cssFamily}"`,
+        '--as-font-family-sans': expectedFamily,
+        '--as-font-family-display': expectedFamily,
         '--as-font-family-mono': MONO_FONT_FAMILY_CSS,
         fontFamily: cssFamily
       })

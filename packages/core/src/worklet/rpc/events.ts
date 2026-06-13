@@ -17,6 +17,16 @@ export type TransferStatus =
 
 export type TransferRole = 'sender' | 'receiver'
 
+export const TRANSFER_ERROR_CODES = {
+  peerUnreachable: 'peer_unreachable',
+  invalidTopic: 'invalid_topic',
+  joinFailed: 'join_failed',
+  transferFailed: 'transfer_failed',
+  downloadFailed: 'download_failed'
+} as const
+
+export type TransferErrorCode = (typeof TRANSFER_ERROR_CODES)[keyof typeof TRANSFER_ERROR_CODES]
+
 export interface ReadyEvent {
   type: 'ready'
 }
@@ -49,6 +59,7 @@ export interface RoleEvent {
 export interface ErrorEvent {
   type: 'error'
   message: string
+  code?: TransferErrorCode
 }
 
 export type TransferIPCMessage = ReadyEvent | TopicEvent | StatusEvent | RoleEvent | ErrorEvent
@@ -72,9 +83,10 @@ export function createRoleEvent(role: TransferRole | null): RoleEvent {
   return { type: 'role', role }
 }
 
-export function createErrorEvent(message: string): ErrorEvent {
+export function createErrorEvent(message: string, code?: TransferErrorCode): ErrorEvent {
   return {
     type: 'error',
-    message
+    message,
+    ...(code ? { code } : {})
   }
 }

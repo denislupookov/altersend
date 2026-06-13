@@ -3,6 +3,7 @@ import { API, decodeRPCPayload, encodeRPCPayload } from '../worklet/rpc/protocol
 import type {
   RPCResponse,
   RendererTransferEvent,
+  TransferErrorCode,
   TransferMethod,
   TransferRPC,
   WorkerTransferEvent
@@ -37,6 +38,20 @@ function createDeferred() {
 
 function toError(err: unknown, fallback: string) {
   return err instanceof Error ? err : new Error(fallback)
+}
+
+function createWorkerResponseError(response: Extract<RPCResponse<unknown>, { ok: false }>) {
+  const error = new Error(response.error.message) as Error & {
+    code?: TransferErrorCode
+    rpcCode?: string
+    transferErrorCode?: TransferErrorCode
+  }
+  error.rpcCode = response.error.code
+  if (response.error.transferErrorCode) {
+    error.code = response.error.transferErrorCode
+    error.transferErrorCode = response.error.transferErrorCode
+  }
+  return error
 }
 
 class TransferWorkerClientCore {
@@ -131,7 +146,7 @@ class TransferWorkerClientCore {
           }
 
           if (!response.ok) {
-            reject(new Error(response.error.message))
+            reject(createWorkerResponseError(response))
             return
           }
 

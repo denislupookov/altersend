@@ -9,56 +9,12 @@ import { ReceiveJoinView } from './ReceiveJoinView'
 
 import {
   clearSession,
-  formatFileSize,
   getDownloadTotals,
+  getReceivePageCopy,
   getReceiveStep,
   isConnectedStep,
-  type ReceiveStep,
   useTransferStore
 } from '@altersend/domain'
-
-function getReceivePageCopy(
-  t: ReturnType<typeof useTranslation>['t'],
-  step: ReceiveStep,
-  incomingCount: number,
-  totalBytes: number
-) {
-  switch (step) {
-    case 'join':
-      return {
-        title: t('receive:page.join.title'),
-        description: t('receive:page.join.description')
-      }
-    case 'connecting':
-      return {
-        title: t('receive:page.connecting.title'),
-        description: t('receive:page.connecting.description')
-      }
-    case 'incoming_transfer':
-      return {
-        title: t('receive:page.incomingTransfer.title'),
-        description: t('receive:page.incomingTransfer.description', {
-          count: incomingCount,
-          size: formatFileSize(totalBytes)
-        })
-      }
-    case 'completed':
-      return {
-        title: t('receive:page.completed.title', { count: incomingCount }),
-        description: ''
-      }
-    case 'reconnecting':
-      return {
-        title: t('receive:page.reconnecting.title'),
-        description: t('receive:page.reconnecting.description')
-      }
-    case 'interrupted':
-      return {
-        title: t('receive:page.interrupted.title'),
-        description: t('receive:page.interrupted.description')
-      }
-  }
-}
 
 export default function ReceivePage() {
   const { t } = useTranslation(['receive', 'common'])

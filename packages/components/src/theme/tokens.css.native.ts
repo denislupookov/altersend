@@ -13,18 +13,18 @@ export interface NativeFontFamilyStack {
 
 export const nativeFontFamilies = {
   "ios": {
-    "fontFamilySans": "AlterSend Sans",
-    "fontFamilyDisplay": "AlterSend Sans",
+    "fontFamilySans": "System",
+    "fontFamilyDisplay": "System",
     "fontFamilyMono": "Menlo"
   },
   "android": {
-    "fontFamilySans": "AlterSend Sans",
-    "fontFamilyDisplay": "AlterSend Sans",
+    "fontFamilySans": "sans-serif",
+    "fontFamilyDisplay": "sans-serif",
     "fontFamilyMono": "monospace"
   },
   "default": {
-    "fontFamilySans": "AlterSend Sans",
-    "fontFamilyDisplay": "AlterSend Sans",
+    "fontFamilySans": "sans-serif",
+    "fontFamilyDisplay": "sans-serif",
     "fontFamilyMono": "monospace"
   }
 } as Record<

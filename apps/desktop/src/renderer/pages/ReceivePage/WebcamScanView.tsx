@@ -3,10 +3,10 @@ import QrScanner from 'qr-scanner'
 import { Button } from '@altersend/components'
 import {
   extractJoinCode,
+  getDisplayError,
   getTransferErrorCode,
   joinSession,
-  TRANSFER_ERROR_CODES,
-  type TransferErrorCode
+  TRANSFER_ERROR_CODES
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
@@ -23,21 +23,6 @@ const CAMERA_ERROR_STATES: Record<string, ScanState> = {
   SecurityError: 'denied',
   NotFoundError: 'no-camera',
   OverconstrainedError: 'no-camera'
-}
-
-function getJoinError(t: ReturnType<typeof useTranslation>['t'], code: TransferErrorCode) {
-  switch (code) {
-    case TRANSFER_ERROR_CODES.invalidTopic:
-      return t('receive:errors.invalidKey')
-    case TRANSFER_ERROR_CODES.joinFailed:
-      return t('errors:transfer.joinFailed')
-    case TRANSFER_ERROR_CODES.peerUnreachable:
-      return t('errors:transfer.peerUnreachable')
-    case TRANSFER_ERROR_CODES.downloadFailed:
-      return t('errors:transfer.downloadFailed')
-    case TRANSFER_ERROR_CODES.transferFailed:
-      return t('errors:transfer.transferFailed')
-  }
 }
 
 export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
@@ -74,7 +59,9 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
         if (signal.aborted) return
         handledRef.current = false
         setErrorMessage(
-          getJoinError(t, getTransferErrorCode(error, TRANSFER_ERROR_CODES.joinFailed))
+          getDisplayError(t, getTransferErrorCode(error, TRANSFER_ERROR_CODES.joinFailed), {
+            invalidTopicKey: 'receive:errors.invalidKey'
+          })
         )
         setState('scanning')
         void scannerRef.current?.start()
@@ -186,7 +173,11 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
       await joinSession(joinCode)
     } catch (error) {
       handledRef.current = false
-      setErrorMessage(getJoinError(t, getTransferErrorCode(error, TRANSFER_ERROR_CODES.joinFailed)))
+      setErrorMessage(
+        getDisplayError(t, getTransferErrorCode(error, TRANSFER_ERROR_CODES.joinFailed), {
+          invalidTopicKey: 'receive:errors.invalidKey'
+        })
+      )
       setState(resumeState)
       if (resumeState === 'scanning') void scannerRef.current?.start()
     }

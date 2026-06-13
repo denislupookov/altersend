@@ -11,8 +11,6 @@ import type { ConnectionState, TransferAction, TransferSessionState } from './ty
 
 export { TRANSFER_ERROR_CODES } from './types'
 
-export const PEER_UNREACHABLE_ERROR_CODE = TRANSFER_ERROR_CODES.peerUnreachable
-
 export const initialTransferSessionState: TransferSessionState = {
   topic: '',
   connectionState: 'disconnected',
@@ -291,7 +289,7 @@ export function transferSessionReducer(
         topic: '',
         connectedPeers: {},
         errorCode: TRANSFER_ERROR_CODES.peerUnreachable,
-        errorMessage: PEER_UNREACHABLE_ERROR_CODE
+        errorMessage: null
       }
 
     // ─── Misc ─────────────────────────────────────────────────────

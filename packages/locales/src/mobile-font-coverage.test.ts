@@ -78,11 +78,11 @@ describe('mobile font coverage', () => {
   it('renders language picker options with per-locale fonts', () => {
     const languageSource = readFileSync(join(mobileRoot.pathname, 'app/language.tsx'), 'utf8')
 
-    expect(languageSource).toContain('BUNDLED_FONT_FAMILIES')
+    expect(languageSource).toContain('getNativeFontFamilyName')
     expect(languageSource).toContain('getLocaleFontFamily')
     expect(languageSource).toContain('getOptionNativeNameFontFamily')
     expect(languageSource).toContain('fontFamily: getOptionNativeNameFontFamily(option)')
-    expect(languageSource).toContain('fontFamily: BUNDLED_FONT_FAMILIES.latin.cssFamily')
+    expect(languageSource).not.toContain('BUNDLED_FONT_FAMILIES.latin.cssFamily')
   })
 
   it('keeps language picker row text metrics explicit for CJK option fonts', () => {

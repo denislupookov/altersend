@@ -3,6 +3,7 @@ import { useTranslation } from '@altersend/locales'
 import {
   getOverallProgress,
   getProgressState,
+  getStatusLabel,
   getStatusTone,
   useTransferStore
 } from '@altersend/domain'
@@ -45,12 +46,7 @@ export function PreparingView() {
               name={item.name}
               size={item.size}
               status={{
-                label:
-                  item.status === 'completed'
-                    ? t('send:status.uploaded')
-                    : item.status === 'uploading'
-                      ? t('send:status.uploading')
-                      : t('send:status.waiting'),
+                label: getStatusLabel(t, item),
                 tone: getStatusTone(item)
               }}
               progress={

@@ -2,37 +2,12 @@ import { useCallback, useEffect } from 'react'
 import { Pressable } from 'react-native'
 import { useTheme } from '@altersend/components'
 import { ArrowLeftIcon } from '@altersend/components/icons'
-import { getSendStep, isShareStep, type SendStep, useTransferStore } from '@altersend/domain'
+import { getSendPageCopy, getSendStep, isShareStep, useTransferStore } from '@altersend/domain'
 import { clearSenderFlow } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Layout } from '@/src/components'
 import { PreparingView } from '@/src/transfer/send'
 import { useNavigation, useRouter } from 'expo-router'
-
-function getSendPageCopy(t: ReturnType<typeof useTranslation>['t'], step: SendStep) {
-  switch (step) {
-    case 'selecting':
-      return {
-        title: t('send:page.selecting.title'),
-        description: t('send:page.selecting.description')
-      }
-    case 'preparing':
-      return {
-        title: t('send:page.preparing.title'),
-        description: t('send:page.preparing.description')
-      }
-    case 'waiting_for_receiver':
-      return {
-        title: t('send:page.waitingForReceiver.title'),
-        description: t('send:page.waitingForReceiver.description')
-      }
-    case 'receiver_connected':
-      return {
-        title: t('send:page.receiverConnected.title'),
-        description: t('send:page.receiverConnected.description')
-      }
-  }
-}
 
 export default function SendPreparingScreen() {
   const { t } = useTranslation(['send', 'common'])

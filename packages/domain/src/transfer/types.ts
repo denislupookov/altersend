@@ -1,4 +1,10 @@
-import type { IncomingFileOffer, RendererTransferEvent, TransferRole } from '@altersend/core'
+import {
+  TRANSFER_ERROR_CODES,
+  type IncomingFileOffer,
+  type RendererTransferEvent,
+  type TransferErrorCode,
+  type TransferRole
+} from '@altersend/core'
 import type {
   DownloadItemState,
   ReceiveDownloadStatusEvent,
@@ -10,18 +16,10 @@ import type { SelectedFile, SenderUploadItem } from '../send/draftTypes'
 import type { SendDraftPhase } from '../send/pageUi'
 
 export type { TransferRole }
+export { TRANSFER_ERROR_CODES }
+export type { TransferErrorCode }
 
 export type ConnectionState = 'disconnected' | 'joining' | 'joined' | 'peer-connected'
-
-export const TRANSFER_ERROR_CODES = {
-  peerUnreachable: 'peer_unreachable',
-  invalidTopic: 'invalid_topic',
-  joinFailed: 'join_failed',
-  transferFailed: 'transfer_failed',
-  downloadFailed: 'download_failed'
-} as const
-
-export type TransferErrorCode = (typeof TRANSFER_ERROR_CODES)[keyof typeof TRANSFER_ERROR_CODES]
 
 export interface TransferSessionState {
   topic: string

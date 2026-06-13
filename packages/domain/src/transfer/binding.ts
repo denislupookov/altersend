@@ -49,7 +49,7 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
     case 'error':
       return dispatchToTransferStore({
         type: 'set_error',
-        code: getTransferErrorCode(event.message, TRANSFER_ERROR_CODES.transferFailed),
+        code: event.code ?? TRANSFER_ERROR_CODES.transferFailed,
         message: event.message
       })
   }

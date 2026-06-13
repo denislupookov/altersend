@@ -24,4 +24,5 @@ export type {
   ShareFileRequest
 } from './worklet/rpc/protocol'
 
-export type { TransferStatus } from './worklet/rpc/events'
+export { TRANSFER_ERROR_CODES } from './worklet/rpc/events'
+export type { TransferStatus, TransferErrorCode } from './worklet/rpc/events'

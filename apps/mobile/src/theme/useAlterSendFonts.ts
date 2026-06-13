@@ -1,7 +1,6 @@
 import { useFonts } from 'expo-font'
 
 import { BUNDLED_FONT_FAMILIES } from '@altersend/components'
-import latinFont from '../../../../assets/fonts/NotoSans-Latin.ttf'
 import japaneseRegularFont from '../../../../assets/fonts/NotoSans-JP-Regular.ttf'
 import japaneseBoldFont from '../../../../assets/fonts/NotoSans-JP-Bold.ttf'
 import koreanRegularFont from '../../../../assets/fonts/NotoSans-KR-Regular.ttf'
@@ -13,7 +12,6 @@ import traditionalChineseBoldFont from '../../../../assets/fonts/NotoSans-TC-Bol
 
 export function useAlterSendFonts() {
   return useFonts({
-    [BUNDLED_FONT_FAMILIES.latin.cssFamily]: latinFont,
     [BUNDLED_FONT_FAMILIES.japanese.cssFamily]: japaneseRegularFont,
     [`${BUNDLED_FONT_FAMILIES.japanese.cssFamily} Bold`]: japaneseBoldFont,
     [BUNDLED_FONT_FAMILIES.korean.cssFamily]: koreanRegularFont,

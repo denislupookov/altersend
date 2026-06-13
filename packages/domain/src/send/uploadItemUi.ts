@@ -1,5 +1,13 @@
 import type { SenderUploadItem } from './draftTypes'
 
+type Translate = (key: string, options?: Record<string, unknown>) => string
+
+export function getStatusLabel(t: Translate, item: Pick<SenderUploadItem, 'status'>) {
+  if (item.status === 'completed') return t('send:status.uploaded')
+  if (item.status === 'uploading') return t('send:status.uploading')
+  return t('send:status.waiting')
+}
+
 export function getStatusTone(
   item: Pick<SenderUploadItem, 'status'>
 ): 'muted' | 'active' | 'success' {

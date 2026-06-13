@@ -23,13 +23,17 @@ function quoteFontFamily(cssFamily: string) {
   return `"${cssFamily.replace(/"/g, '\\"')}"`
 }
 
+function getCssFontFamilyValue(cssFamily: string) {
+  return cssFamily.includes(',') ? cssFamily : quoteFontFamily(cssFamily)
+}
+
 export function getFontFamilyCssVariables(fontFamily: FontFamilyKey): FontFamilyCssVariables {
   const cssFamily = getBundledCssFamily(fontFamily)
-  const quotedCssFamily = quoteFontFamily(cssFamily)
+  const cssFontFamily = getCssFontFamilyValue(cssFamily)
 
   return {
-    '--as-font-family-sans': quotedCssFamily,
-    '--as-font-family-display': quotedCssFamily,
+    '--as-font-family-sans': cssFontFamily,
+    '--as-font-family-display': cssFontFamily,
     '--as-font-family-mono': MONO_FONT_FAMILY_CSS,
     fontFamily: cssFamily
   }

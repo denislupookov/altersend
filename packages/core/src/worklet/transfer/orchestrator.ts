@@ -6,6 +6,8 @@ import {
   createErrorEvent,
   createRoleEvent,
   createStatusEvent,
+  TRANSFER_ERROR_CODES,
+  type TransferErrorCode,
   type TransferIPCMessage,
   type TransferRole,
   type TransferStatus,
@@ -216,8 +218,11 @@ export class TransferOrchestrator implements TransferRPC {
     this.emitIPC(createStatusEvent(state, extra))
   }
 
-  private sendError(message: string): void {
-    this.emitIPC(createErrorEvent(message))
+  private sendError(
+    message: string,
+    code: TransferErrorCode = TRANSFER_ERROR_CODES.transferFailed
+  ): void {
+    this.emitIPC(createErrorEvent(message, code))
   }
 
   private onDownloadStart(event: DownloadLifecycleEvent): void {
@@ -243,7 +248,7 @@ export class TransferOrchestrator implements TransferRPC {
       message
     })
     this.swarm.broadcast(createDownloadFailedMessage({ ...event, message }))
-    this.sendError(message)
+    this.sendError(message, TRANSFER_ERROR_CODES.downloadFailed)
   }
 
   private getDownloaderCallbacks(): DownloaderCallbacks {
@@ -267,7 +272,7 @@ export class TransferOrchestrator implements TransferRPC {
       throw new BadRequestError('Missing topic')
     }
     if (!isValidHexKey(topic)) {
-      throw new BadRequestError('Invalid topic format')
+      throw new BadRequestError('Invalid topic format', TRANSFER_ERROR_CODES.invalidTopic)
     }
     if (this.role === 'sender') {
       throw new BadRequestError('Cannot join a session while sharing files')

@@ -75,8 +75,8 @@ export const tokens = css.defineVars({
   lineHeightSnug: "1.35",
   lineHeightNormal: "1.4",
   lineHeightRelaxed: "1.5",
-  fontFamilySans: "\"AlterSend Sans\"",
-  fontFamilyDisplay: "\"AlterSend Sans\"",
+  fontFamilySans: "\"SF Pro Text\", \"SF Pro Display\", \"Helvetica Neue\", sans-serif",
+  fontFamilyDisplay: "\"SF Pro Display\", \"SF Pro Text\", \"Helvetica Neue\", sans-serif",
   fontFamilyMono: "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Monaco\", \"Consolas\", \"Liberation Mono\", \"Courier New\", monospace",
 });
 

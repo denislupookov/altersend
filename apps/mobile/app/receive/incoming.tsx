@@ -12,77 +12,14 @@ import ConnectionLostSvg from '../../../../assets/connection-lost.svg'
 import {
   createDirectoryDownloadRequests,
   formatFileSize,
+  getDisplayError,
   getDownloadTotals,
+  getReceivePageCopy,
   getReceiveStep,
-  TRANSFER_ERROR_CODES,
-  type TransferErrorCode,
-  type ReceiveStep,
   useTransferStore
 } from '@altersend/domain'
 import { clearSession, downloadFiles } from '@altersend/domain'
 import { Text } from '@/src/components/ThemedText'
-
-function getDisplayError(
-  t: ReturnType<typeof useTranslation>['t'],
-  code: TransferErrorCode | null
-) {
-  if (!code) return null
-  switch (code) {
-    case TRANSFER_ERROR_CODES.invalidTopic:
-      return t('receive:errors.invalidCode')
-    case TRANSFER_ERROR_CODES.joinFailed:
-      return t('errors:transfer.joinFailed')
-    case TRANSFER_ERROR_CODES.peerUnreachable:
-      return t('errors:transfer.peerUnreachable')
-    case TRANSFER_ERROR_CODES.downloadFailed:
-      return t('errors:transfer.downloadFailed')
-    case TRANSFER_ERROR_CODES.transferFailed:
-      return t('errors:transfer.transferFailed')
-  }
-}
-
-function getReceivePageCopy(
-  t: ReturnType<typeof useTranslation>['t'],
-  step: ReceiveStep,
-  incomingCount: number,
-  totalBytes: number
-) {
-  switch (step) {
-    case 'join':
-      return {
-        title: t('receive:page.join.title'),
-        description: t('receive:page.join.description')
-      }
-    case 'connecting':
-      return {
-        title: t('receive:page.connecting.title'),
-        description: t('receive:page.connecting.description')
-      }
-    case 'incoming_transfer':
-      return {
-        title: t('receive:page.incomingTransfer.title'),
-        description: t('receive:page.incomingTransfer.description', {
-          count: incomingCount,
-          size: formatFileSize(totalBytes)
-        })
-      }
-    case 'completed':
-      return {
-        title: t('receive:page.completed.title', { count: incomingCount }),
-        description: ''
-      }
-    case 'reconnecting':
-      return {
-        title: t('receive:page.reconnecting.title'),
-        description: t('receive:page.reconnecting.description')
-      }
-    case 'interrupted':
-      return {
-        title: t('receive:page.interrupted.title'),
-        description: t('receive:page.interrupted.description')
-      }
-  }
-}
 
 export default function ReceiveIncomingScreen() {
   const { t } = useTranslation(['receive', 'common', 'errors'])
