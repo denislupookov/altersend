@@ -21,9 +21,11 @@ import {
   Folder,
   Globe,
   Image,
+  Laptop,
   Lock,
   Mail,
   Menu,
+  Monitor,
   MoreHorizontal,
   Music,
   QrCode,
@@ -32,6 +34,7 @@ import {
   Share2,
   Shield,
   Smartphone,
+  Tablet,
   Upload,
   Video,
   X
@@ -61,6 +64,9 @@ export const FileTextIcon = adaptLucide(FileText)
 export const FolderIcon = adaptLucide(Folder)
 export const GlobeIcon = adaptLucide(Globe)
 export const ImageIcon = adaptLucide(Image)
+export const LaptopIcon = adaptLucide(Laptop)
+export const MonitorIcon = adaptLucide(Monitor)
+export const TabletIcon = adaptLucide(Tablet)
 export const LockIcon = adaptLucide(Lock)
 export const MailIcon = adaptLucide(Mail)
 export const MenuIcon = adaptLucide(Menu)

@@ -1,6 +1,7 @@
 import {
   TRANSFER_ERROR_CODES,
   type IncomingFileOffer,
+  type RememberedPeer,
   type RendererTransferEvent,
   type TransferErrorCode,
   type TransferRole
@@ -21,6 +22,21 @@ export type { TransferErrorCode }
 
 export type ConnectionState = 'disconnected' | 'joining' | 'joined' | 'peer-connected'
 
+export type RememberStatus = 'idle' | 'confirmed' | 'declined'
+
+export interface IncomingPairRequest {
+  transferId: string
+  peerKey: string
+  displayName: string
+  deviceType: string
+}
+
+export interface RememberState {
+  status: RememberStatus
+  peer: RememberedPeer | null
+  incomingRequest: IncomingPairRequest | null
+}
+
 export interface TransferSessionState {
   topic: string
   connectionState: ConnectionState
@@ -36,6 +52,10 @@ export interface TransferSessionState {
   connectedPeers: Record<string, ConnectedPeer>
   errorCode: TransferErrorCode | null
   errorMessage: string | null
+  transferId: string | null
+  remember: RememberState
+  peers: RememberedPeer[]
+  requestedPairPeers: string[]
 }
 
 export type TransferAction =
@@ -71,3 +91,8 @@ export type TransferAction =
   | { type: 'transfer_ready'; files: IncomingFileOffer[] }
   | { type: 'reconnecting' }
   | { type: 'peer_unreachable' }
+  | { type: 'remember_confirmed'; peer: RememberedPeer }
+  | { type: 'remember_declined' }
+  | { type: 'remember_requested'; request: IncomingPairRequest }
+  | { type: 'set_peers'; peers: RememberedPeer[] }
+  | { type: 'request_pair_peer'; peerKey: string }

@@ -1,10 +1,12 @@
 import b4a from 'b4a'
 import type { FileOffer, PeerControlMessage } from '../transfer/control-channel'
+import type { RememberedPeer } from '../peers/remembered-peer'
 import type {
   ErrorEvent,
   ReadyEvent,
   RememberConfirmedEvent,
   RememberDeclinedEvent,
+  RememberRequestedEvent,
   RoleEvent,
   StatusEvent,
   TransferErrorCode,
@@ -95,6 +97,7 @@ export type RendererTransferEvent =
   | RoleEvent
   | RememberConfirmedEvent
   | RememberDeclinedEvent
+  | RememberRequestedEvent
   | PeerControlMessage
 export type WorkerTransferEvent = WorkerReadyEvent | RendererTransferEvent
 export type IncomingFileOffer = FileOffer
@@ -107,6 +110,7 @@ export interface TransferRPC {
   disconnect(): Promise<DisconnectReply>
   closePeers(): Promise<void>
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply>
+  peersList(): Promise<RememberedPeer[]>
 }
 
 export class BadRequestError extends Error {

@@ -21,8 +21,11 @@ export type {
   DisconnectReply,
   DownloadFileRequest,
   DownloadFileResult,
-  ShareFileRequest
+  ShareFileRequest,
+  RememberVoteInput,
+  RememberVoteReply
 } from './worklet/rpc/protocol'
 
 export { TRANSFER_ERROR_CODES } from './worklet/rpc/events'
 export type { TransferStatus, TransferErrorCode } from './worklet/rpc/events'
+export type { RememberedPeer } from './worklet/peers/remembered-peer'

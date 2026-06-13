@@ -54,6 +54,7 @@ import { TransferSwarm, type PeerSession } from './swarm'
 import { isValidHexKey } from './utils'
 import { DeviceIdentityStore } from '../identity/device-identity-store'
 import { RememberedPeerStore } from '../peers/store'
+import type { RememberedPeer } from '../peers/remembered-peer'
 import { RememberCoordinator } from '../peers/remember-coordinator'
 
 function createTransferId(): string {
@@ -179,6 +180,10 @@ export class TransferOrchestrator implements TransferRPC {
 
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply> {
     return this.remember.vote(input)
+  }
+
+  peersList(): Promise<RememberedPeer[]> {
+    return this.rememberedStore.list()
   }
 
   private onPeerDisconnected(peerKey: string | null, remainingCount: number): void {

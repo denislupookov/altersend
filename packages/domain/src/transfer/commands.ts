@@ -79,6 +79,33 @@ export const downloadFiles = async (files: DownloadFileRequest[]): Promise<Downl
   }
 }
 
+export const rememberVote = async (
+  transferId: string,
+  vote: 'remember' | 'no',
+  isMine: boolean
+): Promise<void> => {
+  try {
+    await getTransferApi().worker.rememberVote({ transferId, vote, isMine })
+  } catch (error) {
+    reportError('rememberVote', error)
+    setError(errorMessage(error))
+  }
+}
+
+export const loadPeers = async (): Promise<void> => {
+  try {
+    const peers = await getTransferApi().worker.peersList()
+    dispatchToTransferStore({ type: 'set_peers', peers })
+  } catch (error) {
+    reportError('loadPeers', error)
+  }
+}
+
+export const requestPair = (transferId: string, peerKey: string): void => {
+  dispatchToTransferStore({ type: 'request_pair_peer', peerKey })
+  void rememberVote(transferId, 'remember', false)
+}
+
 export const addSelectedFiles = (files: SelectedFile[]): void => {
   dispatchToTransferStore({ type: 'add_selected_files', files })
 }

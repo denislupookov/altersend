@@ -1,4 +1,5 @@
 import type { RememberedPeer } from '../peers/remembered-peer'
+import type { DeviceType } from '../identity/device-type'
 
 export type TransferStatus =
   | 'peer-connected'
@@ -74,6 +75,14 @@ export interface RememberDeclinedEvent {
   transferId: string
 }
 
+export interface RememberRequestedEvent {
+  type: 'remember-requested'
+  transferId: string
+  peerKey: string
+  displayName: string
+  deviceType: DeviceType
+}
+
 export type TransferIPCMessage =
   | ReadyEvent
   | TopicEvent
@@ -82,6 +91,7 @@ export type TransferIPCMessage =
   | ErrorEvent
   | RememberConfirmedEvent
   | RememberDeclinedEvent
+  | RememberRequestedEvent
 
 export function createReadyEvent(): ReadyEvent {
   return { type: 'ready' }
@@ -108,6 +118,12 @@ export function createRememberConfirmedEvent(peer: RememberedPeer): RememberConf
 
 export function createRememberDeclinedEvent(transferId: string): RememberDeclinedEvent {
   return { type: 'remember-declined', transferId }
+}
+
+export function createRememberRequestedEvent(
+  request: Omit<RememberRequestedEvent, 'type'>
+): RememberRequestedEvent {
+  return { type: 'remember-requested', ...request }
 }
 
 export function createErrorEvent(message: string, code?: TransferErrorCode): ErrorEvent {

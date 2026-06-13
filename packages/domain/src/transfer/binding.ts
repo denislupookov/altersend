@@ -1,6 +1,7 @@
 import { dispatchToTransferStore } from './store'
 import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES } from './types'
+import { loadPeers } from './commands'
 import type { SharingStatusEvent } from '../send/draftModel'
 import type { RendererTransferEvent, TransferRPC } from '@altersend/core'
 
@@ -51,6 +52,22 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
         type: 'set_error',
         code: event.code ?? TRANSFER_ERROR_CODES.transferFailed,
         message: event.message
+      })
+    case 'remember-confirmed':
+      dispatchToTransferStore({ type: 'remember_confirmed', peer: event.peer })
+      void loadPeers()
+      return
+    case 'remember-declined':
+      return dispatchToTransferStore({ type: 'remember_declined' })
+    case 'remember-requested':
+      return dispatchToTransferStore({
+        type: 'remember_requested',
+        request: {
+          transferId: event.transferId,
+          peerKey: event.peerKey,
+          displayName: event.displayName,
+          deviceType: event.deviceType
+        }
       })
   }
 }
@@ -111,7 +128,10 @@ export function bindTransferApi(
 
   void impl
     .startP2P()
-    .then(() => dispatchToTransferStore({ type: 'booted' }))
+    .then(() => {
+      dispatchToTransferStore({ type: 'booted' })
+      void loadPeers()
+    })
     .catch((err) => {
       reportError('bindTransferApi.startP2P', err)
       dispatchToTransferStore({

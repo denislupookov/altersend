@@ -6,6 +6,7 @@ import type { PairingInfo, PeerControlMessage, RememberVote } from '../transfer/
 import {
   createRememberConfirmedEvent,
   createRememberDeclinedEvent,
+  createRememberRequestedEvent,
   type TransferIPCMessage
 } from '../rpc/events'
 import { BadRequestError, type RememberVoteInput, type RememberVoteReply } from '../rpc/protocol'
@@ -59,6 +60,17 @@ export class RememberCoordinator {
 
   handleRememberVote(message: RememberVote, peerKey: string): void {
     this.remoteVotes.set(peerKey, { decision: message.vote, transferId: message.transferId })
+    if (message.vote === 'remember' && !this.localVote) {
+      const pending = this.pendingPairings.get(peerKey)
+      this.deps.emit(
+        createRememberRequestedEvent({
+          transferId: message.transferId,
+          peerKey,
+          displayName: pending?.remoteDisplayName ?? peerKey.slice(0, 6),
+          deviceType: pending?.remoteDeviceType ?? 'unknown'
+        })
+      )
+    }
     this.evaluateVote(peerKey)
   }
 
@@ -89,6 +101,10 @@ export class RememberCoordinator {
   }
 
   onPeerDisconnected(peerKey: string): void {
+    const remote = this.remoteVotes.get(peerKey)
+    if (remote?.decision === 'remember' && !this.localVote) {
+      this.deps.emit(createRememberDeclinedEvent(remote.transferId))
+    }
     this.forgetPeerVote(peerKey)
     if (this.localVote && this.remoteVotes.size === 0) this.endVoteRound()
   }

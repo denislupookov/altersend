@@ -49,4 +49,10 @@ describe('deriveRendezvousTopic', () => {
     expect(() => deriveRendezvousTopic(short, pubB, hash1)).toThrow()
     expect(() => deriveRendezvousTopic(pubA, pubB, b4a.alloc(8))).toThrow()
   })
+
+  it('accepts the real 64-byte Noise handshake hash', () => {
+    expect(HANDSHAKE_HASH_LEN).toBe(64)
+    const topic = deriveRendezvousTopic(pubA, pubB, b4a.alloc(64, 7))
+    expect(topic.byteLength).toBe(RENDEZVOUS_TOPIC_LEN)
+  })
 })

@@ -85,7 +85,14 @@ export class TransferSwarm {
     let session: PeerSession | null = null
     const controlChannel = PeerControlChannel.create(socket, (message) => {
       if (!session) return
-      this.callbacks.onControlMessage(message, session)
+      try {
+        this.callbacks.onControlMessage(message, session)
+      } catch (err) {
+        console.error(
+          'TransferSwarm: onControlMessage handler threw',
+          err instanceof Error ? err.message : String(err)
+        )
+      }
     })
     if (!controlChannel) {
       try {

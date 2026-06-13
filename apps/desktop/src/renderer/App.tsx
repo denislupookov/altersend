@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useSimulatedLoading } from '@altersend/domain'
 import { bridgeApi, hasBridge } from './api/bridgeApi'
 import { UpdateBanner } from './components/UpdateBanner'
+import { PairRequestBanner } from './components/PairRequestBanner'
 import { isOnboardingCompleted, markOnboardingCompleted } from './lifecycle/onboardingStorage'
 import { useUpdateReady } from './lifecycle/useUpdateReady'
 import { BridgeUnavailablePage, LoadingPage, OnboardingPage, TransferPage } from './pages'
@@ -38,6 +39,7 @@ export default function App() {
   return (
     <>
       <TransferPage version={version} />
+      <PairRequestBanner />
       <UpdateBanner ready={updateReady} />
     </>
   )

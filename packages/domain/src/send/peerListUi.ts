@@ -17,6 +17,27 @@ export interface PeerListEntry {
   sortKey: number
 }
 
+export type PairState = 'pairable' | 'requested' | 'paired'
+
+export interface PeerListEntryWithPair extends PeerListEntry {
+  pairState?: PairState
+}
+
+export function applyPairState(
+  entries: PeerListEntry[],
+  requestedPeerKeys: readonly string[],
+  isPaired: boolean
+): PeerListEntryWithPair[] {
+  const requested = new Set(requestedPeerKeys)
+  return entries.map((entry) => {
+    let pairState: PairState | undefined
+    if (entry.status !== 'disconnected') {
+      pairState = requested.has(entry.peerKey) ? (isPaired ? 'paired' : 'requested') : 'pairable'
+    }
+    return { ...entry, pairState }
+  })
+}
+
 function getStatusDetail(data: PeerStatusData): PeerListEntryDetail | null {
   switch (data.status) {
     case 'failed':

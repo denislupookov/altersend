@@ -25,7 +25,11 @@ export const initialTransferSessionState: TransferSessionState = {
   peerDownloads: {},
   connectedPeers: {},
   errorCode: null,
-  errorMessage: null
+  errorMessage: null,
+  transferId: null,
+  remember: { status: 'idle', peer: null, incomingRequest: null },
+  peers: [],
+  requestedPairPeers: []
 }
 
 function clearError(state: TransferSessionState): TransferSessionState {
@@ -61,7 +65,10 @@ function endSession(state: TransferSessionState): TransferSessionState {
     peerCount: 0,
     topic: '',
     errorCode: null,
-    errorMessage: null
+    errorMessage: null,
+    transferId: null,
+    remember: { status: 'idle', peer: null, incomingRequest: null },
+    requestedPairPeers: []
   }
 }
 
@@ -181,6 +188,7 @@ export function transferSessionReducer(
       return {
         ...state,
         uploadItems: applySharingProgress(state.uploadItems, action.event),
+        transferId: action.event.transferId ?? state.transferId,
         errorCode: null,
         errorMessage: null
       }
@@ -240,6 +248,7 @@ export function transferSessionReducer(
           state.receiveDownloadStates,
           incomingFileOffers
         ),
+        transferId: action.files[0]?.transferId ?? state.transferId,
         errorCode: null,
         errorMessage: null
       }
@@ -315,6 +324,23 @@ export function transferSessionReducer(
         errorCode: action.code ?? TRANSFER_ERROR_CODES.transferFailed,
         errorMessage: action.message
       }
+
+    case 'remember_confirmed':
+      return { ...state, remember: { status: 'confirmed', peer: action.peer, incomingRequest: null } }
+    case 'remember_declined':
+      return {
+        ...state,
+        remember: { status: 'declined', peer: null, incomingRequest: null },
+        requestedPairPeers: []
+      }
+    case 'remember_requested':
+      return { ...state, remember: { ...state.remember, incomingRequest: action.request } }
+    case 'set_peers':
+      return { ...state, peers: action.peers }
+    case 'request_pair_peer':
+      return state.requestedPairPeers.includes(action.peerKey)
+        ? state
+        : { ...state, requestedPairPeers: [...state.requestedPairPeers, action.peerKey] }
 
     default: {
       const exhaustiveCheck: never = action

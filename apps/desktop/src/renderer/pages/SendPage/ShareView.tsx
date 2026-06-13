@@ -1,16 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { PeerListCardEntry } from '@altersend/components'
 import {
+  applyPairState,
   formatFileSize,
   getPeerListEntries,
   type PeerListEntry,
   type PeerListEntryDetail,
+  requestPair,
   useTransferStore
 } from '@altersend/domain'
-import { Disclosure, PeerListCard, SendFileListRow } from '@altersend/components'
-import { AlertCircleIcon, FolderIcon } from '@altersend/components/icons'
+import { Button, Disclosure, PeerListCard, SendFileListRow } from '@altersend/components'
+import { AlertCircleIcon, FolderIcon, SmartphoneIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { QRModal } from '../../components/QRModal'
+import { AddDeviceModal } from '../../components/AddDeviceModal'
 import { ConnectionCard } from './ConnectionCard'
 
 function getPeerStatusLabel(t: ReturnType<typeof useTranslation>['t'], entry: PeerListEntry) {
@@ -67,18 +70,25 @@ export function ShareView() {
   const topic = useTransferStore((s) => s.topic)
   const peerDownloads = useTransferStore((s) => s.peerDownloads)
   const connectedPeers = useTransferStore((s) => s.connectedPeers)
+  const transferId = useTransferStore((s) => s.transferId)
+  const requestedPairPeers = useTransferStore((s) => s.requestedPairPeers)
+  const isPaired = useTransferStore((s) => s.remember.status === 'confirmed')
   const isPeerConnected = connectionState === 'peer-connected'
   const [isKeyCopied, setIsKeyCopied] = useState(false)
   const [isFilesExpanded, setIsFilesExpanded] = useState(false)
   const [isQRModalOpen, setIsQRModalOpen] = useState(false)
+  const [isAddDeviceOpen, setIsAddDeviceOpen] = useState(false)
 
   const totalSize = selectedFiles.reduce((sum, file) => sum + (file.size ?? 0), 0)
   const peerEntries = useMemo(
     () => getPeerListEntries(connectedPeers, peerDownloads, selectedFiles),
     [connectedPeers, peerDownloads, selectedFiles]
   )
-  const peerCardEntries = peerEntries.map((entry) => toPeerListCardEntry(t, entry))
   const hasActivity = isPeerConnected || peerEntries.length > 0
+  const deviceEntries = useMemo(
+    () => applyPairState(peerEntries, requestedPairPeers, isPaired).map((e) => toPeerListCardEntry(t, e)),
+    [peerEntries, requestedPairPeers, isPaired, t]
+  )
 
   useEffect(() => {
     if (!isKeyCopied) return
@@ -92,12 +102,25 @@ export function ShareView() {
     setIsKeyCopied(true)
   }
 
+  const handlePair = (peerKey: string) => {
+    if (transferId) requestPair(transferId, peerKey)
+  }
+
   return (
     <div className='flex flex-col gap-3'>
       <aside aria-live='polite' className='flex items-center gap-2 px-1 text-text-muted'>
         <AlertCircleIcon size={12} />
         <span className='text-[11.5px] leading-[1.4]'>{t('send:hints.keepOpen')}</span>
       </aside>
+
+      <Button
+        icon={<SmartphoneIcon size={16} />}
+        onClick={() => setIsAddDeviceOpen(true)}
+        variant='secondary'
+        width='full'
+      >
+        Add a device
+      </Button>
 
       <ConnectionCard
         topic={topic}
@@ -107,13 +130,7 @@ export function ShareView() {
         onOpenQR={() => setIsQRModalOpen(true)}
       />
 
-      <PeerListCard
-        entries={peerCardEntries}
-        labels={{
-          title: t('send:peer.devices'),
-          connectedCount: (count) => t('send:peer.connectedCount', { count })
-        }}
-      />
+      <PeerListCard entries={deviceEntries} onPair={handlePair} />
 
       <Disclosure
         compact
@@ -129,6 +146,7 @@ export function ShareView() {
       </Disclosure>
 
       <QRModal topic={topic} open={isQRModalOpen} onClose={() => setIsQRModalOpen(false)} />
+      <AddDeviceModal open={isAddDeviceOpen} onClose={() => setIsAddDeviceOpen(false)} />
     </div>
   )
 }
