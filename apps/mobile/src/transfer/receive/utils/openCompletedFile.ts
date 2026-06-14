@@ -1,6 +1,8 @@
 import { Linking, Platform } from 'react-native'
 import * as Sharing from 'expo-sharing'
 import { transferStore } from '@altersend/domain'
+import { openDownload } from '@/modules/media-store'
+import { guessMimeType } from './downloadHandlers'
 
 function openPhotos(): void {
   const url = Platform.OS === 'ios' ? 'photos-redirect://' : 'content://media/internal/images/media'
@@ -8,11 +10,20 @@ function openPhotos(): void {
 }
 
 export function openCompletedFile(offerKey: string): void {
-  const item = transferStore.getState().receiveDownloadStates[offerKey]
+  const state = transferStore.getState()
+  const item = state.receiveDownloadStates[offerKey]
   if (!item || item.status !== 'completed' || !item.savedTo) return
 
   if (item.destination === 'photos') {
     openPhotos()
+    return
+  }
+
+  if (item.destination === 'downloads') {
+    const offer = state.incomingFileOffers.find((f) => f.id === offerKey)
+    void openDownload(item.savedTo, guessMimeType(offer?.name ?? '')).catch((err) =>
+      console.error('openCompletedFile: openDownload failed', err)
+    )
     return
   }
 

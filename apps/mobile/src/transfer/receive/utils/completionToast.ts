@@ -1,6 +1,7 @@
 import { Linking, Platform } from 'react-native'
 import type { SaveDestination } from '@altersend/domain'
 import { i18nextInstance } from '@altersend/locales'
+import { openDownloadsFolder } from '@/modules/media-store'
 import type { ShowToastInput } from '@/src/components/Toast'
 
 interface BuildCompletionToastInput {
@@ -27,9 +28,10 @@ export function buildCompletionToast({
   if (count === 0) return null
 
   const photosCount = destinations.filter((d) => d === 'photos').length
-  const filesystemCount = destinations.filter((d) => d === 'filesystem').length
+  const nonPhotosCount = count - photosCount
+  const hasDownloads = destinations.some((d) => d === 'downloads')
 
-  if (photosCount > 0 && filesystemCount > 0) {
+  if (photosCount > 0 && nonPhotosCount > 0) {
     return {
       title: i18nextInstance.t('receive:summary.filesSaved', { count }),
       hint:
@@ -52,11 +54,17 @@ export function buildCompletionToast({
     }
   }
 
+  const showDownloadsAction = Platform.OS === 'android' && hasDownloads
+
   return {
     title: i18nextInstance.t('receive:summary.savedInFiles', { count }),
     hint: Platform.OS === 'ios' ? i18nextInstance.t('common:files.alterSendFolder') : undefined,
-    actionLabel: Platform.OS === 'android' ? i18nextInstance.t('receive:actions.open') : undefined,
-    onPress: Platform.OS === 'ios' ? openFiles : undefined,
+    actionLabel: showDownloadsAction ? i18nextInstance.t('receive:actions.open') : undefined,
+    onPress: showDownloadsAction
+      ? () => void openDownloadsFolder().catch(() => {})
+      : Platform.OS === 'ios'
+        ? openFiles
+        : undefined,
     durationMs: LONG_DURATION_MS
   }
 }

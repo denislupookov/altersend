@@ -3,7 +3,7 @@ import { formatFileSize } from '../format'
 
 export type DownloadStatus = 'idle' | 'downloading' | 'completed' | 'failed'
 
-export type SaveDestination = 'filesystem' | 'photos'
+export type SaveDestination = 'filesystem' | 'photos' | 'downloads'
 
 export interface DownloadItemState {
   status: DownloadStatus

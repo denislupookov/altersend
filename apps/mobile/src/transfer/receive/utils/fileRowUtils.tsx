@@ -1,5 +1,5 @@
 import React from 'react'
-import { Pressable, StyleSheet } from 'react-native'
+import { Platform, Pressable, StyleSheet } from 'react-native'
 import { getFileKind, useTheme } from '@altersend/components'
 import { formatFileSize, type DownloadItemState } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
@@ -17,7 +17,8 @@ function getActionLabel(name: string, t: Translate): string {
 function getDestinationLabel(state: DownloadItemState | undefined, t: Translate): string {
   if (!state || state.destination === undefined) return ''
   if (state.destination === 'photos') return t('common:files.photos')
-  return t('common:files.downloads')
+  if (state.destination === 'downloads') return t('common:files.downloads')
+  return Platform.OS === 'ios' ? t('common:files.alterSendFolder') : t('common:files.files')
 }
 
 export function getFileMeta(
