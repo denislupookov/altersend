@@ -1,14 +1,23 @@
 import b4a from 'b4a'
+import crypto from 'hypercore-crypto'
 import type { DeviceIdentity, DeviceType } from '../identity/device-identity-store'
 import type { PairingInfo } from '../transfer/control-channel'
-import { deriveRendezvousTopic } from './rendezvous'
+import { deriveRendezvousTopic, DEVICE_PUBKEY_LEN } from './rendezvous'
 
 export interface DeviceCapabilities {
   canBackground: boolean
 }
 
+const DEVICE_AUTH_CONTEXT = b4a.from('altersend-device-auth-v1')
+const SIGNATURE_LEN = 64
+
+function deviceAuthChallenge(handshakeHash: Uint8Array): Uint8Array {
+  return crypto.hash([DEVICE_AUTH_CONTEXT, handshakeHash])
+}
+
 export function buildPairingInfo(
   identity: DeviceIdentity,
+  handshakeHash: Uint8Array,
   capabilities: DeviceCapabilities
 ): PairingInfo {
   return {
@@ -16,7 +25,24 @@ export function buildPairingInfo(
     devicePubkey: b4a.toString(identity.publicKey, 'hex'),
     displayName: identity.displayName,
     deviceType: identity.deviceType,
-    capabilities
+    capabilities,
+    signature: b4a.toString(
+      crypto.sign(deviceAuthChallenge(handshakeHash), identity.secretKey),
+      'hex'
+    )
+  }
+}
+
+export function verifyPairingInfo(message: PairingInfo, handshakeHash: Uint8Array): boolean {
+  try {
+    const devicePubkey = b4a.from(message.devicePubkey, 'hex')
+    const signature = b4a.from(message.signature, 'hex')
+    if (devicePubkey.byteLength !== DEVICE_PUBKEY_LEN || signature.byteLength !== SIGNATURE_LEN) {
+      return false
+    }
+    return crypto.verify(deviceAuthChallenge(handshakeHash), signature, devicePubkey)
+  } catch {
+    return false
   }
 }
 

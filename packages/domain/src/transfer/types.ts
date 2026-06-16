@@ -22,7 +22,7 @@ export type { TransferErrorCode }
 
 export type ConnectionState = 'disconnected' | 'joining' | 'joined' | 'peer-connected'
 
-export type RememberStatus = 'idle' | 'confirmed' | 'declined'
+export type PeerPairStatus = 'requested' | 'paired'
 
 export interface IncomingPairRequest {
   transferId: string
@@ -32,8 +32,7 @@ export interface IncomingPairRequest {
 }
 
 export interface RememberState {
-  status: RememberStatus
-  peer: RememberedPeer | null
+  pairStatus: Record<string, PeerPairStatus>
   incomingRequest: IncomingPairRequest | null
 }
 
@@ -55,7 +54,6 @@ export interface TransferSessionState {
   transferId: string | null
   remember: RememberState
   peers: RememberedPeer[]
-  requestedPairPeers: string[]
 }
 
 export type TransferAction =
@@ -91,8 +89,9 @@ export type TransferAction =
   | { type: 'transfer_ready'; files: IncomingFileOffer[] }
   | { type: 'reconnecting' }
   | { type: 'peer_unreachable' }
-  | { type: 'remember_confirmed'; peer: RememberedPeer }
-  | { type: 'remember_declined' }
+  | { type: 'remember_confirmed'; peerKey: string }
+  | { type: 'remember_declined'; peerKey: string }
   | { type: 'remember_requested'; request: IncomingPairRequest }
   | { type: 'set_peers'; peers: RememberedPeer[] }
+  | { type: 'clear_remembered' }
   | { type: 'request_pair_peer'; peerKey: string }

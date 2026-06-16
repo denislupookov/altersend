@@ -329,4 +329,23 @@ describe('transferSessionReducer — misc', () => {
     expect(next.selectedFiles).toEqual([])
     expect(next.uploadItems).toEqual([])
   })
+
+  it('clear_remembered wipes peers and the in-session remember state', () => {
+    const state = make({
+      peers: [{ remoteDevicePubkey: 'a'.repeat(64) }] as TransferSessionState['peers'],
+      remember: {
+        pairStatus: { abc: 'paired' },
+        incomingRequest: { transferId: 't', peerKey: 'abc', displayName: 'X', deviceType: 'phone' }
+      }
+    })
+    const next = apply(state, { type: 'clear_remembered' })
+    expect(next.peers).toEqual([])
+    expect(next.remember).toEqual({ pairStatus: {}, incomingRequest: null })
+  })
+
+  it('request_pair_peer does not downgrade an already-paired peer', () => {
+    const state = make({ remember: { pairStatus: { abc: 'paired' }, incomingRequest: null } })
+    const next = apply(state, { type: 'request_pair_peer', peerKey: 'abc' })
+    expect(next).toBe(state)
+  })
 })

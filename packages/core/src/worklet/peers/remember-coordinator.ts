@@ -1,5 +1,10 @@
-import { buildPairingInfo, computePendingPairing, type PendingPairing } from './pairing'
-import { resolveVote, buildRememberedPeer, type LocalVote, type RememberDecision } from './vote'
+import {
+  buildPairingInfo,
+  computePendingPairing,
+  verifyPairingInfo,
+  type PendingPairing
+} from './pairing'
+import { resolveVote, buildRememberedPeer, type RememberDecision } from './vote'
 import type { RememberedPeer } from './remembered-peer'
 import type { DeviceIdentity } from '../identity/device-identity-store'
 import type { PairingInfo, PeerControlMessage, RememberVote } from '../transfer/control-channel'
@@ -21,8 +26,20 @@ export interface PairingSession {
 export interface RememberCoordinatorDeps {
   deviceIdentityStore: { getOrCreate(): Promise<DeviceIdentity> }
   rememberedStore: { remember(peer: RememberedPeer): Promise<RememberedPeer> }
-  broadcast: (message: PeerControlMessage) => void
+  sendTo: (peerKey: string, message: PeerControlMessage) => void
+  getHandshakeHash: (peerKey: string) => Uint8Array | null
   emit: (event: TransferIPCMessage) => void
+}
+
+interface OurVote {
+  transferId: string
+  decision: RememberDecision
+  isMine: boolean
+}
+
+interface RemoteVote {
+  transferId: string
+  decision: RememberDecision
 }
 
 export class RememberCoordinator {
@@ -30,9 +47,9 @@ export class RememberCoordinator {
   private readonly deviceIdentityReady: Promise<DeviceIdentity>
   private deviceIdentity: DeviceIdentity | null = null
   private readonly pendingPairings = new Map<string, PendingPairing>()
-  private localVote: { transferId: string; vote: LocalVote } | null = null
-  private readonly remoteVotes = new Map<string, { decision: RememberDecision; transferId: string }>()
-  private voteTimer: unknown = null
+  private readonly ourVotes = new Map<string, OurVote>()
+  private readonly remoteVotes = new Map<string, RemoteVote>()
+  private readonly timers = new Map<string, unknown>()
 
   constructor(deps: RememberCoordinatorDeps) {
     this.deps = deps
@@ -49,6 +66,10 @@ export class RememberCoordinator {
       console.warn('RememberCoordinator: pairing-info before handshake/identity ready; ignoring')
       return
     }
+    if (!verifyPairingInfo(message, session.handshakeHash)) {
+      console.warn('RememberCoordinator: pairing-info signature invalid; ignoring')
+      return
+    }
     const pending = computePendingPairing(
       this.deviceIdentity.publicKey,
       message,
@@ -60,7 +81,7 @@ export class RememberCoordinator {
 
   handleRememberVote(message: RememberVote, peerKey: string): void {
     this.remoteVotes.set(peerKey, { decision: message.vote, transferId: message.transferId })
-    if (message.vote === 'remember' && !this.localVote) {
+    if (message.vote === 'remember' && !this.ourVotes.has(peerKey)) {
       const pending = this.pendingPairings.get(peerKey)
       this.deps.emit(
         createRememberRequestedEvent({
@@ -75,9 +96,12 @@ export class RememberCoordinator {
   }
 
   async vote(input: RememberVoteInput): Promise<RememberVoteReply> {
-    const { transferId, vote, isMine } = input
+    const { transferId, peerKey, vote, isMine } = input
     if (typeof transferId !== 'string' || transferId.length === 0) {
       throw new BadRequestError('rememberVote: transferId required')
+    }
+    if (typeof peerKey !== 'string' || peerKey.length === 0) {
+      throw new BadRequestError('rememberVote: peerKey required')
     }
     if (vote !== 'remember' && vote !== 'no') {
       throw new BadRequestError('rememberVote: vote must be "remember" or "no"')
@@ -86,93 +110,97 @@ export class RememberCoordinator {
       throw new BadRequestError('rememberVote: isMine must be a boolean')
     }
 
-    this.localVote = { transferId, vote: { decision: vote, isMine } }
+    this.ourVotes.set(peerKey, { transferId, decision: vote, isMine })
     if (vote === 'remember') {
+      this.startTimeout(peerKey, transferId)
       await this.deviceIdentityReady.catch(() => {})
-      this.broadcastPairingInfo()
-      this.startVoteTimeout(transferId)
+      if (this.ourVotes.has(peerKey)) this.sendPairingInfo(peerKey)
     } else {
-      this.clearVoteTimer()
+      this.clearTimer(peerKey)
     }
-    this.deps.broadcast({ type: 'remember-vote', transferId, vote, isMine })
-
-    for (const peerKey of this.knownVotePeers()) this.evaluateVote(peerKey)
+    this.deps.sendTo(peerKey, { type: 'remember-vote', transferId, vote, isMine })
+    this.evaluateVote(peerKey)
     return { ok: true }
   }
 
   onPeerDisconnected(peerKey: string): void {
+    const our = this.ourVotes.get(peerKey)
     const remote = this.remoteVotes.get(peerKey)
-    if (remote?.decision === 'remember' && !this.localVote) {
-      this.deps.emit(createRememberDeclinedEvent(remote.transferId))
+    if (our || remote) {
+      this.deps.emit(createRememberDeclinedEvent(peerKey, our?.transferId ?? remote?.transferId ?? ''))
     }
-    this.forgetPeerVote(peerKey)
-    if (this.localVote && this.remoteVotes.size === 0) this.endVoteRound()
+    this.cleanupPeer(peerKey)
   }
 
   reset(): void {
-    this.endVoteRound()
+    for (const peerKey of [...this.timers.keys()]) this.clearTimer(peerKey)
+    this.ourVotes.clear()
+    this.remoteVotes.clear()
+    this.pendingPairings.clear()
   }
 
   private evaluateVote(peerKey: string): void {
-    const local = this.localVote
+    const our = this.ourVotes.get(peerKey)
     const remoteEntry = this.remoteVotes.get(peerKey)
     const remote =
-      remoteEntry && remoteEntry.transferId === local?.transferId ? remoteEntry.decision : null
-    const status = resolveVote(local?.vote ?? null, remote)
+      remoteEntry && remoteEntry.transferId === our?.transferId ? remoteEntry.decision : null
+    const status = resolveVote(our ? { decision: our.decision, isMine: our.isMine } : null, remote)
     if (status === 'pending') return
 
     if (status === 'confirmed') {
       const pending = this.pendingPairings.get(peerKey)
-      if (!pending || !local) return
-      const peer = buildRememberedPeer(pending, local.vote, Date.now())
+      if (!pending || !our) return
+      const peer = buildRememberedPeer(pending, { decision: our.decision, isMine: our.isMine }, Date.now())
       void this.deps.rememberedStore
         .remember(peer)
-        .then((saved) => this.deps.emit(createRememberConfirmedEvent(saved)))
+        .then((saved) => this.deps.emit(createRememberConfirmedEvent(peerKey, saved)))
         .catch((err) => console.warn('RememberCoordinator: failed to persist remembered peer', err))
     } else {
-      this.deps.emit(createRememberDeclinedEvent(local?.transferId ?? ''))
+      this.deps.emit(createRememberDeclinedEvent(peerKey, our?.transferId ?? ''))
     }
-    this.forgetPeerVote(peerKey)
-    if (this.remoteVotes.size === 0) this.endVoteRound()
+    this.cleanupPeer(peerKey)
   }
 
-  private broadcastPairingInfo(): void {
+  private sendPairingInfo(peerKey: string): void {
     if (!this.deviceIdentity) {
       console.warn('RememberCoordinator: device identity not ready; cannot send pairing-info')
       return
     }
-    this.deps.broadcast(buildPairingInfo(this.deviceIdentity, { canBackground: false }))
+    const handshakeHash = this.deps.getHandshakeHash(peerKey)
+    if (!handshakeHash) {
+      console.warn('RememberCoordinator: no handshake hash for peer; cannot send pairing-info')
+      return
+    }
+    this.deps.sendTo(
+      peerKey,
+      buildPairingInfo(this.deviceIdentity, handshakeHash, { canBackground: false })
+    )
   }
 
-  private knownVotePeers(): Set<string> {
-    return new Set([...this.pendingPairings.keys(), ...this.remoteVotes.keys()])
+  private startTimeout(peerKey: string, transferId: string): void {
+    this.clearTimer(peerKey)
+    this.timers.set(
+      peerKey,
+      setTimeout(() => {
+        this.timers.delete(peerKey)
+        this.deps.emit(createRememberDeclinedEvent(peerKey, transferId))
+        this.cleanupPeer(peerKey)
+      }, REMEMBER_VOTE_TIMEOUT_MS)
+    )
   }
 
-  private startVoteTimeout(transferId: string): void {
-    this.clearVoteTimer()
-    this.voteTimer = setTimeout(() => {
-      this.voteTimer = null
-      this.deps.emit(createRememberDeclinedEvent(transferId))
-      this.endVoteRound()
-    }, REMEMBER_VOTE_TIMEOUT_MS)
-  }
-
-  private clearVoteTimer(): void {
-    if (this.voteTimer !== null) {
-      clearTimeout(this.voteTimer)
-      this.voteTimer = null
+  private clearTimer(peerKey: string): void {
+    const timer = this.timers.get(peerKey)
+    if (timer !== undefined) {
+      clearTimeout(timer)
+      this.timers.delete(peerKey)
     }
   }
 
-  private forgetPeerVote(peerKey: string): void {
+  private cleanupPeer(peerKey: string): void {
+    this.clearTimer(peerKey)
+    this.ourVotes.delete(peerKey)
     this.remoteVotes.delete(peerKey)
     this.pendingPairings.delete(peerKey)
-  }
-
-  private endVoteRound(): void {
-    this.clearVoteTimer()
-    this.localVote = null
-    this.remoteVotes.clear()
-    this.pendingPairings.clear()
   }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { formatRelativeTime, loadPeers, useTransferStore } from '@altersend/domain'
+import { forgetAllPeers, formatRelativeTime, loadPeers, useTransferStore } from '@altersend/domain'
 import { Button } from '@altersend/components'
 import { CloseIcon, deviceIcon } from '@altersend/components/icons'
 
@@ -12,10 +12,12 @@ interface AddDeviceModalProps {
 export function AddDeviceModal({ open, onClose, onPairNew }: AddDeviceModalProps) {
   const peers = useTransferStore((s) => s.peers)
   const [invitingKey, setInvitingKey] = useState<string | null>(null)
+  const [confirmingClear, setConfirmingClear] = useState(false)
 
   useEffect(() => {
     if (!open) {
       setInvitingKey(null)
+      setConfirmingClear(false)
       return
     }
     void loadPeers()
@@ -25,6 +27,15 @@ export function AddDeviceModal({ open, onClose, onPairNew }: AddDeviceModalProps
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
+
+  useEffect(() => {
+    setConfirmingClear(false)
+  }, [peers])
+
+  const handleRemoveAll = async () => {
+    setConfirmingClear(false)
+    await forgetAllPeers()
+  }
 
   if (!open) return null
 
@@ -112,6 +123,16 @@ export function AddDeviceModal({ open, onClose, onPairNew }: AddDeviceModalProps
           <Button onClick={onClose} size='sm' variant='ghost' width='full'>
             Done
           </Button>
+          {peers.length > 0 ? (
+            <Button
+              onClick={confirmingClear ? () => void handleRemoveAll() : () => setConfirmingClear(true)}
+              size='sm'
+              variant='ghost'
+              width='full'
+            >
+              {confirmingClear ? 'Click again to remove all devices' : 'Remove all devices'}
+            </Button>
+          ) : null}
         </div>
       </div>
     </div>

@@ -25,14 +25,12 @@ export interface PeerListEntryWithPair extends PeerListEntry {
 
 export function applyPairState(
   entries: PeerListEntry[],
-  requestedPeerKeys: readonly string[],
-  isPaired: boolean
+  pairStatus: Record<string, PairState>
 ): PeerListEntryWithPair[] {
-  const requested = new Set(requestedPeerKeys)
   return entries.map((entry) => {
     let pairState: PairState | undefined
     if (entry.status !== 'disconnected') {
-      pairState = requested.has(entry.peerKey) ? (isPaired ? 'paired' : 'requested') : 'pairable'
+      pairState = pairStatus[entry.peerKey] ?? 'pairable'
     }
     return { ...entry, pairState }
   })

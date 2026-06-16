@@ -69,6 +69,7 @@ export interface PairingInfo {
   displayName: string
   deviceType: DeviceType
   capabilities: { canBackground: boolean }
+  signature: string
 }
 
 export interface RememberVote {

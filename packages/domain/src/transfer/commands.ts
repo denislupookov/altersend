@@ -81,11 +81,12 @@ export const downloadFiles = async (files: DownloadFileRequest[]): Promise<Downl
 
 export const rememberVote = async (
   transferId: string,
+  peerKey: string,
   vote: 'remember' | 'no',
   isMine: boolean
 ): Promise<void> => {
   try {
-    await getTransferApi().worker.rememberVote({ transferId, vote, isMine })
+    await getTransferApi().worker.rememberVote({ transferId, peerKey, vote, isMine })
   } catch (error) {
     reportError('rememberVote', error)
     setError(errorMessage(error))
@@ -101,9 +102,19 @@ export const loadPeers = async (): Promise<void> => {
   }
 }
 
+export const forgetAllPeers = async (): Promise<void> => {
+  try {
+    await getTransferApi().worker.clearPeers()
+    dispatchToTransferStore({ type: 'clear_remembered' })
+  } catch (error) {
+    reportError('forgetAllPeers', error)
+    setError(errorMessage(error))
+  }
+}
+
 export const requestPair = (transferId: string, peerKey: string): void => {
   dispatchToTransferStore({ type: 'request_pair_peer', peerKey })
-  void rememberVote(transferId, 'remember', false)
+  void rememberVote(transferId, peerKey, 'remember', false)
 }
 
 export const addSelectedFiles = (files: SelectedFile[]): void => {

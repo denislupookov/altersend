@@ -143,7 +143,8 @@ export class TransferOrchestrator implements TransferRPC {
     this.remember = new RememberCoordinator({
       deviceIdentityStore: this.deviceIdentityStore,
       rememberedStore: this.rememberedStore,
-      broadcast: (message) => this.swarm.broadcast(message),
+      sendTo: (peerKey, message) => this.swarm.sendTo(peerKey, message),
+      getHandshakeHash: (peerKey) => this.swarm.getHandshakeHash(peerKey),
       emit: (event) => this.emitIPC(event)
     })
   }
@@ -184,6 +185,11 @@ export class TransferOrchestrator implements TransferRPC {
 
   peersList(): Promise<RememberedPeer[]> {
     return this.rememberedStore.list()
+  }
+
+  clearPeers(): Promise<void> {
+    this.remember.reset()
+    return this.rememberedStore.clear()
   }
 
   private onPeerDisconnected(peerKey: string | null, remainingCount: number): void {
@@ -451,6 +457,7 @@ export class TransferOrchestrator implements TransferRPC {
   /** Tears down the swarm but keeps role/drive/state. Use `disconnect()` for full cleanup. */
   async closePeers(): Promise<void> {
     this.abortInFlight()
+    this.remember.reset()
     this.currentTopic = null
     await this.swarm.endSession()
   }
@@ -459,6 +466,7 @@ export class TransferOrchestrator implements TransferRPC {
     if (this.suspended) return
     this.suspended = true
     this.abortInFlight()
+    this.remember.reset()
     await tryAsync('swarm.endSession (suspend)', () => this.swarm.endSession())
   }
 

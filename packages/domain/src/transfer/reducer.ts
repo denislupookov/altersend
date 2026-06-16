@@ -7,7 +7,19 @@ import {
 import { applySharingProgress, getPhaseFromSelection, mergeSelectedFiles } from '../send/draftModel'
 import { applyPeerDownloadEvent } from '../send/shareModel'
 import { TRANSFER_ERROR_CODES } from './types'
-import type { ConnectionState, TransferAction, TransferSessionState } from './types'
+import type {
+  ConnectionState,
+  IncomingPairRequest,
+  TransferAction,
+  TransferSessionState
+} from './types'
+
+function clearIncomingFor(
+  incoming: IncomingPairRequest | null,
+  peerKey: string
+): IncomingPairRequest | null {
+  return incoming?.peerKey === peerKey ? null : incoming
+}
 
 export { TRANSFER_ERROR_CODES } from './types'
 
@@ -27,9 +39,8 @@ export const initialTransferSessionState: TransferSessionState = {
   errorCode: null,
   errorMessage: null,
   transferId: null,
-  remember: { status: 'idle', peer: null, incomingRequest: null },
-  peers: [],
-  requestedPairPeers: []
+  remember: { pairStatus: {}, incomingRequest: null },
+  peers: []
 }
 
 function clearError(state: TransferSessionState): TransferSessionState {
@@ -67,8 +78,7 @@ function endSession(state: TransferSessionState): TransferSessionState {
     errorCode: null,
     errorMessage: null,
     transferId: null,
-    remember: { status: 'idle', peer: null, incomingRequest: null },
-    requestedPairPeers: []
+    remember: { pairStatus: {}, incomingRequest: null }
   }
 }
 
@@ -326,21 +336,39 @@ export function transferSessionReducer(
       }
 
     case 'remember_confirmed':
-      return { ...state, remember: { status: 'confirmed', peer: action.peer, incomingRequest: null } }
-    case 'remember_declined':
       return {
         ...state,
-        remember: { status: 'declined', peer: null, incomingRequest: null },
-        requestedPairPeers: []
+        remember: {
+          pairStatus: { ...state.remember.pairStatus, [action.peerKey]: 'paired' },
+          incomingRequest: clearIncomingFor(state.remember.incomingRequest, action.peerKey)
+        }
       }
+    case 'remember_declined': {
+      const pairStatus = { ...state.remember.pairStatus }
+      delete pairStatus[action.peerKey]
+      return {
+        ...state,
+        remember: {
+          pairStatus,
+          incomingRequest: clearIncomingFor(state.remember.incomingRequest, action.peerKey)
+        }
+      }
+    }
     case 'remember_requested':
       return { ...state, remember: { ...state.remember, incomingRequest: action.request } }
     case 'set_peers':
       return { ...state, peers: action.peers }
+    case 'clear_remembered':
+      return { ...state, peers: [], remember: { pairStatus: {}, incomingRequest: null } }
     case 'request_pair_peer':
-      return state.requestedPairPeers.includes(action.peerKey)
-        ? state
-        : { ...state, requestedPairPeers: [...state.requestedPairPeers, action.peerKey] }
+      if (state.remember.pairStatus[action.peerKey] === 'paired') return state
+      return {
+        ...state,
+        remember: {
+          ...state.remember,
+          pairStatus: { ...state.remember.pairStatus, [action.peerKey]: 'requested' }
+        }
+      }
 
     default: {
       const exhaustiveCheck: never = action

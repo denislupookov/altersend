@@ -91,6 +91,7 @@ function ThemedStack() {
       <Stack.Screen name='settings' options={flowScreenOptions} />
       <Stack.Screen name='language' options={flowScreenOptions} />
       <Stack.Screen name='security' options={flowScreenOptions} />
+      <Stack.Screen name='devices' options={flowScreenOptions} />
       <Stack.Screen name='report' options={flowScreenOptions} />
       <Stack.Screen
         name='send/preparing'

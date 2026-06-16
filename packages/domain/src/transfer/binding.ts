@@ -54,11 +54,11 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
         message: event.message
       })
     case 'remember-confirmed':
-      dispatchToTransferStore({ type: 'remember_confirmed', peer: event.peer })
+      dispatchToTransferStore({ type: 'remember_confirmed', peerKey: event.peerKey })
       void loadPeers()
       return
     case 'remember-declined':
-      return dispatchToTransferStore({ type: 'remember_declined' })
+      return dispatchToTransferStore({ type: 'remember_declined', peerKey: event.peerKey })
     case 'remember-requested':
       return dispatchToTransferStore({
         type: 'remember_requested',

@@ -5,8 +5,10 @@ import { RememberCoordinator, type RememberCoordinatorDeps } from './remember-co
 import { buildPairingInfo } from './pairing'
 import type { RememberedPeer } from './remembered-peer'
 import type { DeviceIdentity } from '../identity/device-identity-store'
-import type { PeerControlMessage } from '../transfer/control-channel'
+import type { PeerControlMessage, RememberVote } from '../transfer/control-channel'
 import type { TransferIPCMessage } from '../rpc/events'
+
+const handshake = crypto.randomBytes(64)
 
 function makeIdentity(): DeviceIdentity {
   const kp = crypto.keyPair()
@@ -20,7 +22,7 @@ function makeIdentity(): DeviceIdentity {
 }
 
 function setup(localIdentity: DeviceIdentity = makeIdentity()) {
-  const broadcasts: PeerControlMessage[] = []
+  const sends: { peerKey: string; message: PeerControlMessage }[] = []
   const emits: TransferIPCMessage[] = []
   const remembered: RememberedPeer[] = []
   const deps: RememberCoordinatorDeps = {
@@ -31,79 +33,137 @@ function setup(localIdentity: DeviceIdentity = makeIdentity()) {
         return peer
       }
     },
-    broadcast: (m) => broadcasts.push(m),
+    sendTo: (peerKey, message) => sends.push({ peerKey, message }),
+    getHandshakeHash: () => handshake,
     emit: (e) => emits.push(e)
   }
-  return { coord: new RememberCoordinator(deps), broadcasts, emits, remembered, localIdentity }
+  return { coord: new RememberCoordinator(deps), sends, emits, remembered }
 }
 
-const remote = makeIdentity()
-const remoteKey = b4a.toString(remote.publicKey, 'hex')
-const remoteInfo = buildPairingInfo(remote, { canBackground: false })
-const handshake = crypto.randomBytes(32)
+function peer() {
+  const id = makeIdentity()
+  return {
+    key: b4a.toString(id.publicKey, 'hex'),
+    info: buildPairingInfo(id, handshake, { canBackground: false })
+  }
+}
+
+const remoteVote = (transferId: string, vote: 'remember' | 'no'): RememberVote => ({
+  type: 'remember-vote',
+  transferId,
+  vote,
+  isMine: false
+})
+
 const flush = () => new Promise((r) => setTimeout(r, 0))
 
 describe('RememberCoordinator.vote validation', () => {
   it('rejects bad input', async () => {
     const { coord } = setup()
-    await expect(coord.vote({ transferId: '', vote: 'remember', isMine: true })).rejects.toThrow()
+    const k = peer().key
+    await expect(coord.vote({ transferId: '', peerKey: k, vote: 'remember', isMine: true })).rejects.toThrow()
+    await expect(coord.vote({ transferId: 't', peerKey: '', vote: 'remember', isMine: true })).rejects.toThrow()
     await expect(
-      coord.vote({ transferId: 't', vote: 'maybe' as never, isMine: true })
+      coord.vote({ transferId: 't', peerKey: k, vote: 'maybe' as never, isMine: true })
     ).rejects.toThrow()
     await expect(
-      coord.vote({ transferId: 't', vote: 'remember', isMine: 'x' as never })
+      coord.vote({ transferId: 't', peerKey: k, vote: 'remember', isMine: 'x' as never })
     ).rejects.toThrow()
   })
 })
 
 describe('RememberCoordinator two-sided vote', () => {
-  it("on 'no' it broadcasts the vote and sends no pairing-info", async () => {
-    const { coord, broadcasts } = setup()
-    await coord.vote({ transferId: 't1', vote: 'no', isMine: false })
-    expect(broadcasts).toEqual([{ type: 'remember-vote', transferId: 't1', vote: 'no', isMine: false }])
+  it("on 'no' it sends the vote to that peer only, no pairing-info", async () => {
+    const { coord, sends } = setup()
+    const k = peer().key
+    await coord.vote({ transferId: 't1', peerKey: k, vote: 'no', isMine: false })
+    expect(sends).toEqual([
+      { peerKey: k, message: { type: 'remember-vote', transferId: 't1', vote: 'no', isMine: false } }
+    ])
   })
 
-  it('persists and emits confirmed when both sides vote remember', async () => {
-    const { coord, broadcasts, emits, remembered } = setup()
-    await coord.vote({ transferId: 't1', vote: 'remember', isMine: true })
-    coord.handlePairingInfo(remoteInfo, { peerKey: remoteKey, handshakeHash: handshake })
-    coord.handleRememberVote(
-      { type: 'remember-vote', transferId: 't1', vote: 'remember', isMine: false },
-      remoteKey
-    )
+  it('persists and emits confirmed (with peerKey) when both sides vote remember', async () => {
+    const { coord, sends, emits, remembered } = setup()
+    const p = peer()
+    await coord.vote({ transferId: 't1', peerKey: p.key, vote: 'remember', isMine: true })
+    coord.handlePairingInfo(p.info, { peerKey: p.key, handshakeHash: handshake })
+    coord.handleRememberVote(remoteVote('t1', 'remember'), p.key)
     await flush()
 
-    expect(broadcasts.some((m) => m.type === 'pairing-info')).toBe(true)
+    expect(sends.some((s) => s.message.type === 'pairing-info' && s.peerKey === p.key)).toBe(true)
     expect(remembered).toHaveLength(1)
-    expect(remembered[0].remoteDevicePubkey).toBe(remoteKey)
-    expect(remembered[0].autoAccept).toBe(true) // seeded from our isMine
-    expect(emits.some((e) => e.type === 'remember-confirmed')).toBe(true)
+    expect(remembered[0].remoteDevicePubkey).toBe(p.key)
+    expect(remembered[0].autoAccept).toBe(true)
+    const confirmed = emits.find((e) => e.type === 'remember-confirmed')
+    expect(confirmed?.peerKey).toBe(p.key)
     coord.reset()
   })
 
-  it("declines immediately on the remote's 'no', without persisting", async () => {
+  it("declines immediately on the remote's 'no'", async () => {
     const { coord, emits, remembered } = setup()
-    await coord.vote({ transferId: 't1', vote: 'remember', isMine: false })
-    coord.handleRememberVote(
-      { type: 'remember-vote', transferId: 't1', vote: 'no', isMine: false },
-      remoteKey
-    )
+    const p = peer()
+    await coord.vote({ transferId: 't1', peerKey: p.key, vote: 'remember', isMine: false })
+    coord.handleRememberVote(remoteVote('t1', 'no'), p.key)
     await flush()
     expect(remembered).toHaveLength(0)
     expect(emits.some((e) => e.type === 'remember-declined')).toBe(true)
     coord.reset()
   })
 
-  it('ignores a remote vote from a different transfer (no cross-round confirm)', async () => {
+  it('ignores a remote vote from a different transfer', async () => {
     const { coord, remembered } = setup()
-    await coord.vote({ transferId: 't1', vote: 'remember', isMine: false })
-    coord.handlePairingInfo(remoteInfo, { peerKey: remoteKey, handshakeHash: handshake })
-    coord.handleRememberVote(
-      { type: 'remember-vote', transferId: 't2', vote: 'remember', isMine: false },
-      remoteKey
-    )
+    const p = peer()
+    await coord.vote({ transferId: 't1', peerKey: p.key, vote: 'remember', isMine: false })
+    coord.handlePairingInfo(p.info, { peerKey: p.key, handshakeHash: handshake })
+    coord.handleRememberVote(remoteVote('t2', 'remember'), p.key)
     await flush()
     expect(remembered).toHaveLength(0)
+    coord.reset()
+  })
+
+  it('rejects pairing-info whose signature does not match the claimed pubkey', async () => {
+    const { coord, remembered } = setup()
+    const p = peer()
+    const forged = { ...p.info, signature: b4a.toString(crypto.randomBytes(64), 'hex') }
+    await coord.vote({ transferId: 't1', peerKey: p.key, vote: 'remember', isMine: false })
+    coord.handlePairingInfo(forged, { peerKey: p.key, handshakeHash: handshake })
+    coord.handleRememberVote(remoteVote('t1', 'remember'), p.key)
+    await flush()
+    expect(remembered).toHaveLength(0)
+    coord.reset()
+  })
+
+  it('pairs two peers independently in one session (first confirm must not break the second)', async () => {
+    const { coord, emits, remembered } = setup()
+    const a = peer()
+    const b = peer()
+    await coord.vote({ transferId: 't1', peerKey: a.key, vote: 'remember', isMine: false })
+    await coord.vote({ transferId: 't1', peerKey: b.key, vote: 'remember', isMine: false })
+
+    coord.handlePairingInfo(a.info, { peerKey: a.key, handshakeHash: handshake })
+    coord.handleRememberVote(remoteVote('t1', 'remember'), a.key)
+    await flush()
+
+    coord.handlePairingInfo(b.info, { peerKey: b.key, handshakeHash: handshake })
+    coord.handleRememberVote(remoteVote('t1', 'remember'), b.key)
+    await flush()
+
+    expect(remembered.map((r) => r.remoteDevicePubkey).sort()).toEqual([a.key, b.key].sort())
+    const confirmedKeys = emits
+      .filter((e) => e.type === 'remember-confirmed')
+      .map((e) => e.peerKey)
+      .sort()
+    expect(confirmedKeys).toEqual([a.key, b.key].sort())
+    coord.reset()
+  })
+
+  it('declines the request when the peer disconnects before voting', async () => {
+    const { coord, emits } = setup()
+    const p = peer()
+    await coord.vote({ transferId: 't1', peerKey: p.key, vote: 'remember', isMine: false })
+    coord.onPeerDisconnected(p.key)
+    const declined = emits.find((e) => e.type === 'remember-declined')
+    expect(declined?.peerKey).toBe(p.key)
     coord.reset()
   })
 
@@ -111,9 +171,11 @@ describe('RememberCoordinator two-sided vote', () => {
     vi.useFakeTimers()
     try {
       const { coord, emits } = setup()
-      await coord.vote({ transferId: 't1', vote: 'remember', isMine: true })
+      const p = peer()
+      await coord.vote({ transferId: 't1', peerKey: p.key, vote: 'remember', isMine: true })
       await vi.advanceTimersByTimeAsync(60_000)
-      expect(emits.some((e) => e.type === 'remember-declined')).toBe(true)
+      const declined = emits.find((e) => e.type === 'remember-declined')
+      expect(declined?.peerKey).toBe(p.key)
     } finally {
       vi.useRealTimers()
     }

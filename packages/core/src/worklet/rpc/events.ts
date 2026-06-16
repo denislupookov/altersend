@@ -67,11 +67,13 @@ export interface ErrorEvent {
 
 export interface RememberConfirmedEvent {
   type: 'remember-confirmed'
+  peerKey: string
   peer: RememberedPeer
 }
 
 export interface RememberDeclinedEvent {
   type: 'remember-declined'
+  peerKey: string
   transferId: string
 }
 
@@ -112,12 +114,18 @@ export function createRoleEvent(role: TransferRole | null): RoleEvent {
   return { type: 'role', role }
 }
 
-export function createRememberConfirmedEvent(peer: RememberedPeer): RememberConfirmedEvent {
-  return { type: 'remember-confirmed', peer }
+export function createRememberConfirmedEvent(
+  peerKey: string,
+  peer: RememberedPeer
+): RememberConfirmedEvent {
+  return { type: 'remember-confirmed', peerKey, peer }
 }
 
-export function createRememberDeclinedEvent(transferId: string): RememberDeclinedEvent {
-  return { type: 'remember-declined', transferId }
+export function createRememberDeclinedEvent(
+  peerKey: string,
+  transferId: string
+): RememberDeclinedEvent {
+  return { type: 'remember-declined', peerKey, transferId }
 }
 
 export function createRememberRequestedEvent(

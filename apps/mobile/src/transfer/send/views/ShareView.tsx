@@ -76,8 +76,7 @@ export function ShareView() {
   const peerDownloads = useTransferStore((s) => s.peerDownloads)
   const connectedPeers = useTransferStore((s) => s.connectedPeers)
   const transferId = useTransferStore((s) => s.transferId)
-  const requestedPairPeers = useTransferStore((s) => s.requestedPairPeers)
-  const isPaired = useTransferStore((s) => s.remember.status === 'confirmed')
+  const pairStatus = useTransferStore((s) => s.remember.pairStatus)
   const topic = topicRaw ?? ''
   const isPeerConnected = connectionState === 'peer-connected'
   const [isFilesExpanded, setIsFilesExpanded] = useState(false)
@@ -93,8 +92,8 @@ export function ShareView() {
   const hasActivity = isPeerConnected || peerEntries.length > 0
   const showWaitingState = !hasActivity
   const deviceEntries = useMemo(
-    () => applyPairState(peerEntries, requestedPairPeers, isPaired).map((e) => toPeerListCardEntry(t, e)),
-    [peerEntries, requestedPairPeers, isPaired, t]
+    () => applyPairState(peerEntries, pairStatus).map((e) => toPeerListCardEntry(t, e)),
+    [peerEntries, pairStatus, t]
   )
 
   const handlePair = (peerKey: string) => {

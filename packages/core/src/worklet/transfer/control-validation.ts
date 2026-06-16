@@ -20,8 +20,14 @@ const MAX_MESSAGE_LEN = 1024
 const MAX_FILES_PER_TRANSFER = 10_000
 const MAX_DISPLAY_NAME_LEN = 256
 
+const SIGNATURE_HEX_RE = /^[0-9a-f]{128}$/i
+
 function isBoundedString(x: unknown, maxLen: number): x is string {
   return typeof x === 'string' && x.length > 0 && x.length <= maxLen
+}
+
+function isValidSignatureHex(x: unknown): x is string {
+  return typeof x === 'string' && SIGNATURE_HEX_RE.test(x)
 }
 
 function isOptionalBoundedString(x: unknown, maxLen: number): boolean {
@@ -112,6 +118,7 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
       const v = x as Partial<PairingInfo>
       return (
         isValidHexKey(v.devicePubkey) &&
+        isValidSignatureHex(v.signature) &&
         isBoundedString(v.displayName, MAX_DISPLAY_NAME_LEN) &&
         isDeviceType(v.deviceType) &&
         !!v.capabilities &&

@@ -196,7 +196,8 @@ describe('isValidControlMessage', () => {
       devicePubkey: 'a'.repeat(64),
       displayName: "Denis's MacBook",
       deviceType: 'laptop',
-      capabilities: { canBackground: false }
+      capabilities: { canBackground: false },
+      signature: 'a'.repeat(128)
     }
 
     it('accepts a valid message', () => {
@@ -206,6 +207,12 @@ describe('isValidControlMessage', () => {
     it('rejects a non-hex or wrong-length pubkey', () => {
       expect(isValidControlMessage({ ...valid, devicePubkey: 'xyz' })).toBe(false)
       expect(isValidControlMessage({ ...valid, devicePubkey: 'a'.repeat(63) })).toBe(false)
+    })
+
+    it('rejects a missing or wrong-length signature', () => {
+      const { signature: _signature, ...rest } = valid
+      expect(isValidControlMessage(rest)).toBe(false)
+      expect(isValidControlMessage({ ...valid, signature: 'a'.repeat(64) })).toBe(false)
     })
 
     it('rejects an unknown device type', () => {

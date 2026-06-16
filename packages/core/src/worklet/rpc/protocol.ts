@@ -64,6 +64,7 @@ export interface DisconnectReply {
 
 export interface RememberVoteInput {
   transferId: string
+  peerKey: string
   vote: 'remember' | 'no'
   isMine: boolean
 }
@@ -111,6 +112,7 @@ export interface TransferRPC {
   closePeers(): Promise<void>
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply>
   peersList(): Promise<RememberedPeer[]>
+  clearPeers(): Promise<void>
 }
 
 export class BadRequestError extends Error {

@@ -6,12 +6,16 @@ declare module 'hypercore-crypto' {
   export function discoveryKey(topic: Uint8Array): Uint8Array
   export function keyPair(seed?: Uint8Array): { publicKey: Uint8Array; secretKey: Uint8Array }
   export function hash(data: Uint8Array | Uint8Array[], out?: Uint8Array): Uint8Array
+  export function sign(message: Uint8Array, secretKey: Uint8Array): Uint8Array
+  export function verify(message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array): boolean
 
   const _default: {
     randomBytes: typeof randomBytes
     discoveryKey: typeof discoveryKey
     keyPair: typeof keyPair
     hash: typeof hash
+    sign: typeof sign
+    verify: typeof verify
   }
   export default _default
 }

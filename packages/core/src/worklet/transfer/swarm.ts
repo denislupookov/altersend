@@ -182,6 +182,22 @@ export class TransferSwarm {
     }
   }
 
+  sendTo(peerKey: string, message: PeerControlMessage): void {
+    for (const session of this.peerSessions.values()) {
+      if (session.peerKey === peerKey) {
+        session.controlChannel.send(message)
+        return
+      }
+    }
+  }
+
+  getHandshakeHash(peerKey: string): Uint8Array | null {
+    for (const session of this.peerSessions.values()) {
+      if (session.peerKey === peerKey) return session.handshakeHash
+    }
+    return null
+  }
+
   get peerCount(): number {
     return this.peerSessions.size
   }

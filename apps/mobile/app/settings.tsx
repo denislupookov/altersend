@@ -5,9 +5,11 @@ import { useFocusEffect, useRouter } from 'expo-router'
 import { LOCALE_OPTIONS, useTranslation, type LocalePreference } from '@altersend/locales'
 import {
   discordUrl,
+  loadPeers,
   privacyPolicyUrl,
   supportEmail,
   termsOfServiceUrl,
+  useTransferStore,
   websiteUrl
 } from '@altersend/domain'
 import { useTheme } from '@altersend/components'
@@ -19,7 +21,8 @@ import {
   GlobeIcon,
   LockIcon,
   MailIcon,
-  ShieldIcon
+  ShieldIcon,
+  SmartphoneIcon
 } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
 import brandLogo from '@/assets/images/brand-logo.png'
@@ -77,6 +80,11 @@ export default function SettingsScreen() {
   const [localePreference, setLocalePreference] = useState<LocalePreference>(
     getLocalePreferenceSnapshot
   )
+  const peers = useTransferStore((s) => s.peers)
+
+  useEffect(() => {
+    void loadPeers()
+  }, [])
 
   useEffect(() => subscribeLocalePreference(setLocalePreference), [])
 
@@ -129,6 +137,19 @@ export default function SettingsScreen() {
               hint={t('settings:crashReports.label')}
               icon={<ShieldIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => router.push('/security')}
+              isLast
+            />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>Devices</Text>
+          <View style={[styles.card, cardStyle]}>
+            <LinkRow
+              label='Paired devices'
+              hint={peers.length === 0 ? 'No devices yet' : `${peers.length} paired`}
+              icon={<SmartphoneIcon size={16} color={theme.colors.colorTextSecondary} />}
+              onPress={() => router.push('/devices')}
               isLast
             />
           </View>

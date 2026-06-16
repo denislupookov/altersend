@@ -15,7 +15,7 @@ export function PairRequestBanner() {
 
   const respond = (vote: 'remember' | 'no') => {
     setResponded(true)
-    void rememberVote(request.transferId, vote, false)
+    void rememberVote(request.transferId, request.peerKey, vote, false)
   }
 
   return (
