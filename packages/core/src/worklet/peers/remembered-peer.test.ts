@@ -1,17 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import {
-  type RememberedPeer,
-  findPeer,
-  isValidRememberedPeer,
-  mergeRememberedPeer,
-  patchPeer,
-  removePeer,
-  sanitizeRememberedPeers,
-  upsertPeer
-} from './remembered-peer'
+import { type RememberedPeer, isValidRememberedPeer, mergeRememberedPeer } from './remembered-peer'
 
 const KEY_A = 'a'.repeat(64)
-const KEY_B = 'b'.repeat(64)
 
 function makePeer(overrides: Partial<RememberedPeer> = {}): RememberedPeer {
   return {
@@ -50,62 +40,6 @@ describe('isValidRememberedPeer', () => {
   it('rejects null / non-object', () => {
     expect(isValidRememberedPeer(null)).toBe(false)
     expect(isValidRememberedPeer('peer')).toBe(false)
-  })
-})
-
-describe('sanitizeRememberedPeers', () => {
-  it('returns [] for non-arrays', () => {
-    expect(sanitizeRememberedPeers(undefined)).toEqual([])
-    expect(sanitizeRememberedPeers({})).toEqual([])
-  })
-
-  it('drops invalid entries and keeps valid ones', () => {
-    const result = sanitizeRememberedPeers([makePeer(), { junk: true }, makePeer({ remoteDevicePubkey: KEY_B })])
-    expect(result).toHaveLength(2)
-  })
-
-  it('collapses duplicate pubkeys (last wins)', () => {
-    const result = sanitizeRememberedPeers([
-      makePeer({ displayName: 'Old' }),
-      makePeer({ displayName: 'New' })
-    ])
-    expect(result).toHaveLength(1)
-    expect(result[0].displayName).toBe('New')
-  })
-})
-
-describe('list mutations', () => {
-  it('upsert adds then replaces by pubkey', () => {
-    let peers: RememberedPeer[] = []
-    peers = upsertPeer(peers, makePeer({ displayName: 'First' }))
-    expect(peers).toHaveLength(1)
-    peers = upsertPeer(peers, makePeer({ displayName: 'Second' }))
-    expect(peers).toHaveLength(1)
-    expect(peers[0].displayName).toBe('Second')
-  })
-
-  it('removePeer deletes only the matching key', () => {
-    const peers = [makePeer(), makePeer({ remoteDevicePubkey: KEY_B })]
-    const next = removePeer(peers, KEY_A)
-    expect(next).toHaveLength(1)
-    expect(next[0].remoteDevicePubkey).toBe(KEY_B)
-  })
-
-  it('patchPeer updates fields and is case-insensitive on key', () => {
-    const peers = [makePeer({ blocked: false })]
-    const next = patchPeer(peers, KEY_A.toUpperCase(), { blocked: true })
-    expect(next[0].blocked).toBe(true)
-  })
-
-  it('patchPeer returns the same array reference when no peer matches', () => {
-    const peers = [makePeer()]
-    expect(patchPeer(peers, KEY_B, { blocked: true })).toBe(peers)
-  })
-
-  it('findPeer locates by key or returns null', () => {
-    const peers = [makePeer()]
-    expect(findPeer(peers, KEY_A)?.displayName).toBe("Denis's MacBook")
-    expect(findPeer(peers, KEY_B)).toBeNull()
   })
 })
 

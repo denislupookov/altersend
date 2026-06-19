@@ -89,7 +89,7 @@ export const rememberVote = async (
     await getTransferApi().worker.rememberVote({ transferId, peerKey, vote, isMine })
   } catch (error) {
     reportError('rememberVote', error)
-    setError(errorMessage(error))
+    setError(TRANSFER_ERROR_CODES.transferFailed, error)
   }
 }
 
@@ -108,7 +108,7 @@ export const forgetAllPeers = async (): Promise<void> => {
     dispatchToTransferStore({ type: 'clear_remembered' })
   } catch (error) {
     reportError('forgetAllPeers', error)
-    setError(errorMessage(error))
+    setError(TRANSFER_ERROR_CODES.transferFailed, error)
   }
 }
 

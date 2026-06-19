@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "schema": [
+    {
+      "name": "remembered-peer",
+      "namespace": "altersend",
+      "compact": false,
+      "flagsPosition": 4,
+      "fields": [
+        {
+          "name": "remoteDevicePubkey",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "rendezvousTopic",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "displayName",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "deviceType",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "isMine",
+          "required": false,
+          "type": "bool",
+          "version": 1
+        },
+        {
+          "name": "autoAccept",
+          "required": false,
+          "type": "bool",
+          "version": 1
+        },
+        {
+          "name": "blocked",
+          "required": false,
+          "type": "bool",
+          "version": 1
+        },
+        {
+          "name": "pairedAt",
+          "required": true,
+          "type": "uint",
+          "version": 1
+        },
+        {
+          "name": "lastSeenAt",
+          "required": true,
+          "type": "uint",
+          "version": 1
+        }
+      ]
+    }
+  ]
+}

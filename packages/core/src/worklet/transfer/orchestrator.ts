@@ -52,7 +52,7 @@ import { PeerIdentityStore } from './peer-identity-store'
 import { TransferSender } from './sender'
 import { TransferSwarm, type PeerSession } from './swarm'
 import { isValidHexKey } from './utils'
-import { DeviceIdentityStore } from '../identity/device-identity-store'
+import { DeviceIdentityStore, type DeviceIdentityDefaults } from '../identity/device-identity-store'
 import { RememberedPeerStore } from '../peers/store'
 import type { RememberedPeer } from '../peers/remembered-peer'
 import { RememberCoordinator } from '../peers/remember-coordinator'
@@ -110,12 +110,13 @@ export class TransferOrchestrator implements TransferRPC {
   constructor(
     emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void,
     storageRoot: string,
-    identityRoot: string
+    identityRoot: string,
+    identityDefaults: DeviceIdentityDefaults = {}
   ) {
     this.emitIPC = emitIPC
     this.storageRoot = storageRoot
     this.initStorage()
-    this.deviceIdentityStore = new DeviceIdentityStore(identityRoot)
+    this.deviceIdentityStore = new DeviceIdentityStore(identityRoot, identityDefaults)
     this.rememberedStore = new RememberedPeerStore(identityRoot)
     const identityStore = new PeerIdentityStore(identityRoot)
     this.swarm = new TransferSwarm(
@@ -174,9 +175,9 @@ export class TransferOrchestrator implements TransferRPC {
 
   private onPeerConnected(session: PeerSession): void {
     this.sendStatus('peer-connected', { peer: session.peerKey, peers: this.swarm.peerCount })
-
     if (this.activeTransfer) session.controlChannel.send(this.activeTransfer)
     if (this.activeTransferReady) session.controlChannel.send(this.activeTransferReady)
+    this.remember.onPeerConnected(session.peerKey)
   }
 
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply> {
@@ -202,7 +203,7 @@ export class TransferOrchestrator implements TransferRPC {
 
   private onControlMessage(message: PeerControlMessage, session: PeerSession): void {
     if (message.type === 'pairing-info') {
-      this.remember.handlePairingInfo(message, session)
+      void this.remember.handlePairingInfo(message, session)
       return
     }
     if (message.type === 'remember-vote') {
@@ -493,6 +494,7 @@ export class TransferOrchestrator implements TransferRPC {
     await tryAsync('swarm.endSession', () => this.swarm.endSession())
     await tryAsync('downloader.destroy', () => this.downloader.destroy())
     await tryAsync('swarm.destroy', () => this.swarm.destroy())
+    await tryAsync('rememberedStore.close', () => this.rememberedStore.close())
     await tryAsync('drive.close', () => this.drive.close())
     await tryAsync('coreStore.close', () => this.coreStore.close())
     await tryAsync('storage rm (destroy)', () =>

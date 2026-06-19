@@ -1,3 +1,4 @@
+import b4a from 'b4a'
 import {
   buildPairingInfo,
   computePendingPairing,
@@ -25,7 +26,10 @@ export interface PairingSession {
 
 export interface RememberCoordinatorDeps {
   deviceIdentityStore: { getOrCreate(): Promise<DeviceIdentity> }
-  rememberedStore: { remember(peer: RememberedPeer): Promise<RememberedPeer> }
+  rememberedStore: {
+    remember(peer: RememberedPeer): Promise<RememberedPeer>
+    get(pubkeyHex: string): Promise<RememberedPeer | null>
+  }
   sendTo: (peerKey: string, message: PeerControlMessage) => void
   getHandshakeHash: (peerKey: string) => Uint8Array | null
   emit: (event: TransferIPCMessage) => void
@@ -50,6 +54,7 @@ export class RememberCoordinator {
   private readonly ourVotes = new Map<string, OurVote>()
   private readonly remoteVotes = new Map<string, RemoteVote>()
   private readonly timers = new Map<string, unknown>()
+  private readonly sentPairingInfo = new Set<string>()
 
   constructor(deps: RememberCoordinatorDeps) {
     this.deps = deps
@@ -61,7 +66,15 @@ export class RememberCoordinator {
       .catch((err) => console.warn('RememberCoordinator: device identity init failed', err))
   }
 
-  handlePairingInfo(message: PairingInfo, session: PairingSession): void {
+  onPeerConnected(peerKey: string): void {
+    void this.deviceIdentityReady
+      .then(() => {
+        if (this.deps.getHandshakeHash(peerKey)) this.sendPairingInfo(peerKey)
+      })
+      .catch(() => {})
+  }
+
+  async handlePairingInfo(message: PairingInfo, session: PairingSession): Promise<void> {
     if (!session.handshakeHash || !this.deviceIdentity) {
       console.warn('RememberCoordinator: pairing-info before handshake/identity ready; ignoring')
       return
@@ -75,7 +88,26 @@ export class RememberCoordinator {
       message,
       session.handshakeHash
     )
+    const devicePubkeyHex = b4a.toString(pending.remoteDevicePubkey, 'hex')
+    const known = await this.deps.rememberedStore.get(devicePubkeyHex)
+    if (known) {
+      if (this.deps.getHandshakeHash(session.peerKey)) {
+        this.deps.emit(createRememberConfirmedEvent(session.peerKey, known))
+      }
+      return
+    }
     this.pendingPairings.set(session.peerKey, pending)
+    const remote = this.remoteVotes.get(session.peerKey)
+    if (remote?.decision === 'remember' && !this.ourVotes.has(session.peerKey)) {
+      this.deps.emit(
+        createRememberRequestedEvent({
+          transferId: remote.transferId,
+          peerKey: session.peerKey,
+          displayName: pending.remoteDisplayName,
+          deviceType: pending.remoteDeviceType
+        })
+      )
+    }
     this.evaluateVote(session.peerKey)
   }
 
@@ -137,6 +169,7 @@ export class RememberCoordinator {
     this.ourVotes.clear()
     this.remoteVotes.clear()
     this.pendingPairings.clear()
+    this.sentPairingInfo.clear()
   }
 
   private evaluateVote(peerKey: string): void {
@@ -162,6 +195,7 @@ export class RememberCoordinator {
   }
 
   private sendPairingInfo(peerKey: string): void {
+    if (this.sentPairingInfo.has(peerKey)) return
     if (!this.deviceIdentity) {
       console.warn('RememberCoordinator: device identity not ready; cannot send pairing-info')
       return
@@ -175,6 +209,7 @@ export class RememberCoordinator {
       peerKey,
       buildPairingInfo(this.deviceIdentity, handshakeHash, { canBackground: false })
     )
+    this.sentPairingInfo.add(peerKey)
   }
 
   private startTimeout(peerKey: string, transferId: string): void {
@@ -202,5 +237,6 @@ export class RememberCoordinator {
     this.ourVotes.delete(peerKey)
     this.remoteVotes.delete(peerKey)
     this.pendingPairings.delete(peerKey)
+    this.sentPairingInfo.delete(peerKey)
   }
 }

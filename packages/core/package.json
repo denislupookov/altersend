@@ -26,7 +26,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "build": "tsup",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "schema": "node schema/build.cjs"
   },
   "dependencies": {
     "b4a": "^1.8.0",
@@ -42,6 +43,7 @@
     "compact-encoding": "^2.19.0",
     "corestore": "^7.9.1",
     "hypercore-crypto": "^3.6.1",
+    "hyperdb": "^6.7.0",
     "hyperdrive": "^13.3.0",
     "hyperswarm": "^4.17.0",
     "localdrive": "^2.2.0",

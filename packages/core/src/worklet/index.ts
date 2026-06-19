@@ -7,6 +7,7 @@ import 'bare-tcp'
 import 'bare-tls'
 import 'bare-zlib'
 import bareProcess from 'bare-process'
+import os from 'bare-os'
 import fs from 'bare-fs'
 import { TransferOrchestrator } from './transfer/orchestrator'
 import { createReadyEvent } from './rpc/events'
@@ -55,7 +56,8 @@ function pipeLog(level: 'log' | 'warn' | 'error', args: unknown[]) {
 }
 
 // rpc must be created before the console hijack installs — pipeLog reads it.
-const orchestrator = new TransferOrchestrator(sendTransferEvent, storageRoot, identityRoot)
+const displayName = os.hostname().replace(/\.local$/, '') || 'AlterSend Device'
+const orchestrator = new TransferOrchestrator(sendTransferEvent, storageRoot, identityRoot, { displayName })
 const rpc = createTransferWorkerRPCServer(ipc, orchestrator, sendTransferEvent, () =>
   orchestrator.abortInFlight()
 )

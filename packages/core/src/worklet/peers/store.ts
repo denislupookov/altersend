@@ -1,61 +1,73 @@
-import fs from 'bare-fs'
-import {
-  type RememberedPeer,
-  findPeer,
-  mergeRememberedPeer,
-  patchPeer,
-  removePeer,
-  sanitizeRememberedPeers,
-  upsertPeer
-} from './remembered-peer'
+import HyperDB, { type HyperDBInstance } from 'hyperdb'
+import definition from '../../../schema/spec/hyperdb/index.js'
+import { type RememberedPeer, mergeRememberedPeer, isValidRememberedPeer } from './remembered-peer'
 
-interface RememberedFile {
-  version: 1
-  peers: RememberedPeer[]
-}
+const COLLECTION = '@altersend/remembered-peers'
 
 type PeerPatch = Partial<Omit<RememberedPeer, 'remoteDevicePubkey'>>
 
+const normalizeKey = (pubkeyHex: string): string => pubkeyHex.toLowerCase()
+
 export class RememberedPeerStore {
-  private readonly root: string
-  private readonly filePath: string
-  private cache: RememberedPeer[] | null = null
+  private readonly dbPath: string
+  private db: HyperDBInstance | null = null
+  private closed = false
   private opQueue: Promise<unknown> = Promise.resolve()
-  private dirEnsured: Promise<void> | null = null
 
   constructor(root: string) {
-    this.root = root
-    this.filePath = `${root}/remembered.json`
+    this.dbPath = `${root}/remembered`
   }
 
   async list(): Promise<RememberedPeer[]> {
-    return this.run(async () => [...(await this.load())])
+    return this.run(async () => {
+      const out: RememberedPeer[] = []
+      for await (const record of this.open().find(COLLECTION, {})) {
+        if (isValidRememberedPeer(record)) out.push(record)
+      }
+      return out
+    })
   }
 
   async get(pubkeyHex: string): Promise<RememberedPeer | null> {
-    return this.run(async () => findPeer(await this.load(), pubkeyHex))
+    return this.run(async () => {
+      const record = await this.open().get(COLLECTION, { remoteDevicePubkey: normalizeKey(pubkeyHex) })
+      return isValidRememberedPeer(record) ? record : null
+    })
   }
 
   async remember(peer: RememberedPeer): Promise<RememberedPeer> {
     return this.run(async () => {
-      const peers = await this.load()
-      const merged = mergeRememberedPeer(findPeer(peers, peer.remoteDevicePubkey), peer)
-      await this.save(upsertPeer(peers, merged))
+      const db = this.open()
+      const key = normalizeKey(peer.remoteDevicePubkey)
+      const existing = await db.get(COLLECTION, { remoteDevicePubkey: key })
+      const merged = mergeRememberedPeer(isValidRememberedPeer(existing) ? existing : null, {
+        ...peer,
+        remoteDevicePubkey: key
+      })
+      await db.insert(COLLECTION, merged)
+      await db.flush()
       return merged
     })
   }
 
   async forget(pubkeyHex: string): Promise<void> {
     await this.run(async () => {
-      const peers = await this.load()
-      const next = removePeer(peers, pubkeyHex)
-      if (next.length !== peers.length) await this.save(next)
+      const db = this.open()
+      await db.delete(COLLECTION, { remoteDevicePubkey: normalizeKey(pubkeyHex) })
+      await db.flush()
     })
   }
 
   async clear(): Promise<void> {
     await this.run(async () => {
-      await this.save([])
+      const db = this.open()
+      const keys: string[] = []
+      for await (const record of db.find(COLLECTION, {})) {
+        const key = (record as { remoteDevicePubkey?: unknown }).remoteDevicePubkey
+        if (typeof key === 'string') keys.push(key)
+      }
+      for (const remoteDevicePubkey of keys) await db.delete(COLLECTION, { remoteDevicePubkey })
+      await db.flush()
     })
   }
 
@@ -83,65 +95,36 @@ export class RememberedPeerStore {
     return this.patch(pubkeyHex, { lastSeenAt })
   }
 
+  async close(): Promise<void> {
+    await this.run(async () => {
+      this.closed = true
+      const db = this.db
+      this.db = null
+      if (db) await db.close()
+    })
+  }
+
   private patch(pubkeyHex: string, patch: PeerPatch): Promise<RememberedPeer | null> {
     return this.run(async () => {
-      const peers = await this.load()
-      const next = patchPeer(peers, pubkeyHex, patch)
-      if (next === peers) return null
-      await this.save(next)
-      return findPeer(next, pubkeyHex)
+      const db = this.open()
+      const existing = await db.get(COLLECTION, { remoteDevicePubkey: normalizeKey(pubkeyHex) })
+      if (!isValidRememberedPeer(existing)) return null
+      const next = { ...existing, ...patch }
+      await db.insert(COLLECTION, next)
+      await db.flush()
+      return next
     })
+  }
+
+  private open(): HyperDBInstance {
+    if (this.closed) throw new Error('RememberedPeerStore: store is closed')
+    if (!this.db) this.db = HyperDB.rocks(this.dbPath, definition)
+    return this.db
   }
 
   private run<T>(fn: () => Promise<T>): Promise<T> {
     const next = this.opQueue.catch(() => undefined).then(fn)
     this.opQueue = next
     return next
-  }
-
-  private async load(): Promise<RememberedPeer[]> {
-    if (this.cache) return this.cache
-    try {
-      const raw = (await fs.promises.readFile(this.filePath, 'utf8')) as string
-      const parsed = JSON.parse(raw) as { version?: unknown; peers?: unknown }
-      if (parsed?.version === 1) {
-        this.cache = sanitizeRememberedPeers(parsed.peers)
-        return this.cache
-      }
-      console.warn('RememberedPeerStore: file shape mismatch — starting fresh')
-    } catch (err) {
-      const code = (err as NodeJS.ErrnoException)?.code
-      if (code !== 'ENOENT') {
-        console.warn('RememberedPeerStore: failed to read peers file', err)
-      }
-    }
-    this.cache = []
-    return this.cache
-  }
-
-  private async save(peers: RememberedPeer[]): Promise<void> {
-    await this.ensureDir()
-    const file: RememberedFile = { version: 1, peers }
-    const tmpPath = `${this.filePath}.tmp`
-    try {
-      await fs.promises.writeFile(tmpPath, JSON.stringify(file), 'utf8')
-      await fs.promises.rename(tmpPath, this.filePath)
-      this.cache = peers
-    } catch (err) {
-      try {
-        await fs.promises.unlink(tmpPath)
-      } catch {}
-      throw err
-    }
-  }
-
-  private ensureDir(): Promise<void> {
-    if (this.dirEnsured) return this.dirEnsured
-    const promise = fs.promises.mkdir(this.root, { recursive: true }).catch((err: unknown) => {
-      this.dirEnsured = null
-      throw err
-    })
-    this.dirEnsured = promise
-    return promise
   }
 }

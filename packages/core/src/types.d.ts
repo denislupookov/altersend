@@ -20,6 +20,22 @@ declare module 'hypercore-crypto' {
   export default _default
 }
 
+declare module 'hyperdb' {
+  export interface HyperDBInstance {
+    insert(collection: string, record: unknown): Promise<void>
+    get(collection: string, key: Record<string, string>): Promise<Record<string, unknown> | null>
+    delete(collection: string, key: Record<string, string>): Promise<void>
+    find(collection: string, query?: Record<string, unknown>): AsyncIterable<Record<string, unknown>>
+    flush(): Promise<void>
+    close(): Promise<void>
+  }
+  const HyperDB: {
+    rocks(path: string, definition: unknown): HyperDBInstance
+    bee(core: unknown, definition: unknown): HyperDBInstance
+  }
+  export default HyperDB
+}
+
 declare module 'corestore' {
   export default class Corestore {
     constructor(storage: string)

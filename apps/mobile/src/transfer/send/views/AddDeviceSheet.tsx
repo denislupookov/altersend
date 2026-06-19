@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from 'react-native'
+import { useEffect } from 'react'
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { deviceIcon } from '@altersend/components/icons'
 import { formatRelativeTime, loadPeers, useTransferStore } from '@altersend/domain'
@@ -14,11 +14,9 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
   const { theme } = useTheme()
   const c = theme.colors
   const peers = useTransferStore((s) => s.peers)
-  const [invitingId, setInvitingId] = useState<string | null>(null)
 
   useEffect(() => {
     if (open) void loadPeers()
-    else setInvitingId(null)
   }, [open])
 
   return (
@@ -44,17 +42,12 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
           <View style={styles.list}>
             {peers.map((peer) => {
               const Icon = deviceIcon(peer.deviceType)
-              const isInviting = invitingId === peer.remoteDevicePubkey
               return (
-                <Pressable
+                <View
                   key={peer.remoteDevicePubkey}
-                  onPress={() => setInvitingId(peer.remoteDevicePubkey)}
                   style={[
                     styles.row,
-                    {
-                      backgroundColor: isInviting ? c.colorInfoSubtle : c.colorSurfaceSecondary,
-                      borderColor: isInviting ? c.colorInfo : c.colorSurfaceSecondary
-                    }
+                    { backgroundColor: c.colorSurfaceSecondary, borderColor: c.colorSurfaceSecondary }
                   ]}
                 >
                   <View style={[styles.iconWrap, { backgroundColor: c.colorSurfaceTertiary }]}>
@@ -64,18 +57,11 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
                     <Text style={[styles.deviceName, { color: c.colorTextPrimary }]}>
                       {peer.displayName}
                     </Text>
-                    {isInviting ? (
-                      <View style={styles.invitingRow}>
-                        <Text style={[styles.invitingText, { color: c.colorInfo }]}>Inviting…</Text>
-                        <ActivityIndicator size='small' color={c.colorInfo} />
-                      </View>
-                    ) : (
-                      <Text style={[styles.lastSent, { color: c.colorTextMuted }]}>
-                        Last sent {formatRelativeTime(peer.lastSeenAt)}
-                      </Text>
-                    )}
+                    <Text style={[styles.lastSent, { color: c.colorTextMuted }]}>
+                      Last sent {formatRelativeTime(peer.lastSeenAt)}
+                    </Text>
                   </View>
-                </Pressable>
+                </View>
               )
             })}
           </View>
@@ -156,15 +142,6 @@ const styles = StyleSheet.create({
   },
   lastSent: {
     fontSize: 13
-  },
-  invitingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6
-  },
-  invitingText: {
-    fontSize: 14,
-    fontWeight: '500'
   },
   actions: {
     gap: 10,

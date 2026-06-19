@@ -6,6 +6,7 @@ import {
   getPeerListEntries,
   type PeerListEntry,
   type PeerListEntryDetail,
+  type PeerListEntryWithPair,
   requestPair,
   useTransferStore
 } from '@altersend/domain'
@@ -54,12 +55,13 @@ function getPeerDetailLabel(
 
 function toPeerListCardEntry(
   t: ReturnType<typeof useTranslation>['t'],
-  entry: PeerListEntry
+  entry: PeerListEntryWithPair
 ): PeerListCardEntry {
   return {
     ...entry,
     statusLabel: getPeerStatusLabel(t, entry),
-    detail: getPeerDetailLabel(t, entry.detail)
+    detail: getPeerDetailLabel(t, entry.detail),
+    pairState: entry.pairState
   }
 }
 

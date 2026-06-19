@@ -28,6 +28,7 @@ function setup(localIdentity: DeviceIdentity = makeIdentity()) {
   const deps: RememberCoordinatorDeps = {
     deviceIdentityStore: { getOrCreate: async () => localIdentity },
     rememberedStore: {
+      get: async () => null,
       remember: async (peer) => {
         remembered.push(peer)
         return peer
@@ -86,7 +87,7 @@ describe('RememberCoordinator two-sided vote', () => {
     const { coord, sends, emits, remembered } = setup()
     const p = peer()
     await coord.vote({ transferId: 't1', peerKey: p.key, vote: 'remember', isMine: true })
-    coord.handlePairingInfo(p.info, { peerKey: p.key, handshakeHash: handshake })
+    await coord.handlePairingInfo(p.info, { peerKey: p.key, handshakeHash: handshake })
     coord.handleRememberVote(remoteVote('t1', 'remember'), p.key)
     await flush()
 
@@ -114,10 +115,26 @@ describe('RememberCoordinator two-sided vote', () => {
     const { coord, remembered } = setup()
     const p = peer()
     await coord.vote({ transferId: 't1', peerKey: p.key, vote: 'remember', isMine: false })
-    coord.handlePairingInfo(p.info, { peerKey: p.key, handshakeHash: handshake })
+    await coord.handlePairingInfo(p.info, { peerKey: p.key, handshakeHash: handshake })
     coord.handleRememberVote(remoteVote('t2', 'remember'), p.key)
     await flush()
     expect(remembered).toHaveLength(0)
+    coord.reset()
+  })
+
+  it('re-emits remember-requested with the real name when pairing-info arrives after the vote', async () => {
+    const { coord, emits } = setup()
+    await flush()
+    const p = peer()
+    coord.handleRememberVote(remoteVote('t1', 'remember'), p.key)
+    const requestedBefore = emits.filter((e) => e.type === 'remember-requested')
+    expect(requestedBefore).toHaveLength(1)
+    expect(requestedBefore[0]).toMatchObject({ displayName: p.key.slice(0, 6) })
+
+    await coord.handlePairingInfo(p.info, { peerKey: p.key, handshakeHash: handshake })
+    const requestedAfter = emits.filter((e) => e.type === 'remember-requested')
+    expect(requestedAfter).toHaveLength(2)
+    expect(requestedAfter[1]).toMatchObject({ displayName: 'Device' })
     coord.reset()
   })
 
@@ -126,7 +143,7 @@ describe('RememberCoordinator two-sided vote', () => {
     const p = peer()
     const forged = { ...p.info, signature: b4a.toString(crypto.randomBytes(64), 'hex') }
     await coord.vote({ transferId: 't1', peerKey: p.key, vote: 'remember', isMine: false })
-    coord.handlePairingInfo(forged, { peerKey: p.key, handshakeHash: handshake })
+    await coord.handlePairingInfo(forged, { peerKey: p.key, handshakeHash: handshake })
     coord.handleRememberVote(remoteVote('t1', 'remember'), p.key)
     await flush()
     expect(remembered).toHaveLength(0)
@@ -140,11 +157,11 @@ describe('RememberCoordinator two-sided vote', () => {
     await coord.vote({ transferId: 't1', peerKey: a.key, vote: 'remember', isMine: false })
     await coord.vote({ transferId: 't1', peerKey: b.key, vote: 'remember', isMine: false })
 
-    coord.handlePairingInfo(a.info, { peerKey: a.key, handshakeHash: handshake })
+    await coord.handlePairingInfo(a.info, { peerKey: a.key, handshakeHash: handshake })
     coord.handleRememberVote(remoteVote('t1', 'remember'), a.key)
     await flush()
 
-    coord.handlePairingInfo(b.info, { peerKey: b.key, handshakeHash: handshake })
+    await coord.handlePairingInfo(b.info, { peerKey: b.key, handshakeHash: handshake })
     coord.handleRememberVote(remoteVote('t1', 'remember'), b.key)
     await flush()
 

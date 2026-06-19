@@ -11,12 +11,10 @@ interface AddDeviceModalProps {
 
 export function AddDeviceModal({ open, onClose, onPairNew }: AddDeviceModalProps) {
   const peers = useTransferStore((s) => s.peers)
-  const [invitingKey, setInvitingKey] = useState<string | null>(null)
   const [confirmingClear, setConfirmingClear] = useState(false)
 
   useEffect(() => {
     if (!open) {
-      setInvitingKey(null)
       setConfirmingClear(false)
       return
     }
@@ -79,17 +77,10 @@ export function AddDeviceModal({ open, onClose, onPairNew }: AddDeviceModalProps
             <div className='flex flex-col gap-2'>
               {peers.map((peer) => {
                 const Icon = deviceIcon(peer.deviceType)
-                const isInviting = invitingKey === peer.remoteDevicePubkey
                 return (
-                  <button
+                  <div
                     key={peer.remoteDevicePubkey}
-                    className={`flex cursor-pointer items-center gap-3.5 rounded-[12px] border px-3.5 py-3 text-left transition-colors ${
-                      isInviting
-                        ? 'border-info bg-info/8'
-                        : 'border-transparent bg-surface-secondary hover:bg-surface-hover'
-                    }`}
-                    onClick={() => setInvitingKey(peer.remoteDevicePubkey)}
-                    type='button'
+                    className='flex items-center gap-3.5 rounded-[12px] border border-transparent bg-surface-secondary px-3.5 py-3'
                   >
                     <span className='flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[10px] bg-surface-tertiary text-text-secondary'>
                       <Icon size={20} />
@@ -98,18 +89,11 @@ export function AddDeviceModal({ open, onClose, onPairNew }: AddDeviceModalProps
                       <span className='truncate text-[14px] font-bold text-text-primary'>
                         {peer.displayName}
                       </span>
-                      {isInviting ? (
-                        <span className='flex items-center gap-2 text-[12px] text-info'>
-                          <span className='h-3 w-3 animate-spin rounded-full border-2 border-info border-t-transparent' />
-                          Inviting…
-                        </span>
-                      ) : (
-                        <span className='text-[12px] text-text-muted'>
-                          Last sent {formatRelativeTime(peer.lastSeenAt)}
-                        </span>
-                      )}
+                      <span className='text-[12px] text-text-muted'>
+                        Last sent {formatRelativeTime(peer.lastSeenAt)}
+                      </span>
                     </span>
-                  </button>
+                  </div>
                 )
               })}
             </div>
