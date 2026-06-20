@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Button,
   ExternalLink,
@@ -25,17 +25,21 @@ import {
   DiscordIcon,
   GithubIcon,
   GlobeIcon,
-  SettingsIcon
+  SettingsIcon,
+  SmartphoneIcon
 } from '@altersend/components/icons'
 import {
   discordUrl,
   githubUrl,
+  loadPeers,
   privacyPolicyUrl,
   termsOfServiceUrl,
+  useTransferStore,
   websiteUrl
 } from '@altersend/domain'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
+import { AddDeviceModal } from '../../components/AddDeviceModal'
 import { Select } from '../../components/Select'
 import { closeSentry, initSentry } from '../../sentry'
 import {
@@ -64,7 +68,13 @@ function getLocaleOptionFontFamily(option: LocaleOption): string | undefined {
 export function FooterBar({ version }: { version: string }) {
   const { t } = useTranslation(['settings', 'common', 'feedback'])
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [devicesOpen, setDevicesOpen] = useState(false)
   const [panel, setPanel] = useState<'settings' | 'report'>('settings')
+  const peers = useTransferStore((s) => s.peers)
+
+  useEffect(() => {
+    if (settingsOpen) void loadPeers()
+  }, [settingsOpen])
   const [reportType, setReportType] = useState<FeedbackType>('bug')
   const [reportMessage, setReportMessage] = useState('')
   const [reportState, setReportState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
@@ -198,6 +208,21 @@ export function FooterBar({ version }: { version: string }) {
                       </div>
                     </div>
                     <div className='border-t border-border-primary py-1'>
+                      <button
+                        type='button'
+                        onClick={() => {
+                          setDevicesOpen(true)
+                          closePanel()
+                        }}
+                        className='flex w-full appearance-none items-center gap-3 border-0 bg-transparent px-5 py-2.5 text-[14px] text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary'
+                      >
+                        <SmartphoneIcon size={15} />
+                        <span className='flex-1 text-left'>Paired devices</span>
+                        <span className='text-[12px] text-text-muted'>
+                          {peers.length === 0 ? 'No devices yet' : `${peers.length} paired`}
+                        </span>
+                        <ChevronRightIcon size={13} />
+                      </button>
                       {MENU_ITEMS.map(({ icon: Icon, key, ...rest }) => (
                         <button
                           key={key}
@@ -324,6 +349,8 @@ export function FooterBar({ version }: { version: string }) {
           )}
         </div>
       </div>
+
+      <AddDeviceModal open={devicesOpen} onClose={() => setDevicesOpen(false)} />
     </footer>
   )
 }

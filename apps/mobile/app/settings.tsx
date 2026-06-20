@@ -107,7 +107,7 @@ export default function SettingsScreen() {
   )
 
   const openUrl = (url: string) => {
-    void Linking.openURL(url).catch(() => {})
+    void Linking.openURL(url).catch(() => { })
   }
 
   const cardStyle = {
@@ -124,6 +124,13 @@ export default function SettingsScreen() {
           </Text>
           <View style={[styles.card, cardStyle]}>
             <LinkRow
+              label='Paired devices'
+              hint={peers.length === 0 ? 'No devices yet' : `${peers.length} paired`}
+              icon={<SmartphoneIcon size={16} color={theme.colors.colorTextSecondary} />}
+              onPress={() => router.push('/devices')}
+              isLast
+            />
+            <LinkRow
               label={t('common:labels.language')}
               hint={
                 LOCALE_OPTIONS.find((option) => option.preference === localePreference)
@@ -137,19 +144,6 @@ export default function SettingsScreen() {
               hint={t('settings:crashReports.label')}
               icon={<ShieldIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => router.push('/security')}
-              isLast
-            />
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>Devices</Text>
-          <View style={[styles.card, cardStyle]}>
-            <LinkRow
-              label='Paired devices'
-              hint={peers.length === 0 ? 'No devices yet' : `${peers.length} paired`}
-              icon={<SmartphoneIcon size={16} color={theme.colors.colorTextSecondary} />}
-              onPress={() => router.push('/devices')}
               isLast
             />
           </View>

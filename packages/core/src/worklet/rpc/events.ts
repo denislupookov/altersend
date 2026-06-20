@@ -85,6 +85,16 @@ export interface RememberRequestedEvent {
   deviceType: DeviceType
 }
 
+export interface InviteReceivedEvent {
+  type: 'invite-received'
+  remoteDevicePubkey: string
+  displayName: string
+  deviceType: DeviceType
+  topic: string
+  fileCount?: number
+  totalSize?: number
+}
+
 export type TransferIPCMessage =
   | ReadyEvent
   | TopicEvent
@@ -94,6 +104,7 @@ export type TransferIPCMessage =
   | RememberConfirmedEvent
   | RememberDeclinedEvent
   | RememberRequestedEvent
+  | InviteReceivedEvent
 
 export function createReadyEvent(): ReadyEvent {
   return { type: 'ready' }
@@ -132,6 +143,12 @@ export function createRememberRequestedEvent(
   request: Omit<RememberRequestedEvent, 'type'>
 ): RememberRequestedEvent {
   return { type: 'remember-requested', ...request }
+}
+
+export function createInviteReceivedEvent(
+  invite: Omit<InviteReceivedEvent, 'type'>
+): InviteReceivedEvent {
+  return { type: 'invite-received', ...invite }
 }
 
 export function createErrorEvent(message: string, code?: TransferErrorCode): ErrorEvent {

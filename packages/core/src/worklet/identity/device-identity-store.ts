@@ -83,7 +83,7 @@ export class DeviceIdentityStore {
     this.root = root
     this.filePath = `${root}/device.json`
     this.defaults = {
-      displayName: defaults.displayName ?? 'AlterSend Device',
+      displayName: defaults.displayName ?? 'Unknown Device',
       deviceType: defaults.deviceType ?? 'unknown'
     }
   }

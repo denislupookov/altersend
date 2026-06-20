@@ -1,8 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
-import { Button, useTheme, withAlpha } from '@altersend/components'
-import { deviceIcon } from '@altersend/components/icons'
-import { formatRelativeTime, loadPeers, useTransferStore } from '@altersend/domain'
+import { Button, DeviceRow, useTheme, withAlpha } from '@altersend/components'
+import { InviteStatus, inviteDevice, inviteStatusSubtitle, loadPeers, startSendSession, useTransferStore } from '@altersend/domain'
 
 interface AddDeviceSheetProps {
   open: boolean
@@ -14,10 +13,24 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
   const { theme } = useTheme()
   const c = theme.colors
   const peers = useTransferStore((s) => s.peers)
+  const [status, setStatus] = useState<Record<string, InviteStatus>>({})
 
   useEffect(() => {
     if (open) void loadPeers()
+    else setStatus({})
   }, [open])
+
+  const invite = async (pubkey: string) => {
+    if (status[pubkey] === 'inviting') return
+    setStatus((s) => ({ ...s, [pubkey]: 'inviting' }))
+    try {
+      const topic = await startSendSession()
+      const delivered = await inviteDevice(pubkey, topic)
+      setStatus((s) => ({ ...s, [pubkey]: delivered ? 'sent' : 'offline' }))
+    } catch {
+      setStatus((s) => ({ ...s, [pubkey]: 'offline' }))
+    }
+  }
 
   return (
     <Modal visible={open} transparent animationType='slide' onRequestClose={onClose}>
@@ -41,36 +54,30 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
         ) : (
           <View style={styles.list}>
             {peers.map((peer) => {
-              const Icon = deviceIcon(peer.deviceType)
+              const st = status[peer.remoteDevicePubkey]
+              const active = st === 'inviting' || st === 'sent'
+              const subtitle = inviteStatusSubtitle(st, peer.lastSeenAt)
               return (
-                <View
+                <DeviceRow
                   key={peer.remoteDevicePubkey}
-                  style={[
-                    styles.row,
-                    { backgroundColor: c.colorSurfaceSecondary, borderColor: c.colorSurfaceSecondary }
-                  ]}
-                >
-                  <View style={[styles.iconWrap, { backgroundColor: c.colorSurfaceTertiary }]}>
-                    <Icon size={22} />
-                  </View>
-                  <View style={styles.rowText}>
-                    <Text style={[styles.deviceName, { color: c.colorTextPrimary }]}>
-                      {peer.displayName}
-                    </Text>
-                    <Text style={[styles.lastSent, { color: c.colorTextMuted }]}>
-                      Last sent {formatRelativeTime(peer.lastSeenAt)}
-                    </Text>
-                  </View>
-                </View>
+                  deviceType={peer.deviceType}
+                  name={peer.displayName}
+                  subtitle={subtitle}
+                  subtitleVariant={active ? 'active' : 'default'}
+                  isActive={active}
+                  onClick={() => void invite(peer.remoteDevicePubkey)}
+                />
               )
             })}
           </View>
         )}
 
         <View style={styles.actions}>
-          <Button onClick={onPairNew} variant='secondary' width='full'>
-            Pair New Device
-          </Button>
+          {onPairNew ? (
+            <Button onClick={onPairNew} variant='secondary' width='full'>
+              Pair New Device
+            </Button>
+          ) : null}
           <Button onClick={onClose} variant='ghost' width='full'>
             Done
           </Button>
@@ -115,33 +122,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     paddingVertical: 8
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 14
-  },
-  iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  rowText: {
-    flex: 1,
-    gap: 3
-  },
-  deviceName: {
-    fontSize: 16,
-    fontWeight: '700'
-  },
-  lastSent: {
-    fontSize: 13
   },
   actions: {
     gap: 10,

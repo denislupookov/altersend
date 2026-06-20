@@ -39,7 +39,7 @@ export const initialTransferSessionState: TransferSessionState = {
   errorCode: null,
   errorMessage: null,
   transferId: null,
-  remember: { pairStatus: {}, incomingRequest: null },
+  remember: { pairStatus: {}, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null },
   peers: []
 }
 
@@ -78,7 +78,7 @@ function endSession(state: TransferSessionState): TransferSessionState {
     errorCode: null,
     errorMessage: null,
     transferId: null,
-    remember: { pairStatus: {}, incomingRequest: null }
+    remember: { pairStatus: {}, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null }
   }
 }
 
@@ -339,17 +339,23 @@ export function transferSessionReducer(
       return {
         ...state,
         remember: {
+          ...state.remember,
           pairStatus: { ...state.remember.pairStatus, [action.peerKey]: 'paired' },
+          peerDisplayNames: { ...state.remember.peerDisplayNames, [action.peerKey]: action.displayName },
           incomingRequest: clearIncomingFor(state.remember.incomingRequest, action.peerKey)
         }
       }
     case 'remember_declined': {
       const pairStatus = { ...state.remember.pairStatus }
       delete pairStatus[action.peerKey]
+      const peerDisplayNames = { ...state.remember.peerDisplayNames }
+      delete peerDisplayNames[action.peerKey]
       return {
         ...state,
         remember: {
+          ...state.remember,
           pairStatus,
+          peerDisplayNames,
           incomingRequest: clearIncomingFor(state.remember.incomingRequest, action.peerKey)
         }
       }
@@ -358,8 +364,10 @@ export function transferSessionReducer(
       return { ...state, remember: { ...state.remember, incomingRequest: action.request } }
     case 'set_peers':
       return { ...state, peers: action.peers }
-    case 'clear_remembered':
-      return { ...state, peers: [], remember: { pairStatus: {}, incomingRequest: null } }
+    case 'invite_received':
+      return { ...state, remember: { ...state.remember, incomingInvite: action.invite } }
+    case 'dismiss_invite':
+      return { ...state, remember: { ...state.remember, incomingInvite: null } }
     case 'request_pair_peer':
       if (state.remember.pairStatus[action.peerKey] === 'paired') return state
       return {

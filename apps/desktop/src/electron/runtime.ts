@@ -153,7 +153,11 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
       ) => WorkerClient
     }
 
-    const worker = pear.run(workerPath, [`--storage=${pear.storage}`, ...args])
+    const worker = pear.run(workerPath, [
+      `--storage=${pear.storage}`,
+      '--device-type=desktop',
+      ...args
+    ])
     const client = createTransferWorkerClient(worker, {
       onEvent: (message: RendererTransferEvent) => {
         broadcast('pear:worker:event:' + specifier, message)

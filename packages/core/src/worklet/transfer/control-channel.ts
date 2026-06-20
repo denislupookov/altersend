@@ -79,6 +79,15 @@ export interface RememberVote {
   isMine: boolean
 }
 
+export interface DeviceInvite {
+  type: 'invite'
+  displayName: string
+  deviceType: DeviceType
+  topic: string
+  fileCount?: number
+  totalSize?: number
+}
+
 export type PeerControlMessage =
   | TransferStart
   | TransferReady
@@ -88,6 +97,7 @@ export type PeerControlMessage =
   | DownloadFailed
   | PairingInfo
   | RememberVote
+  | DeviceInvite
 
 type PeerControlHandler = (message: PeerControlMessage) => void
 

@@ -4,7 +4,7 @@ import { CloseIcon } from '../../icons'
 import { fileTypeColors, useTheme } from '../../theme'
 import { FileKindIcon, getFileKind } from '../TransferFileRow/fileKinds'
 import { styles } from './styles'
-import { formatFileSize } from '../../utils/formatFileSize'
+import { formatFileSize } from '@altersend/domain'
 
 export type FileRowStatusTone = 'muted' | 'active' | 'success'
 export type FileRowProgressState = 'waiting' | 'uploading' | 'completed'

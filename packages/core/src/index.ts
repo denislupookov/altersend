@@ -29,3 +29,4 @@ export type {
 export { TRANSFER_ERROR_CODES } from './worklet/rpc/events'
 export type { TransferStatus, TransferErrorCode } from './worklet/rpc/events'
 export type { RememberedPeer } from './worklet/peers/remembered-peer'
+export type { DeviceType } from './worklet/identity/device-type'

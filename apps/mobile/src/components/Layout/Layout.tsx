@@ -9,7 +9,7 @@ import { Text } from '@/src/components/ThemedText'
 
 interface LayoutProps {
   title: string
-  description: string
+  description?: string
   badge?: React.ReactElement
   footer?: React.ReactElement
   hasNativeHeader?: boolean

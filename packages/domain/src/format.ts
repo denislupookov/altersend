@@ -1,3 +1,26 @@
+import type { DeviceType } from '@altersend/core'
+
+export function deviceTypeLabel(deviceType: DeviceType): string {
+  switch (deviceType) {
+    case 'laptop': return 'Laptop'
+    case 'desktop': return 'Desktop'
+    case 'phone': return 'Phone'
+    case 'tablet': return 'Tablet'
+    default: return deviceType
+  }
+}
+
+export type InviteStatus = 'inviting' | 'sent' | 'offline'
+
+export function inviteStatusSubtitle(st: InviteStatus | undefined, lastSeenAt: number): string {
+  switch (st) {
+    case 'inviting': return 'Inviting…'
+    case 'sent': return 'Invite sent'
+    case 'offline': return 'Device offline — try again'
+    default: return `Last sent ${formatRelativeTime(lastSeenAt)}`
+  }
+}
+
 export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(1)} KB`

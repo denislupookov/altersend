@@ -19,6 +19,8 @@ import type {
   DownloadFileRequest,
   DownloadFilesReply,
   HostReply,
+  InviteDeviceInput,
+  InviteDeviceReply,
   JoinReply,
   RememberVoteInput,
   RememberVoteReply,
@@ -56,6 +58,7 @@ import { DeviceIdentityStore, type DeviceIdentityDefaults } from '../identity/de
 import { RememberedPeerStore } from '../peers/store'
 import type { RememberedPeer } from '../peers/remembered-peer'
 import { RememberCoordinator } from '../peers/remember-coordinator'
+import { DiscoveryCoordinator } from '../peers/discovery'
 
 function createTransferId(): string {
   return crypto.randomBytes(16).toString('hex')
@@ -106,6 +109,7 @@ export class TransferOrchestrator implements TransferRPC {
   private readonly deviceIdentityStore: DeviceIdentityStore
   private readonly rememberedStore: RememberedPeerStore
   private readonly remember: RememberCoordinator
+  private readonly discovery: DiscoveryCoordinator
 
   constructor(
     emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void,
@@ -141,13 +145,22 @@ export class TransferOrchestrator implements TransferRPC {
       },
       { identityStore }
     )
+    this.discovery = new DiscoveryCoordinator({
+      deviceIdentityStore: this.deviceIdentityStore,
+      rememberedStore: this.rememberedStore,
+      emit: (event) => this.emitIPC(event)
+    })
     this.remember = new RememberCoordinator({
       deviceIdentityStore: this.deviceIdentityStore,
       rememberedStore: this.rememberedStore,
       sendTo: (peerKey, message) => this.swarm.sendTo(peerKey, message),
       getHandshakeHash: (peerKey) => this.swarm.getHandshakeHash(peerKey),
-      emit: (event) => this.emitIPC(event)
+      emit: (event) => {
+        this.emitIPC(event)
+        if (event.type === 'remember-confirmed') void this.discovery.refresh()
+      }
     })
+    void this.discovery.start()
   }
 
   private initStorage(): void {
@@ -188,9 +201,8 @@ export class TransferOrchestrator implements TransferRPC {
     return this.rememberedStore.list()
   }
 
-  clearPeers(): Promise<void> {
-    this.remember.reset()
-    return this.rememberedStore.clear()
+  inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply> {
+    return this.discovery.invite(input.remoteDevicePubkey, input.topic, input.fileCount, input.totalSize)
   }
 
   private onPeerDisconnected(peerKey: string | null, remainingCount: number): void {
@@ -468,12 +480,14 @@ export class TransferOrchestrator implements TransferRPC {
     this.suspended = true
     this.abortInFlight()
     this.remember.reset()
+    await tryAsync('discovery.stop (suspend)', () => this.discovery.stop())
     await tryAsync('swarm.endSession (suspend)', () => this.swarm.endSession())
   }
 
   async resume(): Promise<void> {
     if (!this.suspended) return
     this.suspended = false
+    void this.discovery.start()
     if (!this.currentTopic) return
     try {
       await this.swarm.join(this.currentTopic)
@@ -491,6 +505,7 @@ export class TransferOrchestrator implements TransferRPC {
     this.currentTopic = null
     this.setRole(null)
 
+    await tryAsync('discovery.stop', () => this.discovery.stop())
     await tryAsync('swarm.endSession', () => this.swarm.endSession())
     await tryAsync('downloader.destroy', () => this.downloader.destroy())
     await tryAsync('swarm.destroy', () => this.swarm.destroy())

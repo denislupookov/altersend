@@ -6,6 +6,7 @@ import {
   type DownloadFailed,
   type DownloadProgress,
   type DownloadRequest,
+  type DeviceInvite,
   type FileOffer,
   type PairingInfo,
   type RememberVote,
@@ -132,6 +133,15 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
         isBoundedString(v.transferId, MAX_ID_LEN) &&
         (v.vote === 'remember' || v.vote === 'no') &&
         typeof v.isMine === 'boolean'
+      )
+    }
+    case 'invite': {
+      const v = x as Partial<DeviceInvite>
+      return (
+        isBoundedString(v.displayName, MAX_DISPLAY_NAME_LEN) &&
+        isDeviceType(v.deviceType) &&
+        (v.fileCount === undefined || isNonNegativeInteger(v.fileCount, MAX_FILES_PER_TRANSFER)) &&
+        (v.totalSize === undefined || isNonNegativeInteger(v.totalSize))
       )
     }
     default:

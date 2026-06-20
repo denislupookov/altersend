@@ -54,7 +54,7 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
         message: event.message
       })
     case 'remember-confirmed':
-      dispatchToTransferStore({ type: 'remember_confirmed', peerKey: event.peerKey })
+      dispatchToTransferStore({ type: 'remember_confirmed', peerKey: event.peerKey, displayName: event.peer.displayName })
       void loadPeers()
       return
     case 'remember-declined':
@@ -67,6 +67,18 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
           peerKey: event.peerKey,
           displayName: event.displayName,
           deviceType: event.deviceType
+        }
+      })
+    case 'invite-received':
+      return dispatchToTransferStore({
+        type: 'invite_received',
+        invite: {
+          remoteDevicePubkey: event.remoteDevicePubkey,
+          displayName: event.displayName,
+          deviceType: event.deviceType,
+          topic: event.topic,
+          ...(event.fileCount !== undefined ? { fileCount: event.fileCount } : {}),
+          ...(event.totalSize !== undefined ? { totalSize: event.totalSize } : {})
         }
       })
   }

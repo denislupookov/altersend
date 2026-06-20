@@ -8,7 +8,7 @@ export const API = {
     closePeers: 6,
     rememberVote: 7,
     peersList: 8,
-    clearPeers: 9
+    inviteDevice: 9
   },
   channels: {
     event: 100,

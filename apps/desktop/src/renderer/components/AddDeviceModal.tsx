@@ -1,39 +1,51 @@
-import { useEffect, useState } from 'react'
-import { forgetAllPeers, formatRelativeTime, loadPeers, useTransferStore } from '@altersend/domain'
-import { Button } from '@altersend/components'
-import { CloseIcon, deviceIcon } from '@altersend/components/icons'
+import { useEffect, useRef, useState } from 'react'
+import { inviteDevice, inviteStatusSubtitle, InviteStatus, loadPeers, useTransferStore } from '@altersend/domain'
+import { Button, DeviceRow } from '@altersend/components'
+import { CloseIcon } from '@altersend/components/icons'
 
 interface AddDeviceModalProps {
   open: boolean
   onClose: () => void
   onPairNew?: () => void
+  topic?: string
 }
 
-export function AddDeviceModal({ open, onClose, onPairNew }: AddDeviceModalProps) {
+export function AddDeviceModal({ open, onClose, onPairNew, topic }: AddDeviceModalProps) {
   const peers = useTransferStore((s) => s.peers)
-  const [confirmingClear, setConfirmingClear] = useState(false)
+  const selectedFiles = useTransferStore((s) => s.selectedFiles)
+  const [inviteStatus, setInviteStatus] = useState<Record<string, InviteStatus>>({})
+  const onCloseRef = useRef(onClose)
+  useEffect(() => { onCloseRef.current = onClose })
 
   useEffect(() => {
-    if (!open) {
-      setConfirmingClear(false)
-      return
+    if (open) void loadPeers()
+    else {
+      setInviteStatus({})
     }
-    void loadPeers()
+  }, [open])
+
+  const invite = async (pubkey: string) => {
+    if (!topic || inviteStatus[pubkey] === 'inviting') return
+    setInviteStatus((s) => ({ ...s, [pubkey]: 'inviting' }))
+    try {
+      const fileInfo = selectedFiles.length > 0
+        ? { fileCount: selectedFiles.length, totalSize: selectedFiles.reduce((s, f) => s + (f.size ?? 0), 0) }
+        : undefined
+      const delivered = await inviteDevice(pubkey, topic, fileInfo)
+      setInviteStatus((s) => ({ ...s, [pubkey]: delivered ? 'sent' : 'offline' }))
+    } catch {
+      setInviteStatus((s) => ({ ...s, [pubkey]: 'offline' }))
+    }
+  }
+
+  useEffect(() => {
+    if (!open) return
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') onCloseRef.current()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open, onClose])
-
-  useEffect(() => {
-    setConfirmingClear(false)
-  }, [peers])
-
-  const handleRemoveAll = async () => {
-    setConfirmingClear(false)
-    await forgetAllPeers()
-  }
+  }, [open])
 
   if (!open) return null
 
@@ -74,25 +86,35 @@ export function AddDeviceModal({ open, onClose, onPairNew }: AddDeviceModalProps
               No paired devices yet. Pair a device to send without a code.
             </p>
           ) : (
-            <div className='flex flex-col gap-2'>
+            <div className='overflow-hidden rounded-[12px] border border-border-primary bg-background-subtle'>
               {peers.map((peer) => {
-                const Icon = deviceIcon(peer.deviceType)
+                const st = topic ? inviteStatus[peer.remoteDevicePubkey] : undefined
+                const isActive = st === 'inviting' || st === 'sent'
+                const subtitle = inviteStatusSubtitle(st, peer.lastSeenAt)
                 return (
-                  <div
-                    key={peer.remoteDevicePubkey}
-                    className='flex items-center gap-3.5 rounded-[12px] border border-transparent bg-surface-secondary px-3.5 py-3'
-                  >
-                    <span className='flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[10px] bg-surface-tertiary text-text-secondary'>
-                      <Icon size={20} />
-                    </span>
-                    <span className='flex min-w-0 flex-col'>
-                      <span className='truncate text-[14px] font-bold text-text-primary'>
-                        {peer.displayName}
-                      </span>
-                      <span className='text-[12px] text-text-muted'>
-                        Last sent {formatRelativeTime(peer.lastSeenAt)}
-                      </span>
-                    </span>
+                  <div key={peer.remoteDevicePubkey}>
+                    <div className='px-2.5'>
+                      <DeviceRow
+                        deviceType={peer.deviceType}
+                        name={peer.displayName}
+                        subtitle={subtitle}
+                        subtitleVariant={isActive ? 'active' : 'default'}
+                        isActive={isActive}
+                        trailing={topic ? (
+                          <Button
+                            disabled={st === 'inviting' || st === 'sent'}
+                            onClick={() => void invite(peer.remoteDevicePubkey)}
+                            size='sm'
+                            variant='secondary'
+                          >
+                            {st === 'sent' ? 'Sent' : 'Invite'}
+                          </Button>
+                        ) : undefined}
+                      />
+                    </div>
+                    {peer !== peers[peers.length - 1] ? (
+                      <div className='ml-2.5 h-px bg-border-primary' />
+                    ) : null}
                   </div>
                 )
               })}
@@ -101,22 +123,14 @@ export function AddDeviceModal({ open, onClose, onPairNew }: AddDeviceModalProps
         </div>
 
         <div className='flex flex-col gap-2 px-6 pb-5 pt-3'>
-          <Button onClick={onPairNew} size='sm' variant='secondary' width='full'>
-            Pair New Device
-          </Button>
+          {onPairNew ? (
+            <Button onClick={onPairNew} size='sm' variant='secondary' width='full'>
+              Pair New Device
+            </Button>
+          ) : null}
           <Button onClick={onClose} size='sm' variant='ghost' width='full'>
             Done
           </Button>
-          {peers.length > 0 ? (
-            <Button
-              onClick={confirmingClear ? () => void handleRemoveAll() : () => setConfirmingClear(true)}
-              size='sm'
-              variant='ghost'
-              width='full'
-            >
-              {confirmingClear ? 'Click again to remove all devices' : 'Remove all devices'}
-            </Button>
-          ) : null}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { html } from 'react-strict-dom'
 import { FileKindIcon, getFileKind } from './fileKinds'
 import { styles } from './styles'
-import { formatFileSize } from '../../utils/formatFileSize'
+import { formatFileSize } from '@altersend/domain'
 
 type DivElementProps = Parameters<typeof html.div>[0]
 

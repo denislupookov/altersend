@@ -21,18 +21,21 @@ export type PairState = 'pairable' | 'requested' | 'paired'
 
 export interface PeerListEntryWithPair extends PeerListEntry {
   pairState?: PairState
+  displayName?: string
 }
 
 export function applyPairState(
   entries: PeerListEntry[],
-  pairStatus: Record<string, PairState>
+  pairStatus: Record<string, PairState>,
+  peerDisplayNames: Record<string, string> = {}
 ): PeerListEntryWithPair[] {
   return entries.map((entry) => {
     let pairState: PairState | undefined
     if (entry.status !== 'disconnected') {
       pairState = pairStatus[entry.peerKey] ?? 'pairable'
     }
-    return { ...entry, pairState }
+    const displayName = pairState === 'paired' ? peerDisplayNames[entry.peerKey] : undefined
+    return { ...entry, pairState, displayName }
   })
 }
 

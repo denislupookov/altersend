@@ -3,6 +3,7 @@ import type { FileOffer, PeerControlMessage } from '../transfer/control-channel'
 import type { RememberedPeer } from '../peers/remembered-peer'
 import type {
   ErrorEvent,
+  InviteReceivedEvent,
   ReadyEvent,
   RememberConfirmedEvent,
   RememberDeclinedEvent,
@@ -73,6 +74,17 @@ export interface RememberVoteReply {
   ok: true
 }
 
+export interface InviteDeviceInput {
+  remoteDevicePubkey: string
+  topic: string
+  fileCount?: number
+  totalSize?: number
+}
+
+export interface InviteDeviceReply {
+  delivered: boolean
+}
+
 export interface RPCErrorPayload {
   code: 'BAD_REQUEST' | 'UNKNOWN_COMMAND' | 'INTERNAL_ERROR'
   message: string
@@ -99,6 +111,7 @@ export type RendererTransferEvent =
   | RememberConfirmedEvent
   | RememberDeclinedEvent
   | RememberRequestedEvent
+  | InviteReceivedEvent
   | PeerControlMessage
 export type WorkerTransferEvent = WorkerReadyEvent | RendererTransferEvent
 export type IncomingFileOffer = FileOffer
@@ -112,7 +125,7 @@ export interface TransferRPC {
   closePeers(): Promise<void>
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply>
   peersList(): Promise<RememberedPeer[]>
-  clearPeers(): Promise<void>
+  inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply>
 }
 
 export class BadRequestError extends Error {

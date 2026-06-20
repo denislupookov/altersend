@@ -59,6 +59,7 @@ function toPeerListCardEntry(
 ): PeerListCardEntry {
   return {
     ...entry,
+    shortKey: entry.displayName ?? entry.shortKey,
     statusLabel: getPeerStatusLabel(t, entry),
     detail: getPeerDetailLabel(t, entry.detail),
     pairState: entry.pairState
@@ -74,6 +75,7 @@ export function ShareView() {
   const connectedPeers = useTransferStore((s) => s.connectedPeers)
   const transferId = useTransferStore((s) => s.transferId)
   const pairStatus = useTransferStore((s) => s.remember.pairStatus)
+  const peerDisplayNames = useTransferStore((s) => s.remember.peerDisplayNames)
   const isPeerConnected = connectionState === 'peer-connected'
   const [isKeyCopied, setIsKeyCopied] = useState(false)
   const [isFilesExpanded, setIsFilesExpanded] = useState(false)
@@ -87,8 +89,8 @@ export function ShareView() {
   )
   const hasActivity = isPeerConnected || peerEntries.length > 0
   const deviceEntries = useMemo(
-    () => applyPairState(peerEntries, pairStatus).map((e) => toPeerListCardEntry(t, e)),
-    [peerEntries, pairStatus, t]
+    () => applyPairState(peerEntries, pairStatus, peerDisplayNames).map((e) => toPeerListCardEntry(t, e)),
+    [peerEntries, pairStatus, peerDisplayNames, t]
   )
 
   useEffect(() => {
@@ -131,7 +133,7 @@ export function ShareView() {
         onOpenQR={() => setIsQRModalOpen(true)}
       />
 
-      <PeerListCard entries={deviceEntries} onPair={handlePair} />
+      <PeerListCard entries={deviceEntries} label='Devices' onPair={handlePair} />
 
       <Disclosure
         compact
@@ -147,7 +149,7 @@ export function ShareView() {
       </Disclosure>
 
       <QRModal topic={topic} open={isQRModalOpen} onClose={() => setIsQRModalOpen(false)} />
-      <AddDeviceModal open={isAddDeviceOpen} onClose={() => setIsAddDeviceOpen(false)} />
+      <AddDeviceModal open={isAddDeviceOpen} onClose={() => setIsAddDeviceOpen(false)} topic={topic || undefined} />
     </div>
   )
 }

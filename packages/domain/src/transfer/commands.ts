@@ -102,19 +102,31 @@ export const loadPeers = async (): Promise<void> => {
   }
 }
 
-export const forgetAllPeers = async (): Promise<void> => {
-  try {
-    await getTransferApi().worker.clearPeers()
-    dispatchToTransferStore({ type: 'clear_remembered' })
-  } catch (error) {
-    reportError('forgetAllPeers', error)
-    setError(TRANSFER_ERROR_CODES.transferFailed, error)
-  }
-}
-
 export const requestPair = (transferId: string, peerKey: string): void => {
   dispatchToTransferStore({ type: 'request_pair_peer', peerKey })
   void rememberVote(transferId, peerKey, 'remember', false)
+}
+
+export const inviteDevice = async (
+  remoteDevicePubkey: string,
+  topic: string,
+  fileInfo?: { fileCount: number; totalSize: number }
+): Promise<boolean> => {
+  try {
+    const { delivered } = await getTransferApi().worker.inviteDevice({
+      remoteDevicePubkey,
+      topic,
+      ...fileInfo
+    })
+    return delivered
+  } catch (error) {
+    reportError('inviteDevice', error)
+    return false
+  }
+}
+
+export const dismissInvite = (): void => {
+  dispatchToTransferStore({ type: 'dismiss_invite' })
 }
 
 export const addSelectedFiles = (files: SelectedFile[]): void => {

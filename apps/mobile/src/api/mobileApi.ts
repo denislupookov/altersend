@@ -7,6 +7,7 @@ import {
   type TransferWorkerProcess,
   type WorkerClient
 } from '@altersend/core'
+import Constants from 'expo-constants'
 import { Directory, Paths } from 'expo-file-system'
 import { Platform } from 'react-native'
 import { Worklet } from 'react-native-bare-kit'
@@ -40,7 +41,15 @@ async function getWorkletArgs() {
     identityRoot.create({ idempotent: true, intermediates: true })
   }
 
-  return [`--storage=${uriToPath(storageRoot.uri)}`, `--identity=${uriToPath(identityRoot.uri)}`]
+  const args = [
+    `--storage=${uriToPath(storageRoot.uri)}`,
+    `--identity=${uriToPath(identityRoot.uri)}`
+  ]
+  const deviceName = Constants.deviceName?.trim()
+  if (deviceName) args.push(`--device-name=${deviceName}`)
+  const isPad = Platform.OS === 'ios' && (Platform as { isPad?: boolean }).isPad === true
+  args.push(`--device-type=${isPad ? 'tablet' : 'phone'}`)
+  return args
 }
 
 class MobileApi {

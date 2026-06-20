@@ -28,6 +28,8 @@ import {
   Monitor,
   MoreHorizontal,
   Music,
+  Pencil,
+  Plus,
   QrCode,
   Send,
   Settings,
@@ -35,6 +37,7 @@ import {
   Shield,
   Smartphone,
   Tablet,
+  Trash2,
   Upload,
   Video,
   X
@@ -72,12 +75,15 @@ export const MailIcon = adaptLucide(Mail)
 export const MenuIcon = adaptLucide(Menu)
 export const MoreHorizontalIcon = adaptLucide(MoreHorizontal)
 export const MusicIcon = adaptLucide(Music)
+export const PencilIcon = adaptLucide(Pencil)
+export const PlusIcon = adaptLucide(Plus)
 export const QrCodeIcon = adaptLucide(QrCode)
 export const SendIcon = adaptLucide(Send)
 export const SettingsIcon = adaptLucide(Settings)
 export const ShareIcon = adaptLucide(Share2)
 export const ShieldIcon = adaptLucide(Shield)
 export const SmartphoneIcon = adaptLucide(Smartphone)
+export const TrashIcon = adaptLucide(Trash2)
 export const UploadIcon = adaptLucide(Upload)
 export const VideoIcon = adaptLucide(Video)
 export const CloseIcon = adaptLucide(X)

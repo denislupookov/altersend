@@ -158,6 +158,14 @@ export const styles = css.create({
     fontSize: tokens.fontSizeSm,
     fontWeight: tokens.fontWeightSemibold
   },
+  requestedText: {
+    margin: 0,
+    color: tokens.colorTextMuted,
+    fontFamily: tokens.fontFamilySans,
+    fontSize: tokens.fontSizeSm,
+    fontWeight: tokens.fontWeightMedium,
+    lineHeight: tokens.lineHeightNormal
+  },
   statusDot: {
     width: tokens.space15,
     height: tokens.space15,

@@ -69,6 +69,7 @@
     }
   },
   "dependencies": {
+    "@altersend/domain": "1.3.0",
     "react-strict-dom": "^0.0.55"
   },
   "devDependencies": {

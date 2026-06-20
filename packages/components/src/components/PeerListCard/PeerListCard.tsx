@@ -17,6 +17,7 @@ export interface PeerListCardEntry {
 
 interface PeerListCardProps {
   entries: PeerListCardEntry[]
+  label?: string
   onPair?: (peerKey: string) => void
 }
 
@@ -36,11 +37,17 @@ const TEXT_TONE = {
   disconnected: styles.textDisconnected
 } as const
 
-export function PeerListCard({ entries, onPair }: PeerListCardProps) {
+export function PeerListCard({ entries, label, onPair }: PeerListCardProps) {
   if (entries.length === 0) return null
 
   return (
     <html.section style={styles.section}>
+      {label ? (
+        <html.div style={styles.header}>
+          <html.p style={styles.headerLabel}>{label}</html.p>
+          <html.p style={styles.headerCount}>{entries.length} connected</html.p>
+        </html.div>
+      ) : null}
       <html.div style={styles.list}>
         {entries.map((entry, index) => (
           <PeerRow
@@ -65,16 +72,12 @@ function PairControl({ entry, onPair }: PeerRowProps) {
   switch (entry.pairState) {
     case 'pairable':
       return (
-        <Button onClick={() => onPair?.(entry.peerKey)} size='sm' variant='primary'>
+        <Button size='sm' variant='secondary' onClick={() => onPair?.(entry.peerKey)}>
           Pair
         </Button>
       )
     case 'requested':
-      return (
-        <Button disabled size='sm' variant='secondary'>
-          Requested…
-        </Button>
-      )
+      return <html.p style={styles.requestedText}>Requested…</html.p>
     case 'paired':
       return <html.p style={styles.pairedText}>Paired</html.p>
     default:

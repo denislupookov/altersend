@@ -123,6 +123,40 @@ export const styles = css.create({
   lightPressed: {
     backgroundColor: tokens.colorAccentActive
   },
+  danger: {
+    backgroundColor: tokens.colorDangerSubtle,
+    borderColor: 'transparent',
+    color: tokens.colorDanger,
+    ':hover': {
+      backgroundColor: tokens.colorDanger,
+      color: tokens.colorBackground
+    },
+    ':focus-visible': {
+      outline: 'none',
+      boxShadow: `0 0 0 2px ${tokens.colorDanger}`
+    }
+  },
+  dangerPressed: {
+    backgroundColor: tokens.colorDanger,
+    color: tokens.colorBackground
+  },
+  success: {
+    backgroundColor: tokens.colorSuccessSubtle,
+    borderColor: 'transparent',
+    color: tokens.colorSuccess,
+    ':hover': {
+      backgroundColor: tokens.colorSuccess,
+      color: tokens.colorBackground
+    },
+    ':focus-visible': {
+      outline: 'none',
+      boxShadow: `0 0 0 2px ${tokens.colorSuccess}`
+    }
+  },
+  successPressed: {
+    backgroundColor: tokens.colorSuccess,
+    color: tokens.colorBackground
+  },
   disabled: {
     backgroundColor: tokens.colorSurfaceTertiary,
     borderColor: tokens.colorBorderPrimary,
@@ -145,5 +179,9 @@ export const styles = css.create({
   textSecondary: { color: tokens.colorTextPrimary },
   textGhost: { color: tokens.colorTextSecondary },
   textLight: { color: tokens.colorOnAccent },
+  textDanger: { color: tokens.colorDanger },
+  textSuccess: { color: tokens.colorSuccess },
+  textOnBackground: { color: tokens.colorBackground },
+  pill: { borderRadius: tokens.radiusFull },
   textDisabled: { color: tokens.colorTextMuted }
 })

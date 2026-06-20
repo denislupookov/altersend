@@ -63,6 +63,7 @@ function toPeerListCardEntry(
 ): PeerListCardEntry {
   return {
     ...entry,
+    shortKey: entry.displayName ?? entry.shortKey,
     statusLabel: getPeerStatusLabel(t, entry),
     detail: getPeerDetailLabel(t, entry.detail),
     pairState: entry.pairState
@@ -79,6 +80,7 @@ export function ShareView() {
   const connectedPeers = useTransferStore((s) => s.connectedPeers)
   const transferId = useTransferStore((s) => s.transferId)
   const pairStatus = useTransferStore((s) => s.remember.pairStatus)
+  const peerDisplayNames = useTransferStore((s) => s.remember.peerDisplayNames)
   const topic = topicRaw ?? ''
   const isPeerConnected = connectionState === 'peer-connected'
   const [isFilesExpanded, setIsFilesExpanded] = useState(false)
@@ -94,8 +96,8 @@ export function ShareView() {
   const hasActivity = isPeerConnected || peerEntries.length > 0
   const showWaitingState = !hasActivity
   const deviceEntries = useMemo(
-    () => applyPairState(peerEntries, pairStatus).map((e) => toPeerListCardEntry(t, e)),
-    [peerEntries, pairStatus, t]
+    () => applyPairState(peerEntries, pairStatus, peerDisplayNames).map((e) => toPeerListCardEntry(t, e)),
+    [peerEntries, pairStatus, peerDisplayNames, t]
   )
 
   const handlePair = (peerKey: string) => {
@@ -150,7 +152,7 @@ export function ShareView() {
 
         {peerEntries.length > 0 ? (
           <View style={styles.peerListWrap}>
-            <PeerListCard entries={deviceEntries} onPair={handlePair} />
+            <PeerListCard entries={deviceEntries} label='Devices' onPair={handlePair} />
           </View>
         ) : null}
 
