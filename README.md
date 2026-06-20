@@ -25,6 +25,7 @@
 - [About](#about)
 - [Features](#features)
 - [Download](#download)
+  - [macOS Homebrew](#macos-homebrew)
 - [How it works](#how-it-works)
   - [Under the hood](#under-the-hood)
 - [For developers](#for-developers)
@@ -65,13 +66,21 @@ Get the latest release from [altersend.com/download](https://altersend.com/downl
 | Platform | Download |
 |---|---|
 | **Windows** | [Microsoft Store](https://apps.microsoft.com/detail/9NHLK9GLVDLW) (signed) · [EXE installer](https://github.com/denislupookov/altersend/releases/latest) |
-| **macOS** | [DMG — Apple Silicon](https://github.com/denislupookov/altersend/releases/latest) · [DMG — Intel](https://github.com/denislupookov/altersend/releases/latest) |
+| **macOS** | [DMG — Apple Silicon](https://github.com/denislupookov/altersend/releases/latest) · [DMG — Intel](https://github.com/denislupookov/altersend/releases/latest) · [Homebrew](#macos-homebrew) |
 | **Linux** | [AppImage](https://github.com/denislupookov/altersend/releases/latest) |
 | **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.altersend.mobile) · [APK](https://github.com/denislupookov/altersend/releases/latest) |
 | **iOS** | [App Store](https://apps.apple.com/us/app/altersend-file-transfer/id6772496271) |
 
 
 > **Windows `.exe`** — not yet signed, so Windows will show "Windows protected your PC" on first run. Click **More info → Run anyway** to install. The Microsoft Store version is signed and avoids this warning.
+
+### macOS Homebrew
+
+You can also install AlterSend on macOS using [Homebrew](https://brew.sh):
+
+```sh
+brew install --cask altersend
+```
 
 ## How it works
 
