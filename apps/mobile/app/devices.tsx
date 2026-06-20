@@ -40,35 +40,22 @@ export default function DevicesScreen() {
             No paired devices yet. Pair a device to send without a code.
           </Text>
         ) : (
-          <>
-            <View
-              style={[
-                styles.listCard,
-                { backgroundColor: c.colorBackgroundSubtle, borderColor: c.colorBorderPrimary }
-              ]}
-            >
-              {peers.map((peer, index) => (
-                <View key={peer.remoteDevicePubkey}>
-                  <View style={styles.listItem}>
-                    <DeviceRow
-                      deviceType={peer.deviceType}
-                      name={peer.displayName}
-                      subtitle={formatRelativeTime(peer.lastSeenAt)}
-                      trailing={
-                        <DeviceActionsButton
-                          color={c.colorTextPrimary}
-                          onPress={() => setActionsOpen(true)}
-                        />
-                      }
-                    />
-                  </View>
-                  {index < peers.length - 1 ? (
-                    <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
-                  ) : null}
-                </View>
-              ))}
-            </View>
-          </>
+          <View style={styles.list}>
+            {peers.map((peer) => (
+              <DeviceRow
+                key={peer.remoteDevicePubkey}
+                deviceType={peer.deviceType}
+                name={peer.displayName}
+                subtitle={formatRelativeTime(peer.lastSeenAt)}
+                trailing={
+                  <DeviceActionsButton
+                    color={c.colorTextPrimary}
+                    onPress={() => setActionsOpen(true)}
+                  />
+                }
+              />
+            ))}
+          </View>
         )}
       </View>
       <DeviceActionsSheet open={actionsOpen} onClose={() => setActionsOpen(false)} />
@@ -105,17 +92,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingVertical: 8
   },
-  listCard: {
-    borderRadius: 12,
-    borderWidth: 1,
-    overflow: 'hidden'
-  },
-  listItem: {
-    paddingHorizontal: 10
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    marginLeft: 16
+  list: {
+    gap: 8
   },
   actionsButton: {
     width: 28,

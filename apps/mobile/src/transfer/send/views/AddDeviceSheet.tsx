@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import { Button, DeviceRow, useTheme, withAlpha } from '@altersend/components'
+import { CloseIcon } from '@altersend/components/icons'
 import { InviteStatus, inviteDevice, inviteStatusSubtitle, loadPeers, startSendSession, useTransferStore } from '@altersend/domain'
 
 interface AddDeviceSheetProps {
@@ -41,46 +42,53 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
       <View
         style={[
           styles.sheet,
-          { backgroundColor: c.colorBackgroundSubtle, borderColor: c.colorBorderPrimary }
+          { backgroundColor: c.colorBackground, borderColor: c.colorBorderPrimary }
         ]}
       >
         <View style={[styles.grabber, { backgroundColor: c.colorBorderStrong }]} />
-        <Text style={[styles.title, { color: c.colorTextPrimary }]}>Add a device</Text>
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: c.colorTextPrimary }]}>Add a device</Text>
+          <Pressable
+            accessibilityRole='button'
+            accessibilityLabel='Close'
+            hitSlop={12}
+            onPress={onClose}
+            style={({ pressed }) => [styles.closeButton, { opacity: pressed ? 0.6 : 1 }]}
+          >
+            <CloseIcon size={20} color={c.colorTextPrimary} />
+          </Pressable>
+        </View>
 
-        {peers.length === 0 ? (
-          <Text style={[styles.empty, { color: c.colorTextMuted }]}>
-            No paired devices yet. Pair a device to send without a code.
-          </Text>
-        ) : (
-          <View style={styles.list}>
-            {peers.map((peer) => {
-              const st = status[peer.remoteDevicePubkey]
-              const active = st === 'inviting' || st === 'sent'
-              const subtitle = inviteStatusSubtitle(st, peer.lastSeenAt)
-              return (
-                <DeviceRow
-                  key={peer.remoteDevicePubkey}
-                  deviceType={peer.deviceType}
-                  name={peer.displayName}
-                  subtitle={subtitle}
-                  subtitleVariant={active ? 'active' : 'default'}
-                  isActive={active}
-                  onClick={() => void invite(peer.remoteDevicePubkey)}
-                />
-              )
-            })}
-          </View>
-        )}
-
-        <View style={styles.actions}>
+        <View style={styles.content}>
+          {peers.length === 0 ? (
+            <Text style={[styles.empty, { color: c.colorTextMuted }]}>
+              No paired devices yet. Pair a device to send without a code.
+            </Text>
+          ) : (
+            <View style={styles.list}>
+              {peers.map((peer) => {
+                const st = status[peer.remoteDevicePubkey]
+                const active = st === 'inviting' || st === 'sent'
+                const subtitle = inviteStatusSubtitle(st, peer.lastSeenAt)
+                return (
+                  <DeviceRow
+                    key={peer.remoteDevicePubkey}
+                    deviceType={peer.deviceType}
+                    name={peer.displayName}
+                    subtitle={subtitle}
+                    subtitleVariant={active ? 'active' : 'default'}
+                    isActive={active}
+                    onClick={() => void invite(peer.remoteDevicePubkey)}
+                  />
+                )
+              })}
+            </View>
+          )}
           {onPairNew ? (
             <Button onClick={onPairNew} variant='secondary' width='full'>
               Pair New Device
             </Button>
           ) : null}
-          <Button onClick={onClose} variant='ghost' width='full'>
-            Done
-          </Button>
         </View>
       </View>
     </Modal>
@@ -98,33 +106,44 @@ const styles = StyleSheet.create({
     bottom: 0,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    borderWidth: 1,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 36,
-    gap: 16
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingTop: 12,
+    paddingBottom: 32,
+    gap: 12
   },
   grabber: {
     alignSelf: 'center',
     width: 36,
     height: 4,
     borderRadius: 999,
-    marginBottom: 6
+    marginBottom: 10
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20
   },
   title: {
-    fontSize: 28,
+    fontSize: 16,
     fontWeight: '700'
   },
+  closeButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  content: {
+    paddingHorizontal: 20,
+    gap: 12
+  },
   list: {
-    gap: 10
+    gap: 8
   },
   empty: {
     fontSize: 14,
     lineHeight: 20,
     paddingVertical: 8
-  },
-  actions: {
-    gap: 10,
-    marginTop: 4
   }
 })
