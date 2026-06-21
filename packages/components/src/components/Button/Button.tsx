@@ -72,13 +72,14 @@ export function Button({
   width = 'auto',
   ...props
 }: ButtonProps) {
-  const { isPressed, pressHandlers } = usePressState()
+  const { isPressed, isHovered, pressHandlers } = usePressState()
   const { theme } = useTheme()
   const showPressed = isPressed && !disabled
+  const showHover = isHovered && !disabled && !isPressed
 
   const iconColorKey = disabled
     ? 'colorTextMuted'
-    : showPressed && pressedIconColor[variant]
+    : (showPressed || showHover) && pressedIconColor[variant]
       ? pressedIconColor[variant]!
       : normalIconColor[variant]
   const resolvedIconColor = theme.colors[iconColorKey]
@@ -98,7 +99,7 @@ export function Button({
         styles[variant],
         pill && styles.pill,
         width === 'full' && styles.full,
-        showPressed && pressedStyle[variant],
+        (showPressed || showHover) && pressedStyle[variant],
         disabled && styles.disabled
       ]}
     >
@@ -109,7 +110,7 @@ export function Button({
             styles.textBase,
             textSize[size],
             textVariant[variant],
-            showPressed && pressedTextStyle[variant],
+            (showPressed || showHover) && pressedTextStyle[variant],
             disabled && styles.textDisabled
           ]}
         >

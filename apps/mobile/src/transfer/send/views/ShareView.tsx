@@ -1,104 +1,82 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ScrollView, Share, StyleSheet, View } from 'react-native'
+import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import type { PeerListCardEntry } from '@altersend/components'
 import {
-  applyPairState,
   buildInviteText,
   formatFileSize,
-  getPeerListEntries,
-  type PeerListEntry,
-  type PeerListEntryDetail,
-  type PeerListEntryWithPair,
+  formatRelativeTime,
+  type InviteStatus,
+  inviteDevice,
+  inviteStatusSubtitle,
   requestPair,
+  startSendSession,
   useTransferStore
 } from '@altersend/domain'
-import { Button, Disclosure, PeerListCard, SendFileListRow, useTheme } from '@altersend/components'
-import { AlertCircleIcon, FolderIcon, SmartphoneIcon } from '@altersend/components/icons'
+import { Button, Disclosure, SendFileListRow, useTheme } from '@altersend/components'
+import { AlertCircleIcon, ChevronRightIcon, deviceIcon, FolderIcon, PlusIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { useToast } from '@/src/components/Toast'
 import { QRSection } from './QRSection'
 import { Text } from '@/src/components/ThemedText'
 import { AddDeviceSheet } from './AddDeviceSheet'
+import { LinkCard } from '@/src/components/LinkRow'
 
-function getPeerStatusLabel(t: ReturnType<typeof useTranslation>['t'], entry: PeerListEntry) {
-  switch (entry.status) {
-    case 'failed':
-      return t('send:status.failed')
-    case 'downloaded':
-      return t('send:status.downloaded')
-    case 'disconnected':
-      return t('send:status.disconnected')
-    case 'online':
-      return t('send:status.online')
-    case 'downloading':
-      return entry.progressPercent != null
-        ? t('send:status.downloadingPercent', { percent: entry.progressPercent })
-        : t('send:status.downloading')
-  }
-}
-
-function getPeerDetailLabel(
-  t: ReturnType<typeof useTranslation>['t'],
-  detail: PeerListEntryDetail | null
-) {
-  if (!detail) return null
-
-  switch (detail.type) {
-    case 'failed-file':
-    case 'in-flight-file':
-      return detail.fileName
-    case 'completed-files':
-      return t('common:files.count', { count: detail.count })
-    case 'completed-done':
-      return t('send:peer.completedDone', { count: detail.count })
-    case 'progress-bytes':
-      return `${formatFileSize(detail.transferredBytes)} / ${formatFileSize(detail.totalBytes)}`
-  }
-}
-
-function toPeerListCardEntry(
-  t: ReturnType<typeof useTranslation>['t'],
-  entry: PeerListEntryWithPair
-): PeerListCardEntry {
-  return {
-    ...entry,
-    shortKey: entry.displayName ?? entry.shortKey,
-    statusLabel: getPeerStatusLabel(t, entry),
-    detail: getPeerDetailLabel(t, entry.detail),
-    pairState: entry.pairState
-  }
-}
 
 export function ShareView() {
   const { t } = useTranslation(['send', 'common'])
   const { theme } = useTheme()
+  const c = theme.colors
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const topicRaw = useTransferStore((s) => s.topic)
   const connectionState = useTransferStore((s) => s.connectionState)
-  const peerDownloads = useTransferStore((s) => s.peerDownloads)
   const connectedPeers = useTransferStore((s) => s.connectedPeers)
   const transferId = useTransferStore((s) => s.transferId)
   const pairStatus = useTransferStore((s) => s.remember.pairStatus)
   const peerDisplayNames = useTransferStore((s) => s.remember.peerDisplayNames)
+  const rememberedPeers = useTransferStore((s) => s.peers)
   const topic = topicRaw ?? ''
   const isPeerConnected = connectionState === 'peer-connected'
   const [isFilesExpanded, setIsFilesExpanded] = useState(false)
   const [isKeyCopied, setIsKeyCopied] = useState(false)
   const [isAddDeviceOpen, setIsAddDeviceOpen] = useState(false)
+  const [inviteStatus, setInviteStatus] = useState<Record<string, InviteStatus>>({})
   const toast = useToast()
 
+  const invite = async (pubkey: string) => {
+    if (inviteStatus[pubkey] === 'inviting') return
+    setInviteStatus((s) => ({ ...s, [pubkey]: 'inviting' }))
+    try {
+      const topic = await startSendSession()
+      const delivered = await inviteDevice(pubkey, topic)
+      setInviteStatus((s) => ({ ...s, [pubkey]: delivered ? 'sent' : 'offline' }))
+    } catch {
+      setInviteStatus((s) => ({ ...s, [pubkey]: 'offline' }))
+    }
+  }
+
   const totalSize = selectedFiles.reduce((sum, file) => sum + (file.size ?? 0), 0)
-  const peerEntries = useMemo(
-    () => getPeerListEntries(connectedPeers, peerDownloads, selectedFiles),
-    [connectedPeers, peerDownloads, selectedFiles]
+
+  const connectedPeerList = useMemo(() => Object.values(connectedPeers), [connectedPeers])
+  const connectedKeySet = useMemo(() => new Set(connectedPeerList.map((p) => p.peerKey)), [connectedPeerList])
+
+  const findRemembered = (peerKey: string) => {
+    const byKey = rememberedPeers.find((r) => r.remoteDevicePubkey === peerKey)
+    if (byKey) return byKey
+    const name = peerDisplayNames[peerKey]
+    return name ? rememberedPeers.find((r) => r.displayName === name) : undefined
+  }
+
+  const connectedDisplayNames = useMemo(
+    () => new Set(connectedPeerList.map((p) => peerDisplayNames[p.peerKey]).filter(Boolean) as string[]),
+    [connectedPeerList, peerDisplayNames]
   )
-  const hasActivity = isPeerConnected || peerEntries.length > 0
-  const showWaitingState = !hasActivity
-  const deviceEntries = useMemo(
-    () => applyPairState(peerEntries, pairStatus, peerDisplayNames).map((e) => toPeerListCardEntry(t, e)),
-    [peerEntries, pairStatus, peerDisplayNames, t]
-  )
+
+  const recentRemembered = useMemo(() => {
+    return rememberedPeers
+      .filter((p) => !connectedKeySet.has(p.remoteDevicePubkey) && !connectedDisplayNames.has(p.displayName))
+      .sort((a, b) => b.lastSeenAt - a.lastSeenAt)
+      .slice(0, 2)
+  }, [rememberedPeers, connectedKeySet, connectedDisplayNames])
 
   const handlePair = (peerKey: string) => {
     if (transferId) requestPair(transferId, peerKey)
@@ -122,25 +100,18 @@ export function ShareView() {
     return () => clearTimeout(id)
   }, [isKeyCopied])
 
+  const showWaitingState = !isPeerConnected
+
+  const connectedCount = connectedPeerList.length
+
   return (
     <>
       <ScrollView style={styles.container}>
         <View style={styles.hint}>
           <AlertCircleIcon size={12} />
-          <Text style={[styles.hintText, { color: theme.colors.colorTextMuted }]}>
+          <Text style={[styles.hintText, { color: c.colorTextMuted }]}>
             {t('send:hints.keepOpen')}
           </Text>
-        </View>
-
-        <View style={styles.addDeviceWrap}>
-          <Button
-            icon={<SmartphoneIcon size={16} />}
-            onClick={() => setIsAddDeviceOpen(true)}
-            variant='secondary'
-            width='full'
-          >
-            Add a device
-          </Button>
         </View>
 
         <QRSection
@@ -150,11 +121,101 @@ export function ShareView() {
           showWaitingState={showWaitingState}
         />
 
-        {peerEntries.length > 0 ? (
-          <View style={styles.peerListWrap}>
-            <PeerListCard entries={deviceEntries} label='Devices' onPair={handlePair} />
-          </View>
-        ) : null}
+        <View style={styles.devicesWrap}>
+          <LinkCard>
+            <View style={[styles.devicesHeader, { borderBottomColor: c.colorBorderPrimary }]}>
+              <Text style={[styles.devicesLabel, { color: c.colorTextSecondary }]}>DEVICES</Text>
+              <Text style={[styles.devicesCount, { color: connectedCount > 0 ? c.colorInfo : c.colorTextMuted }]}>
+                {connectedCount} connected
+              </Text>
+            </View>
+            {connectedPeerList.map((peer) => {
+              const remembered = findRemembered(peer.peerKey)
+              const name = peerDisplayNames[peer.peerKey] ?? remembered?.displayName ?? peer.peerKey.slice(0, 6)
+              const isPaired = Boolean(remembered) || pairStatus[peer.peerKey] === 'paired'
+              const isRequested = pairStatus[peer.peerKey] === 'requested'
+              return (
+                <View key={peer.peerKey} style={styles.deviceRow}>
+                  {remembered ? (
+                    <View style={[styles.iconBox, { backgroundColor: c.colorSurfacePrimary }]}>
+                      {(() => { const I = deviceIcon(remembered.deviceType); return <I size={16} color={c.colorTextSecondary} /> })()}
+                    </View>
+                  ) : (
+                    <View style={[styles.iconBox, { backgroundColor: c.colorInfoSubtle }]}>
+                      <Text style={[styles.initials, { color: c.colorInfo }]}>{name.slice(0, 2).toUpperCase()}</Text>
+                    </View>
+                  )}
+                  <View style={styles.deviceText}>
+                    <Text style={[styles.deviceName, { color: c.colorTextPrimary }]}>{name}</Text>
+                    <Text style={[styles.deviceSub, { color: c.colorInfo }]}>● Online</Text>
+                  </View>
+                  {!isPaired && !isRequested && (
+                    <Button
+                      onClick={() => handlePair(peer.peerKey)}
+                      size='sm'
+                      variant='secondary'
+                    >
+                      Pair
+                    </Button>
+                  )}
+                  <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
+                </View>
+              )
+            })}
+
+            {recentRemembered.map((peer) => {
+              const st = inviteStatus[peer.remoteDevicePubkey]
+              const active = st === 'inviting' || st === 'sent'
+              const subtitle = st === 'offline' ? inviteStatusSubtitle(st) : formatRelativeTime(peer.lastSeenAt)
+              const subtitleColor = st === 'offline' ? c.colorDanger : c.colorTextMuted
+              const PeerIcon = deviceIcon(peer.deviceType)
+              return (
+                <Pressable
+                  key={peer.remoteDevicePubkey}
+                  onPress={() => void invite(peer.remoteDevicePubkey)}
+                  style={({ pressed }) => [
+                    styles.deviceRow,
+                    (active || pressed) && { backgroundColor: c.colorSurfacePrimary }
+                  ]}
+                >
+                  <View style={[styles.iconBox, { backgroundColor: c.colorSurfacePrimary }]}>
+                    <PeerIcon size={16} color={c.colorTextSecondary} />
+                  </View>
+                  <View style={styles.deviceText}>
+                    <Text style={[styles.deviceName, { color: c.colorTextPrimary }]}>{peer.displayName}</Text>
+                    {subtitle ? <Text style={[styles.deviceSub, { color: subtitleColor }]}>{subtitle}</Text> : null}
+                  </View>
+                  <Button
+                    disabled={active}
+                    onClick={() => void invite(peer.remoteDevicePubkey)}
+                    size='sm'
+                    variant='secondary'
+                  >
+                    {st === 'sent' ? 'Sent' : st === 'inviting' ? 'Inviting…' : 'Invite'}
+                  </Button>
+                  <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
+                </Pressable>
+              )
+            })}
+
+            <Pressable
+              accessibilityRole='button'
+              onPress={() => setIsAddDeviceOpen(true)}
+              style={({ pressed }) => [
+                styles.deviceRow,
+                pressed && { backgroundColor: c.colorSurfacePrimary }
+              ]}
+            >
+              <View style={[styles.addIcon, { borderColor: c.colorBorderStrong }]}>
+                <PlusIcon size={14} color={c.colorTextMuted} />
+              </View>
+              <Text style={[styles.addLabel, { color: c.colorTextSecondary }]}>
+                {connectedCount > 0 ? 'Invite another device' : 'Add a device'}
+              </Text>
+              <ChevronRightIcon size={14} color={c.colorTextMuted} />
+            </Pressable>
+          </LinkCard>
+        </View>
 
         <Disclosure
           expanded={isFilesExpanded}
@@ -190,10 +251,78 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     flexShrink: 1
   },
-  addDeviceWrap: {
-    marginBottom: 12
-  },
-  peerListWrap: {
+  devicesWrap: {
     marginBottom: 16
+  },
+  devicesHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth
+  },
+  devicesLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  devicesCount: {
+    fontSize: 11
+  },
+  deviceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12
+  },
+  iconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0
+  },
+  initials: {
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5
+  },
+  deviceText: {
+    flex: 1
+  },
+  deviceName: {
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 18
+  },
+  deviceSub: {
+    fontSize: 12,
+    lineHeight: 16
+  },
+  addIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0
+  },
+  addLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    flex: 1
+  },
+  divider: {
+    position: 'absolute',
+    bottom: 0,
+    left: 64,
+    right: 0,
+    height: StyleSheet.hairlineWidth
   }
 })
