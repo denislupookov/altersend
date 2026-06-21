@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { formatRelativeTime, loadPeers, useTransferStore } from '@altersend/domain'
-import { Button, DeviceRow, useTheme } from '@altersend/components'
-import { PlusIcon } from '@altersend/components/icons'
+import { loadPeers, useTransferStore } from '@altersend/domain'
+import { Button, useTheme } from '@altersend/components'
+import { PlusIcon, deviceIcon } from '@altersend/components/icons'
 import { useRouter } from 'expo-router'
-import { DeviceActionsSheet, Layout } from '@/src/components'
+import { DeviceActionsSheet, Layout, LinkCard, LinkRow } from '@/src/components'
 
 export default function DevicesScreen() {
   const { theme } = useTheme()
@@ -20,7 +20,6 @@ export default function DevicesScreen() {
   return (
     <Layout
       title='Paired Devices'
-      description='These devices can share files with you directly'
       hasNativeHeader
       footer={
         <Button
@@ -40,22 +39,25 @@ export default function DevicesScreen() {
             No paired devices yet. Pair a device to send without a code.
           </Text>
         ) : (
-          <View style={styles.list}>
-            {peers.map((peer) => (
-              <DeviceRow
-                key={peer.remoteDevicePubkey}
-                deviceType={peer.deviceType}
-                name={peer.displayName}
-                subtitle={formatRelativeTime(peer.lastSeenAt)}
-                trailing={
-                  <DeviceActionsButton
-                    color={c.colorTextPrimary}
-                    onPress={() => setActionsOpen(true)}
-                  />
-                }
-              />
-            ))}
-          </View>
+          <LinkCard>
+            {peers.map((peer, index) => {
+              const Icon = deviceIcon(peer.deviceType)
+              return (
+                <LinkRow
+                  key={peer.remoteDevicePubkey}
+                  icon={<Icon size={16} color={c.colorTextSecondary} />}
+                  label={peer.displayName}
+                  trailing={
+                    <DeviceActionsButton
+                      color={c.colorTextMuted}
+                      onPress={() => setActionsOpen(true)}
+                    />
+                  }
+                  isLast={index === peers.length - 1}
+                />
+              )
+            })}
+          </LinkCard>
         )}
       </View>
       <DeviceActionsSheet open={actionsOpen} onClose={() => setActionsOpen(false)} />
@@ -91,9 +93,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     paddingVertical: 8
-  },
-  list: {
-    gap: 8
   },
   actionsButton: {
     width: 28,

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
-import { Button, DeviceRow, useTheme, withAlpha } from '@altersend/components'
-import { CloseIcon } from '@altersend/components/icons'
+import { Button, useTheme, withAlpha } from '@altersend/components'
+import { CloseIcon, deviceIcon } from '@altersend/components/icons'
 import { InviteStatus, inviteDevice, inviteStatusSubtitle, loadPeers, startSendSession, useTransferStore } from '@altersend/domain'
+import { LinkCard, LinkRow } from '../../../components/LinkRow'
 
 interface AddDeviceSheetProps {
   open: boolean
@@ -46,8 +47,9 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
         ]}
       >
         <View style={[styles.grabber, { backgroundColor: c.colorBorderStrong }]} />
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: c.colorTextPrimary }]}>Add a device</Text>
+
+        <View style={styles.sheetHeader}>
+          <Text style={[styles.sheetTitle, { color: c.colorTextPrimary }]}>Add a device</Text>
           <Pressable
             accessibilityRole='button'
             accessibilityLabel='Close'
@@ -59,37 +61,44 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
           </Pressable>
         </View>
 
-        <View style={styles.content}>
+        <View style={styles.deviceList}>
           {peers.length === 0 ? (
             <Text style={[styles.empty, { color: c.colorTextMuted }]}>
               No paired devices yet. Pair a device to send without a code.
             </Text>
           ) : (
-            <View style={styles.list}>
-              {peers.map((peer) => {
+            <LinkCard>
+              {peers.map((peer, index) => {
                 const st = status[peer.remoteDevicePubkey]
                 const active = st === 'inviting' || st === 'sent'
-                const subtitle = inviteStatusSubtitle(st, peer.lastSeenAt)
+                const subtitle = inviteStatusSubtitle(st)
+                const Icon = deviceIcon(peer.deviceType)
+                const subtitleTone = st === 'offline' ? 'danger' : active ? 'success' : 'muted'
                 return (
-                  <DeviceRow
+                  <LinkRow
                     key={peer.remoteDevicePubkey}
-                    deviceType={peer.deviceType}
-                    name={peer.displayName}
+                    icon={<Icon size={16} color={c.colorTextSecondary} />}
+                    label={peer.displayName}
                     subtitle={subtitle}
-                    subtitleVariant={active ? 'active' : 'default'}
+                    subtitleTone={subtitleTone}
                     isActive={active}
-                    onClick={() => void invite(peer.remoteDevicePubkey)}
+                    trailing={null}
+                    onPress={() => void invite(peer.remoteDevicePubkey)}
+                    isLast={index === peers.length - 1}
                   />
                 )
               })}
-            </View>
+            </LinkCard>
           )}
-          {onPairNew ? (
+        </View>
+
+        {onPairNew ? (
+          <View style={styles.actions}>
             <Button onClick={onPairNew} variant='secondary' width='full'>
               Pair New Device
             </Button>
-          ) : null}
-        </View>
+          </View>
+        ) : null}
       </View>
     </Modal>
   )
@@ -97,7 +106,11 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
 
 const styles = StyleSheet.create({
   backdrop: {
-    ...StyleSheet.absoluteFillObject
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   },
   sheet: {
     position: 'absolute',
@@ -107,8 +120,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 0,
     paddingTop: 12,
-    paddingBottom: 32,
+    paddingBottom: 48,
     gap: 12
   },
   grabber: {
@@ -118,13 +132,13 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     marginBottom: 10
   },
-  header: {
+  sheetHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20
   },
-  title: {
+  sheetTitle: {
     fontSize: 16,
     fontWeight: '700'
   },
@@ -134,16 +148,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  content: {
-    paddingHorizontal: 20,
-    gap: 12
-  },
-  list: {
-    gap: 8
+  deviceList: {
+    paddingHorizontal: 20
   },
   empty: {
     fontSize: 14,
     lineHeight: 20,
     paddingVertical: 8
+  },
+  actions: {
+    paddingHorizontal: 20
   }
 })

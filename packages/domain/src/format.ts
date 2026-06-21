@@ -12,12 +12,12 @@ export function deviceTypeLabel(deviceType: DeviceType): string {
 
 export type InviteStatus = 'inviting' | 'sent' | 'offline'
 
-export function inviteStatusSubtitle(st: InviteStatus | undefined, lastSeenAt: number): string {
+export function inviteStatusSubtitle(st: InviteStatus | undefined): string {
   switch (st) {
     case 'inviting': return 'Inviting…'
     case 'sent': return 'Invite sent'
     case 'offline': return 'Device offline — try again'
-    default: return `Last sent ${formatRelativeTime(lastSeenAt)}`
+    default: return ''
   }
 }
 
