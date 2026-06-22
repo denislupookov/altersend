@@ -127,7 +127,7 @@ export function SelectFilesView() {
             placeholder='Type a message or paste a link...'
             value={textInput}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
-            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter' && textInput.trim().length > 0) {
                 void continueShareText(textInput.trim())
               }
