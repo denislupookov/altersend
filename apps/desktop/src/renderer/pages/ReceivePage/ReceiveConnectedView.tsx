@@ -44,7 +44,7 @@ export function ReceiveConnectedView() {
   const isDownloading = totals.activeCount > 0
   const allCompleted = hasIncomingFiles && totals.completedCount === incomingFileOffers.length
 
-  const textOffer = incomingFileOffers.find(f => f.content !== undefined && f.size === 0)
+  const textOffer = incomingFileOffers.find((f) => f.content !== undefined && f.size === 0)
   const isTextTransfer = textOffer !== undefined
 
   const isUrl = useMemo(() => {
@@ -121,11 +121,19 @@ export function ReceiveConnectedView() {
           </Button>
           {isTextTransfer ? (
             isUrl ? (
-              <Button onClick={() => void bridgeApi.openExternalUrl(textOffer.content!)} size='sm' variant='primary'>
+              <Button
+                onClick={() => void bridgeApi.openExternalUrl(textOffer.content!)}
+                size='sm'
+                variant='primary'
+              >
                 Open Link
               </Button>
             ) : (
-              <Button onClick={() => void navigator.clipboard.writeText(textOffer.content!)} size='sm' variant='primary'>
+              <Button
+                onClick={() => void navigator.clipboard.writeText(textOffer.content!)}
+                size='sm'
+                variant='primary'
+              >
                 Copy Text
               </Button>
             )

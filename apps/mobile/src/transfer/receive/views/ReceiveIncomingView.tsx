@@ -12,7 +12,7 @@ export function ReceiveIncomingView() {
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const { theme } = useTheme()
 
-  const textOffer = incomingFileOffers.find(f => f.content !== undefined && f.size === 0)
+  const textOffer = incomingFileOffers.find((f) => f.content !== undefined && f.size === 0)
   const isTextTransfer = textOffer !== undefined
 
   const isUrl = React.useMemo(() => {
@@ -34,11 +34,19 @@ export function ReceiveIncomingView() {
           </Text>
           <View style={styles.textActions}>
             {isUrl ? (
-              <Button onClick={() => void Linking.openURL(textOffer.content!)} size='sm' variant='primary'>
+              <Button
+                onClick={() => void Linking.openURL(textOffer.content!)}
+                size='sm'
+                variant='primary'
+              >
                 {t('common:actions.openLink', { defaultValue: 'Open Link' })}
               </Button>
             ) : (
-              <Button onClick={() => void Clipboard.setStringAsync(textOffer.content!)} size='sm' variant='primary'>
+              <Button
+                onClick={() => void Clipboard.setStringAsync(textOffer.content!)}
+                size='sm'
+                variant='primary'
+              >
                 {t('common:actions.copyText', { defaultValue: 'Copy Text' })}
               </Button>
             )}

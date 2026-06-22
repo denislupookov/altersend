@@ -134,10 +134,10 @@ export function SelectFilesView() {
             }}
           />
         </div>
-        <Button 
-          disabled={textInput.trim().length === 0} 
-          onClick={() => void continueShareText(textInput.trim())} 
-          size='sm' 
+        <Button
+          disabled={textInput.trim().length === 0}
+          onClick={() => void continueShareText(textInput.trim())}
+          size='sm'
           variant='primary'
         >
           Share

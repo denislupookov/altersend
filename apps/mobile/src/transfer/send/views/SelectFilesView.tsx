@@ -9,7 +9,14 @@ import {
   useTransferStore,
   type SelectedFile
 } from '@altersend/domain'
-import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow, Input, Button } from '@altersend/components'
+import {
+  DropZoneLink,
+  ErrorBanner,
+  FileDropZone,
+  SendFileListRow,
+  Input,
+  Button
+} from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 
 function uriToFilePath(uri: string): string {
@@ -147,15 +154,17 @@ export function SelectFilesView() {
       <View style={styles.textInputRow}>
         <View style={styles.textInputWrapper}>
           <Input
-            placeholder={t('send:actions.typeMessageOrLink', { defaultValue: 'Type a message or link...' })}
+            placeholder={t('send:actions.typeMessageOrLink', {
+              defaultValue: 'Type a message or link...'
+            })}
             value={textInput}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
           />
         </View>
-        <Button 
-          disabled={textInput.trim().length === 0} 
-          onClick={() => void continueShareText(textInput.trim())} 
-          size='sm' 
+        <Button
+          disabled={textInput.trim().length === 0}
+          onClick={() => void continueShareText(textInput.trim())}
+          size='sm'
           variant='primary'
         >
           {t('common:actions.share', { defaultValue: 'Share' })}
