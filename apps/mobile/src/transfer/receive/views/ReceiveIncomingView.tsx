@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
-import { SendFileListRow, useTheme } from '@altersend/components'
+import { View, StyleSheet, Linking } from 'react-native'
+import * as Clipboard from 'expo-clipboard'
+import { SendFileListRow, Button, useTheme } from '@altersend/components'
 import { getDownloadRowDisplay, getOfferKey, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
@@ -11,9 +12,39 @@ export function ReceiveIncomingView() {
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const { theme } = useTheme()
 
+  const textOffer = incomingFileOffers.find(f => f.content !== undefined && f.size === 0)
+  const isTextTransfer = textOffer !== undefined
+
+  const isUrl = React.useMemo(() => {
+    if (!textOffer?.content) return false
+    try {
+      new URL(textOffer.content)
+      return true
+    } catch {
+      return false
+    }
+  }, [textOffer])
+
   return (
     <View style={styles.container}>
-      {incomingFileOffers.length > 0 ? (
+      {isTextTransfer ? (
+        <View style={styles.textContainer}>
+          <Text style={[styles.textContent, { color: theme.colors.colorTextPrimary }]}>
+            {textOffer.content}
+          </Text>
+          <View style={styles.textActions}>
+            {isUrl ? (
+              <Button onClick={() => void Linking.openURL(textOffer.content!)} size='sm' variant='primary'>
+                {t('common:actions.openLink', { defaultValue: 'Open Link' })}
+              </Button>
+            ) : (
+              <Button onClick={() => void Clipboard.setStringAsync(textOffer.content!)} size='sm' variant='primary'>
+                {t('common:actions.copyText', { defaultValue: 'Copy Text' })}
+              </Button>
+            )}
+          </View>
+        </View>
+      ) : incomingFileOffers.length > 0 ? (
         <View
           style={[
             styles.card,
@@ -59,5 +90,19 @@ const styles = StyleSheet.create({
   },
   waitingText: {
     fontSize: 13
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16
+  },
+  textContent: {
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  textActions: {
+    flexDirection: 'row',
+    gap: 8
   }
 })

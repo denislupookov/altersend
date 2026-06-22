@@ -4,11 +4,12 @@ import * as DocumentPicker from 'expo-document-picker'
 import * as ImagePicker from 'expo-image-picker'
 import {
   addSelectedFiles,
+  continueShareText,
   removeSelectedFile,
   useTransferStore,
   type SelectedFile
 } from '@altersend/domain'
-import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@altersend/components'
+import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow, Input, Button } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 
 function uriToFilePath(uri: string): string {
@@ -25,6 +26,7 @@ export function SelectFilesView() {
   const { t } = useTranslation(['send', 'common'])
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const [selectionError, setSelectionError] = useState<string | null>(null)
+  const [textInput, setTextInput] = useState('')
 
   const hasSelectedFiles = selectedFiles.length > 0
 
@@ -142,6 +144,24 @@ export function SelectFilesView() {
         </View>
       )}
 
+      <View style={styles.textInputRow}>
+        <View style={styles.textInputWrapper}>
+          <Input
+            placeholder={t('send:actions.typeMessageOrLink', { defaultValue: 'Type a message or link...' })}
+            value={textInput}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
+          />
+        </View>
+        <Button 
+          disabled={textInput.trim().length === 0} 
+          onClick={() => void continueShareText(textInput.trim())} 
+          size='sm' 
+          variant='primary'
+        >
+          {t('common:actions.share', { defaultValue: 'Share' })}
+        </Button>
+      </View>
+
       <ErrorBanner message={selectionError} />
     </View>
   )
@@ -156,5 +176,14 @@ const styles = StyleSheet.create({
   },
   fileList: {
     gap: 8
+  },
+  textInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 8
+  },
+  textInputWrapper: {
+    flex: 1
   }
 })

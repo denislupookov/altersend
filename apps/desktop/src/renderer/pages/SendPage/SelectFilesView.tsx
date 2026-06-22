@@ -3,11 +3,13 @@ import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@alter
 import { useTranslation } from '@altersend/locales'
 import {
   addSelectedFiles,
+  continueShareText,
   normalizeSelectedFiles,
   removeSelectedFile,
   useTransferStore
 } from '@altersend/domain'
 import { bridgeApi } from '../../api/bridgeApi'
+import { Input, Button } from '@altersend/components'
 
 interface DataTransferEntryLike {
   isDirectory: boolean
@@ -28,6 +30,7 @@ export function SelectFilesView() {
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const [isDropZoneDragging, setIsDropZoneDragging] = useState(false)
   const [selectionError, setSelectionError] = useState<string | null>(null)
+  const [textInput, setTextInput] = useState('')
 
   const hasSelectedFiles = selectedFiles.length > 0
 
@@ -117,6 +120,29 @@ export function SelectFilesView() {
           ))}
         </div>
       ) : null}
+
+      <div className='flex flex-row gap-2 mt-2 items-center'>
+        <div className='flex-1'>
+          <Input
+            placeholder='Type a message or paste a link...'
+            value={textInput}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === 'Enter' && textInput.trim().length > 0) {
+                void continueShareText(textInput.trim())
+              }
+            }}
+          />
+        </div>
+        <Button 
+          disabled={textInput.trim().length === 0} 
+          onClick={() => void continueShareText(textInput.trim())} 
+          size='sm' 
+          variant='primary'
+        >
+          Share
+        </Button>
+      </div>
 
       <ErrorBanner message={selectionError} />
     </div>

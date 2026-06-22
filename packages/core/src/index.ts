@@ -21,7 +21,9 @@ export type {
   DisconnectReply,
   DownloadFileRequest,
   DownloadFileResult,
-  ShareFileRequest
+  ShareFileRequest,
+  ShareTextRequest,
+  ShareTextReply
 } from './worklet/rpc/protocol'
 
 export { TRANSFER_ERROR_CODES } from './worklet/rpc/events'

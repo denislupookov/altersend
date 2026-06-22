@@ -9,7 +9,9 @@ import type {
   DownloadFilesReply,
   JoinReply,
   ShareFileRequest,
-  ShareFilesReply
+  ShareFilesReply,
+  ShareTextRequest,
+  ShareTextReply
 } from '@altersend/core'
 
 const setError = (code: TransferErrorCode, error: unknown): void => {
@@ -63,6 +65,18 @@ export const shareFiles = async (files: ShareFileRequest[]): Promise<ShareFilesR
     return await getTransferApi().worker.shareFiles(files)
   } catch (error) {
     reportError('shareFiles', error)
+    dispatchToTransferStore({ type: 'role_changed', role: null })
+    setError(TRANSFER_ERROR_CODES.transferFailed, error)
+    throw error
+  }
+}
+
+export const shareText = async (requests: ShareTextRequest[]): Promise<ShareTextReply> => {
+  dispatchToTransferStore({ type: 'share_requested' })
+  try {
+    return await getTransferApi().worker.shareText(requests)
+  } catch (error) {
+    reportError('shareText', error)
     dispatchToTransferStore({ type: 'role_changed', role: null })
     setError(TRANSFER_ERROR_CODES.transferFailed, error)
     throw error
@@ -129,6 +143,21 @@ export const continueShare = async (files: SelectedFile[]): Promise<void> => {
       type: 'set_draft_phase',
       phase: getPhaseFromSelection(files.length)
     })
+    setError(TRANSFER_ERROR_CODES.transferFailed, error)
+  }
+}
+
+export const continueShareText = async (text: string): Promise<void> => {
+  if (!text) return
+
+  dispatchToTransferStore({ type: 'set_draft_phase', phase: 'preparing' })
+
+  try {
+    await startSendSession()
+    await shareText([{ text }])
+    dispatchToTransferStore({ type: 'set_draft_phase', phase: 'ready' })
+  } catch (error) {
+    dispatchToTransferStore({ type: 'set_draft_phase', phase: 'empty' })
     setError(TRANSFER_ERROR_CODES.transferFailed, error)
   }
 }

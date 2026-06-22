@@ -22,6 +22,8 @@ import type {
   JoinReply,
   ShareFileRequest,
   ShareFilesReply,
+  ShareTextRequest,
+  ShareTextReply,
   TransferRPC
 } from '../rpc/protocol'
 import {
@@ -362,6 +364,48 @@ export class TransferOrchestrator implements TransferRPC {
     } finally {
       await this.stager.closeSourceDrives()
     }
+  }
+
+  async shareText(requests: ShareTextRequest[]): Promise<ShareTextReply> {
+    if (!Array.isArray(requests) || requests.length === 0) {
+      throw new BadRequestError('Missing text to share')
+    }
+    if (this.suspended) {
+      throw new BadRequestError('Cannot share text while suspended')
+    }
+
+    if (this.role === 'receiver') {
+      await this.disconnect()
+    }
+
+    await this.readyPromise
+
+    this.setRole('sender')
+
+    const transferId = createTransferId()
+    this.activeTransfer = {
+      type: 'transfer-start',
+      transferId,
+      totalFiles: requests.length,
+      totalBytes: 0
+    }
+    this.activeTransferReady = null
+    this.swarm.broadcast(this.activeTransfer)
+
+    const offers = requests.map((req) => ({
+      id: createTransferId(),
+      transferId,
+      name: 'text-payload',
+      path: '/text-payload',
+      size: 0,
+      driveKey: this.stager.driveKey,
+      content: req.text
+    }))
+
+    this.activeTransferReady = { type: 'transfer-ready', transferId, files: offers }
+    this.swarm.broadcast(this.activeTransferReady)
+
+    return { accepted: true }
   }
 
   async downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply> {

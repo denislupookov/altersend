@@ -44,6 +44,19 @@ export function ReceiveConnectedView() {
   const isDownloading = totals.activeCount > 0
   const allCompleted = hasIncomingFiles && totals.completedCount === incomingFileOffers.length
 
+  const textOffer = incomingFileOffers.find(f => f.content !== undefined && f.size === 0)
+  const isTextTransfer = textOffer !== undefined
+
+  const isUrl = useMemo(() => {
+    if (!textOffer?.content) return false
+    try {
+      new URL(textOffer.content)
+      return true
+    } catch {
+      return false
+    }
+  }, [textOffer])
+
   const downloadAll = async () => {
     if (incomingFileOffers.length === 0 || isDownloading) return
 
@@ -73,32 +86,50 @@ export function ReceiveConnectedView() {
 
   return (
     <div className='flex h-full min-h-0 w-full flex-1 flex-col'>
-      <div className='min-h-0 flex-1 overflow-y-auto pr-1'>
-        <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
-          {incomingFileOffers.map((file) => {
-            const row = getDownloadRowDisplay(file, downloadStates[getOfferKey(file)])
-            return (
-              <SendFileListRow
-                key={getOfferKey(file)}
-                bare
-                compact
-                name={file.name}
-                size={file.size}
-                description={row.description}
-                status={{ label: getDownloadStatusLabel(t, row), tone: row.status.tone }}
-                progressPercent={row.progressPercent}
-              />
-            )
-          })}
+      {isTextTransfer ? (
+        <div className='flex-1 flex flex-col justify-center items-center'>
+          <div className='p-4 bg-background-subtle rounded-lg border border-border-primary w-full break-words'>
+            <p className='text-text-primary text-center select-text'>{textOffer.content}</p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className='min-h-0 flex-1 overflow-y-auto pr-1'>
+          <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
+            {incomingFileOffers.map((file) => {
+              const row = getDownloadRowDisplay(file, downloadStates[getOfferKey(file)])
+              return (
+                <SendFileListRow
+                  key={getOfferKey(file)}
+                  bare
+                  compact
+                  name={file.name}
+                  size={file.size}
+                  description={row.description}
+                  status={{ label: getDownloadStatusLabel(t, row), tone: row.status.tone }}
+                  progressPercent={row.progressPercent}
+                />
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <div className='mt-4 flex shrink-0 items-center justify-end gap-4'>
         <div className='flex shrink-0 items-center gap-2'>
           <Button onClick={clearSession} size='sm' variant='secondary'>
             {t('common:actions.endSession')}
           </Button>
-          {peerCount > 0 && hasIncomingFiles && !allCompleted ? (
+          {isTextTransfer ? (
+            isUrl ? (
+              <Button onClick={() => void bridgeApi.openExternalUrl(textOffer.content!)} size='sm' variant='primary'>
+                Open Link
+              </Button>
+            ) : (
+              <Button onClick={() => void navigator.clipboard.writeText(textOffer.content!)} size='sm' variant='primary'>
+                Copy Text
+              </Button>
+            )
+          ) : peerCount > 0 && hasIncomingFiles && !allCompleted ? (
             <Button
               disabled={isDownloading}
               icon={<DownloadIcon size={14} />}

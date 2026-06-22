@@ -3,6 +3,7 @@ export const API = {
     host: 1,
     join: 2,
     shareFiles: 3,
+    shareText: 7,
     downloadFiles: 4,
     disconnect: 5,
     closePeers: 6
