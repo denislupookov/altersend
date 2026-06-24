@@ -3,10 +3,10 @@ import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@alter
 import { useTranslation } from '@altersend/locales'
 import {
   addSelectedFiles,
-  continueShareText,
   normalizeSelectedFiles,
   removeSelectedFile,
-  useTransferStore
+  useTransferStore,
+  ENABLE_TEXT_SHARING
 } from '@altersend/domain'
 import { bridgeApi } from '../../api/bridgeApi'
 import { Input, Button } from '@altersend/components'
@@ -73,6 +73,14 @@ export function SelectFilesView() {
     }
   }
 
+  const addTextItem = () => {
+    const text = textInput.trim()
+    if (!text) return
+    const name = text.length > 20 ? text.substring(0, 20) + '...' : text
+    addSelectedFiles([{ name, path: `text-${Date.now()}`, kind: 'text', content: text, isTemporary: true, size: text.length }])
+    setTextInput('')
+  }
+
   return (
     <div className='flex flex-col gap-4'>
       <div>
@@ -121,28 +129,30 @@ export function SelectFilesView() {
         </div>
       ) : null}
 
-      <div className='flex flex-row gap-2 mt-2 items-center'>
-        <div className='flex-1'>
-          <Input
-            placeholder='Type a message or paste a link...'
-            value={textInput}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && textInput.trim().length > 0) {
-                void continueShareText(textInput.trim())
-              }
-            }}
-          />
+      {ENABLE_TEXT_SHARING && (
+        <div className='flex flex-row gap-2 mt-2 items-center'>
+          <div className='flex-1'>
+            <Input
+              placeholder='Type a message or paste a link...'
+              value={textInput}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && textInput.trim().length > 0) {
+                  addTextItem()
+                }
+              }}
+            />
+          </div>
+          <Button
+            disabled={textInput.trim().length === 0}
+            onClick={addTextItem}
+            size='sm'
+            variant='secondary'
+          >
+            Add
+          </Button>
         </div>
-        <Button
-          disabled={textInput.trim().length === 0}
-          onClick={() => void continueShareText(textInput.trim())}
-          size='sm'
-          variant='primary'
-        >
-          Share
-        </Button>
-      </div>
+      )}
 
       <ErrorBanner message={selectionError} />
     </div>

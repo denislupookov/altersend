@@ -22,8 +22,7 @@ import type {
   JoinReply,
   ShareFileRequest,
   ShareFilesReply,
-  ShareTextRequest,
-  ShareTextReply,
+  ShareFilesReply,
   TransferRPC
 } from '../rpc/protocol'
 import {
@@ -303,10 +302,10 @@ export class TransferOrchestrator implements TransferRPC {
 
   async shareFiles(requests: ShareFileRequest[]): Promise<ShareFilesReply> {
     if (!Array.isArray(requests) || requests.length === 0) {
-      throw new BadRequestError('Missing files to share')
+      throw new BadRequestError('Missing items to share')
     }
     if (this.suspended) {
-      throw new BadRequestError('Cannot share files while suspended')
+      throw new BadRequestError('Cannot share items while suspended')
     }
 
     if (this.role === 'receiver') {
@@ -316,11 +315,14 @@ export class TransferOrchestrator implements TransferRPC {
     await this.readyPromise
 
     try {
-      const { files, totalBytes, errors } = await this.stager.scanFiles(requests)
+      const fileRequests = requests.filter((r) => r.kind !== 'text')
+      const textRequests = requests.filter((r) => r.kind === 'text')
+
+      const { files, totalBytes, errors } = await this.stager.scanFiles(fileRequests)
       for (const error of errors) this.sendError(error)
 
-      if (files.length === 0) {
-        this.sendError('No valid files were selected to share. Folders are not supported yet.')
+      if (files.length === 0 && textRequests.length === 0) {
+        this.sendError('No valid items were selected to share. Folders are not supported yet.')
         return { acceptedFiles: 0 }
       }
 
@@ -330,7 +332,7 @@ export class TransferOrchestrator implements TransferRPC {
       this.activeTransfer = {
         type: 'transfer-start',
         transferId,
-        totalFiles: files.length,
+        totalFiles: files.length + textRequests.length,
         totalBytes
       }
       this.activeTransferReady = null
@@ -349,6 +351,18 @@ export class TransferOrchestrator implements TransferRPC {
           controller.signal
         )
 
+        for (const req of textRequests) {
+          offers.push({
+            id: createTransferId(),
+            transferId,
+            name: 'text-payload',
+            path: req.path || '/text-payload',
+            size: req.content?.length || 0,
+            driveKey: this.stager.driveKey,
+            content: req.content
+          })
+        }
+
         this.activeTransferReady = { type: 'transfer-ready', transferId, files: offers }
         this.swarm.broadcast(this.activeTransferReady)
 
@@ -366,47 +380,6 @@ export class TransferOrchestrator implements TransferRPC {
     }
   }
 
-  async shareText(requests: ShareTextRequest[]): Promise<ShareTextReply> {
-    if (!Array.isArray(requests) || requests.length === 0) {
-      throw new BadRequestError('Missing text to share')
-    }
-    if (this.suspended) {
-      throw new BadRequestError('Cannot share text while suspended')
-    }
-
-    if (this.role === 'receiver') {
-      await this.disconnect()
-    }
-
-    await this.readyPromise
-
-    this.setRole('sender')
-
-    const transferId = createTransferId()
-    this.activeTransfer = {
-      type: 'transfer-start',
-      transferId,
-      totalFiles: requests.length,
-      totalBytes: 0
-    }
-    this.activeTransferReady = null
-    this.swarm.broadcast(this.activeTransfer)
-
-    const offers = requests.map((req) => ({
-      id: createTransferId(),
-      transferId,
-      name: 'text-payload',
-      path: '/text-payload',
-      size: 0,
-      driveKey: this.stager.driveKey,
-      content: req.text
-    }))
-
-    this.activeTransferReady = { type: 'transfer-ready', transferId, files: offers }
-    this.swarm.broadcast(this.activeTransferReady)
-
-    return { accepted: true }
-  }
 
   async downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply> {
     if (!Array.isArray(files) || files.length === 0) {

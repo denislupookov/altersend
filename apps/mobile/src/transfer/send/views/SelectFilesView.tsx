@@ -4,9 +4,9 @@ import * as DocumentPicker from 'expo-document-picker'
 import * as ImagePicker from 'expo-image-picker'
 import {
   addSelectedFiles,
-  continueShareText,
   removeSelectedFile,
   useTransferStore,
+  ENABLE_TEXT_SHARING,
   type SelectedFile
 } from '@altersend/domain'
 import {
@@ -114,6 +114,14 @@ export function SelectFilesView() {
     ])
   }
 
+  const addTextItem = () => {
+    const text = textInput.trim()
+    if (!text) return
+    const name = text.length > 20 ? text.substring(0, 20) + '...' : text
+    addSelectedFiles([{ name, path: `text-${Date.now()}`, kind: 'text', content: text, isTemporary: true, size: text.length }])
+    setTextInput('')
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.dropZoneContainer}>
@@ -151,25 +159,27 @@ export function SelectFilesView() {
         </View>
       )}
 
-      <View style={styles.textInputRow}>
-        <View style={styles.textInputWrapper}>
-          <Input
-            placeholder={t('send:actions.typeMessageOrLink', {
-              defaultValue: 'Type a message or link...'
-            })}
-            value={textInput}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
-          />
+      {ENABLE_TEXT_SHARING && (
+        <View style={styles.textInputRow}>
+          <View style={styles.textInputWrapper}>
+            <Input
+              placeholder={t('send:actions.typeMessageOrLink', {
+                defaultValue: 'Type a message or link...'
+              })}
+              value={textInput}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
+            />
+          </View>
+          <Button
+            disabled={textInput.trim().length === 0}
+            onClick={addTextItem}
+            size='sm'
+            variant='secondary'
+          >
+            {t('common:actions.add', { defaultValue: 'Add' })}
+          </Button>
         </View>
-        <Button
-          disabled={textInput.trim().length === 0}
-          onClick={() => void continueShareText(textInput.trim())}
-          size='sm'
-          variant='primary'
-        >
-          {t('common:actions.share', { defaultValue: 'Share' })}
-        </Button>
-      </View>
+      )}
 
       <ErrorBanner message={selectionError} />
     </View>

@@ -2,7 +2,6 @@ import {
   TRANSFER_ERROR_CODES,
   type IncomingFileOffer,
   type RendererTransferEvent,
-  type ShareTextRequest,
   type TransferErrorCode,
   type TransferRole
 } from '@altersend/core'
@@ -16,7 +15,7 @@ import type { ConnectedPeer, PeerDownloadEvent } from '../send/shareModel'
 import type { SelectedFile, SenderUploadItem } from '../send/draftTypes'
 import type { SendDraftPhase } from '../send/pageUi'
 
-export type { TransferRole, ShareTextRequest }
+export type { TransferRole }
 export { TRANSFER_ERROR_CODES }
 export type { TransferErrorCode }
 

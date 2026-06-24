@@ -3,6 +3,8 @@ export interface SelectedFile {
   path: string
   size?: number
   isTemporary?: boolean
+  kind?: 'file' | 'text'
+  content?: string
 }
 
 export type SenderUploadStatus = 'waiting' | 'uploading' | 'completed'

@@ -36,19 +36,14 @@ export interface JoinReply {
 export interface ShareFileRequest {
   path: string
   isTemporary?: boolean
+  kind?: 'file' | 'text'
+  content?: string
 }
 
 export interface ShareFilesReply {
   acceptedFiles: number
 }
 
-export interface ShareTextRequest {
-  text: string
-}
-
-export interface ShareTextReply {
-  accepted: boolean
-}
 
 export interface DownloadFileResult {
   fileId?: string
@@ -93,7 +88,7 @@ export interface TransferRPC {
   host(): Promise<HostReply>
   join(topic: string): Promise<JoinReply>
   shareFiles(files: ShareFileRequest[]): Promise<ShareFilesReply>
-  shareText(requests: ShareTextRequest[]): Promise<ShareTextReply>
+
   downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply>
   disconnect(): Promise<DisconnectReply>
   closePeers(): Promise<void>
