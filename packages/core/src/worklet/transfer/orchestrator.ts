@@ -22,7 +22,6 @@ import type {
   JoinReply,
   ShareFileRequest,
   ShareFilesReply,
-  ShareFilesReply,
   TransferRPC
 } from '../rpc/protocol'
 import {
@@ -352,12 +351,13 @@ export class TransferOrchestrator implements TransferRPC {
         )
 
         for (const req of textRequests) {
+          if (!req.content || req.content.trim() === '') continue
           offers.push({
             id: createTransferId(),
             transferId,
             name: 'text-payload',
             path: req.path || '/text-payload',
-            size: req.content?.length || 0,
+            size: 0,
             driveKey: this.stager.driveKey,
             content: req.content
           })

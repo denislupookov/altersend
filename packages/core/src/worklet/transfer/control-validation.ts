@@ -13,6 +13,7 @@ import {
 
 const MAX_ID_LEN = 128
 const MAX_PATH_LEN = 4096
+const MAX_CONTENT_LEN = 65_536
 const MAX_MESSAGE_LEN = 1024
 const MAX_FILES_PER_TRANSFER = 10_000
 
@@ -38,7 +39,7 @@ function isValidFileOffer(x: unknown): x is FileOffer {
     isBoundedString(o.path, MAX_PATH_LEN) &&
     isNonNegativeInteger(o.size) &&
     isBoundedString(o.driveKey, MAX_ID_LEN) &&
-    isOptionalBoundedString(o.content, MAX_PATH_LEN)
+    isOptionalBoundedString(o.content, MAX_CONTENT_LEN)
   )
 }
 
