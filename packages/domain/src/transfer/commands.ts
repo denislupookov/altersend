@@ -69,7 +69,6 @@ export const shareFiles = async (files: ShareFileRequest[]): Promise<ShareFilesR
   }
 }
 
-
 export const downloadFiles = async (files: DownloadFileRequest[]): Promise<DownloadFilesReply> => {
   try {
     return await getTransferApi().worker.downloadFiles(files)
@@ -135,4 +134,3 @@ export const continueShare = async (files: SelectedFile[]): Promise<void> => {
     setError(TRANSFER_ERROR_CODES.transferFailed, error)
   }
 }
-

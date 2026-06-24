@@ -77,7 +77,16 @@ export function SelectFilesView() {
     const text = textInput.trim()
     if (!text) return
     const name = text.length > 20 ? text.substring(0, 20) + '...' : text
-    addSelectedFiles([{ name, path: `text-${Date.now()}`, kind: 'text', content: text, isTemporary: true, size: text.length }])
+    addSelectedFiles([
+      {
+        name,
+        path: `text-${Date.now()}`,
+        kind: 'text',
+        content: text,
+        isTemporary: true,
+        size: text.length
+      }
+    ])
     setTextInput('')
   }
 

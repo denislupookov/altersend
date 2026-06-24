@@ -44,7 +44,6 @@ export interface ShareFilesReply {
   acceptedFiles: number
 }
 
-
 export interface DownloadFileResult {
   fileId?: string
   fileName: string

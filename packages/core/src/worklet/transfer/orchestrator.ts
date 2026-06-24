@@ -380,7 +380,6 @@ export class TransferOrchestrator implements TransferRPC {
     }
   }
 
-
   async downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply> {
     if (!Array.isArray(files) || files.length === 0) {
       throw new BadRequestError('Missing files to download')
