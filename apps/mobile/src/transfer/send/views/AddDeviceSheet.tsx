@@ -15,6 +15,7 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
   const { theme } = useTheme()
   const c = theme.colors
   const peers = useTransferStore((s) => s.peers)
+  const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const [status, setStatus] = useState<Record<string, InviteStatus>>({})
 
   useEffect(() => {
@@ -27,7 +28,10 @@ export function AddDeviceSheet({ open, onClose, onPairNew }: AddDeviceSheetProps
     setStatus((s) => ({ ...s, [pubkey]: 'inviting' }))
     try {
       const topic = await startSendSession()
-      const delivered = await inviteDevice(pubkey, topic)
+      const delivered = await inviteDevice(pubkey, topic, {
+        fileCount: selectedFiles.length,
+        totalSize: selectedFiles.reduce((sum, file) => sum + (file.size ?? 0), 0)
+      })
       setStatus((s) => ({ ...s, [pubkey]: delivered ? 'sent' : 'offline' }))
     } catch {
       setStatus((s) => ({ ...s, [pubkey]: 'offline' }))

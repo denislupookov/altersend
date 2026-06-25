@@ -7,6 +7,7 @@ import {
   type DownloadProgress,
   type DownloadRequest,
   type DeviceInvite,
+  type DeviceInviteResponse,
   type FileOffer,
   type PairingInfo,
   type RememberVote,
@@ -140,9 +141,14 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
       return (
         isBoundedString(v.displayName, MAX_DISPLAY_NAME_LEN) &&
         isDeviceType(v.deviceType) &&
+        isBoundedString(v.topic, MAX_ID_LEN) &&
         (v.fileCount === undefined || isNonNegativeInteger(v.fileCount, MAX_FILES_PER_TRANSFER)) &&
         (v.totalSize === undefined || isNonNegativeInteger(v.totalSize))
       )
+    }
+    case 'invite-response': {
+      const v = x as Partial<DeviceInviteResponse>
+      return isBoundedString(v.topic, MAX_ID_LEN) && v.response === 'declined'
     }
     default:
       return false

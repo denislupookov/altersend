@@ -95,6 +95,13 @@ export interface InviteReceivedEvent {
   totalSize?: number
 }
 
+export interface InviteResponseReceivedEvent {
+  type: 'invite-response-received'
+  remoteDevicePubkey: string
+  topic: string
+  response: 'declined'
+}
+
 export type TransferIPCMessage =
   | ReadyEvent
   | TopicEvent
@@ -105,6 +112,7 @@ export type TransferIPCMessage =
   | RememberDeclinedEvent
   | RememberRequestedEvent
   | InviteReceivedEvent
+  | InviteResponseReceivedEvent
 
 export function createReadyEvent(): ReadyEvent {
   return { type: 'ready' }
@@ -149,6 +157,12 @@ export function createInviteReceivedEvent(
   invite: Omit<InviteReceivedEvent, 'type'>
 ): InviteReceivedEvent {
   return { type: 'invite-received', ...invite }
+}
+
+export function createInviteResponseReceivedEvent(
+  response: Omit<InviteResponseReceivedEvent, 'type'>
+): InviteResponseReceivedEvent {
+  return { type: 'invite-response-received', ...response }
 }
 
 export function createErrorEvent(message: string, code?: TransferErrorCode): ErrorEvent {

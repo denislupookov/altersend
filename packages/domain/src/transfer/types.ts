@@ -40,11 +40,19 @@ export interface IncomingInvite {
   totalSize?: number
 }
 
+export interface InviteResponse {
+  remoteDevicePubkey: string
+  topic: string
+  response: 'declined'
+  receivedAt: number
+}
+
 export interface RememberState {
   pairStatus: Record<string, PeerPairStatus>
   peerDisplayNames: Record<string, string>
   incomingRequest: IncomingPairRequest | null
   incomingInvite: IncomingInvite | null
+  inviteResponses: Record<string, InviteResponse>
 }
 
 export interface TransferSessionState {
@@ -106,4 +114,5 @@ export type TransferAction =
   | { type: 'set_peers'; peers: RememberedPeer[] }
   | { type: 'request_pair_peer'; peerKey: string }
   | { type: 'invite_received'; invite: IncomingInvite }
+  | { type: 'invite_response_received'; response: InviteResponse }
   | { type: 'dismiss_invite' }

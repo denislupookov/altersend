@@ -23,7 +23,9 @@ export type {
   DownloadFileResult,
   ShareFileRequest,
   RememberVoteInput,
-  RememberVoteReply
+  RememberVoteReply,
+  InviteResponseInput,
+  InviteResponseReply
 } from './worklet/rpc/protocol'
 
 export { TRANSFER_ERROR_CODES } from './worklet/rpc/events'

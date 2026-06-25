@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { dismissInvite, formatFileSize, useTransferStore } from '@altersend/domain'
+import { declineInvite, formatFileSize, useTransferStore } from '@altersend/domain'
 import { Button } from '@altersend/components'
 import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
 
@@ -25,6 +25,10 @@ export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }
   const accept = () => {
     setAccepted(true)
     onAccept(invite.topic)
+  }
+
+  const decline = () => {
+    declineInvite(invite)
   }
 
   return (
@@ -55,7 +59,7 @@ export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }
         </div>
 
         <div className='flex w-full gap-2'>
-          <Button icon={<CloseIcon size={12} />} onClick={dismissInvite} pill size='sm' variant='danger' width='full'>
+          <Button icon={<CloseIcon size={12} />} onClick={decline} pill size='sm' variant='danger' width='full'>
             Decline
           </Button>
           <Button icon={<CheckIcon size={12} />} onClick={accept} pill size='sm' variant='success' width='full'>

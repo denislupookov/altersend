@@ -21,6 +21,8 @@ import type {
   HostReply,
   InviteDeviceInput,
   InviteDeviceReply,
+  InviteResponseInput,
+  InviteResponseReply,
   JoinReply,
   RememberVoteInput,
   RememberVoteReply,
@@ -203,6 +205,10 @@ export class TransferOrchestrator implements TransferRPC {
 
   inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply> {
     return this.discovery.invite(input.remoteDevicePubkey, input.topic, input.fileCount, input.totalSize)
+  }
+
+  respondToInvite(input: InviteResponseInput): Promise<InviteResponseReply> {
+    return this.discovery.respondToInvite(input.remoteDevicePubkey, input.topic, input.response)
   }
 
   private onPeerDisconnected(peerKey: string | null, remainingCount: number): void {

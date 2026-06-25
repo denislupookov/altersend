@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Modal, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import { formatFileSize, useShareViewModel } from '@altersend/domain'
+import { buildInviteText, formatFileSize, useShareViewModel } from '@altersend/domain'
 import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme, withAlpha } from '@altersend/components'
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, CopyIcon, deviceIcon, FolderIcon, QrCodeIcon, ShareIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
@@ -17,6 +17,28 @@ export function ShareView() {
   const [isFilesExpanded, setIsFilesExpanded] = useState(false)
   const [isQrOpen, setIsQrOpen] = useState(false)
   const toast = useToast()
+  const connectedPeerKeysRef = useRef<Set<string> | null>(null)
+  const connectedRows = useMemo(
+    () => vm.devices.filter((row) => row.kind === 'connected'),
+    [vm.devices]
+  )
+
+  useEffect(() => {
+    const currentKeys = new Set(connectedRows.map((row) => row.peerKey))
+    const previousKeys = connectedPeerKeysRef.current
+    connectedPeerKeysRef.current = currentKeys
+
+    if (!previousKeys) return
+
+    const joinedPeer = connectedRows.find((row) => !previousKeys.has(row.peerKey))
+    if (!joinedPeer) return
+
+    toast.show({
+      title: t('send:status.peerConnected'),
+      hint: `${joinedPeer.name} joined`,
+      durationMs: 2500
+    })
+  }, [connectedRows, t, toast])
 
   const copyTopic = async () => {
     if (!vm.topic) return
@@ -24,6 +46,7 @@ export function ShareView() {
       await Clipboard.setStringAsync(vm.topic)
       vm.markCopied()
       toast.show({ title: t('send:connection.copiedToast') })
+      await Share.share({ message: buildInviteText(vm.topic) })
     } catch (error) {
       console.error(error)
     }
@@ -69,6 +92,22 @@ export function ShareView() {
           </View>
         )}
 
+        <View style={styles.filesWrap}>
+          <LinkCard>
+            <LinkRow
+              icon={<FolderIcon size={20} color={c.colorTextSecondary} />}
+              label={vm.files.length === 1 ? '1 file' : `${vm.files.length} files`}
+              subtitle={formatFileSize(vm.totalSize)}
+              onPress={() => setIsFilesExpanded(!isFilesExpanded)}
+              trailing={isFilesExpanded ? <ChevronUpIcon size={20} color={c.colorTextMuted} /> : <ChevronDownIcon size={20} color={c.colorTextMuted} />}
+              isLast={!isFilesExpanded}
+            />
+            {isFilesExpanded && vm.files.map((file, index) => (
+              <LinkRow key={file.path} file label={file.name} size={file.size} isLast={index === vm.files.length - 1} />
+            ))}
+          </LinkCard>
+        </View>
+
         {vm.hasDevices && (
           <>
             <View style={styles.sectionHeader}>
@@ -88,7 +127,6 @@ export function ShareView() {
                     return (
                       <LinkRow
                         key={row.peerKey}
-                        compact
                         icon={
                           Icon
                             ? <Icon size={18} color={c.colorTextSecondary} />
@@ -129,22 +167,6 @@ export function ShareView() {
             </View>
           </>
         )}
-
-        <View style={styles.filesWrap}>
-          <LinkCard>
-            <LinkRow
-              icon={<FolderIcon size={20} color={c.colorTextSecondary} />}
-              label={vm.files.length === 1 ? '1 file' : `${vm.files.length} files`}
-              subtitle={formatFileSize(vm.totalSize)}
-              onPress={() => setIsFilesExpanded(!isFilesExpanded)}
-              trailing={isFilesExpanded ? <ChevronUpIcon size={20} color={c.colorTextMuted} /> : <ChevronDownIcon size={20} color={c.colorTextMuted} />}
-              isLast={!isFilesExpanded}
-            />
-            {isFilesExpanded && vm.files.map((file, index) => (
-              <LinkRow key={file.path} file label={file.name} size={file.size} isLast={index === vm.files.length - 1} />
-            ))}
-          </LinkCard>
-        </View>
       </ScrollView>
 
       <Modal visible={isQrOpen} transparent animationType='slide' onRequestClose={() => setIsQrOpen(false)}>

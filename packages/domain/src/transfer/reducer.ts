@@ -39,7 +39,7 @@ export const initialTransferSessionState: TransferSessionState = {
   errorCode: null,
   errorMessage: null,
   transferId: null,
-  remember: { pairStatus: {}, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null },
+  remember: { pairStatus: {}, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null, inviteResponses: {} },
   peers: []
 }
 
@@ -78,7 +78,7 @@ function endSession(state: TransferSessionState): TransferSessionState {
     errorCode: null,
     errorMessage: null,
     transferId: null,
-    remember: { pairStatus: {}, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null }
+    remember: { pairStatus: {}, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null, inviteResponses: {} }
   }
 }
 
@@ -366,6 +366,17 @@ export function transferSessionReducer(
       return { ...state, peers: action.peers }
     case 'invite_received':
       return { ...state, remember: { ...state.remember, incomingInvite: action.invite } }
+    case 'invite_response_received':
+      return {
+        ...state,
+        remember: {
+          ...state.remember,
+          inviteResponses: {
+            ...state.remember.inviteResponses,
+            [action.response.remoteDevicePubkey]: action.response
+          }
+        }
+      }
     case 'dismiss_invite':
       return { ...state, remember: { ...state.remember, incomingInvite: null } }
     case 'request_pair_peer':

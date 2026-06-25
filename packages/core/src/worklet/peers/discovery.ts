@@ -2,11 +2,11 @@ import b4a from 'b4a'
 import crypto from 'hypercore-crypto'
 import Hyperswarm, { type PeerInfo, type PeerSocket } from 'hyperswarm'
 import { PeerControlChannel } from '../transfer/control-channel'
-import type { DeviceInvite, PeerControlMessage } from '../transfer/control-channel'
+import type { DeviceInvite, DeviceInviteResponse, PeerControlMessage } from '../transfer/control-channel'
 import type { DeviceIdentity } from '../identity/device-identity-store'
 import type { RememberedPeer } from './remembered-peer'
-import { createInviteReceivedEvent, type TransferIPCMessage } from '../rpc/events'
-import { BadRequestError, type InviteDeviceReply } from '../rpc/protocol'
+import { createInviteReceivedEvent, createInviteResponseReceivedEvent, type TransferIPCMessage } from '../rpc/events'
+import { BadRequestError, type InviteDeviceReply, type InviteResponseReply } from '../rpc/protocol'
 
 const INVITE_WAIT_MS = 10_000
 const INVITE_POLL_MS = 200
@@ -108,6 +108,31 @@ export class DiscoveryCoordinator {
     return { delivered: true }
   }
 
+  async respondToInvite(remoteDevicePubkey: string, topic: string, response: DeviceInviteResponse['response']): Promise<InviteResponseReply> {
+    if (typeof remoteDevicePubkey !== 'string' || remoteDevicePubkey.length === 0) {
+      throw new BadRequestError('respondToInvite: remoteDevicePubkey required')
+    }
+    if (typeof topic !== 'string' || topic.length === 0) {
+      throw new BadRequestError('respondToInvite: topic required')
+    }
+    if (response !== 'declined') {
+      throw new BadRequestError('respondToInvite: unsupported response')
+    }
+
+    const peer = await this.deps.rememberedStore.get(remoteDevicePubkey)
+    if (!peer) throw new BadRequestError('respondToInvite: unknown device')
+
+    await this.start()
+    this.knownPubkeys.add(normalizeKey(peer.remoteDevicePubkey))
+    this.joinTopic(peer.rendezvousTopic)
+
+    const session = await this.waitForSession(normalizeKey(peer.remoteDevicePubkey))
+    if (!session) return { delivered: false }
+
+    session.control.send({ type: 'invite-response', topic, response })
+    return { delivered: true }
+  }
+
   async stop(): Promise<void> {
     this.starting = null
     for (const { socket } of this.sessions.values()) {
@@ -164,17 +189,28 @@ export class DiscoveryCoordinator {
   }
 
   private onControlMessage(remotePubkey: string, message: PeerControlMessage): void {
-    if (message.type !== 'invite') return
-    this.deps.emit(
-      createInviteReceivedEvent({
-        remoteDevicePubkey: remotePubkey,
-        displayName: message.displayName,
-        deviceType: message.deviceType,
-        topic: message.topic,
-        ...(message.fileCount !== undefined ? { fileCount: message.fileCount } : {}),
-        ...(message.totalSize !== undefined ? { totalSize: message.totalSize } : {})
-      })
-    )
+    if (message.type === 'invite') {
+      this.deps.emit(
+        createInviteReceivedEvent({
+          remoteDevicePubkey: remotePubkey,
+          displayName: message.displayName,
+          deviceType: message.deviceType,
+          topic: message.topic,
+          ...(message.fileCount !== undefined ? { fileCount: message.fileCount } : {}),
+          ...(message.totalSize !== undefined ? { totalSize: message.totalSize } : {})
+        })
+      )
+      return
+    }
+    if (message.type === 'invite-response') {
+      this.deps.emit(
+        createInviteResponseReceivedEvent({
+          remoteDevicePubkey: remotePubkey,
+          topic: message.topic,
+          response: message.response
+        })
+      )
+    }
   }
 
   private waitForSession(remotePubkey: string): Promise<DiscoverySession | null> {

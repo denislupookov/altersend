@@ -332,7 +332,7 @@ describe('transferSessionReducer — misc', () => {
 
   it('request_pair_peer does not downgrade an already-paired peer', () => {
     const state = make({
-      remember: { pairStatus: { abc: 'paired' }, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null }
+      remember: { pairStatus: { abc: 'paired' }, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null, inviteResponses: {} }
     })
     const next = apply(state, { type: 'request_pair_peer', peerKey: 'abc' })
     expect(next).toBe(state)

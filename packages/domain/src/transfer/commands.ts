@@ -7,10 +7,12 @@ import type { SelectedFile } from '../send/draftTypes'
 import type {
   DownloadFileRequest,
   DownloadFilesReply,
+  InviteResponseInput,
   JoinReply,
   ShareFileRequest,
   ShareFilesReply
 } from '@altersend/core'
+import type { IncomingInvite } from './types'
 
 const setError = (code: TransferErrorCode, error: unknown): void => {
   dispatchToTransferStore({
@@ -125,8 +127,27 @@ export const inviteDevice = async (
   }
 }
 
+export const respondToInvite = async (input: InviteResponseInput): Promise<boolean> => {
+  try {
+    const { delivered } = await getTransferApi().worker.respondToInvite(input)
+    return delivered
+  } catch (error) {
+    reportError('respondToInvite', error)
+    return false
+  }
+}
+
 export const dismissInvite = (): void => {
   dispatchToTransferStore({ type: 'dismiss_invite' })
+}
+
+export const declineInvite = (invite: IncomingInvite): void => {
+  dispatchToTransferStore({ type: 'dismiss_invite' })
+  void respondToInvite({
+    remoteDevicePubkey: invite.remoteDevicePubkey,
+    topic: invite.topic,
+    response: 'declined'
+  })
 }
 
 export const addSelectedFiles = (files: SelectedFile[]): void => {

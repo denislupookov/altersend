@@ -88,6 +88,12 @@ export interface DeviceInvite {
   totalSize?: number
 }
 
+export interface DeviceInviteResponse {
+  type: 'invite-response'
+  topic: string
+  response: 'declined'
+}
+
 export type PeerControlMessage =
   | TransferStart
   | TransferReady
@@ -98,6 +104,7 @@ export type PeerControlMessage =
   | PairingInfo
   | RememberVote
   | DeviceInvite
+  | DeviceInviteResponse
 
 type PeerControlHandler = (message: PeerControlMessage) => void
 

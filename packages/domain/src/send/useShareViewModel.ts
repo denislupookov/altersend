@@ -9,6 +9,12 @@ import type { Translate } from '../i18n'
 
 export type SubtitleTone = 'muted' | 'success' | 'danger' | 'info'
 
+interface InviteStatusState {
+  status: InviteStatus
+  topic?: string
+  invitedAt: number
+}
+
 export interface ConnectedDeviceRow {
   kind: 'connected'
   peerKey: string
@@ -128,16 +134,34 @@ export function useShareViewModel(t: Translate): ShareViewModel {
   const transferId = useTransferStore((s) => s.transferId)
   const pairStatus = useTransferStore((s) => s.remember.pairStatus)
   const peerDisplayNames = useTransferStore((s) => s.remember.peerDisplayNames)
+  const inviteResponses = useTransferStore((s) => s.remember.inviteResponses)
   const rememberedPeers = useTransferStore((s) => s.peers)
 
   const [isCopied, setIsCopied] = useState(false)
-  const [inviteStatuses, setInviteStatuses] = useState<Record<string, InviteStatus>>({})
+  const [inviteStatuses, setInviteStatuses] = useState<Record<string, InviteStatusState>>({})
 
   useEffect(() => {
     if (!isCopied) return
     const id = setTimeout(() => setIsCopied(false), 2000)
     return () => clearTimeout(id)
   }, [isCopied])
+
+  useEffect(() => {
+    setInviteStatuses((current) => {
+      let changed = false
+      const next = { ...current }
+      for (const response of Object.values(inviteResponses)) {
+        if (response.response !== 'declined') continue
+        const inviteState = next[response.remoteDevicePubkey]
+        if (!inviteState || inviteState.status !== 'sent') continue
+        if (inviteState.topic && inviteState.topic !== response.topic) continue
+        if (response.receivedAt < inviteState.invitedAt) continue
+        delete next[response.remoteDevicePubkey]
+        changed = true
+      }
+      return changed ? next : current
+    })
+  }, [inviteResponses, inviteStatuses])
 
   const connectedPeerList = useMemo(() => Object.values(connectedPeers), [connectedPeers])
 
@@ -195,7 +219,7 @@ export function useShareViewModel(t: Translate): ShareViewModel {
   })
 
   const offlineRows: OfflineDeviceRow[] = offlineRemembered.map((peer: RememberedPeer) => {
-    const st = inviteStatuses[peer.remoteDevicePubkey]
+    const st = inviteStatuses[peer.remoteDevicePubkey]?.status
     const subtitleStr =
       st === 'offline' ? (inviteStatusSubtitle(st) ?? 'Unreachable') : formatRelativeTime(peer.lastSeenAt)
     return {
@@ -216,14 +240,21 @@ export function useShareViewModel(t: Translate): ShareViewModel {
   }
 
   const invite = async (peerKey: string) => {
-    if (inviteStatuses[peerKey] === 'inviting') return
-    setInviteStatuses((s) => ({ ...s, [peerKey]: 'inviting' }))
+    if (inviteStatuses[peerKey]?.status === 'inviting') return
+    const invitedAt = Date.now()
+    setInviteStatuses((s) => ({ ...s, [peerKey]: { status: 'inviting', invitedAt } }))
     try {
       const sessionTopic = await startSendSession()
-      const delivered = await inviteDevice(peerKey, sessionTopic)
-      setInviteStatuses((s) => ({ ...s, [peerKey]: delivered ? 'sent' : 'offline' }))
+      const delivered = await inviteDevice(peerKey, sessionTopic, {
+        fileCount: selectedFiles.length,
+        totalSize: selectedFiles.reduce((sum, file) => sum + (file.size ?? 0), 0)
+      })
+      setInviteStatuses((s) => ({
+        ...s,
+        [peerKey]: { status: delivered ? 'sent' : 'offline', topic: sessionTopic, invitedAt }
+      }))
     } catch {
-      setInviteStatuses((s) => ({ ...s, [peerKey]: 'offline' }))
+      setInviteStatuses((s) => ({ ...s, [peerKey]: { status: 'offline', invitedAt } }))
     }
   }
 

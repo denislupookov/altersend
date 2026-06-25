@@ -81,6 +81,16 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
           ...(event.totalSize !== undefined ? { totalSize: event.totalSize } : {})
         }
       })
+    case 'invite-response-received':
+      return dispatchToTransferStore({
+        type: 'invite_response_received',
+        response: {
+          remoteDevicePubkey: event.remoteDevicePubkey,
+          topic: event.topic,
+          response: event.response,
+          receivedAt: Date.now()
+        }
+      })
   }
 }
 
