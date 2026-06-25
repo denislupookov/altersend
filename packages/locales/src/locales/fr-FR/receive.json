@@ -46,8 +46,8 @@
   },
   "form": {
     "codeLabel": "Code de connexion",
-    "codePlaceholder": "Collez le code de 64 caractères…",
-    "orPasteCode": "ou collez le code"
+    "codePlaceholder": "Collez le code…",
+    "orPasteCode": "ou collez le code de connexion"
   },
   "actions": {
     "scanQr": "Scanner le code QR",

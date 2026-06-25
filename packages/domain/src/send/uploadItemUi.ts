@@ -1,6 +1,5 @@
 import type { SenderUploadItem } from './draftTypes'
-
-type Translate = (key: string, options?: Record<string, unknown>) => string
+import type { Translate } from '../i18n'
 
 export function getStatusLabel(t: Translate, item: Pick<SenderUploadItem, 'status'>) {
   if (item.status === 'completed') return t('send:status.uploaded')

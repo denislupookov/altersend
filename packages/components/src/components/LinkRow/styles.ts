@@ -2,14 +2,41 @@ import { css } from 'react-strict-dom'
 import { tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
+  card: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: tokens.colorBorderPrimary,
+    borderRadius: tokens.radius2xl,
+    overflow: 'hidden',
+    backgroundColor: tokens.colorBackgroundSubtle
+  },
   row: {
     display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
     gap: tokens.space3,
-    paddingTop: tokens.space3,
-    paddingBottom: tokens.space3,
+    paddingInline: tokens.space4,
+    paddingBlock: tokens.space3,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    outlineStyle: 'none',
+    textAlign: 'left',
+    width: '100%',
+    boxSizing: 'border-box',
+    ':focus-visible': {
+      outlineStyle: 'none',
+      boxShadow: 'none'
+    }
+  },
+  rowCompact: {
+    gap: tokens.space25,
+    paddingTop: tokens.space2,
+    paddingBottom: tokens.space2,
     paddingLeft: tokens.space35,
     paddingRight: tokens.space3,
+    borderRadius: tokens.radiusMd
+  },
+  rowStandalone: {
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: tokens.colorBorderPrimary,
@@ -21,14 +48,6 @@ export const styles = css.create({
       backgroundColor: tokens.colorSurfacePrimary,
       borderColor: tokens.colorBorderStrong
     }
-  },
-  rowCompact: {
-    gap: tokens.space25,
-    paddingTop: tokens.space2,
-    paddingBottom: tokens.space2,
-    paddingLeft: tokens.space25,
-    paddingRight: tokens.space2,
-    borderRadius: tokens.radiusMd
   },
   rowBare: {
     borderWidth: 0,
@@ -45,37 +64,41 @@ export const styles = css.create({
   rowBareFirst: {
     borderTopWidth: 0
   },
-  thumb: {
-    width: tokens.space10,
-    height: tokens.space10,
+  rowPressable: {
+    cursor: 'pointer',
+    transitionDuration: '150ms',
+    transitionProperty: 'background-color',
+    transitionTimingFunction: 'ease',
+    ':hover': {
+      backgroundColor: tokens.colorSurfacePrimary
+    }
+  },
+  rowActive: {
+    backgroundColor: tokens.colorSurfacePrimary
+  },
+  iconBox: {
+    width: tokens.space9,
+    height: tokens.space9,
+    borderRadius: tokens.radiusMd,
     flexShrink: 0,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: tokens.radiusSm
+    backgroundColor: tokens.colorSurfacePrimary
   },
-  thumbCompact: {
+  iconBoxCompact: {
     width: 30,
     height: 30,
     borderRadius: tokens.radiusXs
   },
-  thumbImage: { backgroundColor: 'rgba(59, 130, 246, 0.14)', color: '#60a5fa' },
-  thumbVideo: { backgroundColor: 'rgba(244, 63, 94, 0.14)', color: '#fb7185' },
-  thumbPdf: { backgroundColor: 'rgba(239, 68, 68, 0.14)', color: '#f87171' },
-  thumbAudio: { backgroundColor: 'rgba(168, 85, 247, 0.14)', color: '#c084fc' },
-  thumbArchive: { backgroundColor: 'rgba(234, 179, 8, 0.14)', color: '#facc15' },
-  thumbApp: { backgroundColor: 'rgba(243, 239, 232, 0.10)', color: '#f3efe8' },
-  thumbCode: { backgroundColor: 'rgba(20, 184, 166, 0.14)', color: '#5eead4' },
-  thumbGeneric: { backgroundColor: 'rgba(148, 163, 184, 0.12)', color: '#cbd5e1' },
-  thumbDisabled: {
-    backgroundColor: tokens.colorBackgroundSubtle,
-    color: tokens.colorTextMuted
-  },
+  iconBoxCustom: (backgroundColor: string) => ({
+    backgroundColor
+  }),
   content: {
-    display: 'flex',
-    flexDirection: 'column',
     minWidth: 0,
     flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
     gap: tokens.space05
   },
   metaRow: {
@@ -85,12 +108,52 @@ export const styles = css.create({
     justifyContent: 'space-between',
     gap: tokens.space3
   },
-  nameBlock: {
-    display: 'flex',
-    flexDirection: 'column',
+  text: {
     minWidth: 0,
     flex: 1,
-    gap: tokens.space05
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  label: {
+    margin: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    color: tokens.colorTextPrimary,
+    fontFamily: tokens.fontFamilySans,
+    fontSize: tokens.fontSizeBase,
+    fontWeight: tokens.fontWeightMedium,
+    lineHeight: tokens.lineHeightSnug
+  },
+  labelCompact: {
+    fontSize: tokens.fontSizeMd
+  },
+  labelDisabled: {
+    color: tokens.colorTextMuted
+  },
+  subtitle: {
+    margin: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    fontFamily: tokens.fontFamilySans,
+    fontSize: tokens.fontSizeSm,
+    lineHeight: tokens.lineHeightNormal
+  },
+  subtitleCompact: {
+    fontSize: tokens.fontSizeXs
+  },
+  subtitleMuted: {
+    color: tokens.colorTextMuted
+  },
+  subtitleSuccess: {
+    color: tokens.colorSuccess
+  },
+  subtitleDanger: {
+    color: tokens.colorDanger
+  },
+  subtitleInfo: {
+    color: tokens.colorInfo
   },
   statusGroup: {
     display: 'flex',
@@ -151,32 +214,16 @@ export const styles = css.create({
     width: `${percent}%`,
     backgroundColor: tokens.colorTextPrimary
   }),
-  name: {
-    margin: 0,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    color: tokens.colorTextPrimary,
-    fontFamily: tokens.fontFamilySans,
-    fontSize: tokens.fontSizeBase,
-    fontWeight: tokens.fontWeightMedium,
-    lineHeight: tokens.lineHeightSnug
+  trailing: {
+    marginLeft: 'auto',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center'
   },
-  nameCompact: {
-    fontSize: tokens.fontSizeMd
-  },
-  nameDisabled: {
-    color: tokens.colorTextMuted
-  },
-  size: {
-    margin: 0,
-    color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightNormal
-  },
-  sizeCompact: {
-    fontSize: tokens.fontSizeXs
+  divider: {
+    height: 1,
+    marginLeft: 64,
+    backgroundColor: tokens.colorBorderPrimary
   },
   removeButton: {
     flexShrink: 0,

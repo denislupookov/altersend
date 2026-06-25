@@ -1,4 +1,5 @@
 import { app } from 'electron'
+import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -95,6 +96,29 @@ function isTransferMethod(method: unknown): method is TransferMethod {
   return typeof method === 'string' && method in API.methods
 }
 
+// One-time migration: move identity from old path (inside pear.storage, wiped on disconnect)
+// to the new durable path outside the storage root.
+function migrateIdentityIfNeeded(oldRoot: string, newRoot: string): void {
+  const oldFile = path.join(oldRoot, 'device.json')
+  const newFile = path.join(newRoot, 'device.json')
+  try {
+    if (!fs.existsSync(newFile) && fs.existsSync(oldFile)) {
+      fs.mkdirSync(newRoot, { recursive: true })
+      fs.cpSync(oldRoot, newRoot, { recursive: true })
+    }
+  } catch (err) {
+    console.warn('[runtime] identity migration failed (non-fatal):', err)
+  }
+}
+
+function appDataDir(name: string): string {
+  return isMac
+    ? path.join(os.homedir(), 'Library', 'Application Support', name)
+    : isLinux
+      ? path.join(os.homedir(), '.config', name)
+      : path.join(os.homedir(), 'AppData', 'Local', name)
+}
+
 export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): DesktopRuntime {
   const workers = new Map<string, WorkerRuntime>()
   let pear: PearRuntimeInstance | null = null
@@ -103,18 +127,7 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
     if (pear) return pear
 
     const appPath = getAppPath()
-    let dir = null
-    if (pearStore) {
-      dir = pearStore
-    } else if (appPath === null) {
-      dir = path.join(os.tmpdir(), 'pear', productName)
-    } else {
-      dir = isMac
-        ? path.join(os.homedir(), 'Library', 'Application Support', productName)
-        : isLinux
-          ? path.join(os.homedir(), '.config', productName)
-          : path.join(os.homedir(), 'AppData', 'Local', productName)
-    }
+    const dir = pearStore || appDataDir(appPath === null ? `${productName}-dev` : productName)
 
     const extension = isLinux ? '.AppImage' : isMac ? '.app' : '.msix'
     const instance: PearRuntimeInstance = new PearRuntime({
@@ -153,8 +166,14 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
       ) => WorkerClient
     }
 
+    const identityRoot = path.join(path.dirname(pear.storage), 'identity')
+    migrateIdentityIfNeeded(path.join(pear.storage, 'identities'), identityRoot)
+
     const worker = pear.run(workerPath, [
       `--storage=${pear.storage}`,
+      // Keep identity OUTSIDE the storage root so it can never inherit a volatile storage path and
+      // is untouched by the startup/disconnect Corestore wipe (which only clears `<storage>/core`).
+      `--identity=${identityRoot}`,
       '--device-type=desktop',
       ...args
     ])

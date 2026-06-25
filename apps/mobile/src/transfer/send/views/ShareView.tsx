@@ -1,328 +1,235 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
+import { useState } from 'react'
+import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import {
-  buildInviteText,
-  formatFileSize,
-  formatRelativeTime,
-  type InviteStatus,
-  inviteDevice,
-  inviteStatusSubtitle,
-  requestPair,
-  startSendSession,
-  useTransferStore
-} from '@altersend/domain'
-import { Button, Disclosure, SendFileListRow, useTheme } from '@altersend/components'
-import { AlertCircleIcon, ChevronRightIcon, deviceIcon, FolderIcon, PlusIcon } from '@altersend/components/icons'
+import { formatFileSize, useShareViewModel } from '@altersend/domain'
+import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme, withAlpha } from '@altersend/components'
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, CopyIcon, deviceIcon, FolderIcon, QrCodeIcon, ShareIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { useToast } from '@/src/components/Toast'
 import { QRSection } from './QRSection'
 import { Text } from '@/src/components/ThemedText'
-import { AddDeviceSheet } from './AddDeviceSheet'
-import { LinkCard } from '@/src/components/LinkRow'
-
 
 export function ShareView() {
   const { t } = useTranslation(['send', 'common'])
   const { theme } = useTheme()
   const c = theme.colors
-  const selectedFiles = useTransferStore((s) => s.selectedFiles)
-  const topicRaw = useTransferStore((s) => s.topic)
-  const connectionState = useTransferStore((s) => s.connectionState)
-  const connectedPeers = useTransferStore((s) => s.connectedPeers)
-  const transferId = useTransferStore((s) => s.transferId)
-  const pairStatus = useTransferStore((s) => s.remember.pairStatus)
-  const peerDisplayNames = useTransferStore((s) => s.remember.peerDisplayNames)
-  const rememberedPeers = useTransferStore((s) => s.peers)
-  const topic = topicRaw ?? ''
-  const isPeerConnected = connectionState === 'peer-connected'
+  const vm = useShareViewModel(t)
   const [isFilesExpanded, setIsFilesExpanded] = useState(false)
-  const [isKeyCopied, setIsKeyCopied] = useState(false)
-  const [isAddDeviceOpen, setIsAddDeviceOpen] = useState(false)
-  const [inviteStatus, setInviteStatus] = useState<Record<string, InviteStatus>>({})
+  const [isQrOpen, setIsQrOpen] = useState(false)
   const toast = useToast()
 
-  const invite = async (pubkey: string) => {
-    if (inviteStatus[pubkey] === 'inviting') return
-    setInviteStatus((s) => ({ ...s, [pubkey]: 'inviting' }))
+  const copyTopic = async () => {
+    if (!vm.topic) return
     try {
-      const topic = await startSendSession()
-      const delivered = await inviteDevice(pubkey, topic)
-      setInviteStatus((s) => ({ ...s, [pubkey]: delivered ? 'sent' : 'offline' }))
-    } catch {
-      setInviteStatus((s) => ({ ...s, [pubkey]: 'offline' }))
-    }
-  }
-
-  const totalSize = selectedFiles.reduce((sum, file) => sum + (file.size ?? 0), 0)
-
-  const connectedPeerList = useMemo(() => Object.values(connectedPeers), [connectedPeers])
-  const connectedKeySet = useMemo(() => new Set(connectedPeerList.map((p) => p.peerKey)), [connectedPeerList])
-
-  const findRemembered = (peerKey: string) => {
-    const byKey = rememberedPeers.find((r) => r.remoteDevicePubkey === peerKey)
-    if (byKey) return byKey
-    const name = peerDisplayNames[peerKey]
-    return name ? rememberedPeers.find((r) => r.displayName === name) : undefined
-  }
-
-  const connectedDisplayNames = useMemo(
-    () => new Set(connectedPeerList.map((p) => peerDisplayNames[p.peerKey]).filter(Boolean) as string[]),
-    [connectedPeerList, peerDisplayNames]
-  )
-
-  const recentRemembered = useMemo(() => {
-    return rememberedPeers
-      .filter((p) => !connectedKeySet.has(p.remoteDevicePubkey) && !connectedDisplayNames.has(p.displayName))
-      .sort((a, b) => b.lastSeenAt - a.lastSeenAt)
-      .slice(0, 2)
-  }, [rememberedPeers, connectedKeySet, connectedDisplayNames])
-
-  const handlePair = (peerKey: string) => {
-    if (transferId) requestPair(transferId, peerKey)
-  }
-
-  const onCopy = async () => {
-    if (!topic) return
-    try {
-      await Clipboard.setStringAsync(topic)
-      setIsKeyCopied(true)
+      await Clipboard.setStringAsync(vm.topic)
+      vm.markCopied()
       toast.show({ title: t('send:connection.copiedToast') })
-      await Share.share({ message: buildInviteText(topic) })
     } catch (error) {
       console.error(error)
     }
   }
 
-  useEffect(() => {
-    if (!isKeyCopied) return
-    const id = setTimeout(() => setIsKeyCopied(false), 2000)
-    return () => clearTimeout(id)
-  }, [isKeyCopied])
-
-  const showWaitingState = !isPeerConnected
-
-  const connectedCount = connectedPeerList.length
-
   return (
     <>
-      <ScrollView style={styles.container}>
-        <View style={styles.hint}>
-          <AlertCircleIcon size={12} />
-          <Text style={[styles.hintText, { color: c.colorTextMuted }]}>
-            {t('send:hints.keepOpen')}
-          </Text>
-        </View>
-
-        <QRSection
-          topic={topic}
-          isKeyCopied={isKeyCopied}
-          onCopy={() => void onCopy()}
-          showWaitingState={showWaitingState}
-        />
-
-        <View style={styles.devicesWrap}>
-          <LinkCard>
-            <View style={[styles.devicesHeader, { borderBottomColor: c.colorBorderPrimary }]}>
-              <Text style={[styles.devicesLabel, { color: c.colorTextSecondary }]}>DEVICES</Text>
-              <Text style={[styles.devicesCount, { color: connectedCount > 0 ? c.colorInfo : c.colorTextMuted }]}>
-                {connectedCount} connected
-              </Text>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        {vm.phase === 'waiting' && (
+          <View style={styles.statusStrip}>
+            <WaitingRadar size={60} color={c.colorInfo} pulsing icon={<ShareIcon size={16} color={c.colorInfo} />} />
+            <View style={styles.statusText}>
+              <Text style={[styles.statusTitle, { color: c.colorTextPrimary }]}>Waiting for someone to join</Text>
+              <Text style={[styles.statusCaption, { color: c.colorTextMuted }]} numberOfLines={1}>{t('send:hints.keepOpen')}</Text>
             </View>
-            {connectedPeerList.map((peer) => {
-              const remembered = findRemembered(peer.peerKey)
-              const name = peerDisplayNames[peer.peerKey] ?? remembered?.displayName ?? peer.peerKey.slice(0, 6)
-              const isPaired = Boolean(remembered) || pairStatus[peer.peerKey] === 'paired'
-              const isRequested = pairStatus[peer.peerKey] === 'requested'
-              return (
-                <View key={peer.peerKey} style={styles.deviceRow}>
-                  {remembered ? (
-                    <View style={[styles.iconBox, { backgroundColor: c.colorSurfacePrimary }]}>
-                      {(() => { const I = deviceIcon(remembered.deviceType); return <I size={16} color={c.colorTextSecondary} /> })()}
-                    </View>
-                  ) : (
-                    <View style={[styles.iconBox, { backgroundColor: c.colorInfoSubtle }]}>
-                      <Text style={[styles.initials, { color: c.colorInfo }]}>{name.slice(0, 2).toUpperCase()}</Text>
-                    </View>
-                  )}
-                  <View style={styles.deviceText}>
-                    <Text style={[styles.deviceName, { color: c.colorTextPrimary }]}>{name}</Text>
-                    <Text style={[styles.deviceSub, { color: c.colorInfo }]}>● Online</Text>
-                  </View>
-                  {!isPaired && !isRequested && (
-                    <Button
-                      onClick={() => handlePair(peer.peerKey)}
-                      size='sm'
-                      variant='secondary'
-                    >
-                      Pair
-                    </Button>
-                  )}
-                  <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
-                </View>
-              )
-            })}
+          </View>
+        )}
 
-            {recentRemembered.map((peer) => {
-              const st = inviteStatus[peer.remoteDevicePubkey]
-              const active = st === 'inviting' || st === 'sent'
-              const subtitle = st === 'offline' ? inviteStatusSubtitle(st) : formatRelativeTime(peer.lastSeenAt)
-              const subtitleColor = st === 'offline' ? c.colorDanger : c.colorTextMuted
-              const PeerIcon = deviceIcon(peer.deviceType)
-              return (
-                <Pressable
-                  key={peer.remoteDevicePubkey}
-                  onPress={() => void invite(peer.remoteDevicePubkey)}
-                  style={({ pressed }) => [
-                    styles.deviceRow,
-                    (active || pressed) && { backgroundColor: c.colorSurfacePrimary }
-                  ]}
-                >
-                  <View style={[styles.iconBox, { backgroundColor: c.colorSurfacePrimary }]}>
-                    <PeerIcon size={16} color={c.colorTextSecondary} />
-                  </View>
-                  <View style={styles.deviceText}>
-                    <Text style={[styles.deviceName, { color: c.colorTextPrimary }]}>{peer.displayName}</Text>
-                    {subtitle ? <Text style={[styles.deviceSub, { color: subtitleColor }]}>{subtitle}</Text> : null}
-                  </View>
-                  <Button
-                    disabled={active}
-                    onClick={() => void invite(peer.remoteDevicePubkey)}
-                    size='sm'
-                    variant='secondary'
-                  >
-                    {st === 'sent' ? 'Sent' : st === 'inviting' ? 'Inviting…' : 'Invite'}
-                  </Button>
-                  <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
-                </Pressable>
-              )
-            })}
+        {vm.hasDevices ? (
+          <View style={styles.tiles}>
+            <View style={styles.tile}>
+              <Button variant='secondary' width='full' icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />} onClick={() => void copyTopic()}>
+                {vm.isCopied ? 'Copied' : 'Copy code'}
+              </Button>
+            </View>
+            <View style={styles.tile}>
+              <Button variant='secondary' width='full' icon={<QrCodeIcon size={16} />} onClick={() => setIsQrOpen(true)}>
+                QR code
+              </Button>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.invitePanel}>
+            <QRSection topic={vm.topic} showWaitingState={false} size={200} style={styles.qrPanelSection} />
+            <View style={styles.keyContainer}>
+              <TopicCodeField
+                copied={vm.isCopied}
+                onCopy={() => void copyTopic()}
+                placeholder={t('send:connection.placeholder')}
+                topic={vm.topic}
+              />
+            </View>
+          </View>
+        )}
 
-            <Pressable
-              accessibilityRole='button'
-              onPress={() => setIsAddDeviceOpen(true)}
-              style={({ pressed }) => [
-                styles.deviceRow,
-                pressed && { backgroundColor: c.colorSurfacePrimary }
-              ]}
-            >
-              <View style={[styles.addIcon, { borderColor: c.colorBorderStrong }]}>
-                <PlusIcon size={14} color={c.colorTextMuted} />
-              </View>
-              <Text style={[styles.addLabel, { color: c.colorTextSecondary }]}>
-                {connectedCount > 0 ? 'Invite another device' : 'Add a device'}
-              </Text>
-              <ChevronRightIcon size={14} color={c.colorTextMuted} />
-            </Pressable>
+        {vm.hasDevices && (
+          <>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionLabel, { color: c.colorTextSecondary }]}>DEVICES</Text>
+              {vm.connectedCount > 0 && (
+                <Text style={[styles.sectionCount, { color: c.colorTextMuted }]}>
+                  {vm.connectedCount === 1 ? '1 connected' : `${vm.connectedCount} connected`}
+                </Text>
+              )}
+            </View>
+            <View style={styles.section}>
+              <LinkCard>
+                {vm.devices.map((row, index) => {
+                  const isLast = index === vm.devices.length - 1
+                  if (row.kind === 'connected') {
+                    const Icon = row.deviceType ? deviceIcon(row.deviceType) : null
+                    return (
+                      <LinkRow
+                        key={row.peerKey}
+                        compact
+                        icon={
+                          Icon
+                            ? <Icon size={18} color={c.colorTextSecondary} />
+                            : <Text style={[styles.initials, { color: c.colorInfo }]}>{row.name.slice(0, 2).toUpperCase()}</Text>
+                        }
+                        iconBackground={Icon ? c.colorSurfacePrimary : c.colorInfoSubtle}
+                        label={row.name}
+                        subtitle={row.subtitle}
+                        subtitleTone={row.subtitleTone}
+                        progressPercent={row.progressPercent}
+                        trailing={row.action === 'pair' ? <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>Pair</Button> : null}
+                        isLast={isLast}
+                      />
+                    )
+                  }
+                  const PeerIcon = deviceIcon(row.deviceType)
+                  const isActive = row.action === 'inviting' || row.action === 'invite-sent'
+                  const label = row.action === 'inviting' ? 'Inviting…' : row.action === 'invite-sent' ? 'Sent' : 'Invite'
+                  return (
+                    <LinkRow
+                      key={row.peerKey}
+                      icon={<PeerIcon size={18} color={c.colorTextSecondary} />}
+                      label={row.name}
+                      subtitle={row.subtitle}
+                      subtitleTone={row.subtitleTone}
+                      isActive={isActive}
+                      onPress={() => void vm.invite(row.peerKey)}
+                      trailing={
+                        <Button disabled={isActive} onClick={() => void vm.invite(row.peerKey)} size='sm' variant='primary' pill>
+                          {label}
+                        </Button>
+                      }
+                      isLast={isLast}
+                    />
+                  )
+                })}
+              </LinkCard>
+            </View>
+          </>
+        )}
+
+        <View style={styles.filesWrap}>
+          <LinkCard>
+            <LinkRow
+              icon={<FolderIcon size={20} color={c.colorTextSecondary} />}
+              label={vm.files.length === 1 ? '1 file' : `${vm.files.length} files`}
+              subtitle={formatFileSize(vm.totalSize)}
+              onPress={() => setIsFilesExpanded(!isFilesExpanded)}
+              trailing={isFilesExpanded ? <ChevronUpIcon size={20} color={c.colorTextMuted} /> : <ChevronDownIcon size={20} color={c.colorTextMuted} />}
+              isLast={!isFilesExpanded}
+            />
+            {isFilesExpanded && vm.files.map((file, index) => (
+              <LinkRow key={file.path} file label={file.name} size={file.size} isLast={index === vm.files.length - 1} />
+            ))}
           </LinkCard>
         </View>
-
-        <Disclosure
-          expanded={isFilesExpanded}
-          icon={<FolderIcon size={20} />}
-          onToggle={() => setIsFilesExpanded(!isFilesExpanded)}
-          subtitle={formatFileSize(totalSize)}
-          title={selectedFiles.length === 1 ? '1 file' : `${selectedFiles.length} files`}
-        >
-          {selectedFiles.map((file) => (
-            <SendFileListRow key={file.path} bare name={file.name} size={file.size} />
-          ))}
-        </Disclosure>
       </ScrollView>
 
-      <AddDeviceSheet open={isAddDeviceOpen} onClose={() => setIsAddDeviceOpen(false)} />
+      <Modal visible={isQrOpen} transparent animationType='slide' onRequestClose={() => setIsQrOpen(false)}>
+        <Pressable style={[styles.backdrop, { backgroundColor: withAlpha(c.colorScrim, 0.55) }]} onPress={() => setIsQrOpen(false)} />
+        <View style={[styles.sheet, { backgroundColor: c.colorBackground, borderColor: c.colorBorderPrimary }]}>
+          <View style={[styles.grabber, { backgroundColor: c.colorBorderStrong }]} />
+          <View style={styles.sheetHeader}>
+            <Text style={[styles.sheetTitle, { color: c.colorTextPrimary }]}>Scan to connect</Text>
+            <Pressable accessibilityRole='button' accessibilityLabel='Close' hitSlop={12} onPress={() => setIsQrOpen(false)}>
+              <CloseIcon size={20} color={c.colorTextPrimary} />
+            </Pressable>
+          </View>
+          <QRSection topic={vm.topic} showWaitingState={false} />
+        </View>
+      </Modal>
     </>
   )
 }
 
+function TopicCodeField({
+  copied,
+  onCopy,
+  placeholder,
+  topic
+}: {
+  copied: boolean
+  onCopy: () => void
+  placeholder: string
+  topic: string
+}) {
+  const { t } = useTranslation(['send'])
+
+  return (
+    <Input
+      aria-label={t('send:connection.copyLabel')}
+      mono
+      placeholder={placeholder}
+      readOnly
+      secure
+      trailing={
+        <Pressable
+          accessibilityLabel={t('send:connection.copyLabel')}
+          accessibilityRole='button'
+          disabled={!topic}
+          onPress={onCopy}
+          style={({ pressed }) => [styles.copyButton, pressed && styles.copyButtonPressed]}
+        >
+          {copied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+        </Pressable>
+      }
+      value={topic}
+    />
+  )
+}
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
+  container: { flex: 1 },
+  content: { paddingTop: 0, paddingBottom: 16 },
+  statusStrip: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 24 },
+  statusText: { flex: 1, minWidth: 0 },
+  statusTitle: { fontSize: 16, fontWeight: '700' },
+  statusCaption: { fontSize: 12.5, lineHeight: 17, marginTop: 2 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4, marginBottom: 8 },
+  sectionLabel: { fontSize: 11, fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase' },
+  sectionCount: { fontSize: 11.5, fontWeight: '500' },
+  section: { marginBottom: 16 },
+  filesWrap: { marginBottom: 24 },
+  tiles: { flexDirection: 'row', gap: 12, marginBottom: 24 },
+  tile: { flex: 1 },
+  invitePanel: {
+    marginBottom: 20
   },
-  hint: {
-    flexDirection: 'row',
+  keyContainer: { marginTop: 20, width: '100%' },
+  copyButton: {
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 4,
-    marginBottom: 10
+    justifyContent: 'center'
   },
-  hintText: {
-    fontSize: 11.5,
-    lineHeight: 16,
-    flexShrink: 1
-  },
-  devicesWrap: {
-    marginBottom: 16
-  },
-  devicesHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth
-  },
-  devicesLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 1,
-    textTransform: 'uppercase'
-  },
-  devicesCount: {
-    fontSize: 11
-  },
-  deviceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12
-  },
-  iconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0
-  },
-  initials: {
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.5
-  },
-  deviceText: {
-    flex: 1
-  },
-  deviceName: {
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 18
-  },
-  deviceSub: {
-    fontSize: 12,
-    lineHeight: 16
-  },
-  addIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0
-  },
-  addLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    flex: 1
-  },
-  divider: {
-    position: 'absolute',
-    bottom: 0,
-    left: 64,
-    right: 0,
-    height: StyleSheet.hairlineWidth
-  }
+  copyButtonPressed: { opacity: 0.55 },
+  qrPanelSection: { paddingTop: 0 },
+  initials: { fontSize: 14, fontWeight: '700', letterSpacing: 0.5 },
+  backdrop: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  sheet: { position: 'absolute', left: 0, right: 0, bottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 48, gap: 12 },
+  grabber: { alignSelf: 'center', width: 36, height: 4, borderRadius: 999, marginBottom: 4 },
+  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  sheetTitle: { fontSize: 16, fontWeight: '700' }
 })

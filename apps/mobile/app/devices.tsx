@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 import { loadPeers, useTransferStore } from '@altersend/domain'
-import { Button, useTheme } from '@altersend/components'
+import { Button, LinkCard, LinkRow, useTheme } from '@altersend/components'
 import { PlusIcon, deviceIcon } from '@altersend/components/icons'
 import { useRouter } from 'expo-router'
-import { DeviceActionsSheet, Layout, LinkCard, LinkRow } from '@/src/components'
+import { DeviceActionsSheet, Layout } from '@/src/components'
+import { Text } from '@/src/components/ThemedText'
 
 export default function DevicesScreen() {
   const { theme } = useTheme()

@@ -115,9 +115,12 @@ export const styles = css.create({
   },
   iconSlot: {
     flexShrink: 0,
+    width: tokens.space5,
+    height: tokens.space5,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    lineHeight: 0,
     color: tokens.colorTextMuted
   },
   inputInner: {

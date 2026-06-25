@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { rememberVote, useTransferStore } from '@altersend/domain'
 import { Button } from '@altersend/components'
-import { SmartphoneIcon } from '@altersend/components/icons'
+import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
 
 export function PairRequestBanner() {
   const request = useTransferStore((s) => s.remember.incomingRequest)
@@ -13,25 +13,45 @@ export function PairRequestBanner() {
 
   if (!request || responded) return null
 
+  const Icon = deviceIcon(request.deviceType)
+
   const respond = (vote: 'remember' | 'no') => {
     setResponded(true)
     void rememberVote(request.transferId, request.peerKey, vote, false)
   }
 
   return (
-    <div className='pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4'>
-      <div className='pointer-events-auto flex items-center gap-3 rounded-full border border-border-primary bg-surface-secondary px-5 py-2.5 shadow-lg'>
-        <div className='flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-info/15 text-info'>
-          <SmartphoneIcon size={12} />
+    <div
+      className='fixed inset-0 z-50 flex justify-center pt-4'
+      style={{
+        backgroundColor: 'color-mix(in oklab, var(--as-color-scrim) 25%, transparent)',
+        backdropFilter: 'blur(2px)',
+        WebkitBackdropFilter: 'blur(2px)',
+        animation: 'as-fade-in 180ms ease-out'
+      }}
+    >
+      <div
+        className='pointer-events-auto flex h-fit w-[280px] flex-col items-center gap-4 rounded-[24px] border border-border-primary bg-background px-5 py-6 shadow-[0_8px_32px_color-mix(in_oklab,var(--as-color-scrim)_40%,transparent)]'
+        style={{ animation: 'as-scale-in 200ms cubic-bezier(0.16, 1, 0.3, 1)' }}
+      >
+        <div className='flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-surface-secondary'>
+          <Icon size={22} />
         </div>
-        <span className='text-[13px] font-semibold text-text-primary'>
-          {request.displayName} wants to pair
-        </span>
-        <div className='flex items-center gap-2'>
-          <Button onClick={() => respond('no')} size='sm' variant='ghost'>
+
+        <div className='text-center'>
+          <p className='m-0 text-[14px] font-semibold leading-snug text-text-primary'>
+            {request.displayName}
+          </p>
+          <p className='m-0 mt-0.5 text-[12px] leading-snug text-text-secondary'>
+            wants to pair with this device
+          </p>
+        </div>
+
+        <div className='flex w-full gap-2'>
+          <Button icon={<CloseIcon size={12} />} onClick={() => respond('no')} pill size='sm' variant='danger' width='full'>
             Decline
           </Button>
-          <Button onClick={() => respond('remember')} size='sm' variant='primary'>
+          <Button icon={<CheckIcon size={12} />} onClick={() => respond('remember')} pill size='sm' variant='success' width='full'>
             Pair
           </Button>
         </div>

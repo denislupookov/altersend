@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, StyleSheet } from 'react-native'
-import { SendFileListRow, useTheme } from '@altersend/components'
+import { LinkRow, useTheme } from '@altersend/components'
 import { getDownloadRowDisplay, getOfferKey, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
@@ -26,11 +26,12 @@ export function ReceiveIncomingView() {
           {incomingFileOffers.map((file, index) => {
             const row = getDownloadRowDisplay(file, downloadStates[getOfferKey(file)])
             return (
-              <SendFileListRow
+              <LinkRow
                 key={getOfferKey(file)}
+                file
                 bare
                 isFirst={index === 0}
-                name={file.name}
+                label={file.name}
                 size={file.size}
                 description={row.isActive ? `${row.description} · ${row.percent}%` : undefined}
                 progressPercent={row.isActive || row.isCompleted ? row.percent : undefined}

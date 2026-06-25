@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@altersend/components'
+import { DropZoneLink, ErrorBanner, FileDropZone, LinkRow } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import {
   addSelectedFiles,
@@ -106,10 +106,12 @@ export function SelectFilesView() {
       {hasSelectedFiles ? (
         <div className='flex flex-col gap-1.5'>
           {selectedFiles.map((file) => (
-            <SendFileListRow
+            <LinkRow
               key={file.path}
+              file
+              standalone
               compact
-              name={file.name}
+              label={file.name}
               onRemove={() => removeSelectedFile(file.path)}
               removeLabel={t('send:files.removeLabel', { name: file.name })}
               size={file.size}

@@ -46,8 +46,8 @@
   },
   "form": {
     "codeLabel": "连接代码",
-    "codePlaceholder": "粘贴 64 字符代码...",
-    "orPasteCode": "或粘贴代码"
+    "codePlaceholder": "粘贴代码...",
+    "orPasteCode": "或粘贴连接代码"
   },
   "actions": {
     "scanQr": "扫描QR代码",

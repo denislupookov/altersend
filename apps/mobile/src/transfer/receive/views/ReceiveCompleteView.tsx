@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { SendFileListRow, useTheme, withAlpha } from '@altersend/components'
+import { LinkRow, useTheme, withAlpha } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { formatFileSize, getOfferKey, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
@@ -61,11 +61,12 @@ export function ReceiveCompleteView() {
           const state = downloadStates[offerKey]
           const isComplete = state?.status === 'completed'
           return (
-            <SendFileListRow
+            <LinkRow
               key={file.id}
+              file
               bare
               isFirst={index === 0}
-              name={file.name}
+              label={file.name}
               description={getFileMeta(file.size, state, t)}
               trailing={
                 isComplete ? (

@@ -40,7 +40,7 @@ export function TransferCardFrame({
 
       <div className={`min-h-0 flex-1 overflow-hidden ${hasHeader ? 'mt-5' : ''}`}>{children}</div>
 
-      {footer ? <div className='mt-5 shrink-0 pt-4'>{footer}</div> : null}
+      {footer ? <div className='mt-3 shrink-0 pt-1'>{footer}</div> : null}
     </div>
   )
 }

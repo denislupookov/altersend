@@ -1,4 +1,4 @@
-import { Button, SendFileListRow } from '@altersend/components'
+import { Button, LinkRow } from '@altersend/components'
 import { CloseIcon } from '@altersend/components/icons'
 import { clearSession, formatFileSize, getOfferKey, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
@@ -47,10 +47,11 @@ export function ReceiveDisconnectedView() {
               const state = downloadStates[getOfferKey(file)]
               const isComplete = state?.status === 'completed'
               return (
-                <SendFileListRow
+                <LinkRow
                   key={getOfferKey(file)}
+                  file
                   bare
-                  name={file.name}
+                  label={file.name}
                   description={
                     isComplete ? formatFileSize(file.size) : t('receive:errors.didntArrive')
                   }

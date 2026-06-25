@@ -1,6 +1,7 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Modal, Pressable, StyleSheet, View } from 'react-native'
 import { useTheme, withAlpha } from '@altersend/components'
 import { CloseIcon, PencilIcon, TrashIcon } from '@altersend/components/icons'
+import { Text } from '../ThemedText'
 
 interface DeviceActionsSheetProps {
   open: boolean

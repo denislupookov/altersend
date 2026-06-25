@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
-import { Button, useTheme, withAlpha } from '@altersend/components'
+import { Modal, Pressable, StyleSheet, View } from 'react-native'
+import { Button, LinkCard, LinkRow, useTheme, withAlpha } from '@altersend/components'
 import { CloseIcon, deviceIcon } from '@altersend/components/icons'
 import { InviteStatus, inviteDevice, inviteStatusSubtitle, loadPeers, startSendSession, useTransferStore } from '@altersend/domain'
-import { LinkCard, LinkRow } from '../../../components/LinkRow'
+import { Text } from '@/src/components/ThemedText'
 
 interface AddDeviceSheetProps {
   open: boolean

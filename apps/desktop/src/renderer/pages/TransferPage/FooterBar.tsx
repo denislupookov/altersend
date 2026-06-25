@@ -21,12 +21,15 @@ import {
 import {
   AlertCircleIcon,
   ArrowLeftIcon,
+  ArrowUpRightIcon,
   ChevronRightIcon,
+  CloseIcon,
   DiscordIcon,
   GithubIcon,
   GlobeIcon,
   SettingsIcon,
-  SmartphoneIcon
+  SmartphoneIcon,
+  deviceIcon
 } from '@altersend/components/icons'
 import {
   discordUrl,
@@ -39,7 +42,6 @@ import {
 } from '@altersend/domain'
 import logo from '../../../../../../assets/logo.png'
 import { bridgeApi } from '../../api/bridgeApi'
-import { AddDeviceModal } from '../../components/AddDeviceModal'
 import { Select } from '../../components/Select'
 import { closeSentry, initSentry } from '../../sentry'
 import {
@@ -52,12 +54,6 @@ import {
 } from '../../lifecycle/localePreferenceStorage'
 import { getDesktopSystemLocales } from '../../lifecycle/systemLocale'
 
-const MENU_ITEMS = [
-  { icon: AlertCircleIcon, key: 'feedback', chevron: true },
-  { icon: DiscordIcon, key: 'discord' },
-  { icon: GithubIcon, key: 'github' },
-  { icon: GlobeIcon, key: 'website' }
-] as const
 const DISCORD_EMBED_COLOR = 0x5865f2
 
 function getLocaleOptionFontFamily(option: LocaleOption): string | undefined {
@@ -68,8 +64,7 @@ function getLocaleOptionFontFamily(option: LocaleOption): string | undefined {
 export function FooterBar({ version }: { version: string }) {
   const { t } = useTranslation(['settings', 'common', 'feedback'])
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [devicesOpen, setDevicesOpen] = useState(false)
-  const [panel, setPanel] = useState<'settings' | 'report'>('settings')
+  const [panel, setPanel] = useState<'settings' | 'report' | 'devices'>('settings')
   const peers = useTransferStore((s) => s.peers)
 
   useEffect(() => {
@@ -105,7 +100,7 @@ export function FooterBar({ version }: { version: string }) {
     setReportState('idle')
   }
 
-  const handleMenuAction = (key: (typeof MENU_ITEMS)[number]['key']) => {
+  const handleMenuAction = (key: 'feedback' | 'discord' | 'github' | 'website') => {
     if (key === 'feedback') {
       setPanel('report')
       return
@@ -162,195 +157,280 @@ export function FooterBar({ version }: { version: string }) {
           <span className='ml-1 shrink-0 tabular-nums opacity-70'>v{version}</span>
         </div>
 
-        <div className='relative'>
-          <button
-            aria-label={t('common:labels.settings')}
-            title={t('common:labels.settings')}
-            type='button'
-            className='flex p-1.5 appearance-none items-center justify-center rounded-full border border-border-strong bg-surface-primary text-text-muted transition-colors hover:border-text-muted hover:text-text-primary'
-            onClick={() => setSettingsOpen((v) => !v)}
-          >
-            <SettingsIcon size={14} />
-          </button>
-
-          {settingsOpen && (
-            <>
-              <div className='fixed inset-0' onClick={closePanel} />
-              <div className='absolute bottom-[calc(100%+10px)] right-0 z-50 w-[350px] overflow-hidden rounded-xl border border-border-primary bg-surface-primary shadow-xl'>
-                {panel === 'settings' ? (
-                  <>
-                    <div className='px-5 pb-4 pt-5'>
-                      <p className='mb-4 mt-0 text-[11px] font-semibold uppercase tracking-widest text-text-muted'>
-                        {t('settings:title')}
-                      </p>
-                      <ToggleSwitch
-                        checked={crashReporting}
-                        onChange={handleCrashReportingToggle}
-                        label={t('settings:crashReports.label')}
-                        description={t('settings:crashReports.description')}
-                      />
-                      <div className='mt-3'>
-                        <label className='mb-2 block text-[13px] font-medium text-text-secondary'>
-                          {t('common:labels.language')}
-                        </label>
-                        <Select
-                          aria-label={t('common:labels.language')}
-                          value={localePreference}
-                          onChange={handleLocaleChange}
-                          options={LOCALE_OPTIONS.map((option) => ({
-                            value: option.preference,
-                            label: option.nativeName
-                              ? `${option.nativeName} · ${option.label}`
-                              : t('common:labels.systemDefault'),
-                            fontFamily: getLocaleOptionFontFamily(option)
-                          }))}
-                        />
-                      </div>
-                    </div>
-                    <div className='border-t border-border-primary py-1'>
-                      <button
-                        type='button'
-                        onClick={() => {
-                          setDevicesOpen(true)
-                          closePanel()
-                        }}
-                        className='flex w-full appearance-none items-center gap-3 border-0 bg-transparent px-5 py-2.5 text-[14px] text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary'
-                      >
-                        <SmartphoneIcon size={15} />
-                        <span className='flex-1 text-left'>Paired devices</span>
-                        <span className='text-[12px] text-text-muted'>
-                          {peers.length === 0 ? 'No devices yet' : `${peers.length} paired`}
-                        </span>
-                        <ChevronRightIcon size={13} />
-                      </button>
-                      {MENU_ITEMS.map(({ icon: Icon, key, ...rest }) => (
-                        <button
-                          key={key}
-                          type='button'
-                          onClick={() => handleMenuAction(key)}
-                          className='flex w-full appearance-none items-center gap-3 border-0 bg-transparent px-5 py-2.5 text-[14px] text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary'
-                        >
-                          <Icon size={15} />
-                          <span className='flex-1 text-left'>
-                            {key === 'feedback'
-                              ? t('settings:rows.feedback')
-                              : key === 'discord'
-                                ? t('settings:rows.discord')
-                                : key === 'github'
-                                  ? 'GitHub'
-                                  : t('settings:rows.website')}
-                          </span>
-                          {'chevron' in rest && rest.chevron && <ChevronRightIcon size={13} />}
-                        </button>
-                      ))}
-                    </div>
-                    <div className='border-t border-border-primary px-5 py-4'>
-                      <p className='m-0 font-medium text-[12px] text-text-muted'>
-                        <Trans
-                          ns='settings'
-                          i18nKey='legal.sentence'
-                          components={{
-                            terms: (
-                              <ExternalLink
-                                onPress={() => void bridgeApi.openExternalUrl(termsOfServiceUrl)}
-                              >
-                                {null}
-                              </ExternalLink>
-                            ),
-                            privacy: (
-                              <ExternalLink
-                                onPress={() => void bridgeApi.openExternalUrl(privacyPolicyUrl)}
-                              >
-                                {null}
-                              </ExternalLink>
-                            )
-                          }}
-                        />
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <div className='p-3'>
-                    <div className='mb-3'>
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        icon={<ArrowLeftIcon size={13} />}
-                        onClick={() => {
-                          setPanel('settings')
-                          setReportState('idle')
-                          setReportMessage('')
-                          setReportType('bug')
-                        }}
-                      >
-                        {t('feedback:title')}
-                      </Button>
-                    </div>
-
-                    {reportState === 'sent' ? (
-                      <p className='py-8 text-center text-[14px] text-text-secondary'>
-                        {t('feedback:states.sent')}
-                      </p>
-                    ) : (
-                      <>
-                        <div className='mb-3'>
-                          <FeedbackTypeSelector
-                            value={reportType}
-                            onChange={setReportType}
-                            labels={{
-                              bug: t('feedback:types.bug'),
-                              feature: t('feedback:types.feature'),
-                              general: t('feedback:types.general')
-                            }}
-                            disabled={reportState === 'sending'}
-                          />
-                        </div>
-                        <textarea
-                          className='w-full resize-none rounded-lg border border-border-primary bg-surface-secondary px-3 py-3 font-sans text-[13px] text-text-primary placeholder:text-text-muted focus:border-border-strong focus:outline-none disabled:opacity-50'
-                          rows={4}
-                          placeholder={
-                            reportType === 'bug'
-                              ? t('feedback:placeholders.desktopBug')
-                              : reportType === 'feature'
-                                ? t('feedback:placeholders.desktopFeature')
-                                : t('feedback:placeholders.general')
-                          }
-                          value={reportMessage}
-                          disabled={reportState === 'sending'}
-                          onChange={(e) => {
-                            setReportMessage(e.target.value)
-                            if (reportState === 'error') setReportState('idle')
-                          }}
-                        />
-                        {reportState === 'error' && (
-                          <p className='mt-1.5 text-[11px] text-danger'>
-                            {t('feedback:states.failed')}
-                          </p>
-                        )}
-                        <div className='mt-3'>
-                          <Button
-                            variant='primary'
-                            size='sm'
-                            width='full'
-                            disabled={!reportMessage.trim() || reportState === 'sending'}
-                            onClick={() => void sendReport()}
-                          >
-                            {reportState === 'sending'
-                              ? t('feedback:actions.sending')
-                              : t('feedback:actions.send')}
-                          </Button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
+        <button
+          aria-label={t('common:labels.settings')}
+          title={t('common:labels.settings')}
+          type='button'
+          className='flex p-1.5 appearance-none items-center justify-center rounded-full border border-border-strong bg-surface-primary text-text-muted transition-colors hover:border-text-muted hover:text-text-primary'
+          onClick={() => setSettingsOpen((v) => !v)}
+        >
+          <SettingsIcon size={14} />
+        </button>
       </div>
 
-      <AddDeviceModal open={devicesOpen} onClose={() => setDevicesOpen(false)} />
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 z-40 transition-opacity duration-200 ${settingsOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={closePanel}
+      />
+
+      {/* Right sidebar */}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 flex w-[360px] flex-col overflow-hidden border-l border-border-primary bg-surface-primary shadow-2xl transition-transform duration-200 ease-out ${settingsOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        {panel === 'settings' ? (
+          <>
+            <div className='flex shrink-0 items-center justify-between border-b border-border-primary px-5 py-4'>
+              <p className='m-0 text-[18px] font-semibold text-text-primary'>
+                {t('settings:title')}
+              </p>
+              <button
+                type='button'
+                aria-label={t('common:actions.close')}
+                onClick={closePanel}
+                className='inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-text-primary transition-colors hover:bg-surface-secondary'
+                style={{ appearance: 'none' }}
+              >
+                <CloseIcon size={14} />
+              </button>
+            </div>
+
+            <div className='flex-1 overflow-y-auto'>
+              <div className='px-5 pb-4 pt-5'>
+                <ToggleSwitch
+                  checked={crashReporting}
+                  onChange={handleCrashReportingToggle}
+                  label={t('settings:crashReports.label')}
+                  description={t('settings:crashReports.description')}
+                />
+                <div className='mt-4'>
+                  <label className='mb-2 block text-[13px] font-medium text-text-secondary'>
+                    {t('common:labels.language')}
+                  </label>
+                  <Select
+                    aria-label={t('common:labels.language')}
+                    value={localePreference}
+                    onChange={handleLocaleChange}
+                    options={LOCALE_OPTIONS.map((option) => ({
+                      value: option.preference,
+                      label: option.nativeName
+                        ? `${option.nativeName} · ${option.label}`
+                        : t('common:labels.systemDefault'),
+                      fontFamily: getLocaleOptionFontFamily(option)
+                    }))}
+                  />
+                </div>
+              </div>
+
+              <div className='border-t border-border-primary py-1'>
+                <button
+                  type='button'
+                  onClick={() => setPanel('devices')}
+                  className='flex w-full appearance-none items-center gap-3 border-0 bg-transparent px-5 py-3 text-[14px] text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary'
+                >
+                  <SmartphoneIcon size={15} />
+                  <span className='flex-1 text-left'>Paired devices</span>
+                  <span className='text-[12px] text-text-muted'>
+                    {peers.length === 0 ? 'No devices yet' : `${peers.length} paired`}
+                  </span>
+                  <ChevronRightIcon size={13} />
+                </button>
+                <button
+                  type='button'
+                  onClick={() => handleMenuAction('feedback')}
+                  className='flex w-full appearance-none items-center gap-3 border-0 bg-transparent px-5 py-3 text-[14px] text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary'
+                >
+                  <AlertCircleIcon size={15} />
+                  <span className='flex-1 text-left'>{t('settings:rows.feedback')}</span>
+                  <ChevronRightIcon size={13} />
+                </button>
+              </div>
+
+              <div className='border-t border-border-primary py-1'>
+                {([
+                  { icon: DiscordIcon, key: 'discord', label: t('settings:rows.discord') },
+                  { icon: GithubIcon, key: 'github', label: 'GitHub' },
+                  { icon: GlobeIcon, key: 'website', label: t('settings:rows.website') }
+                ] as const).map(({ icon: Icon, key, label }) => (
+                  <button
+                    key={key}
+                    type='button'
+                    onClick={() => handleMenuAction(key)}
+                    className='flex w-full appearance-none items-center gap-3 border-0 bg-transparent px-5 py-3 text-[14px] text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary'
+                  >
+                    <Icon size={15} />
+                    <span className='flex-1 text-left'>{label}</span>
+                    <ArrowUpRightIcon size={13} />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className='shrink-0 border-t border-border-primary px-5 py-4'>
+              <p className='m-0 text-[12px] font-medium text-text-muted'>
+                <Trans
+                  ns='settings'
+                  i18nKey='legal.sentence'
+                  components={{
+                    terms: (
+                      <ExternalLink
+                        onPress={() => void bridgeApi.openExternalUrl(termsOfServiceUrl)}
+                      >
+                        {null}
+                      </ExternalLink>
+                    ),
+                    privacy: (
+                      <ExternalLink
+                        onPress={() => void bridgeApi.openExternalUrl(privacyPolicyUrl)}
+                      >
+                        {null}
+                      </ExternalLink>
+                    )
+                  }}
+                />
+              </p>
+            </div>
+          </>
+        ) : panel === 'devices' ? (
+          <>
+            <div className='flex shrink-0 items-center justify-between border-b border-border-primary px-3 py-3'>
+              <Button
+                variant='ghost'
+                size='sm'
+                icon={<ArrowLeftIcon size={13} />}
+                onClick={() => setPanel('settings')}
+              >
+                Paired devices
+              </Button>
+              <button
+                type='button'
+                aria-label={t('common:actions.close')}
+                onClick={closePanel}
+                className='inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-text-primary transition-colors hover:bg-surface-secondary'
+                style={{ appearance: 'none' }}
+              >
+                <CloseIcon size={14} />
+              </button>
+            </div>
+
+            <div className='flex-1 overflow-y-auto'>
+              {peers.length === 0 ? (
+                <p className='m-0 px-5 py-4 text-[13px] leading-relaxed text-text-muted'>
+                  No paired devices yet. Pair a device to send without a code.
+                </p>
+              ) : (
+                <div className='px-5 py-4'>
+                  <div className='overflow-hidden rounded-[16px] border border-border-primary bg-background-subtle'>
+                    {peers.map((peer, index) => {
+                      const Icon = deviceIcon(peer.deviceType)
+                      return (
+                        <div key={peer.remoteDevicePubkey}>
+                          <div className='flex items-center gap-3 px-4 py-[13px]'>
+                            <div className='flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-primary'>
+                              <Icon size={16} />
+                            </div>
+                            <p className='m-0 min-w-0 flex-1 truncate text-[14px] font-medium leading-[18px] text-text-primary'>
+                              {peer.displayName}
+                            </p>
+                          </div>
+                          {index < peers.length - 1 ? (
+                            <div className='ml-[60px] h-px bg-border-primary' />
+                          ) : null}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className='flex shrink-0 items-center justify-between border-b border-border-primary px-3 py-3'>
+              <Button
+                variant='ghost'
+                size='sm'
+                icon={<ArrowLeftIcon size={13} />}
+                onClick={() => {
+                  setPanel('settings')
+                  setReportState('idle')
+                  setReportMessage('')
+                  setReportType('bug')
+                }}
+              >
+                {t('feedback:title')}
+              </Button>
+              <button
+                type='button'
+                aria-label={t('common:actions.close')}
+                onClick={closePanel}
+                className='inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-text-primary transition-colors hover:bg-surface-secondary'
+                style={{ appearance: 'none' }}
+              >
+                <CloseIcon size={14} />
+              </button>
+            </div>
+
+            <div className='flex-1 overflow-y-auto p-4'>
+              {reportState === 'sent' ? (
+                <p className='py-8 text-center text-[14px] text-text-secondary'>
+                  {t('feedback:states.sent')}
+                </p>
+              ) : (
+                <>
+                  <div className='mb-3'>
+                    <FeedbackTypeSelector
+                      value={reportType}
+                      onChange={setReportType}
+                      labels={{
+                        bug: t('feedback:types.bug'),
+                        feature: t('feedback:types.feature'),
+                        general: t('feedback:types.general')
+                      }}
+                      disabled={reportState === 'sending'}
+                    />
+                  </div>
+                  <textarea
+                    className='w-full resize-none rounded-lg border border-border-primary bg-surface-secondary px-3 py-3 font-sans text-[13px] text-text-primary placeholder:text-text-muted focus:border-border-strong focus:outline-none disabled:opacity-50'
+                    rows={5}
+                    placeholder={
+                      reportType === 'bug'
+                        ? t('feedback:placeholders.desktopBug')
+                        : reportType === 'feature'
+                          ? t('feedback:placeholders.desktopFeature')
+                          : t('feedback:placeholders.general')
+                    }
+                    value={reportMessage}
+                    disabled={reportState === 'sending'}
+                    onChange={(e) => {
+                      setReportMessage(e.target.value)
+                      if (reportState === 'error') setReportState('idle')
+                    }}
+                  />
+                  {reportState === 'error' && (
+                    <p className='mt-1.5 text-[11px] text-danger'>
+                      {t('feedback:states.failed')}
+                    </p>
+                  )}
+                  <div className='mt-3'>
+                    <Button
+                      variant='primary'
+                      size='sm'
+                      width='full'
+                      disabled={!reportMessage.trim() || reportState === 'sending'}
+                      onClick={() => void sendReport()}
+                    >
+                      {reportState === 'sending'
+                        ? t('feedback:actions.sending')
+                        : t('feedback:actions.send')}
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </footer>
   )
 }

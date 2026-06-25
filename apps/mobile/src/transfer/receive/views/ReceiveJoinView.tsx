@@ -1,7 +1,7 @@
 import React from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
-import { Button, Input, useTheme, withAlpha } from '@altersend/components'
-import { ChevronRightIcon, QrCodeIcon } from '@altersend/components/icons'
+import { StyleSheet, View } from 'react-native'
+import { Button, Input, LinkRow, useTheme } from '@altersend/components'
+import { QrCodeIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
@@ -29,38 +29,14 @@ export function ReceiveJoinView({
 
   return (
     <View style={styles.container}>
-      <Pressable
-        accessibilityRole='button'
+      <LinkRow
+        icon={<QrCodeIcon size={20} color={theme.colors.colorInfo} />}
+        iconBackground={theme.colors.colorInfoSubtle}
+        label={t('receive:actions.scanOrImportQr')}
         onPress={onScanQr}
-        style={({ pressed }) => [
-          styles.card,
-          {
-            backgroundColor: theme.colors.colorBackgroundSubtle,
-            borderColor: theme.colors.colorBorderPrimary,
-            opacity: pressed ? 0.85 : 1
-          }
-        ]}
-      >
-        <View style={styles.qrRow}>
-          <View
-            style={[
-              styles.qrIconBadge,
-              { backgroundColor: withAlpha(theme.colors.colorInfo, 0.16) }
-            ]}
-          >
-            <QrCodeIcon size={22} color={theme.colors.colorInfo} />
-          </View>
-          <View style={styles.qrText}>
-            <Text style={[styles.qrTitle, { color: theme.colors.colorTextPrimary }]}>
-              {t('receive:actions.scanOrImportQr')}
-            </Text>
-            <Text style={[styles.qrSubtitle, { color: theme.colors.colorTextSecondary }]}>
-              {t('receive:actions.scanOrImportQrHintMobile')}
-            </Text>
-          </View>
-          <ChevronRightIcon size={18} color={theme.colors.colorTextMuted} />
-        </View>
-      </Pressable>
+        standalone
+        subtitle={t('receive:actions.scanOrImportQrHintMobile')}
+      />
 
       <View style={styles.divider}>
         <Text style={[styles.dividerText, { color: theme.colors.colorTextMuted }]}>
@@ -68,21 +44,10 @@ export function ReceiveJoinView({
         </Text>
       </View>
 
-      <View
-        style={[
-          styles.card,
-          {
-            backgroundColor: theme.colors.colorBackgroundSubtle,
-            borderColor: theme.colors.colorBorderPrimary,
-            padding: 18,
-            gap: 14
-          }
-        ]}
-      >
+      <View style={styles.codeForm}>
         <Input
           disabled={isLoading}
           error={joinCodeError}
-          label={t('receive:form.codeLabel')}
           mono
           secure
           onChange={(e: { target: { value: string } }) => onJoinCodeChange(e.target.value)}
@@ -103,34 +68,8 @@ const styles = StyleSheet.create({
   container: {
     gap: 16
   },
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 16
-  },
-  qrRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14
-  },
-  qrIconBadge: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  qrText: {
-    flex: 1,
-    gap: 2
-  },
-  qrTitle: {
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  qrSubtitle: {
-    fontSize: 13,
-    lineHeight: 18
+  codeForm: {
+    gap: 10
   },
   divider: {
     alignItems: 'center',

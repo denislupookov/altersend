@@ -54,11 +54,19 @@ describe('mobile font coverage', () => {
     expect(storageSource).toMatch(/listeners\.forEach\(\(listener\) => listener\(preference\)\)/)
   })
 
-  it('keeps Settings paired row text metrics explicit for CJK fonts', () => {
+  it('keeps shared row text metrics explicit for CJK fonts', () => {
     const settingsSource = readFileSync(join(mobileRoot.pathname, 'app/settings.tsx'), 'utf8')
+    const linkRowSource = readFileSync(
+      join(repoRoot.pathname, 'packages/components/src/components/LinkRow/styles.ts'),
+      'utf8'
+    )
 
-    expect(settingsSource).toMatch(/rowLabel:\s*\{[^}]*fontSize:\s*14,[^}]*lineHeight:\s*18/s)
-    expect(settingsSource).toMatch(/rowHint:\s*\{[^}]*fontSize:\s*12,[^}]*lineHeight:\s*16/s)
+    expect(linkRowSource).toMatch(
+      /label:\s*\{[^}]*fontSize:\s*tokens\.fontSizeBase,[^}]*lineHeight:\s*tokens\.lineHeightSnug/s
+    )
+    expect(linkRowSource).toMatch(
+      /subtitle:\s*\{[^}]*fontSize:\s*tokens\.fontSizeSm,[^}]*lineHeight:\s*tokens\.lineHeightNormal/s
+    )
     expect(settingsSource).toMatch(/brandName:\s*\{[^}]*fontSize:\s*13,[^}]*lineHeight:\s*18/s)
     expect(settingsSource).toMatch(/brandTagline:\s*\{[^}]*fontSize:\s*12,[^}]*lineHeight:\s*16/s)
   })

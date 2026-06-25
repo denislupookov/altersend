@@ -8,7 +8,7 @@ import {
   useTransferStore,
   type SelectedFile
 } from '@altersend/domain'
-import { DropZoneLink, ErrorBanner, FileDropZone, SendFileListRow } from '@altersend/components'
+import { DropZoneLink, ErrorBanner, FileDropZone, LinkRow } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 
 function uriToFilePath(uri: string): string {
@@ -131,9 +131,11 @@ export function SelectFilesView() {
       {hasSelectedFiles && (
         <View style={styles.fileList}>
           {selectedFiles.map((file) => (
-            <SendFileListRow
+            <LinkRow
               key={file.path}
-              name={file.name}
+              file
+              standalone
+              label={file.name}
               onRemove={() => removeSelectedFile(file.path)}
               removeLabel={t('send:files.removeLabel', { name: file.name })}
               size={file.size}

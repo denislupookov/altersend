@@ -1,8 +1,7 @@
 import { TRANSFER_ERROR_CODES, type TransferErrorCode } from './types'
+import type { Translate } from '../i18n'
 
 const TRANSFER_ERROR_CODE_SET = new Set<string>(Object.values(TRANSFER_ERROR_CODES))
-
-type Translate = (key: string, options?: Record<string, unknown>) => string
 
 export function getTransferDebugMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)

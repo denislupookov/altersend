@@ -46,8 +46,8 @@
   },
   "form": {
     "codeLabel": "Verbindungscode",
-    "codePlaceholder": "64-stelligen Code einfügen…",
-    "orPasteCode": "oder Code einfügen"
+    "codePlaceholder": "Code einfügen…",
+    "orPasteCode": "oder Verbindungscode einfügen"
   },
   "actions": {
     "scanQr": "Scannen Sie den QR-Code",

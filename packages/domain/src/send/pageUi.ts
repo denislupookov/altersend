@@ -1,8 +1,8 @@
+import type { Translate } from '../i18n'
+
 export type SendStep = 'selecting' | 'preparing' | 'waiting_for_receiver' | 'receiver_connected'
 
 export type SendDraftPhase = 'empty' | 'selected' | 'preparing' | 'ready'
-
-type Translate = (key: string, options?: Record<string, unknown>) => string
 
 export interface SendPageCopy {
   title: string

@@ -12,7 +12,7 @@ import {
   useTransferStore,
   websiteUrl
 } from '@altersend/domain'
-import { useTheme } from '@altersend/components'
+import { LinkCard, LinkRow, useTheme } from '@altersend/components'
 import {
   AlertCircleIcon,
   DiscordIcon,
@@ -23,7 +23,7 @@ import {
   ShieldIcon,
   SmartphoneIcon
 } from '@altersend/components/icons'
-import { Layout, LinkCard, LinkRow } from '@/src/components'
+import { Layout } from '@/src/components'
 import brandLogo from '@/assets/images/brand-logo.png'
 import {
   getLocalePreferenceSnapshot,

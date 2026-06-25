@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from 'react'
 import { StyleSheet, View } from 'react-native'
 import type { IncomingFileOffer } from '@altersend/core'
-import { SendFileListRow, useTheme, withAlpha } from '@altersend/components'
+import { LinkRow, useTheme, withAlpha } from '@altersend/components'
 import { CloseIcon } from '@altersend/components/icons'
 import { getOfferKey, type DownloadItemState } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
@@ -90,12 +90,13 @@ export function ReceiveInterruptedView({
             const state = downloadStates[offerKey]
             const isComplete = state?.status === 'completed'
             return (
-              <SendFileListRow
+              <LinkRow
                 key={file.id}
+                file
                 bare
                 isFirst={index === 0}
                 disabled={!isComplete}
-                name={file.name}
+                label={file.name}
                 description={getFileMeta(file.size, state, t, { disabled: !isComplete })}
                 trailing={
                   isComplete ? (

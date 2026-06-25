@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Button, SendFileListRow } from '@altersend/components'
+import { Button, LinkRow } from '@altersend/components'
 import { DownloadIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
@@ -78,11 +78,12 @@ export function ReceiveConnectedView() {
           {incomingFileOffers.map((file) => {
             const row = getDownloadRowDisplay(file, downloadStates[getOfferKey(file)])
             return (
-              <SendFileListRow
+              <LinkRow
                 key={getOfferKey(file)}
+                file
                 bare
                 compact
-                name={file.name}
+                label={file.name}
                 size={file.size}
                 description={row.description}
                 status={{ label: getDownloadStatusLabel(t, row), tone: row.status.tone }}

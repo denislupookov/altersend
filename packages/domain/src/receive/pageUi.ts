@@ -1,5 +1,6 @@
 import type { TransferRole } from '@altersend/core'
 import { formatFileSize } from '../format'
+import type { Translate } from '../i18n'
 
 export type ReceiveStep =
   | 'join'
@@ -8,8 +9,6 @@ export type ReceiveStep =
   | 'reconnecting'
   | 'interrupted'
   | 'completed'
-
-type Translate = (key: string, options?: Record<string, unknown>) => string
 
 export interface ReceivePageCopy {
   title: string

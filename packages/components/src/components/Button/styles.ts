@@ -28,24 +28,24 @@ export const styles = css.create({
     transitionTimingFunction: 'ease'
   },
   sm: {
-    paddingTop: tokens.space3,
-    paddingBottom: tokens.space3,
-    paddingLeft: tokens.space6,
-    paddingRight: tokens.space6,
+    paddingTop: tokens.space25,
+    paddingBottom: tokens.space25,
+    paddingLeft: tokens.space5,
+    paddingRight: tokens.space5,
     fontSize: tokens.fontSizeMd,
     borderRadius: tokens.radiusSm
   },
   md: {
-    paddingTop: tokens.space3,
-    paddingBottom: tokens.space3,
+    paddingTop: tokens.space35,
+    paddingBottom: tokens.space35,
     paddingLeft: 26,
     paddingRight: 26,
     fontSize: tokens.fontSizeBase,
     borderRadius: tokens.radiusMd
   },
   lg: {
-    paddingTop: tokens.space35,
-    paddingBottom: tokens.space35,
+    paddingTop: tokens.space4,
+    paddingBottom: tokens.space4,
     paddingLeft: tokens.space7,
     paddingRight: tokens.space7,
     fontSize: tokens.fontSizeLg,

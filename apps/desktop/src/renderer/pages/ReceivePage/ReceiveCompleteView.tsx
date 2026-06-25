@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Button, SendFileListRow } from '@altersend/components'
+import { Button, LinkRow } from '@altersend/components'
 import { CheckIcon, FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import {
@@ -90,11 +90,12 @@ export function ReceiveCompleteView() {
             const description = [shortPath, formatFileSize(file.size)].filter(Boolean).join(' · ')
 
             return (
-              <SendFileListRow
+              <LinkRow
                 key={getOfferKey(file)}
+                file
                 bare
                 compact
-                name={file.name}
+                label={file.name}
                 description={description}
                 trailing={
                   savedTo ? (

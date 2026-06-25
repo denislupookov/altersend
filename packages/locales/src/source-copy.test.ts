@@ -17,10 +17,6 @@ const hardcodedCopyChecks = [
     snippets: ['Generating…', 'QR code for connection key']
   },
   {
-    file: 'packages/components/src/components/SendFileListRow/SendFileListRow.tsx',
-    snippets: ['Remove ${name}']
-  },
-  {
     file: 'packages/components/src/components/PeerListCard/PeerListCard.tsx',
     snippets: ['Devices', '1 connected', '${activeCount} connected']
   },

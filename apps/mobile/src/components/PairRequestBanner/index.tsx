@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
+import { Modal, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useTheme } from '@altersend/components'
-import { Smartphone } from 'lucide-react-native'
+import { Button, useTheme } from '@altersend/components'
+import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
 import { rememberVote, useTransferStore } from '@altersend/domain'
 import { Text } from '@/src/components/ThemedText'
 
@@ -12,83 +12,106 @@ export function PairRequestBanner() {
   const insets = useSafeAreaInsets()
   const request = useTransferStore((s) => s.remember.incomingRequest)
   const [responded, setResponded] = useState(false)
+  const respondedRef = useRef(false)
 
   useEffect(() => {
-    if (request) setResponded(false)
+    if (request) {
+      setResponded(false)
+      respondedRef.current = false
+    }
   }, [request])
 
-  if (!request || responded) return null
+  const visible = Boolean(request && !responded)
 
+  // Guarded against double-firing: onDismiss (iOS swipe) also fires after a programmatic
+  // close, so without the ref a tap on Pair would be followed by a stray 'no' vote.
   const respond = (vote: 'remember' | 'no') => {
+    if (!request || respondedRef.current) return
+    respondedRef.current = true
     setResponded(true)
     void rememberVote(request.transferId, request.peerKey, vote, false)
   }
 
+  const Icon = request ? deviceIcon(request.deviceType) : null
+
   return (
-    <View pointerEvents='box-none' style={[styles.container, { top: insets.top + 16 }]}>
-      <View
-        style={[
-          styles.banner,
-          {
-            backgroundColor: c.colorSurfaceSecondary,
-            borderColor: c.colorBorderPrimary,
-            shadowColor: c.colorScrim
-          }
-        ]}
-      >
-        <View style={[styles.iconWrap, { backgroundColor: c.colorInfoSubtle }]}>
-          <Smartphone size={14} color={c.colorInfo} />
+    <Modal
+      visible={visible}
+      animationType='slide'
+      presentationStyle='pageSheet'
+      onRequestClose={() => respond('no')}
+      onDismiss={() => respond('no')}
+    >
+      {request && Icon ? (
+        <View style={[styles.root, { backgroundColor: c.colorBackground }]}>
+          <View style={styles.body}>
+            <View style={[styles.iconWrap, { backgroundColor: c.colorSurfaceSecondary }]}>
+              <Icon size={48} color={c.colorTextPrimary} />
+            </View>
+
+            <Text style={[styles.deviceName, { color: c.colorTextPrimary }]}>
+              {request.displayName}
+            </Text>
+
+            <Text style={[styles.subtitle, { color: c.colorTextSecondary }]}>
+              wants to pair with this device
+            </Text>
+          </View>
+
+          <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 36) }]}>
+            <View style={styles.actionWrap}>
+              <Button variant='danger' size='lg' pill width='full' icon={<CloseIcon size={18} color={c.colorDanger} />} onClick={() => respond('no')}>
+                Decline
+              </Button>
+            </View>
+            <View style={styles.actionWrap}>
+              <Button variant='success' size='lg' pill width='full' icon={<CheckIcon size={18} color={c.colorSuccess} />} onClick={() => respond('remember')}>
+                Pair
+              </Button>
+            </View>
+          </View>
         </View>
-
-        <Text style={[styles.label, { color: c.colorTextPrimary }]} numberOfLines={1}>
-          {request.displayName} wants to pair
-        </Text>
-
-        <Pressable onPress={() => respond('no')} hitSlop={8}>
-          <Text style={[styles.action, { color: c.colorTextSecondary }]}>Decline</Text>
-        </Pressable>
-
-        <Pressable onPress={() => respond('remember')} hitSlop={8}>
-          <Text style={[styles.action, { color: c.colorInfo }]}>Pair</Text>
-        </Pressable>
-      </View>
-    </View>
+      ) : null}
+    </Modal>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    left: 16,
-    right: 16
+  root: {
+    flex: 1,
+    justifyContent: 'space-between'
   },
-  banner: {
-    flexDirection: 'row',
+  body: {
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 14,
+    paddingHorizontal: 32
+  },
+  deviceName: {
+    fontSize: 20,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginTop: 8
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 4
+  },
+  footer: {
+    flexDirection: 'row',
     gap: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    borderWidth: 1,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    elevation: 8
+    paddingHorizontal: 20
   },
   iconWrap: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 96,
+    height: 96,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center'
   },
-  label: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  action: {
-    fontSize: 14,
-    fontWeight: '700'
+  actionWrap: {
+    flex: 1
   }
 })
