@@ -59,6 +59,7 @@ export interface TransferSessionState {
   topic: string
   connectionState: ConnectionState
   role: TransferRole | null
+  pairing: boolean
   peerCount: number
   isReconnecting: boolean
   incomingFileOffers: IncomingFileOffer[]
@@ -83,6 +84,8 @@ export type TransferAction =
   | { type: 'share_requested' }
   | { type: 'join_failed'; code?: TransferErrorCode; message: string }
   | { type: 'clear_session' }
+  | { type: 'clear_pairing_session' }
+  | { type: 'pairing_started' }
   | { type: 'set_error'; code?: TransferErrorCode; message: string }
   | { type: 'status_changed'; state: ConnectionState; peers?: number }
   | { type: 'role_changed'; role: TransferRole | null }
@@ -112,6 +115,7 @@ export type TransferAction =
   | { type: 'remember_declined'; peerKey: string }
   | { type: 'remember_requested'; request: IncomingPairRequest }
   | { type: 'set_peers'; peers: RememberedPeer[] }
+  | { type: 'forget_peer'; peerKey: string }
   | { type: 'request_pair_peer'; peerKey: string }
   | { type: 'invite_received'; invite: IncomingInvite }
   | { type: 'invite_response_received'; response: InviteResponse }

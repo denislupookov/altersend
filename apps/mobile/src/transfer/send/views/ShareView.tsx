@@ -1,25 +1,29 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Modal, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
+import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import { buildInviteText, formatFileSize, useShareViewModel } from '@altersend/domain'
-import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme, withAlpha } from '@altersend/components'
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, CopyIcon, deviceIcon, FolderIcon, QrCodeIcon, ShareIcon } from '@altersend/components/icons'
+import { buildInviteText, formatFileSize, useShareViewModel, type ConnectedDeviceRow } from '@altersend/domain'
+import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
+import { CheckIcon, ChevronsUpDownIcon, CopyIcon, deviceIcon, FolderIcon, QrCodeIcon, ShareIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { useToast } from '@/src/components/Toast'
+import { DeviceActionsSheet } from '@/src/components'
 import { QRSection } from './QRSection'
+import { ShareQrSheet } from './ShareQrSheet'
+import { ShareFilesSheet } from './ShareFilesSheet'
 import { Text } from '@/src/components/ThemedText'
 
 export function ShareView() {
-  const { t } = useTranslation(['send', 'common'])
+  const { t } = useTranslation(['send', 'common', 'settings'])
   const { theme } = useTheme()
   const c = theme.colors
   const vm = useShareViewModel(t)
-  const [isFilesExpanded, setIsFilesExpanded] = useState(false)
+  const [isFilesSheetOpen, setIsFilesSheetOpen] = useState(false)
   const [isQrOpen, setIsQrOpen] = useState(false)
+  const [actionsTarget, setActionsTarget] = useState<{ peerKey: string; name: string } | null>(null)
   const toast = useToast()
   const connectedPeerKeysRef = useRef<Set<string> | null>(null)
   const connectedRows = useMemo(
-    () => vm.devices.filter((row) => row.kind === 'connected'),
+    () => vm.devices.filter((row): row is ConnectedDeviceRow => row.kind === 'connected'),
     [vm.devices]
   )
 
@@ -35,7 +39,7 @@ export function ShareView() {
 
     toast.show({
       title: t('send:status.peerConnected'),
-      hint: `${joinedPeer.name} joined`,
+      hint: joinedPeer.isKnown ? `${joinedPeer.name} joined` : undefined,
       durationMs: 2500
     })
   }, [connectedRows, t, toast])
@@ -82,31 +86,41 @@ export function ShareView() {
           <View style={styles.invitePanel}>
             <QRSection topic={vm.topic} showWaitingState={false} size={200} style={styles.qrPanelSection} />
             <View style={styles.keyContainer}>
-              <TopicCodeField
-                copied={vm.isCopied}
-                onCopy={() => void copyTopic()}
+              <Input
+                aria-label={t('send:connection.copyLabel')}
                 placeholder={t('send:connection.placeholder')}
-                topic={vm.topic}
+                readOnly
+                trailing={
+                  <Button
+                    variant={vm.isCopied ? 'success' : 'ghost'}
+                    size='sm'
+                    iconOnly
+                    aria-label={t('send:connection.copyLabel')}
+                    disabled={!vm.topic}
+                    onClick={() => void copyTopic()}
+                    icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+                  />
+                }
+                value={vm.topic}
               />
             </View>
           </View>
         )}
 
-        <View style={styles.filesWrap}>
-          <LinkCard>
-            <LinkRow
-              icon={<FolderIcon size={20} color={c.colorTextSecondary} />}
-              label={vm.files.length === 1 ? '1 file' : `${vm.files.length} files`}
-              subtitle={formatFileSize(vm.totalSize)}
-              onPress={() => setIsFilesExpanded(!isFilesExpanded)}
-              trailing={isFilesExpanded ? <ChevronUpIcon size={20} color={c.colorTextMuted} /> : <ChevronDownIcon size={20} color={c.colorTextMuted} />}
-              isLast={!isFilesExpanded}
-            />
-            {isFilesExpanded && vm.files.map((file, index) => (
-              <LinkRow key={file.path} file label={file.name} size={file.size} isLast={index === vm.files.length - 1} />
-            ))}
-          </LinkCard>
-        </View>
+        {vm.files.length > 0 && (
+          <View style={styles.filesWrap}>
+            <LinkCard>
+              <LinkRow
+                icon={<FolderIcon size={20} color={c.colorTextSecondary} />}
+                label={vm.files.length === 1 ? '1 file' : `${vm.files.length} files`}
+                subtitle={formatFileSize(vm.totalSize)}
+                onPress={() => setIsFilesSheetOpen(true)}
+                trailing={<ChevronsUpDownIcon size={18} color={c.colorTextMuted} />}
+                isLast
+              />
+            </LinkCard>
+          </View>
+        )}
 
         {vm.hasDevices && (
           <>
@@ -122,45 +136,48 @@ export function ShareView() {
               <LinkCard>
                 {vm.devices.map((row, index) => {
                   const isLast = index === vm.devices.length - 1
+                  const openActions = () => setActionsTarget({ peerKey: row.peerKey, name: row.name })
                   if (row.kind === 'connected') {
                     const Icon = row.deviceType ? deviceIcon(row.deviceType) : null
                     return (
-                      <LinkRow
-                        key={row.peerKey}
-                        icon={
-                          Icon
-                            ? <Icon size={18} color={c.colorTextSecondary} />
-                            : <Text style={[styles.initials, { color: c.colorInfo }]}>{row.name.slice(0, 2).toUpperCase()}</Text>
-                        }
-                        iconBackground={Icon ? c.colorSurfacePrimary : c.colorInfoSubtle}
-                        label={row.name}
-                        subtitle={row.subtitle}
-                        subtitleTone={row.subtitleTone}
-                        progressPercent={row.progressPercent}
-                        trailing={row.action === 'pair' ? <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>Pair</Button> : null}
-                        isLast={isLast}
-                      />
+                      <Pressable key={row.peerKey} onLongPress={openActions}>
+                        <LinkRow
+                          icon={
+                            Icon
+                              ? <Icon size={18} color={c.colorTextSecondary} />
+                              : <Text style={[styles.initials, { color: c.colorInfo }]}>{row.name.slice(0, 2).toUpperCase()}</Text>
+                          }
+                          iconBackground={Icon ? c.colorSurfacePrimary : c.colorInfoSubtle}
+                          label={row.name}
+                          subtitle={row.subtitle}
+                          subtitleTone={row.subtitleTone}
+                          progressPercent={row.progressPercent}
+                          trailing={row.action === 'pair' ? <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>Pair</Button> : null}
+                          isLast={isLast}
+                        />
+                      </Pressable>
                     )
                   }
                   const PeerIcon = deviceIcon(row.deviceType)
                   const isActive = row.action === 'inviting' || row.action === 'invite-sent'
                   const label = row.action === 'inviting' ? 'Inviting…' : row.action === 'invite-sent' ? 'Sent' : 'Invite'
                   return (
-                    <LinkRow
-                      key={row.peerKey}
-                      icon={<PeerIcon size={18} color={c.colorTextSecondary} />}
-                      label={row.name}
-                      subtitle={row.subtitle}
-                      subtitleTone={row.subtitleTone}
-                      isActive={isActive}
-                      onPress={() => void vm.invite(row.peerKey)}
-                      trailing={
-                        <Button disabled={isActive} onClick={() => void vm.invite(row.peerKey)} size='sm' variant='primary' pill>
-                          {label}
-                        </Button>
-                      }
-                      isLast={isLast}
-                    />
+                    <Pressable key={row.peerKey} onLongPress={openActions}>
+                      <LinkRow
+                        icon={<PeerIcon size={18} color={c.colorTextSecondary} />}
+                        label={row.name}
+                        subtitle={row.subtitle}
+                        subtitleTone={row.subtitleTone}
+                        isActive={isActive}
+                        onPress={() => void vm.invite(row.peerKey)}
+                        trailing={
+                          <Button disabled={isActive} onClick={() => void vm.invite(row.peerKey)} size='sm' variant='primary' pill>
+                            {label}
+                          </Button>
+                        }
+                        isLast={isLast}
+                      />
+                    </Pressable>
                   )
                 })}
               </LinkCard>
@@ -169,58 +186,30 @@ export function ShareView() {
         )}
       </ScrollView>
 
-      <Modal visible={isQrOpen} transparent animationType='slide' onRequestClose={() => setIsQrOpen(false)}>
-        <Pressable style={[styles.backdrop, { backgroundColor: withAlpha(c.colorScrim, 0.55) }]} onPress={() => setIsQrOpen(false)} />
-        <View style={[styles.sheet, { backgroundColor: c.colorBackground, borderColor: c.colorBorderPrimary }]}>
-          <View style={[styles.grabber, { backgroundColor: c.colorBorderStrong }]} />
-          <View style={styles.sheetHeader}>
-            <Text style={[styles.sheetTitle, { color: c.colorTextPrimary }]}>Scan to connect</Text>
-            <Pressable accessibilityRole='button' accessibilityLabel='Close' hitSlop={12} onPress={() => setIsQrOpen(false)}>
-              <CloseIcon size={20} color={c.colorTextPrimary} />
-            </Pressable>
-          </View>
-          <QRSection topic={vm.topic} showWaitingState={false} />
-        </View>
-      </Modal>
+      <ShareQrSheet open={isQrOpen} topic={vm.topic} onClose={() => setIsQrOpen(false)} />
+
+      <DeviceActionsSheet
+        open={actionsTarget !== null}
+        onClose={() => setActionsTarget(null)}
+        onRemove={async () => {
+          const target = actionsTarget
+          setActionsTarget(null)
+          if (!target) return
+          const removed = await vm.forget(target.peerKey)
+          toast.show({ title: t(removed ? 'settings:pairing.deviceRemoved' : 'settings:pairing.removeFailed') })
+        }}
+      />
+
+      <ShareFilesSheet
+        open={isFilesSheetOpen}
+        files={vm.files}
+        totalSize={vm.totalSize}
+        onClose={() => setIsFilesSheetOpen(false)}
+      />
     </>
   )
 }
 
-function TopicCodeField({
-  copied,
-  onCopy,
-  placeholder,
-  topic
-}: {
-  copied: boolean
-  onCopy: () => void
-  placeholder: string
-  topic: string
-}) {
-  const { t } = useTranslation(['send'])
-
-  return (
-    <Input
-      aria-label={t('send:connection.copyLabel')}
-      mono
-      placeholder={placeholder}
-      readOnly
-      secure
-      trailing={
-        <Pressable
-          accessibilityLabel={t('send:connection.copyLabel')}
-          accessibilityRole='button'
-          disabled={!topic}
-          onPress={onCopy}
-          style={({ pressed }) => [styles.copyButton, pressed && styles.copyButtonPressed]}
-        >
-          {copied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
-        </Pressable>
-      }
-      value={topic}
-    />
-  )
-}
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
@@ -235,23 +224,11 @@ const styles = StyleSheet.create({
   section: { marginBottom: 16 },
   filesWrap: { marginBottom: 24 },
   tiles: { flexDirection: 'row', gap: 12, marginBottom: 24 },
-  tile: { flex: 1 },
+  tile: { flex: 1, minWidth: 0 },
   invitePanel: {
     marginBottom: 20
   },
   keyContainer: { marginTop: 20, width: '100%' },
-  copyButton: {
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  copyButtonPressed: { opacity: 0.55 },
   qrPanelSection: { paddingTop: 0 },
-  initials: { fontSize: 14, fontWeight: '700', letterSpacing: 0.5 },
-  backdrop: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
-  sheet: { position: 'absolute', left: 0, right: 0, bottom: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 48, gap: 12 },
-  grabber: { alignSelf: 'center', width: 36, height: 4, borderRadius: 999, marginBottom: 4 },
-  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sheetTitle: { fontSize: 16, fontWeight: '700' }
+  initials: { fontSize: 14, fontWeight: '700', letterSpacing: 0.5 }
 })

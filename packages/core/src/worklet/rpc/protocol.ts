@@ -139,6 +139,7 @@ export interface TransferRPC {
   peersList(): Promise<RememberedPeer[]>
   inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply>
   respondToInvite(input: InviteResponseInput): Promise<InviteResponseReply>
+  forgetPeer(pubkey: string): Promise<void>
 }
 
 export class BadRequestError extends Error {

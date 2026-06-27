@@ -2,7 +2,7 @@ import { Button, LinkRow } from '@altersend/components'
 import { CloseIcon } from '@altersend/components/icons'
 import { clearSession, formatFileSize, getOfferKey, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
-import { TransferActionGroup } from '../../components/TransferPrimitives'
+import { TransferActionGroup } from '../../components'
 
 export function ReceiveDisconnectedView() {
   const { t } = useTranslation(['receive', 'common'])

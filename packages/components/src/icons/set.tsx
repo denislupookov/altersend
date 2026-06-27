@@ -10,8 +10,11 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronUp,
+  ChevronsUpDown,
   CloudUpload,
   Code,
+  Clipboard,
+  ClipboardPaste,
   Copy,
   Database,
   Download,
@@ -27,6 +30,7 @@ import {
   Menu,
   Monitor,
   MoreHorizontal,
+  MoreVertical,
   Music,
   Pencil,
   Plus,
@@ -56,8 +60,11 @@ export const CheckIcon = adaptLucide(Check)
 export const ChevronDownIcon = adaptLucide(ChevronDown)
 export const ChevronRightIcon = adaptLucide(ChevronRight)
 export const ChevronUpIcon = adaptLucide(ChevronUp)
+export const ChevronsUpDownIcon = adaptLucide(ChevronsUpDown)
 export const CloudUploadIcon = adaptLucide(CloudUpload)
 export const CodeIcon = adaptLucide(Code)
+export const ClipboardIcon = adaptLucide(Clipboard)
+export const ClipboardPasteIcon = adaptLucide(ClipboardPaste)
 export const CopyIcon = adaptLucide(Copy)
 export const DatabaseIcon = adaptLucide(Database)
 export const DownloadIcon = adaptLucide(Download)
@@ -74,6 +81,7 @@ export const LockIcon = adaptLucide(Lock)
 export const MailIcon = adaptLucide(Mail)
 export const MenuIcon = adaptLucide(Menu)
 export const MoreHorizontalIcon = adaptLucide(MoreHorizontal)
+export const MoreVerticalIcon = adaptLucide(MoreVertical)
 export const MusicIcon = adaptLucide(Music)
 export const PencilIcon = adaptLucide(Pencil)
 export const PlusIcon = adaptLucide(Plus)

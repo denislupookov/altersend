@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
-import { FooterBar } from './FooterBar'
+import { Settings } from '../../components'
 import { ReceivePage, SendPage } from '..'
 
 type TransferTab = 'send' | 'receive'
@@ -47,7 +47,7 @@ export default function TransferPage({
         </Tabs>
       </section>
 
-      <FooterBar version={version} />
+      <Settings version={version} />
     </main>
   )
 }

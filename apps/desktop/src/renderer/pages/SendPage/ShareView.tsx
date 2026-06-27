@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { buildJoinUrl, formatFileSize, useShareViewModel } from '@altersend/domain'
 import { Button, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
-import { ChevronDownIcon, ChevronUpIcon, deviceIcon, FolderIcon, QrCodeIcon, ShareIcon } from '@altersend/components/icons'
+import { ChevronsUpDownIcon, deviceIcon, FolderIcon, QrCodeIcon, ShareIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { QRCode } from '../../components/QRCode'
-import { QRModal } from '../../components/QRModal'
+import { Popover, QRCode, QRModal } from '../../components'
 import { TopicCopyButton } from './TopicCopyButton'
 
 export function ShareView() {
@@ -12,7 +11,6 @@ export function ShareView() {
   const { theme } = useTheme()
   const c = theme.colors
   const vm = useShareViewModel(t)
-  const [isFilesExpanded, setIsFilesExpanded] = useState(false)
   const [isQrOpen, setIsQrOpen] = useState(false)
   const hasConnectedDevices = vm.connectedCount > 0
 
@@ -23,20 +21,32 @@ export function ShareView() {
   }
 
   const filesCard = (
-    <LinkCard>
-      <LinkRow
-        compact
-        icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
-        label={t('common:files.count', { count: vm.files.length })}
-        subtitle={formatFileSize(vm.totalSize)}
-        onPress={() => setIsFilesExpanded((v) => !v)}
-        trailing={isFilesExpanded ? <ChevronUpIcon size={16} color={c.colorTextMuted} /> : <ChevronDownIcon size={16} color={c.colorTextMuted} />}
-        isLast={!isFilesExpanded}
-      />
-      {isFilesExpanded && vm.files.map((file, index) => (
-        <LinkRow key={file.path} compact file label={file.name} size={file.size} isLast={index === vm.files.length - 1} />
-      ))}
-    </LinkCard>
+    <Popover
+      variant='plain'
+      align='left'
+      trigger={
+        <LinkCard>
+          <LinkRow
+            compact
+            icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
+            label={t('common:files.count', { count: vm.files.length })}
+            subtitle={formatFileSize(vm.totalSize)}
+            trailing={<ChevronsUpDownIcon size={16} color={c.colorTextMuted} />}
+            isLast
+          />
+        </LinkCard>
+      }
+    >
+      {() => (
+        <div style={{ maxHeight: 280, overflowY: 'auto' }}>
+          <LinkCard>
+            {vm.files.map((file, index) => (
+              <LinkRow key={file.path} compact file label={file.name} size={file.size} isLast={index === vm.files.length - 1} />
+            ))}
+          </LinkCard>
+        </div>
+      )}
+    </Popover>
   )
 
   return (
@@ -50,32 +60,35 @@ export function ShareView() {
             </Button>
           </div>
         ) : (
-          <div className='flex gap-6'>
-            <aside className='flex w-[240px] shrink-0 justify-center'>
-              {vm.topic ? (
-                <QRCode imageLabel={t('send:connection.qrCodeLabel')} loadingLabel={t('send:connection.generating')} size={216} value={buildJoinUrl(vm.topic)} />
-              ) : (
-                <div className='flex items-center justify-center rounded-lg bg-surface-primary text-[12px] text-text-muted' style={{ width: 216, height: 216 }}>
-                  {t('send:connection.generating')}
-                </div>
-              )}
-            </aside>
-
-            <div className='flex min-w-0 flex-1 flex-col justify-center gap-5'>
-              {vm.phase === 'waiting' && (
-                <div className='flex items-center gap-3'>
-                  <WaitingRadar size={44} color={c.colorInfo} pulsing icon={<ShareIcon size={17} color={c.colorInfo} />} />
-                  <div className='min-w-0'>
-                    <p className='m-0 text-[15px] font-bold leading-snug text-text-primary'>Waiting for someone to join</p>
-                    <p className='m-0 mt-0.5 text-[12px] leading-snug text-text-muted'>{t('send:hints.keepOpen')}</p>
+          <div className='flex flex-col gap-5'>
+            <div className='flex gap-6'>
+              <aside className={`flex w-[240px] shrink-0 justify-center ${vm.hasDevices ? 'self-start' : ''}`}>
+                {vm.topic ? (
+                  <QRCode imageLabel={t('send:connection.qrCodeLabel')} loadingLabel={t('send:connection.generating')} size={216} value={buildJoinUrl(vm.topic)} />
+                ) : (
+                  <div className='flex items-center justify-center rounded-lg bg-surface-primary text-[12px] text-text-muted' style={{ width: 216, height: 216 }}>
+                    {t('send:connection.generating')}
                   </div>
+                )}
+              </aside>
+
+              <div className={`flex min-w-0 flex-1 flex-col gap-5 ${vm.hasDevices ? '' : 'justify-center'}`}>
+                {vm.phase === 'waiting' && (
+                  <div className='flex items-center gap-3'>
+                    <WaitingRadar size={44} color={c.colorInfo} pulsing icon={<ShareIcon size={17} color={c.colorInfo} />} />
+                    <div className='min-w-0'>
+                      <p className='m-0 text-[15px] font-bold leading-snug text-text-primary'>Waiting for someone to join</p>
+                      <p className='m-0 mt-0.5 text-[12px] leading-snug text-text-muted'>{t('send:hints.keepOpen')}</p>
+                    </div>
+                  </div>
+                )}
+                <div className='flex w-full'>
+                  <TopicCopyButton topic={vm.topic} copied={vm.isCopied} onCopy={() => void copyTopic()} placeholder={t('send:connection.placeholder')} />
                 </div>
-              )}
-              <div className='flex w-full'>
-                <TopicCopyButton topic={vm.topic} copied={vm.isCopied} onCopy={() => void copyTopic()} placeholder={t('send:connection.placeholder')} />
+                {vm.hasDevices && filesCard}
               </div>
-              {filesCard}
             </div>
+            {!vm.hasDevices && filesCard}
           </div>
         )}
 
@@ -107,7 +120,7 @@ export function ShareView() {
                       trailing={
                         row.action === 'pair' ? <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>Pair</Button>
                         : row.action === 'pair-requested' ? <span className='text-[12px] text-text-muted'>Requested…</span>
-                        : null
+                        : undefined
                       }
                       isLast={isLast}
                     />

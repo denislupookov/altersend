@@ -67,11 +67,13 @@ export class RememberCoordinator {
   }
 
   onPeerConnected(peerKey: string): void {
-    void this.deviceIdentityReady
+    this.deviceIdentityReady
       .then(() => {
-        if (this.deps.getHandshakeHash(peerKey)) this.sendPairingInfo(peerKey)
+        if (this.deps.getHandshakeHash(peerKey)) {
+          this.sendPairingInfo(peerKey)
+        }
       })
-      .catch(() => {})
+      .catch(() => { })
   }
 
   async handlePairingInfo(message: PairingInfo, session: PairingSession): Promise<void> {
@@ -91,13 +93,15 @@ export class RememberCoordinator {
     const devicePubkeyHex = b4a.toString(pending.remoteDevicePubkey, 'hex')
     const known = await this.deps.rememberedStore.get(devicePubkeyHex)
     if (known) {
-      if (this.deps.getHandshakeHash(session.peerKey)) {
-        this.deps.emit(createRememberConfirmedEvent(session.peerKey, known))
+      if (!this.deps.getHandshakeHash(session.peerKey)) {
+        return
       }
-      return
+
+      this.deps.emit(createRememberConfirmedEvent(session.peerKey, known))
     }
     this.pendingPairings.set(session.peerKey, pending)
     const remote = this.remoteVotes.get(session.peerKey)
+
     if (remote?.decision === 'remember' && !this.ourVotes.has(session.peerKey)) {
       this.deps.emit(
         createRememberRequestedEvent({
@@ -145,7 +149,7 @@ export class RememberCoordinator {
     this.ourVotes.set(peerKey, { transferId, decision: vote, isMine })
     if (vote === 'remember') {
       this.startTimeout(peerKey, transferId)
-      await this.deviceIdentityReady.catch(() => {})
+      await this.deviceIdentityReady.catch(() => { })
       if (this.ourVotes.has(peerKey)) this.sendPairingInfo(peerKey)
     } else {
       this.clearTimer(peerKey)
@@ -158,14 +162,17 @@ export class RememberCoordinator {
   onPeerDisconnected(peerKey: string): void {
     const our = this.ourVotes.get(peerKey)
     const remote = this.remoteVotes.get(peerKey)
+
     if (our || remote) {
       this.deps.emit(createRememberDeclinedEvent(peerKey, our?.transferId ?? remote?.transferId ?? ''))
     }
+
     this.cleanupPeer(peerKey)
   }
 
   reset(): void {
     for (const peerKey of [...this.timers.keys()]) this.clearTimer(peerKey)
+
     this.ourVotes.clear()
     this.remoteVotes.clear()
     this.pendingPairings.clear()
@@ -178,6 +185,7 @@ export class RememberCoordinator {
     const remote =
       remoteEntry && remoteEntry.transferId === our?.transferId ? remoteEntry.decision : null
     const status = resolveVote(our ? { decision: our.decision, isMine: our.isMine } : null, remote)
+
     if (status === 'pending') return
 
     if (status === 'confirmed') {

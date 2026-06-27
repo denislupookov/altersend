@@ -48,8 +48,6 @@ export function ReceiveJoinView({
         <Input
           disabled={isLoading}
           error={joinCodeError}
-          mono
-          secure
           onChange={(e: { target: { value: string } }) => onJoinCodeChange(e.target.value)}
           placeholder={t('receive:form.codePlaceholder')}
           type='text'

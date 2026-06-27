@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { RememberedPeer } from '@altersend/core'
 import { formatFileSize, formatRelativeTime, type InviteStatus, inviteStatusSubtitle } from '../format'
-import { inviteDevice, requestPair, startSendSession } from '../transfer/commands'
+import { forgetPeer, inviteDevice, requestPair, startSendSession } from '../transfer/commands'
 import { useTransferStore } from '../transfer/store'
 import { applyPairState, getPeerListEntries } from './peerListUi'
 import type { PairState, PeerListEntryWithPair } from './peerListUi'
@@ -19,6 +19,7 @@ export interface ConnectedDeviceRow {
   kind: 'connected'
   peerKey: string
   name: string
+  isKnown: boolean
   deviceType: string | null
   subtitle: string
   subtitleTone: SubtitleTone
@@ -60,6 +61,7 @@ export interface ShareViewModel {
 
   pair: (peerKey: string) => void
   invite: (peerKey: string) => Promise<void>
+  forget: (peerKey: string) => Promise<boolean>
 }
 
 function statusLabel(status: PeerListEntryWithPair['status'], t: Translate): string {
@@ -210,11 +212,12 @@ export function useShareViewModel(t: Translate): ShareViewModel {
       kind: 'connected',
       peerKey: entry.peerKey,
       name: entry.displayName ?? peerDisplayNames[entry.peerKey] ?? entry.shortKey,
+      isKnown: Boolean(entry.displayName ?? peerDisplayNames[entry.peerKey]),
       deviceType: rememberedForPeer?.deviceType ?? null,
       subtitle,
       subtitleTone,
       progressPercent: entry.status === 'downloading' ? entry.progressPercent : undefined,
-      action: toPairAction(entry.pairState)
+      action: entry.status === 'disconnected' ? 'pair-done' : toPairAction(entry.pairState)
     }
   })
 
@@ -269,6 +272,7 @@ export function useShareViewModel(t: Translate): ShareViewModel {
     isCopied,
     markCopied: () => setIsCopied(true),
     pair,
-    invite
+    invite,
+    forget: forgetPeer
   }
 }

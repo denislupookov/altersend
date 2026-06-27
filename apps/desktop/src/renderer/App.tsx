@@ -2,9 +2,7 @@ import { useState } from 'react'
 import { clearSession, dismissInvite, joinSession, useSimulatedLoading, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi, hasBridge } from './api/bridgeApi'
-import { UpdateBanner } from './components/UpdateBanner'
-import { PairRequestBanner } from './components/PairRequestBanner'
-import { InviteBanner } from './components/InviteBanner'
+import { InviteBanner, PairRequestBanner, ToastProvider, UpdateBanner } from './components'
 import { isOnboardingCompleted, markOnboardingCompleted } from './lifecycle/onboardingStorage'
 import { useUpdateReady } from './lifecycle/useUpdateReady'
 import { BridgeUnavailablePage, LoadingPage, OnboardingPage, TransferPage } from './pages'
@@ -58,7 +56,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <ToastProvider>
       <TransferPage version={version} activeTab={activeTab} onTabChange={switchTab} />
       <PairRequestBanner />
       <InviteBanner onAccept={(topic) => {
@@ -68,6 +66,6 @@ export default function App() {
         }
       }} />
       <UpdateBanner ready={updateReady} />
-    </>
+    </ToastProvider>
   )
 }

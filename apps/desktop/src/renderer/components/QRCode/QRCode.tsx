@@ -22,7 +22,7 @@ export function QRCode({ value, loadingLabel, imageLabel, size = 220 }: QRCodePr
       return
     }
 
-    void QRCodeLib.toString(value, {
+    QRCodeLib.toString(value, {
       type: 'svg',
       errorCorrectionLevel: 'M',
       margin: 1,

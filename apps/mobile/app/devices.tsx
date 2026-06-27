@@ -1,47 +1,47 @@
-import { useEffect, useState } from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
-import { loadPeers, useTransferStore } from '@altersend/domain'
+import { StyleSheet, View } from 'react-native'
 import { Button, LinkCard, LinkRow, useTheme } from '@altersend/components'
-import { PlusIcon, deviceIcon } from '@altersend/components/icons'
-import { useRouter } from 'expo-router'
-import { DeviceActionsSheet, Layout } from '@/src/components'
+import { MoreVerticalIcon, PlusIcon, deviceIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/locales'
+import {
+  AddPairDeviceSheet,
+  DeviceActionsSheet,
+  Layout,
+  PairingManualCodeSheet,
+  PairingQrSheet,
+  PairingScanSheet
+} from '@/src/components'
 import { Text } from '@/src/components/ThemedText'
+import { usePairingFlow } from '@/src/pairing/usePairingFlow'
+import SyncDevicesSvg from '../../../assets/sync_devices.svg'
 
 export default function DevicesScreen() {
+  const { t } = useTranslation(['settings'])
   const { theme } = useTheme()
   const c = theme.colors
-  const router = useRouter()
-  const peers = useTransferStore((s) => s.peers)
-  const [actionsOpen, setActionsOpen] = useState(false)
-
-  useEffect(() => {
-    void loadPeers()
-  }, [])
+  const flow = usePairingFlow()
 
   return (
     <Layout
       title='Paired Devices'
       hasNativeHeader
       footer={
-        <Button
-          icon={<PlusIcon size={16} />}
-          onClick={() => router.push('/(tabs)/send')}
-          variant='primary'
-          size='lg'
-          width='full'
-        >
-          Pair New Device
+        <Button icon={<PlusIcon size={16} />} onClick={flow.openAddSheet} variant='primary' size='lg' width='full'>
+          {t('settings:pairing.pairANewDevice')}
         </Button>
       }
     >
-      <View style={styles.content}>
-        {peers.length === 0 ? (
-          <Text style={[styles.empty, { color: c.colorTextMuted }]}>
-            No paired devices yet. Pair a device to send without a code.
-          </Text>
-        ) : (
+      {flow.peers.length === 0 ? (
+        <View style={styles.emptyState}>
+          <View style={styles.illustration}>
+            <SyncDevicesSvg width='100%' height='100%' />
+          </View>
+          <Text style={[styles.emptyTitle, { color: c.colorTextPrimary }]}>{t('settings:pairing.noPairedDevices')}</Text>
+          <Text style={[styles.emptySubtitle, { color: c.colorTextMuted }]}>{t('settings:pairing.noPairedDevicesHint')}</Text>
+        </View>
+      ) : (
+        <View style={styles.content}>
           <LinkCard>
-            {peers.map((peer, index) => {
+            {flow.peers.map((peer, index) => {
               const Icon = deviceIcon(peer.deviceType)
               return (
                 <LinkRow
@@ -49,38 +49,29 @@ export default function DevicesScreen() {
                   icon={<Icon size={16} color={c.colorTextSecondary} />}
                   label={peer.displayName}
                   trailing={
-                    <DeviceActionsButton
-                      color={c.colorTextMuted}
-                      onPress={() => setActionsOpen(true)}
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      iconOnly
+                      aria-label='Device actions'
+                      icon={<MoreVerticalIcon size={14} />}
+                      onClick={() => flow.openDeviceActions(peer.remoteDevicePubkey, peer.displayName)}
                     />
                   }
-                  isLast={index === peers.length - 1}
+                  isLast={index === flow.peers.length - 1}
                 />
               )
             })}
           </LinkCard>
-        )}
-      </View>
-      <DeviceActionsSheet open={actionsOpen} onClose={() => setActionsOpen(false)} />
-    </Layout>
-  )
-}
+        </View>
+      )}
 
-function DeviceActionsButton({ color, onPress }: { color: string; onPress: () => void }) {
-  return (
-    <Pressable
-      accessibilityRole='button'
-      accessibilityLabel='Device actions'
-      hitSlop={12}
-      onPress={onPress}
-      style={({ pressed }) => [styles.actionsButton, { opacity: pressed ? 0.6 : 1 }]}
-    >
-      <View style={styles.dots}>
-        <View style={[styles.dot, { backgroundColor: color }]} />
-        <View style={[styles.dot, { backgroundColor: color }]} />
-        <View style={[styles.dot, { backgroundColor: color }]} />
-      </View>
-    </Pressable>
+      <DeviceActionsSheet {...flow.deviceActionsSheet} />
+      <AddPairDeviceSheet {...flow.addSheet} />
+      <PairingQrSheet {...flow.qrSheet} />
+      <PairingScanSheet {...flow.scanSheet} />
+      <PairingManualCodeSheet {...flow.manualSheet} />
+    </Layout>
   )
 }
 
@@ -90,23 +81,26 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingBottom: 16
   },
-  empty: {
+  emptyState: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 48
+  },
+  illustration: {
+    width: '80%',
+    aspectRatio: 1058 / 747.88979
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginTop: 28,
+    textAlign: 'center'
+  },
+  emptySubtitle: {
     fontSize: 14,
     lineHeight: 20,
-    paddingVertical: 8
-  },
-  actionsButton: {
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  dots: {
-    gap: 2
-  },
-  dot: {
-    width: 2.5,
-    height: 2.5,
-    borderRadius: 2
+    marginTop: 6,
+    textAlign: 'center'
   }
 })

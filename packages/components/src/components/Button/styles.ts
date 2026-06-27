@@ -17,42 +17,61 @@ export const styles = css.create({
     fontFamily: tokens.fontFamilySans,
     fontSize: tokens.fontSizeMd,
     fontWeight: tokens.fontWeightSemibold,
-    lineHeight: 1,
+    lineHeight: 1.1,
     letterSpacing: '-0.005em',
     textAlign: 'center',
     whiteSpace: 'nowrap',
     cursor: 'pointer',
     userSelect: 'none',
     transitionDuration: '160ms',
-    transitionProperty: 'background-color, border-color, color, box-shadow, opacity, transform',
+    transitionProperty: 'background-color, border-color, color, box-shadow, opacity',
     transitionTimingFunction: 'ease'
   },
   sm: {
-    paddingTop: tokens.space25,
-    paddingBottom: tokens.space25,
+    paddingTop: tokens.space3,
+    paddingBottom: tokens.space3,
     paddingLeft: tokens.space5,
     paddingRight: tokens.space5,
     fontSize: tokens.fontSizeMd,
     borderRadius: tokens.radiusSm
   },
   md: {
-    paddingTop: tokens.space35,
-    paddingBottom: tokens.space35,
+    paddingTop: tokens.space4,
+    paddingBottom: tokens.space4,
     paddingLeft: 26,
     paddingRight: 26,
     fontSize: tokens.fontSizeBase,
     borderRadius: tokens.radiusMd
   },
   lg: {
-    paddingTop: tokens.space4,
-    paddingBottom: tokens.space4,
-    paddingLeft: tokens.space7,
-    paddingRight: tokens.space7,
+    paddingTop: tokens.space35,
+    paddingBottom: tokens.space35,
+    paddingLeft: tokens.space4,
+    paddingRight: tokens.space4,
+    gap: tokens.space2,
     fontSize: tokens.fontSizeLg,
-    borderRadius: tokens.radiusMd
+    borderRadius: tokens.radiusLg
   },
   full: {
     width: '100%'
+  },
+  iconOnlySm: {
+    paddingTop: tokens.space2,
+    paddingBottom: tokens.space2,
+    paddingLeft: tokens.space15,
+    paddingRight: tokens.space15
+  },
+  iconOnlyMd: {
+    paddingTop: tokens.space25,
+    paddingBottom: tokens.space25,
+    paddingLeft: tokens.space2,
+    paddingRight: tokens.space2
+  },
+  iconOnlyLg: {
+    paddingTop: tokens.space3,
+    paddingBottom: tokens.space3,
+    paddingLeft: tokens.space25,
+    paddingRight: tokens.space25
   },
   primary: {
     backgroundColor: tokens.colorTextPrimary,
@@ -70,8 +89,7 @@ export const styles = css.create({
   },
   primaryPressed: {
     backgroundColor: tokens.colorAccentActive,
-    borderColor: tokens.colorBorderPrimary,
-    transform: 'translateY(1px)'
+    borderColor: tokens.colorBorderPrimary
   },
   secondary: {
     backgroundColor: tokens.colorBackgroundSubtle,
@@ -164,6 +182,14 @@ export const styles = css.create({
     cursor: 'not-allowed',
     boxShadow: 'none',
     opacity: 1
+  },
+  disabledGhost: {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    color: tokens.colorTextMuted,
+    cursor: 'not-allowed',
+    boxShadow: 'none',
+    opacity: 0.5
   },
   textBase: {
     fontFamily: tokens.fontFamilySans,

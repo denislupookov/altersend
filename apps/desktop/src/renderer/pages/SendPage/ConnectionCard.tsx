@@ -1,7 +1,7 @@
 import { buildJoinUrl } from '@altersend/domain'
 import { QrCodeIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { QRCode } from '../../components/QRCode'
+import { QRCode } from '../../components'
 import { TopicCopyButton } from './TopicCopyButton'
 
 interface ConnectionCardProps {

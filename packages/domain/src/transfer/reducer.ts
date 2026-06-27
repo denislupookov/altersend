@@ -27,6 +27,7 @@ export const initialTransferSessionState: TransferSessionState = {
   topic: '',
   connectionState: 'disconnected',
   role: null,
+  pairing: false,
   peerCount: 0,
   isReconnecting: false,
   incomingFileOffers: [],
@@ -64,6 +65,7 @@ function endSession(state: TransferSessionState): TransferSessionState {
   return {
     ...state,
     role: null,
+    pairing: false,
     isReconnecting: false,
     incomingFileOffers: [],
     receiveDownloadStates: {},
@@ -131,6 +133,27 @@ export function transferSessionReducer(
       return { ...state, isReconnecting: true }
     case 'clear_session':
       return endSession(state)
+    case 'pairing_started':
+      return { ...state, pairing: true }
+    case 'clear_pairing_session':
+      return {
+        ...state,
+        role: null,
+        pairing: false,
+        connectionState: 'disconnected',
+        isReconnecting: false,
+        peerCount: 0,
+        topic: '',
+        transferId: null,
+        connectedPeers: {},
+        peerDownloads: {},
+        remember: {
+          ...state.remember,
+          pairStatus: {},
+          peerDisplayNames: {},
+          incomingRequest: null
+        }
+      }
     case 'join_failed':
       return {
         ...state,
@@ -151,6 +174,7 @@ export function transferSessionReducer(
       return {
         ...state,
         role: 'sender',
+        pairing: false,
         peerDownloads: {},
         connectedPeers: {},
         errorCode: null,
@@ -236,6 +260,7 @@ export function transferSessionReducer(
       return {
         ...state,
         role: 'receiver',
+        pairing: false,
         incomingFileOffers: [],
         receiveDownloadStates: {},
         selectedFiles: [],
@@ -364,6 +389,34 @@ export function transferSessionReducer(
       return { ...state, remember: { ...state.remember, incomingRequest: action.request } }
     case 'set_peers':
       return { ...state, peers: action.peers }
+    case 'forget_peer': {
+      const key = action.peerKey.toLowerCase()
+      const peers = state.peers.filter((peer) => peer.remoteDevicePubkey.toLowerCase() !== key)
+      const pairStatus = { ...state.remember.pairStatus }
+      delete pairStatus[action.peerKey]
+      delete pairStatus[key]
+      const peerDisplayNames = { ...state.remember.peerDisplayNames }
+      delete peerDisplayNames[action.peerKey]
+      delete peerDisplayNames[key]
+      const inviteResponses = { ...state.remember.inviteResponses }
+      delete inviteResponses[action.peerKey]
+      delete inviteResponses[key]
+      return {
+        ...state,
+        peers,
+        remember: {
+          ...state.remember,
+          pairStatus,
+          peerDisplayNames,
+          inviteResponses,
+          incomingRequest: clearIncomingFor(state.remember.incomingRequest, action.peerKey),
+          incomingInvite:
+            state.remember.incomingInvite?.remoteDevicePubkey.toLowerCase() === key
+              ? null
+              : state.remember.incomingInvite
+        }
+      }
+    }
     case 'invite_received':
       return { ...state, remember: { ...state.remember, incomingInvite: action.invite } }
     case 'invite_response_received':

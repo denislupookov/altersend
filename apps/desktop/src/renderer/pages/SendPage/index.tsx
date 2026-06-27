@@ -8,7 +8,7 @@ import {
   isShareStep,
   useTransferStore
 } from '@altersend/domain'
-import { TransferActionGroup, TransferCardFrame } from '../../components/TransferPrimitives'
+import { TransferActionGroup, TransferCardFrame } from '../../components'
 import { PreparingView } from './PreparingView'
 import { SelectFilesView } from './SelectFilesView'
 import { ShareView } from './ShareView'

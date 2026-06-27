@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Button } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
-import { TransferStatusPanel, TransferCardFrame } from '../../components/TransferPrimitives'
+import { TransferStatusPanel, TransferCardFrame } from '../../components'
 import { ReceiveCompleteView } from './ReceiveCompleteView'
 import { ReceiveConnectedView } from './ReceiveConnectedView'
 import { ReceiveDisconnectedView } from './ReceiveDisconnectedView'
@@ -18,7 +18,7 @@ import {
 
 export default function ReceivePage() {
   const { t } = useTranslation(['receive', 'common'])
-  const role = useTransferStore((s) => s.role)
+  const role = useTransferStore((s) => (s.pairing ? null : s.role))
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const receiveDownloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const peerCount = useTransferStore((s) => s.peerCount)

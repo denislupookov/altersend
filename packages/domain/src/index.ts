@@ -17,3 +17,4 @@ export * from './transfer'
 
 export * from './onboarding'
 export * from './useSimulatedLoading'
+export * from './pairing'

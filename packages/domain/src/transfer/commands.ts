@@ -44,6 +44,37 @@ export const startSendSession = async (): Promise<string> => {
   }
 }
 
+export const hostPairingSession = async (): Promise<string> => {
+  dispatchToTransferStore({ type: 'pairing_started' })
+  try {
+    const { topic } = await getTransferApi().worker.host()
+    return topic
+  } catch (error) {
+    reportError('hostPairingSession', error)
+    throw error
+  }
+}
+
+export const joinPairingSession = async (topic: string): Promise<JoinReply> => {
+  dispatchToTransferStore({ type: 'pairing_started' })
+  try {
+    return await getTransferApi().worker.join(topic)
+  } catch (error) {
+    reportError('joinPairingSession', error)
+    throw error
+  }
+}
+
+export const clearPairingSession = async (): Promise<void> => {
+  dispatchToTransferStore({ type: 'clear_pairing_session' })
+  try {
+    await getTransferApi().worker.closePeers()
+  } catch (error) {
+    reportError('clearPairingSession', error)
+    throw error
+  }
+}
+
 export const joinSession = async (topic: string): Promise<JoinReply> => {
   dispatchToTransferStore({ type: 'join_requested' })
   try {
@@ -81,18 +112,28 @@ export const downloadFiles = async (files: DownloadFileRequest[]): Promise<Downl
   }
 }
 
-export const rememberVote = async (
-  transferId: string,
-  peerKey: string,
-  vote: 'remember' | 'no',
+export interface RememberVote {
+  transferId: string
+  peerKey: string
+  vote: 'remember' | 'no'
   isMine: boolean
-): Promise<void> => {
+}
+
+export const rememberVote = async (input: RememberVote): Promise<void> => {
   try {
-    await getTransferApi().worker.rememberVote({ transferId, peerKey, vote, isMine })
+    await getTransferApi().worker.rememberVote(input)
   } catch (error) {
     reportError('rememberVote', error)
     setError(TRANSFER_ERROR_CODES.transferFailed, error)
   }
+}
+
+export function subscribeToPeerConnected(cb: (peerKey: string) => void): () => void {
+  return getTransferApi().onTransferEvent((event) => {
+    if (event.type === 'status' && event.state === 'peer-connected' && event.peer) {
+      cb(event.peer)
+    }
+  })
 }
 
 export const loadPeers = async (): Promise<void> => {
@@ -104,9 +145,24 @@ export const loadPeers = async (): Promise<void> => {
   }
 }
 
+export const forgetPeer = async (pubkey: string): Promise<boolean> => {
+  dispatchToTransferStore({ type: 'forget_peer', peerKey: pubkey })
+
+  try {
+    await getTransferApi().worker.forgetPeer(pubkey)
+    await loadPeers()
+    return true
+  } catch (error) {
+    reportError('forgetPeer', error)
+    await loadPeers()
+    return false
+  }
+}
+
 export const requestPair = (transferId: string, peerKey: string): void => {
   dispatchToTransferStore({ type: 'request_pair_peer', peerKey })
-  void rememberVote(transferId, peerKey, 'remember', false)
+  
+  rememberVote({ transferId, peerKey, vote: 'remember', isMine: false })
 }
 
 export const inviteDevice = async (
@@ -143,7 +199,8 @@ export const dismissInvite = (): void => {
 
 export const declineInvite = (invite: IncomingInvite): void => {
   dispatchToTransferStore({ type: 'dismiss_invite' })
-  void respondToInvite({
+  
+  respondToInvite({
     remoteDevicePubkey: invite.remoteDevicePubkey,
     topic: invite.topic,
     response: 'declined'
@@ -166,14 +223,16 @@ export const removeSelectedFile = (path: string): void => {
 export function canJoinFromDeepLink(code: string): boolean {
   const { topic, role } = transferStore.getState()
   const activeTopic = topic.length > 0 ? topic : null
+
   if (role === 'sender') return false
   if (activeTopic && activeTopic !== code) return false
+
   return true
 }
 
 export const clearSenderFlow = (): void => {
   dispatchToTransferStore({ type: 'clear_send_draft' })
-  void clearSession()
+  clearSession()
 }
 
 export const continueShare = async (files: SelectedFile[]): Promise<void> => {
@@ -183,6 +242,7 @@ export const continueShare = async (files: SelectedFile[]): Promise<void> => {
     path: file.path,
     isTemporary: file.isTemporary
   }))
+  
   dispatchToTransferStore({
     type: 'init_upload_items',
     items: createInitialUploadItems(files)

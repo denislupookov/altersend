@@ -2,6 +2,7 @@ import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 
 import { html } from 'react-strict-dom'
 import { usePressState } from '../../hooks/usePressState'
 import { useTheme } from '../../theme'
+import { Spinner } from '../Spinner'
 import { styles } from './styles'
 
 type ButtonElementProps = Parameters<typeof html.button>[0]
@@ -10,8 +11,10 @@ export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'light' | 'dange
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 export interface ButtonProps extends Omit<ButtonElementProps, 'children' | 'style'> {
-  children: ReactNode
+  children?: ReactNode
   icon?: ReactNode
+  iconOnly?: boolean
+  loading?: boolean
   pill?: boolean
   size?: ButtonSize
   variant?: ButtonVariant
@@ -61,10 +64,20 @@ const pressedIconColor: Partial<Record<ButtonVariant, keyof ReturnType<typeof us
   success: 'colorBackground'
 }
 
+const spinnerSize: Record<ButtonSize, number> = { sm: 12, md: 14, lg: 16 }
+
+const iconOnlyPadding: Record<ButtonSize, (typeof styles)[keyof typeof styles]> = {
+  sm: styles.iconOnlySm,
+  md: styles.iconOnlyMd,
+  lg: styles.iconOnlyLg
+}
+
 export function Button({
   children,
   disabled,
   icon,
+  iconOnly = false,
+  loading = false,
   pill,
   size = 'md',
   type = 'button',
@@ -74,36 +87,41 @@ export function Button({
 }: ButtonProps) {
   const { isPressed, isHovered, pressHandlers } = usePressState()
   const { theme } = useTheme()
-  const showPressed = isPressed && !disabled
-  const showHover = isHovered && !disabled && !isPressed
+  const isDisabled = disabled || loading
+  const showPressed = isPressed && !isDisabled
+  const showHover = isHovered && !isDisabled && !isPressed
 
-  const iconColorKey = disabled
+  const iconColorKey = isDisabled && !loading
     ? 'colorTextMuted'
     : (showPressed || showHover) && pressedIconColor[variant]
       ? pressedIconColor[variant]!
       : normalIconColor[variant]
   const resolvedIconColor = theme.colors[iconColorKey]
-  const iconEl = isValidElement(icon)
-    ? cloneElement(icon as ReactElement<{ color?: string }>, { color: resolvedIconColor })
-    : icon
+
+  const leadingEl = loading
+    ? <Spinner size={spinnerSize[size]} color={resolvedIconColor} />
+    : isValidElement(icon)
+      ? cloneElement(icon as ReactElement<{ color?: string }>, { color: resolvedIconColor })
+      : icon
 
   return (
     <html.button
       {...props}
       {...pressHandlers}
-      disabled={disabled}
+      disabled={isDisabled}
       type={type}
       style={[
         styles.base,
         styles[size],
+        iconOnly && iconOnlyPadding[size],
         styles[variant],
         pill && styles.pill,
         width === 'full' && styles.full,
         (showPressed || showHover) && pressedStyle[variant],
-        disabled && styles.disabled
+        isDisabled && !loading && (variant === 'ghost' ? styles.disabledGhost : styles.disabled)
       ]}
     >
-      {iconEl ?? null}
+      {leadingEl ?? null}
       {typeof children === 'string' ? (
         <html.span
           style={[
@@ -111,7 +129,7 @@ export function Button({
             textSize[size],
             textVariant[variant],
             (showPressed || showHover) && pressedTextStyle[variant],
-            disabled && styles.textDisabled
+            isDisabled && !loading && styles.textDisabled
           ]}
         >
           {children}

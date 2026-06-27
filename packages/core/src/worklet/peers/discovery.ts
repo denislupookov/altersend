@@ -27,9 +27,6 @@ interface DiscoverySession {
 
 const normalizeKey = (hex: string): string => hex.toLowerCase()
 
-// Keeps a device-identity-keyed Hyperswarm presence on every remembered peer's
-// rendezvous topic so paired devices auto-connect while both are foregrounded.
-// The warm connection carries lightweight `invite` knocks between them.
 export class DiscoveryCoordinator {
   private readonly deps: DiscoveryDeps
   private swarm: Hyperswarm | null = null
@@ -68,7 +65,6 @@ export class DiscoveryCoordinator {
     for (const peer of peers) this.joinTopic(peer.rendezvousTopic)
   }
 
-  // Pick up topics for peers paired after start().
   async refresh(): Promise<void> {
     if (!this.swarm) return this.start()
     const peers = await this.deps.rememberedStore.list()
@@ -131,6 +127,17 @@ export class DiscoveryCoordinator {
 
     session.control.send({ type: 'invite-response', topic, response })
     return { delivered: true }
+  }
+
+  forget(remoteDevicePubkey: string): void {
+    const key = normalizeKey(remoteDevicePubkey)
+    this.knownPubkeys.delete(key)
+    const session = this.sessions.get(key)
+    if (!session) return
+    this.sessions.delete(key)
+    try {
+      session.socket.destroy()
+    } catch {}
   }
 
   async stop(): Promise<void> {

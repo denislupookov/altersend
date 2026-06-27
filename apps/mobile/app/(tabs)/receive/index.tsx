@@ -24,7 +24,7 @@ export default function ReceiveScreen() {
   const { t } = useTranslation(['receive', 'common', 'errors'])
   const router = useRouter()
   const errorCode = useTransferStore((s) => s.errorCode)
-  const role = useTransferStore((s) => s.role)
+  const role = useTransferStore((s) => (s.pairing ? null : s.role))
   const isReconnecting = useTransferStore((s) => s.isReconnecting)
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const peerCount = useTransferStore((s) => s.peerCount)

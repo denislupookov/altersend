@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking'
 import { router } from 'expo-router'
-import { canJoinFromDeepLink, extractJoinCode, joinSession } from '@altersend/domain'
+import { canJoinFromDeepLink, extractJoinCode, isPairUrl, joinSession } from '@altersend/domain'
 
 let started = false
 let subscription: { remove(): void } | null = null
@@ -24,6 +24,16 @@ function handleUrl(url: string): void {
   if (!ALLOWED_SCHEMES.some((s) => url.startsWith(s))) return
   const code = extractJoinCode(url)
   if (!code) return
+
+  if (isPairUrl(url)) {
+    try {
+      router.navigate({ pathname: '/devices', params: { pairCode: code } })
+    } catch (err) {
+      console.warn('deepLinkHandler: pair navigate failed', err)
+    }
+    return
+  }
+
   if (!canJoinFromDeepLink(code)) {
     console.warn('deepLinkHandler: ignoring incoming URL — session already active')
     return

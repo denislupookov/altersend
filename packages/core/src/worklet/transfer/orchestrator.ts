@@ -162,7 +162,8 @@ export class TransferOrchestrator implements TransferRPC {
         if (event.type === 'remember-confirmed') void this.discovery.refresh()
       }
     })
-    void this.discovery.start()
+    
+    this.discovery.start()
   }
 
   private initStorage(): void {
@@ -201,6 +202,11 @@ export class TransferOrchestrator implements TransferRPC {
 
   peersList(): Promise<RememberedPeer[]> {
     return this.rememberedStore.list()
+  }
+
+  async forgetPeer(pubkey: string): Promise<void> {
+    await this.rememberedStore.forget(pubkey)
+    this.discovery.forget(pubkey)
   }
 
   inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply> {
@@ -450,6 +456,7 @@ export class TransferOrchestrator implements TransferRPC {
   abortInFlight(): void {
     const controller = this.inflightAbort
     if (!controller) return
+    
     this.inflightAbort = null
     controller.abort()
   }
@@ -462,9 +469,11 @@ export class TransferOrchestrator implements TransferRPC {
       this.activeTransfer = null
       this.activeTransferReady = null
       this.currentTopic = null
+
       await this.swarm.endSession()
       await this.downloader.reset()
       await this.wipeAndReinitStorage()
+      
       this.setRole(null)
       this.sendStatus('disconnected')
       return { state: 'disconnected' }
@@ -473,7 +482,6 @@ export class TransferOrchestrator implements TransferRPC {
     }
   }
 
-  /** Tears down the swarm but keeps role/drive/state. Use `disconnect()` for full cleanup. */
   async closePeers(): Promise<void> {
     this.abortInFlight()
     this.remember.reset()
@@ -483,18 +491,23 @@ export class TransferOrchestrator implements TransferRPC {
 
   async suspend(): Promise<void> {
     if (this.suspended) return
+
     this.suspended = true
     this.abortInFlight()
     this.remember.reset()
+
     await tryAsync('discovery.stop (suspend)', () => this.discovery.stop())
     await tryAsync('swarm.endSession (suspend)', () => this.swarm.endSession())
   }
 
   async resume(): Promise<void> {
     if (!this.suspended) return
+
     this.suspended = false
-    void this.discovery.start()
+    this.discovery.start()
+
     if (!this.currentTopic) return
+    
     try {
       await this.swarm.join(this.currentTopic)
     } catch (err) {

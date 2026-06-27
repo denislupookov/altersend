@@ -5,7 +5,7 @@ import {
   transferSessionReducer
 } from './reducer'
 import type { TransferAction, TransferSessionState } from './types'
-import type { IncomingFileOffer } from '@altersend/core'
+import type { IncomingFileOffer, RememberedPeer } from '@altersend/core'
 
 const make = (overrides: Partial<TransferSessionState> = {}): TransferSessionState => ({
   ...initialTransferSessionState,
@@ -23,6 +23,18 @@ const offer = (id: string, name: string): IncomingFileOffer => ({
 
 const apply = (state: TransferSessionState, action: TransferAction) =>
   transferSessionReducer(state, action)
+
+const rememberedPeer = (remoteDevicePubkey: string): RememberedPeer => ({
+  remoteDevicePubkey,
+  rendezvousTopic: 'c'.repeat(64),
+  displayName: 'My Laptop',
+  deviceType: 'laptop',
+  isMine: false,
+  autoAccept: false,
+  blocked: false,
+  pairedAt: 1,
+  lastSeenAt: 2
+})
 
 describe('transferSessionReducer — lifecycle', () => {
   it('returns the input state reference when booted has no error to clear', () => {
@@ -330,11 +342,82 @@ describe('transferSessionReducer — misc', () => {
     expect(next.uploadItems).toEqual([])
   })
 
+  it('clear_pairing_session: clears role and pairing state but keeps send-draft and remembered peers', () => {
+    const peerKey = 'a'.repeat(64)
+    const state = make({
+      role: 'receiver',
+      pairing: true,
+      connectionState: 'peer-connected',
+      topic: 'pairing-topic',
+      selectedFiles: [{ name: 'a', path: '/a', size: 1 }],
+      uploadItems: [{ name: 'a', path: '/a', size: 1, status: 'uploading' }],
+      peers: [rememberedPeer(peerKey)],
+      remember: {
+        pairStatus: { [peerKey]: 'paired' },
+        peerDisplayNames: { [peerKey]: 'Phone' },
+        incomingRequest: null,
+        incomingInvite: null,
+        inviteResponses: {}
+      }
+    })
+    const next = apply(state, { type: 'clear_pairing_session' })
+
+    expect(next.role).toBeNull()
+    expect(next.pairing).toBe(false)
+    expect(next.connectionState).toBe('disconnected')
+    expect(next.topic).toBe('')
+    expect(next.remember.pairStatus).toEqual({})
+
+    expect(next.selectedFiles).toEqual(state.selectedFiles)
+    expect(next.uploadItems).toEqual(state.uploadItems)
+    expect(next.peers).toEqual(state.peers)
+  })
+
+  it('pairing flag: pairing_started sets it; a real receive and teardown clear it', () => {
+    const started = apply(make(), { type: 'pairing_started' })
+    expect(started.pairing).toBe(true)
+    expect(apply(started, { type: 'join_requested' }).pairing).toBe(false)
+    expect(apply(started, { type: 'clear_session' }).pairing).toBe(false)
+  })
+
   it('request_pair_peer does not downgrade an already-paired peer', () => {
     const state = make({
       remember: { pairStatus: { abc: 'paired' }, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null, inviteResponses: {} }
     })
     const next = apply(state, { type: 'request_pair_peer', peerKey: 'abc' })
     expect(next).toBe(state)
+  })
+
+  it('forget_peer removes the peer and related remembered state', () => {
+    const peerKey = 'a'.repeat(64)
+    const otherPeerKey = 'b'.repeat(64)
+    const state = make({
+      peers: [rememberedPeer(peerKey), rememberedPeer(otherPeerKey)],
+      remember: {
+        pairStatus: { [peerKey]: 'paired', [otherPeerKey]: 'paired' },
+        peerDisplayNames: { [peerKey]: 'Phone', [otherPeerKey]: 'Tablet' },
+        incomingRequest: null,
+        incomingInvite: {
+          remoteDevicePubkey: peerKey,
+          displayName: 'Phone',
+          deviceType: 'phone',
+          topic: 'd'.repeat(64)
+        },
+        inviteResponses: {
+          [peerKey]: { remoteDevicePubkey: peerKey, topic: 'd'.repeat(64), response: 'declined', receivedAt: 1 },
+          [otherPeerKey]: { remoteDevicePubkey: otherPeerKey, topic: 'e'.repeat(64), response: 'declined', receivedAt: 1 }
+        }
+      }
+    })
+
+    const next = apply(state, { type: 'forget_peer', peerKey })
+
+    expect(next.peers.map((peer) => peer.remoteDevicePubkey)).toEqual([otherPeerKey])
+    expect(next.remember.pairStatus).toEqual({ [otherPeerKey]: 'paired' })
+    expect(next.remember.peerDisplayNames).toEqual({ [otherPeerKey]: 'Tablet' })
+    expect(next.remember.incomingInvite).toBeNull()
+    expect(next.remember.inviteResponses).toEqual({
+      [otherPeerKey]: { remoteDevicePubkey: otherPeerKey, topic: 'e'.repeat(64), response: 'declined', receivedAt: 1 }
+    })
   })
 })

@@ -3,7 +3,7 @@ import { Modal, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Button, useTheme } from '@altersend/components'
 import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
-import { rememberVote, useTransferStore } from '@altersend/domain'
+import { rememberVote, usePairingSessionStore, useTransferStore } from '@altersend/domain'
 import { Text } from '@/src/components/ThemedText'
 
 export function PairRequestBanner() {
@@ -11,6 +11,7 @@ export function PairRequestBanner() {
   const c = theme.colors
   const insets = useSafeAreaInsets()
   const request = useTransferStore((s) => s.remember.incomingRequest)
+  const isPairing = usePairingSessionStore((s) => s.activeCount > 0)
   const [responded, setResponded] = useState(false)
   const respondedRef = useRef(false)
 
@@ -21,7 +22,7 @@ export function PairRequestBanner() {
     }
   }, [request])
 
-  const visible = Boolean(request && !responded)
+  const visible = Boolean(request && !responded && !isPairing)
 
   // Guarded against double-firing: onDismiss (iOS swipe) also fires after a programmatic
   // close, so without the ref a tap on Pair would be followed by a stray 'no' vote.
@@ -29,7 +30,7 @@ export function PairRequestBanner() {
     if (!request || respondedRef.current) return
     respondedRef.current = true
     setResponded(true)
-    void rememberVote(request.transferId, request.peerKey, vote, false)
+    rememberVote({ transferId: request.transferId, peerKey: request.peerKey, vote, isMine: false }).catch(() => {})
   }
 
   const Icon = request ? deviceIcon(request.deviceType) : null

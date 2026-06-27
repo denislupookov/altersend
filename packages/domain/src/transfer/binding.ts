@@ -55,7 +55,7 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
       })
     case 'remember-confirmed':
       dispatchToTransferStore({ type: 'remember_confirmed', peerKey: event.peerKey, displayName: event.peer.displayName })
-      void loadPeers()
+      loadPeers()
       return
     case 'remember-declined':
       return dispatchToTransferStore({ type: 'remember_declined', peerKey: event.peerKey })
@@ -141,7 +141,7 @@ export function bindTransferApi(
   impl: TransferApi,
   options: BindTransferApiOptions = {}
 ): () => void {
-  if (api === impl) return unbindCurrent ?? (() => {})
+  if (api === impl) return unbindCurrent ?? (() => { })
   if (unbindCurrent) unbindCurrent()
 
   api = impl
@@ -152,7 +152,7 @@ export function bindTransferApi(
     .startP2P()
     .then(() => {
       dispatchToTransferStore({ type: 'booted' })
-      void loadPeers()
+      loadPeers()
     })
     .catch((err) => {
       reportError('bindTransferApi.startP2P', err)

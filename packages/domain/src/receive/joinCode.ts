@@ -6,6 +6,14 @@ export function buildJoinUrl(topic: string): string {
   return `${JOIN_URL_SCHEME}://join/${topic}`
 }
 
+export function buildPairUrl(topic: string): string {
+  return `${JOIN_URL_SCHEME}://pair/${topic}`
+}
+
+export function isPairUrl(value: string): boolean {
+  return value.includes('://pair/')
+}
+
 export function buildInviteText(topic: string): string {
   return topic
 }

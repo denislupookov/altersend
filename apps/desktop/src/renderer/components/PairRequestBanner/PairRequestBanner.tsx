@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react'
-import { rememberVote, useTransferStore } from '@altersend/domain'
+import { rememberVote, usePairingSessionStore, useTransferStore } from '@altersend/domain'
 import { Button } from '@altersend/components'
 import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
 
 export function PairRequestBanner() {
   const request = useTransferStore((s) => s.remember.incomingRequest)
+  const isPairing = usePairingSessionStore((s) => s.activeCount > 0)
   const [responded, setResponded] = useState(false)
 
   useEffect(() => {
     if (request) setResponded(false)
   }, [request])
 
-  if (!request || responded) return null
+  if (!request || responded || isPairing) return null
 
   const Icon = deviceIcon(request.deviceType)
 
   const respond = (vote: 'remember' | 'no') => {
     setResponded(true)
-    void rememberVote(request.transferId, request.peerKey, vote, false)
+    rememberVote({ transferId: request.transferId, peerKey: request.peerKey, vote, isMine: false }).catch(() => {})
   }
 
   return (

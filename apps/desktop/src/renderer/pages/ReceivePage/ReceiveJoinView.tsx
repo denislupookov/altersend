@@ -74,9 +74,7 @@ export function ReceiveJoinView() {
           autoComplete='off'
           disabled={isJoining}
           error={joinKeyError}
-          secure
           label={t('receive:form.codeLabel')}
-          mono
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setJoinKey(e.currentTarget.value)
             if (showValidation) setShowValidation(false)
