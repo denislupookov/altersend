@@ -38,7 +38,10 @@ export default function ReceivePage() {
     peerCount
   })
 
-  const totalBytes = incomingFileOffers.reduce((sum, f) => sum + f.size, 0)
+  const totalBytes = incomingFileOffers.reduce(
+    (sum, f) => sum + (f.kind === 'file' ? f.size : 0),
+    0
+  )
   const { title, description } = getReceivePageCopy(t, step, incomingFileOffers.length, totalBytes)
 
   const connectedBadge =

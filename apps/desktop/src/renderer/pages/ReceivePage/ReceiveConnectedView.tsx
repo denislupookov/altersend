@@ -58,14 +58,15 @@ export function ReceiveConnectedView() {
   }, [textOffer])
 
   const downloadAll = async () => {
-    if (incomingFileOffers.length === 0 || isDownloading) return
+    const fileOffers = incomingFileOffers.filter((f) => f.kind === 'file')
+    if (fileOffers.length === 0 || isDownloading) return
 
-    if (incomingFileOffers.length === 1) {
-      const selected = await bridgeApi.pickSaveFile(incomingFileOffers[0].name)
+    if (fileOffers.length === 1) {
+      const selected = await bridgeApi.pickSaveFile(fileOffers[0].name)
       if (!selected?.path) return
 
       try {
-        await downloadFiles([createSingleDownloadRequest(incomingFileOffers[0], selected.path)])
+        await downloadFiles([createSingleDownloadRequest(fileOffers[0], selected.path)])
       } catch (error) {
         console.error('ReceiveConnectedView: single-file download failed', error)
       }
@@ -96,6 +97,7 @@ export function ReceiveConnectedView() {
         <div className='min-h-0 flex-1 overflow-y-auto pr-1'>
           <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
             {incomingFileOffers.map((file) => {
+              if (file.kind !== 'file') return null
               const row = getDownloadRowDisplay(file, downloadStates[getOfferKey(file)])
               return (
                 <SendFileListRow

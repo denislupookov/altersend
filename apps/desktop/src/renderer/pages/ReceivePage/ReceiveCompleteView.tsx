@@ -29,7 +29,10 @@ export function ReceiveCompleteView() {
     })
   }, [])
 
-  const totalBytes = incomingFileOffers.reduce((sum, f) => sum + f.size, 0)
+  const totalBytes = incomingFileOffers.reduce(
+    (sum, f) => sum + (f.kind === 'file' ? f.size : 0),
+    0
+  )
   const fileCount = incomingFileOffers.length
 
   const firstSavedTo = Object.values(downloadStates).find((s) => s.savedTo)?.savedTo
@@ -84,6 +87,7 @@ export function ReceiveCompleteView() {
 
         <div className='min-h-0 flex-1 overflow-y-auto'>
           {incomingFileOffers.map((file) => {
+            if (file.kind !== 'file') return null
             const state = downloadStates[getOfferKey(file)]
             const savedTo = state?.savedTo
             const shortPath = savedTo ? shortenHomePath(getParentDir(savedTo)) : null
