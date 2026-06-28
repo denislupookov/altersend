@@ -6,6 +6,7 @@ import {
   type DownloadProgress,
   type DownloadRequest,
   type FileOffer,
+  type TextOffer,
   type PeerControlMessage,
   type TransferReady,
   type TransferStart
@@ -19,10 +20,6 @@ const MAX_FILES_PER_TRANSFER = 10_000
 
 function isBoundedString(x: unknown, maxLen: number): x is string {
   return typeof x === 'string' && x.length > 0 && x.length <= maxLen
-}
-
-function isOptionalBoundedString(x: unknown, maxLen: number): boolean {
-  return x === undefined || (typeof x === 'string' && x.length <= maxLen)
 }
 
 function isNonNegativeInteger(x: unknown, max = Number.MAX_SAFE_INTEGER): x is number {
@@ -39,8 +36,27 @@ function isValidFileOffer(x: unknown): x is FileOffer {
     isBoundedString(o.path, MAX_PATH_LEN) &&
     isNonNegativeInteger(o.size) &&
     isBoundedString(o.driveKey, MAX_ID_LEN) &&
-    isOptionalBoundedString(o.content, MAX_CONTENT_LEN)
+    o.kind === 'file'
   )
+}
+
+function isValidTextOffer(x: unknown): x is TextOffer {
+  if (!x || typeof x !== 'object') return false
+  const o = x as Partial<TextOffer>
+  return (
+    isBoundedString(o.id, MAX_ID_LEN) &&
+    isBoundedString(o.transferId, MAX_ID_LEN) &&
+    o.kind === 'text' &&
+    isBoundedString(o.content, MAX_CONTENT_LEN)
+  )
+}
+
+function isValidTransferOffer(x: unknown): boolean {
+  if (!x || typeof x !== 'object') return false
+  const kind = (x as { kind?: unknown }).kind
+  if (kind === 'file') return isValidFileOffer(x)
+  if (kind === 'text') return isValidTextOffer(x)
+  return false
 }
 
 export function isValidControlMessage(x: unknown): x is PeerControlMessage {
@@ -64,7 +80,7 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
         isBoundedString(v.transferId, MAX_ID_LEN) &&
         Array.isArray(v.files) &&
         v.files.length <= MAX_FILES_PER_TRANSFER &&
-        v.files.every(isValidFileOffer)
+        v.files.every(isValidTransferOffer)
       )
     }
     case 'download-request': {

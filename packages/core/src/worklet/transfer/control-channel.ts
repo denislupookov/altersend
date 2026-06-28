@@ -12,13 +12,22 @@ export interface FileOffer {
   path: string
   size: number
   driveKey: string
-  content?: string
+  kind: 'file'
 }
+
+export interface TextOffer {
+  id: string
+  transferId: string
+  kind: 'text'
+  content: string
+}
+
+export type TransferOffer = FileOffer | TextOffer
 
 export interface TransferReady {
   type: 'transfer-ready'
   transferId: string
-  files: FileOffer[]
+  files: TransferOffer[]
 }
 
 export interface TransferStart {

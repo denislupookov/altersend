@@ -30,6 +30,8 @@ import {
   type DownloadProgress,
   type DownloadRequest,
   type PeerControlMessage,
+  type TextOffer,
+  type TransferOffer,
   type TransferReady,
   type TransferStart
 } from './control-channel'
@@ -341,7 +343,7 @@ export class TransferOrchestrator implements TransferRPC {
       this.inflightAbort = controller
 
       try {
-        const offers = await this.stager.stageFiles(
+        const offers: TransferOffer[] = await this.stager.stageFiles(
           files,
           transferId,
           (file) => {
@@ -352,15 +354,13 @@ export class TransferOrchestrator implements TransferRPC {
 
         for (const req of textRequests) {
           if (!req.content || req.content.trim() === '') continue
-          offers.push({
+          const textOffer: TextOffer = {
             id: createTransferId(),
             transferId,
-            name: 'text-payload',
-            path: req.path || '/text-payload',
-            size: 0,
-            driveKey: this.stager.driveKey,
+            kind: 'text',
             content: req.content
-          })
+          }
+          offers.push(textOffer)
         }
 
         this.activeTransferReady = { type: 'transfer-ready', transferId, files: offers }

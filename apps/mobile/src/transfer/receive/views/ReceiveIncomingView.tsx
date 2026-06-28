@@ -12,14 +12,14 @@ export function ReceiveIncomingView() {
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const { theme } = useTheme()
 
-  const textOffer = incomingFileOffers.find((f) => f.content !== undefined && f.size === 0)
+  const textOffer = incomingFileOffers.find((f) => f.kind === 'text')
   const isTextTransfer = textOffer !== undefined
 
   const isUrl = React.useMemo(() => {
-    if (!textOffer?.content) return false
+    if (textOffer?.kind !== 'text') return false
     try {
-      new URL(textOffer.content)
-      return true
+      const url = new URL(textOffer.content)
+      return url.protocol === 'https:' || url.protocol === 'http:'
     } catch {
       return false
     }

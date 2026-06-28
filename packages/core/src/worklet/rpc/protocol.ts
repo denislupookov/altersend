@@ -1,5 +1,10 @@
 import b4a from 'b4a'
-import type { FileOffer, PeerControlMessage } from '../transfer/control-channel'
+import type {
+  FileOffer,
+  TextOffer,
+  TransferOffer,
+  PeerControlMessage
+} from '../transfer/control-channel'
 import type {
   ErrorEvent,
   ReadyEvent,
@@ -81,7 +86,8 @@ export type RPCResponse<T> = RPCSuccessPayload<T> | RPCErrorResponse
 type WorkerReadyEvent = ReadyEvent
 export type RendererTransferEvent = StatusEvent | ErrorEvent | RoleEvent | PeerControlMessage
 export type WorkerTransferEvent = WorkerReadyEvent | RendererTransferEvent
-export type IncomingFileOffer = FileOffer
+export type { FileOffer, TextOffer, TransferOffer }
+export type IncomingFileOffer = TransferOffer
 
 export interface TransferRPC {
   host(): Promise<HostReply>

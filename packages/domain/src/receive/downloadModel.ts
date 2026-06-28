@@ -60,7 +60,7 @@ export function createDownloadStateMap(
     next[key] = current[key] ?? {
       status: 'idle',
       bytesTransferred: 0,
-      totalBytes: file.size
+      totalBytes: file.kind === 'file' ? file.size : 0
     }
   }
 
@@ -71,7 +71,7 @@ export function getDownloadRowDisplay(
   file: IncomingFileOffer,
   state: DownloadItemState | undefined
 ): DownloadRowDisplay {
-  const totalBytes = state?.totalBytes || file.size
+  const totalBytes = state?.totalBytes || (file.kind === 'file' ? file.size : 0)
   const percent = getProgressPercent(state?.bytesTransferred ?? 0, totalBytes)
   const isCompleted = state?.status === 'completed'
   const isActive = state?.status === 'downloading' && totalBytes > 0
@@ -125,7 +125,9 @@ export function resolveOfferKey(offers: IncomingFileOffer[], message: ReceiveDow
     if (match) return getOfferKey(match)
   }
 
-  const match = offers.find((offer) => offer.name === message.file && offer.path === message.path)
+  const match = offers.find(
+    (offer) => offer.kind === 'file' && offer.name === message.file && offer.path === message.path
+  )
   return match ? getOfferKey(match) : null
 }
 
@@ -200,12 +202,13 @@ export function getDownloadTotals(
   files: IncomingFileOffer[],
   states: Record<string, DownloadItemState>
 ): DownloadTotals {
-  const totalBytes = files.reduce((sum, file) => sum + file.size, 0)
+  const fileOffers = files.filter((f) => f.kind === 'file')
+  const totalBytes = fileOffers.reduce((sum, file) => sum + file.size, 0)
   let bytesTransferred = 0
   let completedCount = 0
   let activeCount = 0
 
-  for (const file of files) {
+  for (const file of fileOffers) {
     const state = states[getOfferKey(file)]
     if (!state) continue
 
@@ -234,6 +237,7 @@ export function createSingleDownloadRequest(
   file: IncomingFileOffer,
   targetPath: string
 ): DownloadFileRequest {
+  if (file.kind !== 'file') throw new Error('createSingleDownloadRequest: expected FileOffer')
   return {
     transferId: file.transferId,
     fileId: file.id,
@@ -249,13 +253,15 @@ export function createDirectoryDownloadRequests(
   files: IncomingFileOffer[],
   targetDir: string
 ): DownloadFileRequest[] {
-  return files.map((file) => ({
-    transferId: file.transferId,
-    fileId: file.id,
-    driveKey: file.driveKey,
-    path: file.path,
-    name: file.name,
-    size: file.size,
-    targetDir
-  }))
+  return files
+    .filter((f) => f.kind === 'file')
+    .map((file) => ({
+      transferId: file.transferId,
+      fileId: file.id,
+      driveKey: file.driveKey,
+      path: file.path,
+      name: file.name,
+      size: file.size,
+      targetDir
+    }))
 }

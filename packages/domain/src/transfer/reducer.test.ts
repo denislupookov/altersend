@@ -18,7 +18,8 @@ const offer = (id: string, name: string): IncomingFileOffer => ({
   name,
   path: `/files/${name}`,
   size: 1024,
-  driveKey: 'drive-1'
+  driveKey: 'drive-1',
+  kind: 'file'
 })
 
 const apply = (state: TransferSessionState, action: TransferAction) =>

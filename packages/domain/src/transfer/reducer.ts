@@ -38,10 +38,8 @@ function mergeIncomingFileOffers(
   current: TransferSessionState['incomingFileOffers'],
   nextFiles: TransferSessionState['incomingFileOffers']
 ) {
-  const existingKeys = new Set(current.map((offer) => `${offer.driveKey}:${offer.path}`))
-  const uniqueNextFiles = nextFiles.filter(
-    (offer) => !existingKeys.has(`${offer.driveKey}:${offer.path}`)
-  )
+  const existingIds = new Set(current.map((offer) => offer.id))
+  const uniqueNextFiles = nextFiles.filter((offer) => !existingIds.has(offer.id))
   return uniqueNextFiles.length > 0 ? [...current, ...uniqueNextFiles] : current
 }
 
