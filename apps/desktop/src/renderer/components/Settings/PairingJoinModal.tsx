@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button, Input } from '@altersend/components'
 import { ClipboardIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
+import { bridgeApi } from '../../api/bridgeApi'
 import { Modal } from '../Modal'
 
 interface PairingJoinModalProps {
@@ -24,7 +25,7 @@ export function PairingJoinModal({ open, isLoading, onClose, onJoin }: PairingJo
   }, [open])
 
   const handlePaste = async () => {
-    const text = await navigator.clipboard.readText()
+    const text = await bridgeApi.clipboardReadText()
     setValue(text)
     setError(false)
   }

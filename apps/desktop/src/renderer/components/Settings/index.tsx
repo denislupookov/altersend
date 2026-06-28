@@ -6,19 +6,29 @@ import logo from '../../../../../../assets/logo.png'
 import { SettingsPanel } from './SettingsPanel'
 import { DevicesPanel } from './DevicesPanel'
 import { FeedbackPanel } from './FeedbackPanel'
+import { subscribeOpenSettings, type SettingsPanelView } from './settingsControl'
 
-type PanelView = 'settings' | 'devices' | 'report'
+export { openSettingsPanel } from './settingsControl'
 
 export function Settings({ version }: { version: string }) {
   const { t } = useTranslation(['common'])
   const [open, setOpen] = useState(false)
-  const [panel, setPanel] = useState<PanelView>('settings')
+  const [panel, setPanel] = useState<SettingsPanelView>('settings')
 
   useEffect(() => {
     if (open) {
       loadPeers()
     }
   }, [open])
+
+  useEffect(
+    () =>
+      subscribeOpenSettings((next) => {
+        setPanel(next)
+        setOpen(true)
+      }),
+    []
+  )
 
   const close = () => {
     setOpen(false)

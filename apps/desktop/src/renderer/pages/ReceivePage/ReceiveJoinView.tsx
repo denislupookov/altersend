@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent } from 'react'
 import { Button, Input, LinkRow, useTheme } from '@altersend/components'
-import { QrCodeIcon } from '@altersend/components/icons'
+import { ClipboardIcon, QrCodeIcon } from '@altersend/components/icons'
 import {
   getDisplayError,
   getTransferErrorCode,
@@ -11,6 +11,7 @@ import {
   useTransferStore
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
+import { bridgeApi } from '../../api/bridgeApi'
 import { WebcamScanView } from './WebcamScanView'
 
 export function ReceiveJoinView() {
@@ -52,6 +53,14 @@ export function ReceiveJoinView() {
     }
   }
 
+  const pasteCode = async () => {
+    const text = await bridgeApi.clipboardReadText()
+    if (!text) return
+    setJoinKey(text)
+    if (showValidation) setShowValidation(false)
+    if (localErrorCode) setLocalErrorCode(null)
+  }
+
   return (
     <div className='flex w-full flex-col gap-4'>
       <LinkRow
@@ -82,6 +91,17 @@ export function ReceiveJoinView() {
           }}
           placeholder={t('receive:form.codePlaceholder')}
           spellCheck={false}
+          trailing={
+            <Button
+              variant='ghost'
+              size='sm'
+              iconOnly
+              aria-label='Paste'
+              disabled={isJoining}
+              onClick={() => { pasteCode().catch(() => {}) }}
+              icon={<ClipboardIcon size={16} />}
+            />
+          }
           type='text'
           value={joinKey}
         />

@@ -66,5 +66,12 @@
     "pairFailed": "Couldn’t pair — try again",
     "deviceRemoved": "Paired device removed",
     "removeFailed": "Could not remove paired device"
+  },
+  "pairPrompt": {
+    "title": "Pair a Device",
+    "heading": "Skip the code next time",
+    "body": "Pair a device you use often and send to it instantly — no code to scan or type each time.",
+    "pairButton": "Pair a Device",
+    "skip": "Skip for now"
   }
 }

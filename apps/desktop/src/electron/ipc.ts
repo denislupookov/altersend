@@ -1,5 +1,6 @@
 import {
   BrowserWindow,
+  clipboard,
   dialog,
   ipcMain,
   shell,
@@ -129,6 +130,8 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.handle('app:restart', () => {
     runtime.restartApp()
   })
+
+  ipcMain.handle('app:clipboardReadText', () => clipboard.readText())
 
   ipcMain.handle('app:showInFolder', (evt, filePath: string) => {
     if (!isPathSafe(filePath)) throw new Error('Refused: path failed safety check')

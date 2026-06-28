@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, safeStorage } from 'electron'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
@@ -111,6 +111,35 @@ function migrateIdentityIfNeeded(oldRoot: string, newRoot: string): void {
   }
 }
 
+async function initDeviceKeychain(client: WorkerClient, identityRoot: string): Promise<void> {
+  const keyPath = path.join(identityRoot, 'device.key')
+  const available = safeStorage.isEncryptionAvailable()
+
+  let sealed: string | null = null
+  if (available) {
+    try {
+      if (fs.existsSync(keyPath)) sealed = safeStorage.decryptString(fs.readFileSync(keyPath))
+    } catch (err) {
+      console.warn('[runtime] device key decrypt failed:', err)
+    }
+  }
+
+  try {
+    await client.ready
+    const reply = await client.initDeviceSecret(
+      available ? { mode: 'managed', secret: sealed } : { mode: 'legacy' }
+    )
+    if (available && reply.secretKey) {
+      fs.mkdirSync(identityRoot, { recursive: true })
+      const tmp = keyPath + '.tmp'
+      fs.writeFileSync(tmp, safeStorage.encryptString(reply.secretKey))
+      fs.renameSync(tmp, keyPath)
+    }
+  } catch (err) {
+    console.warn('[runtime] device key init failed:', err)
+  }
+}
+
 function appDataDir(name: string): string {
   return isMac
     ? path.join(os.homedir(), 'Library', 'Application Support', name)
@@ -182,6 +211,7 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
         broadcast('pear:worker:event:' + specifier, message)
       }
     })
+    initDeviceKeychain(client, identityRoot).catch(() => {})
     const runtime: WorkerRuntime = {
       worker,
       client,

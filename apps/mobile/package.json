@@ -57,6 +57,7 @@
     "expo-localization": "~55.0.15",
     "expo-media-library": "~55.0.15",
     "expo-router": "~55.0.5",
+    "expo-secure-store": "~55.0.0",
     "expo-share-intent": "^6.1.0",
     "expo-sharing": "~55.0.18",
     "expo-splash-screen": "~55.0.21",

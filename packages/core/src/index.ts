@@ -25,7 +25,9 @@ export type {
   RememberVoteInput,
   RememberVoteReply,
   InviteResponseInput,
-  InviteResponseReply
+  InviteResponseReply,
+  InitDeviceSecretReply,
+  DeviceSecretInit
 } from './worklet/rpc/protocol'
 
 export { TRANSFER_ERROR_CODES } from './worklet/rpc/events'

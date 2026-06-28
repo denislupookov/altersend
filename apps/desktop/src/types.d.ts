@@ -73,6 +73,7 @@ declare global {
     openExternalUrl: (url: string) => Promise<void>
     setSentryEnabled: (enabled: boolean) => Promise<void>
     requestCameraAccess: () => Promise<boolean>
+    clipboardReadText: () => Promise<string>
   }
 
   interface Window {

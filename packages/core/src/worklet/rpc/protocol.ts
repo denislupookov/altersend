@@ -1,6 +1,7 @@
 import b4a from 'b4a'
 import type { FileOffer, PeerControlMessage } from '../transfer/control-channel'
 import type { RememberedPeer } from '../peers/remembered-peer'
+import type { DeviceSecretInit } from '../identity/device-identity-store'
 import type {
   ErrorEvent,
   InviteReceivedEvent,
@@ -19,6 +20,7 @@ import type { TransferMethod } from './commands'
 
 export { API, API_BY_VALUE }
 export type { TransferErrorCode, TransferRole, TransferMethod }
+export type { DeviceSecretInit }
 
 export interface DownloadFileRequest {
   transferId: string
@@ -96,6 +98,10 @@ export interface InviteResponseReply {
   delivered: boolean
 }
 
+export interface InitDeviceSecretReply {
+  secretKey: string | null
+}
+
 export interface RPCErrorPayload {
   code: 'BAD_REQUEST' | 'UNKNOWN_COMMAND' | 'INTERNAL_ERROR'
   message: string
@@ -140,6 +146,7 @@ export interface TransferRPC {
   inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply>
   respondToInvite(input: InviteResponseInput): Promise<InviteResponseReply>
   forgetPeer(pubkey: string): Promise<void>
+  initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply>
 }
 
 export class BadRequestError extends Error {

@@ -23,6 +23,7 @@ import type {
   InviteDeviceReply,
   InviteResponseInput,
   InviteResponseReply,
+  InitDeviceSecretReply,
   JoinReply,
   RememberVoteInput,
   RememberVoteReply,
@@ -56,7 +57,7 @@ import { PeerIdentityStore } from './peer-identity-store'
 import { TransferSender } from './sender'
 import { TransferSwarm, type PeerSession } from './swarm'
 import { isValidHexKey } from './utils'
-import { DeviceIdentityStore, type DeviceIdentityDefaults } from '../identity/device-identity-store'
+import { DeviceIdentityStore, type DeviceIdentityDefaults, type DeviceSecretInit } from '../identity/device-identity-store'
 import { RememberedPeerStore } from '../peers/store'
 import type { RememberedPeer } from '../peers/remembered-peer'
 import { RememberCoordinator } from '../peers/remember-coordinator'
@@ -207,6 +208,11 @@ export class TransferOrchestrator implements TransferRPC {
   async forgetPeer(pubkey: string): Promise<void> {
     await this.rememberedStore.forget(pubkey)
     this.discovery.forget(pubkey)
+  }
+
+  async initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply> {
+    const secretKey = await this.deviceIdentityStore.provideSecret(init)
+    return { secretKey }
   }
 
   inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply> {

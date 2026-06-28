@@ -78,5 +78,8 @@ export const bridgeApi = {
   },
   requestCameraAccess() {
     return requireBridge().requestCameraAccess()
+  },
+  clipboardReadText() {
+    return requireBridge().clipboardReadText()
   }
 }

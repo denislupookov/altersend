@@ -10,7 +10,8 @@ export const API = {
     peersList: 8,
     inviteDevice: 9,
     respondToInvite: 10,
-    forgetPeer: 11
+    forgetPeer: 11,
+    initDeviceSecret: 12
   },
   channels: {
     event: 100,

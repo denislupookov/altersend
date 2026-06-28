@@ -13,7 +13,15 @@ export interface DeviceIdentity {
   createdAt: number
 }
 
-interface SerializedDeviceIdentity {
+interface SerializedMeta {
+  version: 2
+  publicKey: string
+  displayName: string
+  deviceType: DeviceType
+  createdAt: number
+}
+
+interface SerializedLegacy {
   version: 1
   publicKey: string
   secretKey: string
@@ -21,6 +29,12 @@ interface SerializedDeviceIdentity {
   deviceType: DeviceType
   createdAt: number
 }
+
+export type DeviceSecretInit =
+  | { mode: 'managed'; secret: string | null }
+  | { mode: 'legacy' }
+
+type DeviceMeta = Omit<SerializedMeta, 'version'>
 
 const HEX_RE = /^[0-9a-f]+$/i
 const PUBLIC_KEY_HEX_LEN = 64
@@ -30,13 +44,9 @@ function isHex(value: unknown, expectedLen: number): value is string {
   return typeof value === 'string' && value.length === expectedLen && HEX_RE.test(value)
 }
 
-function isSerialized(value: unknown): value is SerializedDeviceIdentity {
-  if (!value || typeof value !== 'object') return false
-  const v = value as Record<string, unknown>
+function hasCommonMeta(v: Record<string, unknown>): boolean {
   return (
-    v.version === 1 &&
     isHex(v.publicKey, PUBLIC_KEY_HEX_LEN) &&
-    isHex(v.secretKey, SECRET_KEY_HEX_LEN) &&
     typeof v.displayName === 'string' &&
     typeof v.deviceType === 'string' &&
     DEVICE_TYPES.has(v.deviceType as DeviceType) &&
@@ -45,24 +55,25 @@ function isSerialized(value: unknown): value is SerializedDeviceIdentity {
   )
 }
 
-function serialize(id: DeviceIdentity): SerializedDeviceIdentity {
-  return {
-    version: 1,
-    publicKey: b4a.toString(id.publicKey, 'hex'),
-    secretKey: b4a.toString(id.secretKey, 'hex'),
-    displayName: id.displayName,
-    deviceType: id.deviceType,
-    createdAt: id.createdAt
-  }
+function isMeta(value: unknown): value is SerializedMeta {
+  if (!value || typeof value !== 'object') return false
+  const v = value as Record<string, unknown>
+  return v.version === 2 && hasCommonMeta(v)
 }
 
-function deserialize(s: SerializedDeviceIdentity): DeviceIdentity {
+function isLegacy(value: unknown): value is SerializedLegacy {
+  if (!value || typeof value !== 'object') return false
+  const v = value as Record<string, unknown>
+  return v.version === 1 && isHex(v.secretKey, SECRET_KEY_HEX_LEN) && hasCommonMeta(v)
+}
+
+function deviceFromSecret(secretKey: Uint8Array, meta: Omit<DeviceMeta, 'publicKey'>): DeviceIdentity {
   return {
-    publicKey: b4a.from(s.publicKey, 'hex'),
-    secretKey: b4a.from(s.secretKey, 'hex'),
-    displayName: s.displayName,
-    deviceType: s.deviceType,
-    createdAt: s.createdAt
+    publicKey: b4a.from(secretKey.subarray(32, 64)),
+    secretKey,
+    displayName: meta.displayName,
+    deviceType: meta.deviceType,
+    createdAt: meta.createdAt
   }
 }
 
@@ -71,6 +82,19 @@ export interface DeviceIdentityDefaults {
   deviceType?: DeviceType
 }
 
+function createDeferred<T>() {
+  let resolve!: (value: T) => void
+  const promise = new Promise<T>((res) => {
+    resolve = res
+  })
+  return { promise, resolve }
+}
+
+type LoadedFile =
+  | { kind: 'meta'; meta: DeviceMeta }
+  | { kind: 'legacy'; meta: DeviceMeta; identity: DeviceIdentity }
+  | null
+
 export class DeviceIdentityStore {
   private readonly root: string
   private readonly filePath: string
@@ -78,6 +102,9 @@ export class DeviceIdentityStore {
   private cache: DeviceIdentity | null = null
   private opQueue: Promise<unknown> = Promise.resolve()
   private dirEnsured: Promise<void> | null = null
+
+  private readonly injected = createDeferred<DeviceSecretInit>()
+  private secretToSeal: string | null = null
 
   constructor(root: string, defaults: DeviceIdentityDefaults = {}) {
     this.root = root
@@ -88,61 +115,71 @@ export class DeviceIdentityStore {
     }
   }
 
+  async provideSecret(init: DeviceSecretInit): Promise<string | null> {
+    this.injected.resolve(init)
+    await this.getOrCreate()
+    const seal = this.secretToSeal
+    this.secretToSeal = null
+    return seal
+  }
+
   async getOrCreate(): Promise<DeviceIdentity> {
     return this.run(async () => {
-      const existing = await this.load()
-      if (existing) return existing
+      if (this.cache) return this.cache
+      const init = await this.injected.promise
+      this.cache = await this.materialize(init)
+      return this.cache
+    })
+  }
+
+  private async materialize(init: DeviceSecretInit): Promise<DeviceIdentity> {
+    const stored = await this.loadFile()
+
+    if (init.mode === 'legacy') {
+      if (stored?.kind === 'legacy') return stored.identity
+      if (stored?.kind === 'meta') {
+        console.warn('DeviceIdentityStore: legacy mode but secret is keychain-only — regenerating')
+      }
       const fresh = this.makeFresh()
-      await this.save(fresh)
+      await this.saveLegacy(fresh)
       return fresh
-    })
-  }
-
-  async setDisplayName(name: string): Promise<DeviceIdentity> {
-    const trimmed = name.trim()
-    if (trimmed.length === 0) {
-      throw new Error('DeviceIdentityStore: displayName must not be empty')
     }
-    return this.run(async () => {
-      const current = (await this.load()) ?? this.makeFresh()
-      const next: DeviceIdentity = { ...current, displayName: trimmed }
-      await this.save(next)
-      return next
-    })
-  }
 
-  async setDeviceType(type: DeviceType): Promise<DeviceIdentity> {
-    if (!DEVICE_TYPES.has(type)) {
-      throw new Error(`DeviceIdentityStore: unknown deviceType ${type}`)
+    if (init.secret) {
+      if (isHex(init.secret, SECRET_KEY_HEX_LEN)) {
+        const secretKey = b4a.from(init.secret, 'hex')
+        const id = deviceFromSecret(secretKey, stored?.meta ?? this.freshMeta())
+        if (stored?.kind !== 'meta') await this.saveMeta(id)
+        return id
+      }
+      console.warn('DeviceIdentityStore: injected secret is malformed — recovering from disk or regenerating')
     }
-    return this.run(async () => {
-      const current = (await this.load()) ?? this.makeFresh()
-      const next: DeviceIdentity = { ...current, deviceType: type }
-      await this.save(next)
-      return next
-    })
+
+    if (stored?.kind === 'legacy') {
+      this.secretToSeal = b4a.toString(stored.identity.secretKey, 'hex')
+      await this.saveMeta(stored.identity)
+      return stored.identity
+    }
+    const fresh = this.makeFresh()
+    this.secretToSeal = b4a.toString(fresh.secretKey, 'hex')
+    await this.saveMeta(fresh)
+    return fresh
   }
 
-  async rotate(): Promise<DeviceIdentity> {
-    return this.run(async () => {
-      const previous = await this.load()
-      const fresh = this.makeFresh({
-        displayName: previous?.displayName,
-        deviceType: previous?.deviceType
-      })
-      await this.save(fresh)
-      return fresh
-    })
+  private freshMeta(): Omit<DeviceMeta, 'publicKey'> {
+    return {
+      displayName: this.defaults.displayName,
+      deviceType: this.defaults.deviceType,
+      createdAt: Date.now()
+    }
   }
 
-  private makeFresh(overrides: Partial<DeviceIdentity> = {}): DeviceIdentity {
+  private makeFresh(): DeviceIdentity {
     const kp = crypto.keyPair()
     return {
       publicKey: kp.publicKey,
       secretKey: kp.secretKey,
-      displayName: overrides.displayName ?? this.defaults.displayName,
-      deviceType: overrides.deviceType ?? this.defaults.deviceType,
-      createdAt: Date.now()
+      ...this.freshMeta()
     }
   }
 
@@ -152,17 +189,25 @@ export class DeviceIdentityStore {
     return next
   }
 
-  private async load(): Promise<DeviceIdentity | null> {
-    if (this.cache) return this.cache
+  private async loadFile(): Promise<LoadedFile> {
     try {
       const raw = (await fs.promises.readFile(this.filePath, 'utf8')) as string
       const parsed = JSON.parse(raw) as unknown
-      if (!isSerialized(parsed)) {
-        console.warn('DeviceIdentityStore: identity file shape mismatch — regenerating')
-        return null
+      if (isMeta(parsed)) {
+        const { publicKey, displayName, deviceType, createdAt } = parsed
+        return { kind: 'meta', meta: { publicKey, displayName, deviceType, createdAt } }
       }
-      this.cache = deserialize(parsed)
-      return this.cache
+      if (isLegacy(parsed)) {
+        const { publicKey, secretKey, displayName, deviceType, createdAt } = parsed
+        const sk = b4a.from(secretKey, 'hex')
+        return {
+          kind: 'legacy',
+          meta: { publicKey, displayName, deviceType, createdAt },
+          identity: deviceFromSecret(sk, { displayName, deviceType, createdAt })
+        }
+      }
+      console.warn('DeviceIdentityStore: identity file shape mismatch — regenerating')
+      return null
     } catch (err) {
       const code = (err as NodeJS.ErrnoException)?.code
       if (code !== 'ENOENT') {
@@ -172,13 +217,33 @@ export class DeviceIdentityStore {
     }
   }
 
-  private async save(id: DeviceIdentity): Promise<void> {
+  private saveMeta(id: DeviceIdentity): Promise<void> {
+    return this.writeFile({
+      version: 2,
+      publicKey: b4a.toString(id.publicKey, 'hex'),
+      displayName: id.displayName,
+      deviceType: id.deviceType,
+      createdAt: id.createdAt
+    } satisfies SerializedMeta)
+  }
+
+  private saveLegacy(id: DeviceIdentity): Promise<void> {
+    return this.writeFile({
+      version: 1,
+      publicKey: b4a.toString(id.publicKey, 'hex'),
+      secretKey: b4a.toString(id.secretKey, 'hex'),
+      displayName: id.displayName,
+      deviceType: id.deviceType,
+      createdAt: id.createdAt
+    } satisfies SerializedLegacy)
+  }
+
+  private async writeFile(payload: SerializedMeta | SerializedLegacy): Promise<void> {
     await this.ensureDir()
     const tmpPath = `${this.filePath}.tmp`
     try {
-      await fs.promises.writeFile(tmpPath, JSON.stringify(serialize(id)), 'utf8')
+      await fs.promises.writeFile(tmpPath, JSON.stringify(payload), 'utf8')
       await fs.promises.rename(tmpPath, this.filePath)
-      this.cache = id
     } catch (err) {
       try {
         await fs.promises.unlink(tmpPath)

@@ -1,6 +1,7 @@
 export * from './AddDeviceModal'
 export * from './InviteBanner'
 export * from './Modal'
+export * from './PairDeviceModal'
 export * from './PairRequestBanner'
 export * from './Popover'
 export * from './QRCode'

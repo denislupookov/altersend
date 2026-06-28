@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { clearSession, dismissInvite, joinSession, useSimulatedLoading, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi, hasBridge } from './api/bridgeApi'
-import { InviteBanner, PairRequestBanner, ToastProvider, UpdateBanner } from './components'
+import { InviteBanner, openSettingsPanel, PairDeviceModal, PairRequestBanner, ToastProvider, UpdateBanner } from './components'
 import { isOnboardingCompleted, markOnboardingCompleted } from './lifecycle/onboardingStorage'
 import { useUpdateReady } from './lifecycle/useUpdateReady'
 import { BridgeUnavailablePage, LoadingPage, OnboardingPage, TransferPage } from './pages'
@@ -12,6 +12,7 @@ type TransferTab = 'send' | 'receive'
 export default function App() {
   const { t } = useTranslation(['common'])
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingCompleted())
+  const [showPairPrompt, setShowPairPrompt] = useState(false)
   const [activeTab, setActiveTab] = useState<TransferTab>('send')
   const progress = useSimulatedLoading()
   const role = useTransferStore((s) => s.role)
@@ -48,6 +49,7 @@ export default function App() {
           onFinish={() => {
             markOnboardingCompleted()
             setShowOnboarding(false)
+            setShowPairPrompt(true)
           }}
         />
         <UpdateBanner ready={updateReady} />
@@ -66,6 +68,14 @@ export default function App() {
         }
       }} />
       <UpdateBanner ready={updateReady} />
+      <PairDeviceModal
+        open={showPairPrompt}
+        onPair={() => {
+          setShowPairPrompt(false)
+          openSettingsPanel('devices')
+        }}
+        onSkip={() => setShowPairPrompt(false)}
+      />
     </ToastProvider>
   )
 }
