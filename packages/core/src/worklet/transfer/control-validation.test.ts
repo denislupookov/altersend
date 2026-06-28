@@ -10,7 +10,8 @@ const validFileOffer = {
   name: 'photo.jpg',
   path: '/photo.jpg',
   size: 1024,
-  driveKey: 'abc123'
+  driveKey: 'abc123',
+  kind: 'file'
 }
 
 describe('isValidControlMessage', () => {
