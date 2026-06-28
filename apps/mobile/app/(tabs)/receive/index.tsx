@@ -94,7 +94,10 @@ export default function ReceiveScreen() {
     }
   }, [step])
 
-  const totalBytes = incomingFileOffers.reduce((sum, file) => sum + file.size, 0)
+  const totalBytes = incomingFileOffers.reduce(
+    (sum, file) => sum + (file.kind === 'file' ? file.size : 0),
+    0
+  )
   const copy = getReceivePageCopy(t, step, incomingFileOffers.length, totalBytes)
   const title = step === 'join' ? t('receive:page.tabTitle') : copy.title
   const description = step === 'join' ? t('receive:page.join.mobileDescription') : copy.description

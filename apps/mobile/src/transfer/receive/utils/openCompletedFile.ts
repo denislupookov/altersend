@@ -21,7 +21,8 @@ export function openCompletedFile(offerKey: string): void {
 
   if (item.destination === 'downloads') {
     const offer = state.incomingFileOffers.find((f) => f.id === offerKey)
-    void openDownload(item.savedTo, guessMimeType(offer?.name ?? '')).catch((err) =>
+    const name = offer?.kind === 'file' ? offer.name : ''
+    void openDownload(item.savedTo, guessMimeType(name)).catch((err) =>
       console.error('openCompletedFile: openDownload failed', err)
     )
     return

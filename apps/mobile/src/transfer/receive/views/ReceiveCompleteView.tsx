@@ -15,7 +15,10 @@ export function ReceiveCompleteView() {
   const onOpenFile = openCompletedFile
   const { theme } = useTheme()
 
-  const totalBytes = incomingFileOffers.reduce((sum, f) => sum + f.size, 0)
+  const totalBytes = incomingFileOffers.reduce(
+    (sum, f) => sum + (f.kind === 'file' ? f.size : 0),
+    0
+  )
   const fileCount = incomingFileOffers.length
 
   return (
@@ -57,6 +60,7 @@ export function ReceiveCompleteView() {
         ]}
       >
         {incomingFileOffers.map((file, index) => {
+          if (file.kind !== 'file') return null
           const offerKey = getOfferKey(file)
           const state = downloadStates[offerKey]
           const isComplete = state?.status === 'completed'

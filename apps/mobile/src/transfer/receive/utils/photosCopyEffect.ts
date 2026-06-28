@@ -77,7 +77,7 @@ export function startPhotosCopyEffect(): () => void {
       if (!item.savedTo) continue
 
       const offer = incomingFileOffers.find((f) => f.id === offerKey)
-      if (!offer) continue
+      if (offer?.kind !== 'file') continue
 
       processed.add(offerKey)
       void routeOne(offerKey, item.savedTo, offer.name)

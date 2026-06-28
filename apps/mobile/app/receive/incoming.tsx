@@ -83,7 +83,10 @@ export default function ReceiveIncomingScreen() {
     })
   }, [navigation, handleEndSession, t, theme.colors.colorTextPrimary])
 
-  const totalBytes = incomingFileOffers.reduce((sum, f) => sum + f.size, 0)
+  const totalBytes = incomingFileOffers.reduce(
+    (sum, f) => sum + (f.kind === 'file' ? f.size : 0),
+    0
+  )
   const { title, description } = getReceivePageCopy(t, step, incomingFileOffers.length, totalBytes)
 
   const handleDownloadAll = async () => {

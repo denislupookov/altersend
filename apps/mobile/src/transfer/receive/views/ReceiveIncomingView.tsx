@@ -63,6 +63,7 @@ export function ReceiveIncomingView() {
           ]}
         >
           {incomingFileOffers.map((file, index) => {
+            if (file.kind !== 'file') return null
             const row = getDownloadRowDisplay(file, downloadStates[getOfferKey(file)])
             return (
               <SendFileListRow

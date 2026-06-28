@@ -86,6 +86,7 @@ export function ReceiveInterruptedView({
           ]}
         >
           {incomingFileOffers.map((file, index) => {
+            if (file.kind !== 'file') return null
             const offerKey = getOfferKey(file)
             const state = downloadStates[offerKey]
             const isComplete = state?.status === 'completed'
