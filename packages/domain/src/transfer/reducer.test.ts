@@ -342,15 +342,13 @@ describe('transferSessionReducer — misc', () => {
     expect(next.uploadItems).toEqual([])
   })
 
-  it('clear_pairing_session: clears role and pairing state but keeps send-draft and remembered peers', () => {
+  it('clear_pairing_session: resets pairing vote state but leaves the transfer session untouched', () => {
     const peerKey = 'a'.repeat(64)
     const state = make({
       role: 'receiver',
-      pairing: true,
       connectionState: 'peer-connected',
-      topic: 'pairing-topic',
+      topic: 'transfer-topic',
       selectedFiles: [{ name: 'a', path: '/a', size: 1 }],
-      uploadItems: [{ name: 'a', path: '/a', size: 1, status: 'uploading' }],
       peers: [rememberedPeer(peerKey)],
       remember: {
         pairStatus: { [peerKey]: 'paired' },
@@ -362,22 +360,15 @@ describe('transferSessionReducer — misc', () => {
     })
     const next = apply(state, { type: 'clear_pairing_session' })
 
-    expect(next.role).toBeNull()
-    expect(next.pairing).toBe(false)
-    expect(next.connectionState).toBe('disconnected')
-    expect(next.topic).toBe('')
     expect(next.remember.pairStatus).toEqual({})
+    expect(next.remember.peerDisplayNames).toEqual({})
 
+    // pairing runs on its own swarm now, so transfer state must survive
+    expect(next.role).toBe('receiver')
+    expect(next.connectionState).toBe('peer-connected')
+    expect(next.topic).toBe('transfer-topic')
     expect(next.selectedFiles).toEqual(state.selectedFiles)
-    expect(next.uploadItems).toEqual(state.uploadItems)
     expect(next.peers).toEqual(state.peers)
-  })
-
-  it('pairing flag: pairing_started sets it; a real receive and teardown clear it', () => {
-    const started = apply(make(), { type: 'pairing_started' })
-    expect(started.pairing).toBe(true)
-    expect(apply(started, { type: 'join_requested' }).pairing).toBe(false)
-    expect(apply(started, { type: 'clear_session' }).pairing).toBe(false)
   })
 
   it('request_pair_peer does not downgrade an already-paired peer', () => {

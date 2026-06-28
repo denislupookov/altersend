@@ -59,7 +59,6 @@ export interface TransferSessionState {
   topic: string
   connectionState: ConnectionState
   role: TransferRole | null
-  pairing: boolean
   peerCount: number
   isReconnecting: boolean
   incomingFileOffers: IncomingFileOffer[]
@@ -85,7 +84,6 @@ export type TransferAction =
   | { type: 'join_failed'; code?: TransferErrorCode; message: string }
   | { type: 'clear_session' }
   | { type: 'clear_pairing_session' }
-  | { type: 'pairing_started' }
   | { type: 'set_error'; code?: TransferErrorCode; message: string }
   | { type: 'status_changed'; state: ConnectionState; peers?: number }
   | { type: 'role_changed'; role: TransferRole | null }

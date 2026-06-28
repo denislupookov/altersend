@@ -24,7 +24,8 @@
     "openSettings": "Abrir configurações",
     "update": "Atualizar",
     "downloadAll": "Baixar tudo",
-    "skip": "Pular"
+    "skip": "Pular",
+    "paste": "Paste"
   },
   "labels": {
     "settings": "Configurações",

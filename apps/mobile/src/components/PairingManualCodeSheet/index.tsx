@@ -83,7 +83,7 @@ export function PairingManualCodeSheet({ open, onBack, onClose, onJoined, isWait
               variant='ghost'
               size='sm'
               iconOnly
-              aria-label='Paste invite code'
+              aria-label={t('settings:pairing.pasteCodeLabel')}
               disabled={isJoining}
               onClick={() => { pasteFromClipboard().catch(() => {}) }}
               icon={<ClipboardIcon size={16} />}

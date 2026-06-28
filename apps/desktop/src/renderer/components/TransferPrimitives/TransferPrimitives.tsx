@@ -23,7 +23,7 @@ export function TransferCardFrame({
 }: TransferCardProps) {
   const hasHeader = !!(title || badge)
   return (
-    <div className='flex h-full min-h-0 w-full flex-col rounded-[12px] border border-border-primary bg-surface-primary px-6 py-6'>
+    <div className='flex h-full min-h-0 w-full flex-col rounded-[12px] border border-border-primary bg-background-subtle px-6 py-6'>
       {hasHeader ? (
         <div className='shrink-0'>
           {badge ? <div className='mb-4'>{badge}</div> : null}

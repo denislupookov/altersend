@@ -42,7 +42,8 @@
     "disconnected": "Disconnected",
     "online": "Online",
     "downloading": "Downloading",
-    "downloadingPercent": "Downloading {{percent}}%"
+    "downloadingPercent": "Downloading {{percent}}%",
+    "waitingForJoin": "Waiting for someone to join"
   },
   "connection": {
     "placeholder": "Generating secure key…",

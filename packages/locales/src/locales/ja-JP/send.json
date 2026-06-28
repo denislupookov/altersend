@@ -42,7 +42,8 @@
     "disconnected": "切断",
     "online": "オンライン",
     "downloading": "ダウンロード中",
-    "downloadingPercent": "{{percent}}% ダウンロード中"
+    "downloadingPercent": "{{percent}}% ダウンロード中",
+    "waitingForJoin": "Waiting for someone to join"
   },
   "connection": {
     "placeholder": "安全なキーを生成中…",

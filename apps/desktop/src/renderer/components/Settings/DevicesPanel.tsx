@@ -85,7 +85,7 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
                     trailing={
                       <Popover
                         trigger={
-                          <Button variant='ghost' size='sm' iconOnly aria-label='Device actions' icon={<MoreVerticalIcon size={14} />} />
+                          <Button variant='ghost' size='sm' iconOnly aria-label={t('settings:pairing.deviceActions')} icon={<MoreVerticalIcon size={14} />} />
                         }
                       >
                         {(close) => (

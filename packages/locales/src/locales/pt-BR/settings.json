@@ -22,7 +22,9 @@
     "privacyPolicyHint": "Como o AlterSend trata seus dados",
     "terms": "Termos de serviço",
     "termsHint": "Regras para usar o AlterSend",
-    "website": "Site"
+    "website": "Site",
+    "noDevices": "No devices yet",
+    "pairedCount": "{{count}} paired"
   },
   "legal": {
     "terms": "Termos de Uso",
@@ -65,10 +67,15 @@
     "devicePaired": "Device paired",
     "pairFailed": "Couldn’t pair — try again",
     "deviceRemoved": "Paired device removed",
-    "removeFailed": "Could not remove paired device"
+    "removeFailed": "Could not remove paired device",
+    "deviceActions": "Device actions",
+    "pairingDevice": "Pairing Device",
+    "couldNotReadImage": "Could not read image",
+    "copyShareLabel": "Copy and share invite code",
+    "pasteCodeLabel": "Paste invite code"
   },
   "pairPrompt": {
-    "title": "Pair a Device",
+    "title": "Set up your devices",
     "heading": "Skip the code next time",
     "body": "Pair a device you use often and send to it instantly — no code to scan or type each time.",
     "pairButton": "Pair a Device",

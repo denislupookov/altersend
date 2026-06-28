@@ -18,7 +18,7 @@ import {
 
 export default function ReceivePage() {
   const { t } = useTranslation(['receive', 'common'])
-  const role = useTransferStore((s) => (s.pairing ? null : s.role))
+  const role = useTransferStore((s) => s.role)
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const receiveDownloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const peerCount = useTransferStore((s) => s.peerCount)

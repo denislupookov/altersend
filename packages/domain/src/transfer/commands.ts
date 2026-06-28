@@ -45,9 +45,8 @@ export const startSendSession = async (): Promise<string> => {
 }
 
 export const hostPairingSession = async (): Promise<string> => {
-  dispatchToTransferStore({ type: 'pairing_started' })
   try {
-    const { topic } = await getTransferApi().worker.host()
+    const { topic } = await getTransferApi().worker.hostPairing()
     return topic
   } catch (error) {
     reportError('hostPairingSession', error)
@@ -56,9 +55,8 @@ export const hostPairingSession = async (): Promise<string> => {
 }
 
 export const joinPairingSession = async (topic: string): Promise<JoinReply> => {
-  dispatchToTransferStore({ type: 'pairing_started' })
   try {
-    return await getTransferApi().worker.join(topic)
+    return await getTransferApi().worker.joinPairing(topic)
   } catch (error) {
     reportError('joinPairingSession', error)
     throw error
@@ -68,7 +66,7 @@ export const joinPairingSession = async (topic: string): Promise<JoinReply> => {
 export const clearPairingSession = async (): Promise<void> => {
   dispatchToTransferStore({ type: 'clear_pairing_session' })
   try {
-    await getTransferApi().worker.closePeers()
+    await getTransferApi().worker.closePairing()
   } catch (error) {
     reportError('clearPairingSession', error)
     throw error
@@ -133,6 +131,12 @@ export function subscribeToPeerConnected(cb: (peerKey: string) => void): () => v
     if (event.type === 'status' && event.state === 'peer-connected' && event.peer) {
       cb(event.peer)
     }
+  })
+}
+
+export function subscribeToPairingPeerConnected(cb: (peerKey: string) => void): () => void {
+  return getTransferApi().onTransferEvent((event) => {
+    if (event.type === 'pairing-peer-connected') cb(event.peerKey)
   })
 }
 

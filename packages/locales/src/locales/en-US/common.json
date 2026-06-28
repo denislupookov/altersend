@@ -24,7 +24,8 @@
     "openSettings": "Open settings",
     "update": "Update",
     "downloadAll": "Download all",
-    "skip": "Skip"
+    "skip": "Skip",
+    "paste": "Paste"
   },
   "labels": {
     "settings": "Settings",

@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react'
 import { ArrowLeftIcon, CloseIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/locales'
 
 interface ModalProps {
   open: boolean
@@ -12,6 +13,7 @@ interface ModalProps {
 }
 
 export function Modal({ open, title, subtitle, width = 440, onClose, onBack, children }: ModalProps) {
+  const { t } = useTranslation(['common'])
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -44,7 +46,7 @@ export function Modal({ open, title, subtitle, width = 440, onClose, onBack, chi
           <div className='flex items-center gap-2 px-4 pb-3 pt-4'>
             {onBack && (
               <button
-                aria-label='Back'
+                aria-label={t('common:actions.back')}
                 type='button'
                 onClick={onBack}
                 className='-ml-1 inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-[8px] border-none bg-transparent p-0 text-text-muted transition-colors hover:bg-surface-primary hover:text-text-primary'
@@ -58,7 +60,7 @@ export function Modal({ open, title, subtitle, width = 440, onClose, onBack, chi
               {subtitle && <span className='mt-0.5 block text-[13px] leading-snug text-text-muted'>{subtitle}</span>}
             </div>
             <button
-              aria-label='Close'
+              aria-label={t('common:actions.close')}
               type='button'
               onClick={onClose}
               className='inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-[8px] border-none bg-transparent p-0 text-text-muted transition-colors hover:bg-surface-primary hover:text-text-primary'

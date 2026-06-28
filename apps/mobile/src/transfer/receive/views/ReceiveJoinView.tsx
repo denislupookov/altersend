@@ -54,7 +54,7 @@ export function ReceiveJoinView({
           value={joinCode}
         />
 
-        <Button disabled={!canConnect} onClick={onConnect} size='md' variant='primary' width='full'>
+        <Button disabled={!canConnect} onClick={onConnect} variant='primary' size='lg' width='full'>
           {isLoading ? t('common:actions.connecting') : t('common:actions.connect')}
         </Button>
       </View>

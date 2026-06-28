@@ -18,7 +18,7 @@ interface PairingQrSheetProps {
 }
 
 export function PairingQrSheet({ open, topic, isWaiting = false, onBack, onClose }: PairingQrSheetProps) {
-  const { t } = useTranslation(['settings'])
+  const { t } = useTranslation(['settings', 'send'])
   const { theme } = useTheme()
   const c = theme.colors
   const toast = useToast()
@@ -26,7 +26,7 @@ export function PairingQrSheet({ open, topic, isWaiting = false, onBack, onClose
   const copyAndShare = async () => {
     if (!topic) return
     await Clipboard.setStringAsync(topic)
-    toast.show({ title: 'Copied to clipboard' })
+    toast.show({ title: t('send:connection.copiedToast') })
     await Share.share({ message: topic })
   }
 
@@ -47,7 +47,7 @@ export function PairingQrSheet({ open, topic, isWaiting = false, onBack, onClose
         {isWaiting && (
           <View style={[styles.waitingOverlay, { backgroundColor: withAlpha(c.colorBackground, 0.92), borderColor: c.colorBorderPrimary }]}>
             <Spinner size={28} color={c.colorInfo} />
-            <Text style={[styles.waitingText, { color: c.colorTextPrimary }]}>Pairing Device</Text>
+            <Text style={[styles.waitingText, { color: c.colorTextPrimary }]}>{t('settings:pairing.pairingDevice')}</Text>
           </View>
         )}
       </View>
@@ -64,7 +64,7 @@ export function PairingQrSheet({ open, topic, isWaiting = false, onBack, onClose
               variant='ghost'
               size='sm'
               iconOnly
-              aria-label='Copy and share invite code'
+              aria-label={t('settings:pairing.copyShareLabel')}
               disabled={!topic}
               onClick={() => { copyAndShare().catch(() => {}) }}
               icon={<CopyIcon size={16} />}

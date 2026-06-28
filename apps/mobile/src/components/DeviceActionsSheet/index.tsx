@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native'
 import { useTheme } from '@altersend/components'
 import { TrashIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/locales'
 import { BottomSheet } from '../BottomSheet'
 import { Text } from '../ThemedText'
 
@@ -11,11 +12,12 @@ interface DeviceActionsSheetProps {
 }
 
 export function DeviceActionsSheet({ open, onClose, onRemove }: DeviceActionsSheetProps) {
+  const { t } = useTranslation(['settings'])
   const { theme } = useTheme()
   const c = theme.colors
 
   return (
-    <BottomSheet open={open} onClose={onClose} title='Device actions' sheetStyle={styles.sheet}>
+    <BottomSheet open={open} onClose={onClose} title={t('settings:pairing.deviceActions')} sheetStyle={styles.sheet}>
       <View style={styles.actionList}>
         <Pressable
           accessibilityRole='button'
@@ -23,7 +25,7 @@ export function DeviceActionsSheet({ open, onClose, onRemove }: DeviceActionsShe
           style={({ pressed }) => [styles.actionRow, pressed && { backgroundColor: c.colorDangerSubtle }]}
         >
           <TrashIcon size={16} color={c.colorDanger} />
-          <Text style={[styles.actionText, { color: c.colorDanger }]}>Remove Device</Text>
+          <Text style={[styles.actionText, { color: c.colorDanger }]}>{t('settings:pairing.removeDevice')}</Text>
         </Pressable>
       </View>
     </BottomSheet>

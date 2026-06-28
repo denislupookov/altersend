@@ -13,7 +13,7 @@ interface PairingJoinModalProps {
 }
 
 export function PairingJoinModal({ open, isLoading, onClose, onJoin }: PairingJoinModalProps) {
-  const { t } = useTranslation(['settings'])
+  const { t } = useTranslation(['settings', 'common'])
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
 
@@ -50,7 +50,7 @@ export function PairingJoinModal({ open, isLoading, onClose, onJoin }: PairingJo
               variant='ghost'
               size='sm'
               iconOnly
-              aria-label='Paste'
+              aria-label={t('common:actions.paste')}
               onClick={() => { handlePaste().catch(() => { }) }}
               icon={<ClipboardIcon size={16} />}
             />

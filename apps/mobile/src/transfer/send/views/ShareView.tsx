@@ -63,7 +63,7 @@ export function ShareView() {
           <View style={styles.statusStrip}>
             <WaitingRadar size={60} color={c.colorInfo} pulsing icon={<ShareIcon size={16} color={c.colorInfo} />} />
             <View style={styles.statusText}>
-              <Text style={[styles.statusTitle, { color: c.colorTextPrimary }]}>Waiting for someone to join</Text>
+              <Text style={[styles.statusTitle, { color: c.colorTextPrimary }]}>{t('send:status.waitingForJoin')}</Text>
               <Text style={[styles.statusCaption, { color: c.colorTextMuted }]} numberOfLines={1}>{t('send:hints.keepOpen')}</Text>
             </View>
           </View>
@@ -125,7 +125,7 @@ export function ShareView() {
         {vm.hasDevices && (
           <>
             <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionLabel, { color: c.colorTextSecondary }]}>DEVICES</Text>
+              <Text style={[styles.sectionLabel, { color: c.colorTextSecondary }]}>{t('send:peer.devices')}</Text>
               {vm.connectedCount > 0 && (
                 <Text style={[styles.sectionCount, { color: c.colorTextMuted }]}>
                   {vm.connectedCount === 1 ? '1 connected' : `${vm.connectedCount} connected`}

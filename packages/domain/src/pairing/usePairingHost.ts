@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { clearPairingSession, hostPairingSession } from '../transfer/commands'
-import { usePairingSessionStore } from './pairingStore'
+import { useEffect, useState } from 'react'
+import { hostPairingSession } from '../transfer/commands'
 import { usePairingVotes } from './usePairingVotes'
 
 interface UsePairingHostResult {
@@ -14,47 +13,29 @@ export function usePairingHost(isOpen: boolean): UsePairingHostResult {
   const [isPaired, setIsPaired] = useState(false)
   const [isWaiting, setIsWaiting] = useState(false)
 
-  const sessionActiveRef = useRef(false)
-  const { startPairing, endPairing } = usePairingSessionStore()
-
   useEffect(() => {
-    if (!isOpen) return
-
-    startPairing()
-    return () => endPairing()
-  }, [isOpen, startPairing, endPairing])
-
-  useEffect(() => {
-    if (!isOpen) {
-      if (sessionActiveRef.current) {
-        sessionActiveRef.current = false
-        clearPairingSession().catch(() => {})
-      }
-
-      setTopic('')
-      setIsPaired(false)
-      setIsWaiting(false)
-      return
-    }
-
-    hostPairingSession()
-      .then((hostedTopic) => {
-        sessionActiveRef.current = true
-        setTopic(hostedTopic)
-      })
-      .catch(() => {})
+    if (isOpen) setIsPaired(false)
   }, [isOpen])
+
+  // The worklet owns the host swarm and keeps it alive for the whole app
+  // session, so we just (idempotently) start it when the QR is shown and read
+  // the stable topic. No teardown — closing the modal or leaving the screen
+  // leaves the host announcing, and reopening shows the same code.
+  useEffect(() => {
+    if (!isOpen || topic) return
+    hostPairingSession()
+      .then(setTopic)
+      .catch(() => {})
+  }, [isOpen, topic])
 
   usePairingVotes({
     topic,
-    isMine: true,
     engaged: isWaiting,
     onPeerConnected: () => setIsWaiting(true),
     onStalled: () => setIsWaiting(false),
     onPaired: () => {
       setIsPaired(true)
       setIsWaiting(false)
-      setTopic('')
     }
   })
 

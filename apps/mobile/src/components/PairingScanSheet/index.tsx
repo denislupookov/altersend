@@ -116,7 +116,7 @@ export function PairingScanSheet({
       await resolveCode(scan.data)
     } catch (error) {
       console.warn('PairingScanSheet: importFromImage failed', error)
-      toast.show({ title: 'Could not read image' })
+      toast.show({ title: t('settings:pairing.couldNotReadImage') })
     }
   }, [resolveCode, role, toast, t])
 

@@ -117,9 +117,9 @@ export function SettingsPanel({ onNavigate, onClose }: SettingsPanelProps) {
             className='flex w-full appearance-none items-center gap-3 border-0 bg-transparent px-5 py-3 text-[14px] text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary'
           >
             <SmartphoneIcon size={15} />
-            <span className='flex-1 text-left'>Paired devices</span>
+            <span className='flex-1 text-left'>{t('settings:pairing.pairedDevices')}</span>
             <span className='text-[12px] text-text-muted'>
-              {peers.length === 0 ? 'No devices yet' : `${peers.length} paired`}
+              {peers.length === 0 ? t('settings:rows.noDevices') : t('settings:rows.pairedCount', { count: peers.length })}
             </span>
             <ChevronRightIcon size={13} />
           </button>

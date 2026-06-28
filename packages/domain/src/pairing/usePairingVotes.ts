@@ -1,28 +1,27 @@
 import { useEffect, useRef } from 'react'
-import { rememberVote, subscribeToPeerConnected } from '../transfer/commands'
+import { subscribeToPairingPeerConnected } from '../transfer/commands'
 import { useTransferStore } from '../transfer/store'
 
 const PAIRING_STALL_MS = 20_000
 
 interface UsePairingVotesArgs {
   topic: string
-  isMine: boolean
   engaged?: boolean
   onPeerConnected?: () => void
   onPaired: () => void
   onStalled?: () => void
 }
 
-export function usePairingVotes({ topic, isMine, engaged = true, onPeerConnected, onPaired, onStalled }: UsePairingVotesArgs) {
-  const votedPeersRef = useRef(new Set<string>())
+// The worklet now drives the remember vote itself (so pairing completes even
+// with no pairing UI mounted). This hook is just the view side: surface when a
+// peer connects, when the pairing is confirmed, and when it stalls.
+export function usePairingVotes({ topic, engaged = true, onPeerConnected, onPaired, onStalled }: UsePairingVotesArgs) {
   const prevPairStatusRef = useRef<Record<string, string>>({})
-
   const pairStatus = useTransferStore((s) => s.remember.pairStatus)
-  const incomingRequest = useTransferStore((s) => s.remember.incomingRequest)
 
   const onPeerConnectedRef = useRef(onPeerConnected)
   onPeerConnectedRef.current = onPeerConnected
-  
+
   const onPairedRef = useRef(onPaired)
   onPairedRef.current = onPaired
 
@@ -30,30 +29,9 @@ export function usePairingVotes({ topic, isMine, engaged = true, onPeerConnected
   onStalledRef.current = onStalled
 
   useEffect(() => {
-    if (!topic) votedPeersRef.current.clear()
-  }, [topic])
-
-  useEffect(() => {
-    if (!topic || !incomingRequest) return
-
-    const { peerKey, transferId } = incomingRequest
-    if (votedPeersRef.current.has(peerKey)) return
-
-    votedPeersRef.current.add(peerKey)
-    rememberVote({ transferId, peerKey, vote: 'remember', isMine }).catch(() => {})
-  }, [incomingRequest, topic, isMine])
-
-  useEffect(() => {
     if (!topic) return
-
-    return subscribeToPeerConnected((peerKey) => {
-      onPeerConnectedRef.current?.()
-      if (votedPeersRef.current.has(peerKey)) return
-
-      votedPeersRef.current.add(peerKey)
-      rememberVote({ transferId: topic, peerKey, vote: 'remember', isMine }).catch(() => {})
-    })
-  }, [topic, isMine])
+    return subscribeToPairingPeerConnected(() => onPeerConnectedRef.current?.())
+  }, [topic])
 
   useEffect(() => {
     const prev = prevPairStatusRef.current

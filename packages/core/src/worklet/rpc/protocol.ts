@@ -6,6 +6,7 @@ import type {
   ErrorEvent,
   InviteReceivedEvent,
   InviteResponseReceivedEvent,
+  PairingPeerConnectedEvent,
   ReadyEvent,
   RememberConfirmedEvent,
   RememberDeclinedEvent,
@@ -130,6 +131,7 @@ export type RendererTransferEvent =
   | RememberRequestedEvent
   | InviteReceivedEvent
   | InviteResponseReceivedEvent
+  | PairingPeerConnectedEvent
   | PeerControlMessage
 export type WorkerTransferEvent = WorkerReadyEvent | RendererTransferEvent
 export type IncomingFileOffer = FileOffer
@@ -147,6 +149,9 @@ export interface TransferRPC {
   respondToInvite(input: InviteResponseInput): Promise<InviteResponseReply>
   forgetPeer(pubkey: string): Promise<void>
   initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply>
+  hostPairing(): Promise<HostReply>
+  joinPairing(topic: string): Promise<JoinReply>
+  closePairing(): Promise<void>
 }
 
 export class BadRequestError extends Error {

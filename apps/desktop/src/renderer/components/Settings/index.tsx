@@ -36,7 +36,7 @@ export function Settings({ version }: { version: string }) {
   }
 
   return (
-    <footer className='shrink-0 border-t border-border-primary/60 bg-surface-primary'>
+    <footer className='shrink-0 border-t border-border-primary'>
       <div className='mx-auto flex w-full select-none items-center justify-between px-5 py-2 text-[12px] text-text-muted'>
         <div className='flex min-w-0 items-center gap-1.5'>
           <img
@@ -52,7 +52,7 @@ export function Settings({ version }: { version: string }) {
           aria-label={t('common:labels.settings')}
           title={t('common:labels.settings')}
           type='button'
-          className='flex appearance-none items-center justify-center rounded-full border border-border-strong bg-surface-primary p-1.5 text-text-muted transition-colors hover:border-text-muted hover:text-text-primary'
+          className='flex appearance-none items-center justify-center rounded-full border border-border-strong bg-transparent p-1.5 text-text-muted transition-colors hover:border-text-muted hover:text-text-primary cursor-pointer'
           onClick={() => setOpen((v) => !v)}
         >
           <SettingsIcon size={14} />
@@ -65,7 +65,7 @@ export function Settings({ version }: { version: string }) {
       />
 
       <div
-        className={`fixed inset-y-0 right-0 z-50 flex w-[360px] flex-col overflow-hidden border-l border-border-primary bg-surface-primary shadow-2xl transition-transform duration-200 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed inset-y-0 right-0 z-50 flex w-[360px] flex-col overflow-hidden border-l border-border-primary bg-background-subtle shadow-2xl transition-transform duration-200 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
       >
         {panel === 'settings' ? (
           <SettingsPanel onNavigate={setPanel} onClose={close} />

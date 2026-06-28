@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { clearPairingSession, joinPairingSession } from '../transfer/commands'
+import { useEffect, useState } from 'react'
+import { joinPairingSession } from '../transfer/commands'
 import { extractJoinCode } from '../receive/joinCode'
 import { usePairingSessionStore } from './pairingStore'
 import { usePairingVotes } from './usePairingVotes'
@@ -19,15 +19,7 @@ export function usePairingJoin(isOpen: boolean): UsePairingJoinResult {
   const [isPaired, setIsPaired] = useState(false)
   const [isFailed, setIsFailed] = useState(false)
 
-  const sessionActiveRef = useRef(false)
   const { startPairing, endPairing } = usePairingSessionStore()
-
-  const endSession = () => {
-    if (sessionActiveRef.current) {
-      sessionActiveRef.current = false
-      clearPairingSession().catch(() => {})
-    }
-  }
 
   useEffect(() => {
     if (!isOpen) return
@@ -39,7 +31,6 @@ export function usePairingJoin(isOpen: boolean): UsePairingJoinResult {
   useEffect(() => {
     if (isOpen) return
 
-    endSession()
     setJoiningTopic('')
     setIsJoining(false)
     setIsPaired(false)
@@ -48,13 +39,11 @@ export function usePairingJoin(isOpen: boolean): UsePairingJoinResult {
 
   usePairingVotes({
     topic: joiningTopic,
-    isMine: false,
     onPaired: () => {
       setIsPaired(true)
       setJoiningTopic('')
     },
     onStalled: () => {
-      endSession()
       setJoiningTopic('')
       setIsFailed(true)
     }
@@ -68,7 +57,6 @@ export function usePairingJoin(isOpen: boolean): UsePairingJoinResult {
     setIsJoining(true)
     try {
       await joinPairingSession(code)
-      sessionActiveRef.current = true
       setJoiningTopic(code)
       return true
     } catch {
@@ -80,7 +68,6 @@ export function usePairingJoin(isOpen: boolean): UsePairingJoinResult {
 
   const setJoinedTopic = (topic: string) => {
     setIsFailed(false)
-    sessionActiveRef.current = true
     setJoiningTopic(topic)
   }
 

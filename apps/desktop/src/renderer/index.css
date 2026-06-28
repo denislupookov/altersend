@@ -95,6 +95,11 @@
     font-family: inherit;
   }
 
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
   ::selection {
     background: color-mix(in oklab, var(--as-color-accent) 20%, transparent);
   }

@@ -75,11 +75,12 @@ export function ActionRow({ icon, title, subtitle, onClick, compact = false }: A
     ? cloneElement(icon as ReactElement<{ color?: string; size?: number }>, { color: c.colorTextPrimary, size: iconSize })
     : icon
 
-  const backgroundColor = isPressed
-    ? c.colorSurfacePrimary
-    : isHovered
-      ? c.colorSurfaceSecondary
-      : 'transparent'
+  const resolveBackgroundColor = () => {
+    if (isPressed) return c.colorSurfacePrimary
+    if (isHovered) return c.colorSurfaceSecondary
+    return 'transparent'
+  }
+  const backgroundColor = resolveBackgroundColor()
 
   return (
     <html.div

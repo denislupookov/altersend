@@ -91,18 +91,21 @@ export function Button({
   const showPressed = isPressed && !isDisabled
   const showHover = isHovered && !isDisabled && !isPressed
 
-  const iconColorKey = isDisabled && !loading
-    ? 'colorTextMuted'
-    : (showPressed || showHover) && pressedIconColor[variant]
-      ? pressedIconColor[variant]!
-      : normalIconColor[variant]
-  const resolvedIconColor = theme.colors[iconColorKey]
+  const resolveIconColorKey = () => {
+    if (isDisabled && !loading) return 'colorTextMuted'
+    if ((showPressed || showHover) && pressedIconColor[variant]) return pressedIconColor[variant]!
+    return normalIconColor[variant]
+  }
+  const resolvedIconColor = theme.colors[resolveIconColorKey()]
 
-  const leadingEl = loading
-    ? <Spinner size={spinnerSize[size]} color={resolvedIconColor} />
-    : isValidElement(icon)
-      ? cloneElement(icon as ReactElement<{ color?: string }>, { color: resolvedIconColor })
-      : icon
+  const renderLeading = (): ReactNode => {
+    if (loading) return <Spinner size={spinnerSize[size]} color={resolvedIconColor} />
+    if (isValidElement(icon)) {
+      return cloneElement(icon as ReactElement<{ color?: string }>, { color: resolvedIconColor })
+    }
+    return icon
+  }
+  const leadingEl = renderLeading()
 
   return (
     <html.button

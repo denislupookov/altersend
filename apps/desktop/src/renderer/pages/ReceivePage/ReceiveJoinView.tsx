@@ -96,7 +96,7 @@ export function ReceiveJoinView() {
               variant='ghost'
               size='sm'
               iconOnly
-              aria-label='Paste'
+              aria-label={t('common:actions.paste')}
               disabled={isJoining}
               onClick={() => { pasteCode().catch(() => {}) }}
               icon={<ClipboardIcon size={16} />}

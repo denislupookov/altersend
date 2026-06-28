@@ -10,7 +10,7 @@ export const styles = css.create({
     minWidth: 0,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderRadius: tokens.radiusSm,
+    borderRadius: tokens.radiusLg,
     padding: tokens.space3,
     alignItems: 'center',
     justifyContent: 'center',
@@ -32,16 +32,14 @@ export const styles = css.create({
     paddingBottom: tokens.space3,
     paddingLeft: tokens.space5,
     paddingRight: tokens.space5,
-    fontSize: tokens.fontSizeMd,
-    borderRadius: tokens.radiusSm
+    fontSize: tokens.fontSizeMd
   },
   md: {
     paddingTop: tokens.space4,
     paddingBottom: tokens.space4,
     paddingLeft: 26,
     paddingRight: 26,
-    fontSize: tokens.fontSizeBase,
-    borderRadius: tokens.radiusMd
+    fontSize: tokens.fontSizeBase
   },
   lg: {
     paddingTop: tokens.space35,
@@ -49,8 +47,7 @@ export const styles = css.create({
     paddingLeft: tokens.space4,
     paddingRight: tokens.space4,
     gap: tokens.space2,
-    fontSize: tokens.fontSizeLg,
-    borderRadius: tokens.radiusLg
+    fontSize: tokens.fontSizeLg
   },
   full: {
     width: '100%'
@@ -59,19 +56,22 @@ export const styles = css.create({
     paddingTop: tokens.space2,
     paddingBottom: tokens.space2,
     paddingLeft: tokens.space15,
-    paddingRight: tokens.space15
+    paddingRight: tokens.space15,
+    borderRadius: tokens.radiusSm
   },
   iconOnlyMd: {
     paddingTop: tokens.space25,
     paddingBottom: tokens.space25,
     paddingLeft: tokens.space2,
-    paddingRight: tokens.space2
+    paddingRight: tokens.space2,
+    borderRadius: tokens.radiusMd
   },
   iconOnlyLg: {
     paddingTop: tokens.space3,
     paddingBottom: tokens.space3,
     paddingLeft: tokens.space25,
-    paddingRight: tokens.space25
+    paddingRight: tokens.space25,
+    borderRadius: tokens.radiusLg
   },
   primary: {
     backgroundColor: tokens.colorTextPrimary,

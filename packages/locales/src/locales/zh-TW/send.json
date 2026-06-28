@@ -42,7 +42,8 @@
     "disconnected": "已斷開連接",
     "online": "網路",
     "downloading": "正在下載",
-    "downloadingPercent": "正在下載 {{percent}}%"
+    "downloadingPercent": "正在下載 {{percent}}%",
+    "waitingForJoin": "Waiting for someone to join"
   },
   "connection": {
     "placeholder": "正在生成安全密钥...",

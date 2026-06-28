@@ -62,6 +62,7 @@ import { RememberedPeerStore } from '../peers/store'
 import type { RememberedPeer } from '../peers/remembered-peer'
 import { RememberCoordinator } from '../peers/remember-coordinator'
 import { DiscoveryCoordinator } from '../peers/discovery'
+import { PairingCoordinator } from '../peers/pairing-coordinator'
 
 function createTransferId(): string {
   return crypto.randomBytes(16).toString('hex')
@@ -114,6 +115,8 @@ export class TransferOrchestrator implements TransferRPC {
   private readonly remember: RememberCoordinator
   private readonly discovery: DiscoveryCoordinator
 
+  private readonly pairing: PairingCoordinator
+
   constructor(
     emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void,
     storageRoot: string,
@@ -163,8 +166,28 @@ export class TransferOrchestrator implements TransferRPC {
         if (event.type === 'remember-confirmed') void this.discovery.refresh()
       }
     })
-    
+
+    this.pairing = new PairingCoordinator({
+      identityStore,
+      deviceIdentityStore: this.deviceIdentityStore,
+      rememberedStore: this.rememberedStore,
+      emit: (event) => this.emitIPC(event),
+      onRememberConfirmed: () => void this.discovery.refresh()
+    })
+
     this.discovery.start()
+  }
+
+  hostPairing(): Promise<HostReply> {
+    return this.pairing.host()
+  }
+
+  joinPairing(topic: string): Promise<JoinReply> {
+    return this.pairing.join(topic)
+  }
+
+  closePairing(): Promise<void> {
+    return this.pairing.close()
   }
 
   private initStorage(): void {
@@ -198,7 +221,7 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply> {
-    return this.remember.vote(input)
+    return this.pairing.vote(input)
   }
 
   peersList(): Promise<RememberedPeer[]> {

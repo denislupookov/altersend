@@ -92,35 +92,52 @@ export function LinkRow({
   const { theme } = useTheme()
   const kind = file ? getFileKind(label) : null
   const fileTone = kind ? fileTypeColors[kind] : null
-  const iconNode = icon ?? (kind
-    ? (
+  const renderIcon = (): ReactNode => {
+    if (icon != null) return icon
+    if (!kind) return null
+    return (
       <FileKindIcon
         kind={kind}
         size={compact ? 16 : 20}
         color={disabled ? theme.colors.colorTextMuted : fileTone?.fg}
       />
     )
-    : null)
-  const iconBoxBackground = disabled
-    ? theme.colors.colorBackgroundSubtle
-    : iconBackground ?? fileTone?.bg
-  const rowSubtitle = subtitle ?? description ?? (typeof size === 'number' ? formatFileSize(size) : undefined)
-  const clampedProgressPercent = typeof progressPercent === 'number'
-    ? Math.max(0, Math.min(100, progressPercent))
-    : undefined
-  const trailingContent = disabled
-    ? null
-    : trailing !== undefined
-    ? trailing
-    : onRemove
-      ? (
+  }
+
+  const resolveIconBoxBackground = (): string | undefined => {
+    if (disabled) return theme.colors.colorBackgroundSubtle
+    return iconBackground ?? fileTone?.bg
+  }
+
+  const resolveSubtitle = (): string | undefined => {
+    if (subtitle != null) return subtitle
+    if (description != null) return description
+    if (typeof size === 'number') return formatFileSize(size)
+    return undefined
+  }
+
+  const renderTrailing = (): ReactNode => {
+    if (disabled) return null
+    if (trailing !== undefined) return trailing
+    if (onRemove) {
+      return (
         <html.button aria-label={removeLabel} onClick={onRemove} style={[styles.removeButton, compact && styles.removeButtonCompact]} type='button'>
           <CloseIcon size={compact ? 14 : 16} />
         </html.button>
       )
-    : onPress
-      ? <ChevronRightIcon size={14} color={theme.colors.colorTextMuted} />
-      : null
+    }
+    if (onPress) return <ChevronRightIcon size={14} color={theme.colors.colorTextMuted} />
+    return null
+  }
+
+  const iconNode = renderIcon()
+  const iconBoxBackground = resolveIconBoxBackground()
+  const rowSubtitle = resolveSubtitle()
+  const trailingContent = renderTrailing()
+
+  const clampedProgressPercent = typeof progressPercent === 'number'
+    ? Math.max(0, Math.min(100, progressPercent))
+    : undefined
 
   return (
     <>

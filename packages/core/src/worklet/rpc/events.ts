@@ -102,6 +102,11 @@ export interface InviteResponseReceivedEvent {
   response: 'declined'
 }
 
+export interface PairingPeerConnectedEvent {
+  type: 'pairing-peer-connected'
+  peerKey: string
+}
+
 export type TransferIPCMessage =
   | ReadyEvent
   | TopicEvent
@@ -113,6 +118,7 @@ export type TransferIPCMessage =
   | RememberRequestedEvent
   | InviteReceivedEvent
   | InviteResponseReceivedEvent
+  | PairingPeerConnectedEvent
 
 export function createReadyEvent(): ReadyEvent {
   return { type: 'ready' }
@@ -163,6 +169,10 @@ export function createInviteResponseReceivedEvent(
   response: Omit<InviteResponseReceivedEvent, 'type'>
 ): InviteResponseReceivedEvent {
   return { type: 'invite-response-received', ...response }
+}
+
+export function createPairingPeerConnectedEvent(peerKey: string): PairingPeerConnectedEvent {
+  return { type: 'pairing-peer-connected', peerKey }
 }
 
 export function createErrorEvent(message: string, code?: TransferErrorCode): ErrorEvent {

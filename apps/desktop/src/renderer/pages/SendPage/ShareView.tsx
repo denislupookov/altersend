@@ -77,7 +77,7 @@ export function ShareView() {
                   <div className='flex items-center gap-3'>
                     <WaitingRadar size={44} color={c.colorInfo} pulsing icon={<ShareIcon size={17} color={c.colorInfo} />} />
                     <div className='min-w-0'>
-                      <p className='m-0 text-[15px] font-bold leading-snug text-text-primary'>Waiting for someone to join</p>
+                      <p className='m-0 text-[15px] font-bold leading-snug text-text-primary'>{t('send:status.waitingForJoin')}</p>
                       <p className='m-0 mt-0.5 text-[12px] leading-snug text-text-muted'>{t('send:hints.keepOpen')}</p>
                     </div>
                   </div>

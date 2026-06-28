@@ -42,7 +42,8 @@
     "disconnected": "연결이 끊김",
     "online": "온라인",
     "downloading": "다운로드 중",
-    "downloadingPercent": "{{percent}}% 다운로드 중"
+    "downloadingPercent": "{{percent}}% 다운로드 중",
+    "waitingForJoin": "Waiting for someone to join"
   },
   "connection": {
     "placeholder": "보안 키 생성 중…",
