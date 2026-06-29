@@ -43,11 +43,11 @@
     "online": "En línea",
     "downloading": "Descargando",
     "downloadingPercent": "Descargando {{percent}}%",
-    "waitingForJoin": "Waiting for someone to join",
-    "pairedToast": "Paired with {{name}}",
-    "inviteFailedToast": "Couldn't reach {{name}}",
-    "inviteFailedHint": "Make sure it's online and try again",
-    "deviceConnected": "{{name}} connected"
+    "waitingForJoin": "Esperando a que alguien se una",
+    "pairedToast": "Emparejado con {{name}}",
+    "inviteFailedToast": "No se pudo contactar con {{name}}",
+    "inviteFailedHint": "Asegúrate de que esté en línea e inténtalo de nuevo",
+    "deviceConnected": "{{name}} conectado"
   },
   "connection": {
     "placeholder": "Generando clave segura…",
@@ -60,8 +60,8 @@
     "orScan": "o escanea",
     "generating": "Generando…",
     "waitingForConnection": "Esperando una conexión…",
-    "copyCode": "Copy code",
-    "qrCode": "QR code"
+    "copyCode": "Copiar código",
+    "qrCode": "Código QR"
   },
   "errors": {
     "folderUnsupported": "Las carpetas aún no son compatibles. Seleccione solo archivos.",
@@ -81,12 +81,12 @@
     "devices": "Dispositivos",
     "connectedCount_one": "{{count}} conectado",
     "connectedCount_other": "{{count}} conectados",
-    "pair": "Pair",
-    "requested": "Requested…",
-    "invite": "Invite",
-    "inviting": "Inviting…",
-    "sent": "Sent",
-    "deviceOffline": "Device offline — try again"
+    "pair": "Emparejar",
+    "requested": "Solicitado…",
+    "invite": "Invitar",
+    "inviting": "Invitando…",
+    "sent": "Enviado",
+    "deviceOffline": "Dispositivo sin conexión: inténtalo de nuevo"
   },
   "dropzone": {
     "addMoreDescription": "o haz clic para <link>agregar más</link>",

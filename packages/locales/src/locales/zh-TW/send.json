@@ -43,11 +43,11 @@
     "online": "網路",
     "downloading": "正在下載",
     "downloadingPercent": "正在下載 {{percent}}%",
-    "waitingForJoin": "Waiting for someone to join",
-    "pairedToast": "Paired with {{name}}",
-    "inviteFailedToast": "Couldn't reach {{name}}",
-    "inviteFailedHint": "Make sure it's online and try again",
-    "deviceConnected": "{{name}} connected"
+    "waitingForJoin": "等待他人加入",
+    "pairedToast": "已與 {{name}} 配對",
+    "inviteFailedToast": "無法連線到 {{name}}",
+    "inviteFailedHint": "請確認其在線後重試",
+    "deviceConnected": "{{name}} 已連線"
   },
   "connection": {
     "placeholder": "正在生成安全密钥...",
@@ -60,8 +60,8 @@
     "orScan": "或掃描",
     "generating": "產生中…",
     "waitingForConnection": "正在等待連線…",
-    "copyCode": "Copy code",
-    "qrCode": "QR code"
+    "copyCode": "複製代碼",
+    "qrCode": "QR 碼"
   },
   "errors": {
     "folderUnsupported": "尚不支持文件夹。请仅选择文件。",
@@ -81,12 +81,12 @@
     "devices": "裝置",
     "connectedCount_one": "{{count}} 台裝置已連線",
     "connectedCount_other": "{{count}} 台裝置已連線",
-    "pair": "Pair",
-    "requested": "Requested…",
-    "invite": "Invite",
-    "inviting": "Inviting…",
-    "sent": "Sent",
-    "deviceOffline": "Device offline — try again"
+    "pair": "配對",
+    "requested": "已請求…",
+    "invite": "邀請",
+    "inviting": "正在邀請…",
+    "sent": "已傳送",
+    "deviceOffline": "裝置離線 — 請重試"
   },
   "dropzone": {
     "addMoreDescription": "或點擊<link>繼續新增</link>",

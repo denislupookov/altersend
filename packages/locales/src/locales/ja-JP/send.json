@@ -43,11 +43,11 @@
     "online": "オンライン",
     "downloading": "ダウンロード中",
     "downloadingPercent": "{{percent}}% ダウンロード中",
-    "waitingForJoin": "Waiting for someone to join",
-    "pairedToast": "Paired with {{name}}",
-    "inviteFailedToast": "Couldn't reach {{name}}",
-    "inviteFailedHint": "Make sure it's online and try again",
-    "deviceConnected": "{{name}} connected"
+    "waitingForJoin": "参加を待っています",
+    "pairedToast": "{{name}} とペアリングしました",
+    "inviteFailedToast": "{{name}} に接続できませんでした",
+    "inviteFailedHint": "オンラインであることを確認してもう一度お試しください",
+    "deviceConnected": "{{name}} が接続しました"
   },
   "connection": {
     "placeholder": "安全なキーを生成中…",
@@ -60,8 +60,8 @@
     "orScan": "またはスキャン",
     "generating": "生成中…",
     "waitingForConnection": "接続を待機中…",
-    "copyCode": "Copy code",
-    "qrCode": "QR code"
+    "copyCode": "コードをコピー",
+    "qrCode": "QRコード"
   },
   "errors": {
     "folderUnsupported": "フォルダはまだ対応していません。ファイルのみ選択してください。",
@@ -81,12 +81,12 @@
     "devices": "デバイス",
     "connectedCount_one": "{{count}} 台接続済み",
     "connectedCount_other": "{{count}} 台接続済み",
-    "pair": "Pair",
-    "requested": "Requested…",
-    "invite": "Invite",
-    "inviting": "Inviting…",
-    "sent": "Sent",
-    "deviceOffline": "Device offline — try again"
+    "pair": "ペアリング",
+    "requested": "リクエスト済み…",
+    "invite": "招待",
+    "inviting": "招待中…",
+    "sent": "送信済み",
+    "deviceOffline": "デバイスはオフラインです — もう一度お試しください"
   },
   "dropzone": {
     "addMoreDescription": "またはクリックして<link>さらに追加</link>",
