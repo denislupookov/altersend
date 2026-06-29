@@ -25,7 +25,13 @@ export default function DevicesScreen() {
       title='Paired Devices'
       hasNativeHeader
       footer={
-        <Button icon={<PlusIcon size={16} />} onClick={flow.openAddSheet} variant='primary' size='lg' width='full'>
+        <Button
+          icon={<PlusIcon size={16} />}
+          onClick={flow.openAddSheet}
+          variant='primary'
+          size='lg'
+          width='full'
+        >
           {t('settings:pairing.pairANewDevice')}
         </Button>
       }
@@ -35,8 +41,12 @@ export default function DevicesScreen() {
           <View style={styles.illustration}>
             <SyncDevicesSvg width='100%' height='100%' />
           </View>
-          <Text style={[styles.emptyTitle, { color: c.colorTextPrimary }]}>{t('settings:pairing.noPairedDevices')}</Text>
-          <Text style={[styles.emptySubtitle, { color: c.colorTextMuted }]}>{t('settings:pairing.noPairedDevicesHint')}</Text>
+          <Text style={[styles.emptyTitle, { color: c.colorTextPrimary }]}>
+            {t('settings:pairing.noPairedDevices')}
+          </Text>
+          <Text style={[styles.emptySubtitle, { color: c.colorTextMuted }]}>
+            {t('settings:pairing.noPairedDevicesHint')}
+          </Text>
         </View>
       ) : (
         <View style={styles.content}>
@@ -55,7 +65,9 @@ export default function DevicesScreen() {
                       iconOnly
                       aria-label='Device actions'
                       icon={<MoreVerticalIcon size={14} />}
-                      onClick={() => flow.openDeviceActions(peer.remoteDevicePubkey, peer.displayName)}
+                      onClick={() =>
+                        flow.openDeviceActions(peer.remoteDevicePubkey, peer.displayName)
+                      }
                     />
                   }
                   isLast={index === flow.peers.length - 1}

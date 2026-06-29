@@ -344,7 +344,13 @@ describe('transferSessionReducer — misc', () => {
 
   it('request_pair_peer does not downgrade an already-paired peer', () => {
     const state = make({
-      remember: { pairStatus: { abc: 'paired' }, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null, inviteResponses: {} }
+      remember: {
+        pairStatus: { abc: 'paired' },
+        peerDisplayNames: {},
+        incomingRequest: null,
+        incomingInvite: null,
+        inviteResponses: {}
+      }
     })
     const next = apply(state, { type: 'request_pair_peer', peerKey: 'abc' })
     expect(next).toBe(state)
@@ -366,8 +372,18 @@ describe('transferSessionReducer — misc', () => {
           topic: 'd'.repeat(64)
         },
         inviteResponses: {
-          [peerKey]: { remoteDevicePubkey: peerKey, topic: 'd'.repeat(64), response: 'declined', receivedAt: 1 },
-          [otherPeerKey]: { remoteDevicePubkey: otherPeerKey, topic: 'e'.repeat(64), response: 'declined', receivedAt: 1 }
+          [peerKey]: {
+            remoteDevicePubkey: peerKey,
+            topic: 'd'.repeat(64),
+            response: 'declined',
+            receivedAt: 1
+          },
+          [otherPeerKey]: {
+            remoteDevicePubkey: otherPeerKey,
+            topic: 'e'.repeat(64),
+            response: 'declined',
+            receivedAt: 1
+          }
         }
       }
     })
@@ -379,7 +395,12 @@ describe('transferSessionReducer — misc', () => {
     expect(next.remember.peerDisplayNames).toEqual({ [otherPeerKey]: 'Tablet' })
     expect(next.remember.incomingInvite).toBeNull()
     expect(next.remember.inviteResponses).toEqual({
-      [otherPeerKey]: { remoteDevicePubkey: otherPeerKey, topic: 'e'.repeat(64), response: 'declined', receivedAt: 1 }
+      [otherPeerKey]: {
+        remoteDevicePubkey: otherPeerKey,
+        topic: 'e'.repeat(64),
+        response: 'declined',
+        receivedAt: 1
+      }
     })
   })
 })

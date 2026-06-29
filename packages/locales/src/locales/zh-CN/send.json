@@ -44,10 +44,10 @@
     "downloading": "正在下载",
     "downloadingPercent": "正在下载 {{percent}}%",
     "waitingForJoin": "Waiting for someone to join",
-    "peerJoinedHint": "{{name}} joined",
     "pairedToast": "Paired with {{name}}",
     "inviteFailedToast": "Couldn't reach {{name}}",
-    "inviteFailedHint": "Make sure it's online and try again"
+    "inviteFailedHint": "Make sure it's online and try again",
+    "deviceConnected": "{{name}} connected"
   },
   "connection": {
     "placeholder": "正在生成安全密钥...",
@@ -85,7 +85,8 @@
     "requested": "Requested…",
     "invite": "Invite",
     "inviting": "Inviting…",
-    "sent": "Sent"
+    "sent": "Sent",
+    "deviceOffline": "Device offline — try again"
   },
   "dropzone": {
     "addMoreDescription": "或点击<link>继续添加</link>",

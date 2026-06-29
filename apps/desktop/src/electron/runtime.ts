@@ -78,7 +78,6 @@ const cmd = command(
   flag('--storage <path>', 'pass custom storage to pear-runtime'),
   flag('--no-updates', 'start without OTA updates'),
   flag('--multi', 'allow multiple instances'),
-  // Tolerate OS/installer-injected argv (Squirrel --squirrel-*, deep-link URLs) so module load can't crash
   sloppy({ flags: true, args: true })
 )
 
@@ -96,8 +95,6 @@ function isTransferMethod(method: unknown): method is TransferMethod {
   return typeof method === 'string' && method in API.methods
 }
 
-// One-time migration: move identity from old path (inside pear.storage, wiped on disconnect)
-// to the new durable path outside the storage root.
 function migrateIdentityIfNeeded(oldRoot: string, newRoot: string): void {
   const oldFile = path.join(oldRoot, 'device.json')
   const newFile = path.join(newRoot, 'device.json')
@@ -200,8 +197,6 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
 
     const worker = pear.run(workerPath, [
       `--storage=${pear.storage}`,
-      // Keep identity OUTSIDE the storage root so it can never inherit a volatile storage path and
-      // is untouched by the startup/disconnect Corestore wipe (which only clears `<storage>/core`).
       `--identity=${identityRoot}`,
       '--device-type=desktop',
       ...args

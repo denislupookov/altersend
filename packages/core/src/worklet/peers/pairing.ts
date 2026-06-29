@@ -49,7 +49,10 @@ export function verifyPairingInfo(message: PairingInfo, handshakeHash: Uint8Arra
 export function buildRecognition(identity: DeviceIdentity, handshakeHash: Uint8Array): Recognition {
   return {
     type: 'recognition',
-    signature: b4a.toString(crypto.sign(deviceAuthChallenge(handshakeHash), identity.secretKey), 'hex')
+    signature: b4a.toString(
+      crypto.sign(deviceAuthChallenge(handshakeHash), identity.secretKey),
+      'hex'
+    )
   }
 }
 

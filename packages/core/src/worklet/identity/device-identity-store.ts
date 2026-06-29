@@ -30,9 +30,7 @@ interface SerializedLegacy {
   createdAt: number
 }
 
-export type DeviceSecretInit =
-  | { mode: 'managed'; secret: string | null }
-  | { mode: 'legacy' }
+export type DeviceSecretInit = { mode: 'managed'; secret: string | null } | { mode: 'legacy' }
 
 type DeviceMeta = Omit<SerializedMeta, 'version'>
 
@@ -67,7 +65,10 @@ function isLegacy(value: unknown): value is SerializedLegacy {
   return v.version === 1 && isHex(v.secretKey, SECRET_KEY_HEX_LEN) && hasCommonMeta(v)
 }
 
-function deviceFromSecret(secretKey: Uint8Array, meta: Omit<DeviceMeta, 'publicKey'>): DeviceIdentity {
+function deviceFromSecret(
+  secretKey: Uint8Array,
+  meta: Omit<DeviceMeta, 'publicKey'>
+): DeviceIdentity {
   return {
     publicKey: b4a.from(secretKey.subarray(32, 64)),
     secretKey,
@@ -152,7 +153,9 @@ export class DeviceIdentityStore {
         if (stored?.kind !== 'meta') await this.saveMeta(id)
         return id
       }
-      console.warn('DeviceIdentityStore: injected secret is malformed — recovering from disk or regenerating')
+      console.warn(
+        'DeviceIdentityStore: injected secret is malformed — recovering from disk or regenerating'
+      )
     }
 
     if (stored?.kind === 'legacy') {

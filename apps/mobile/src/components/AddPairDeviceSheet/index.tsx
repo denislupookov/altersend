@@ -26,7 +26,13 @@ export function AddPairDeviceSheet({
   const c = theme.colors
 
   return (
-    <BottomSheet open={open} onClose={onClose} onDismiss={onDismiss} title={t('settings:pairing.pairNewDevice')} sheetStyle={styles.sheet}>
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      onDismiss={onDismiss}
+      title={t('settings:pairing.pairNewDevice')}
+      sheetStyle={styles.sheet}
+    >
       <View style={styles.actionList}>
         <ActionRow
           icon={<QrCodeIcon size={15} />}

@@ -23,22 +23,28 @@ export function FeedbackPanel({ version, onBack, onClose }: FeedbackPanelProps) 
 
     if (!url || url.includes('PLACEHOLDER')) return
     setReportState('sending')
-    
+
     try {
       await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          embeds: [{
-            title: t(`feedback:types.${reportType}`),
-            description: reportMessage.trim(),
-            color: DISCORD_EMBED_COLOR,
-            fields: [
-              { name: t('common:labels.version'), value: `v${version}`, inline: true },
-              { name: t('common:labels.platform'), value: t('common:labels.desktop'), inline: true }
-            ],
-            timestamp: new Date().toISOString()
-          }]
+          embeds: [
+            {
+              title: t(`feedback:types.${reportType}`),
+              description: reportMessage.trim(),
+              color: DISCORD_EMBED_COLOR,
+              fields: [
+                { name: t('common:labels.version'), value: `v${version}`, inline: true },
+                {
+                  name: t('common:labels.platform'),
+                  value: t('common:labels.desktop'),
+                  inline: true
+                }
+              ],
+              timestamp: new Date().toISOString()
+            }
+          ]
         })
       })
       setReportState('sent')
@@ -65,14 +71,20 @@ export function FeedbackPanel({ version, onBack, onClose }: FeedbackPanelProps) 
 
       <div className='flex-1 overflow-y-auto p-4'>
         {reportState === 'sent' ? (
-          <p className='py-8 text-center text-[14px] text-text-secondary'>{t('feedback:states.sent')}</p>
+          <p className='py-8 text-center text-[14px] text-text-secondary'>
+            {t('feedback:states.sent')}
+          </p>
         ) : (
           <>
             <div className='mb-3'>
               <FeedbackTypeSelector
                 value={reportType}
                 onChange={setReportType}
-                labels={{ bug: t('feedback:types.bug'), feature: t('feedback:types.feature'), general: t('feedback:types.general') }}
+                labels={{
+                  bug: t('feedback:types.bug'),
+                  feature: t('feedback:types.feature'),
+                  general: t('feedback:types.general')
+                }}
                 disabled={reportState === 'sending'}
               />
             </div>
@@ -104,7 +116,9 @@ export function FeedbackPanel({ version, onBack, onClose }: FeedbackPanelProps) 
                 disabled={!reportMessage.trim() || reportState === 'sending'}
                 onClick={() => void sendReport()}
               >
-                {reportState === 'sending' ? t('feedback:actions.sending') : t('feedback:actions.send')}
+                {reportState === 'sending'
+                  ? t('feedback:actions.sending')
+                  : t('feedback:actions.send')}
               </Button>
             </div>
           </>

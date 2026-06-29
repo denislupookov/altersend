@@ -21,12 +21,25 @@ import {
   type LocaleOption,
   type LocalePreference
 } from '@altersend/locales'
-import { discordUrl, githubUrl, privacyPolicyUrl, termsOfServiceUrl, useTransferStore, websiteUrl } from '@altersend/domain'
+import {
+  discordUrl,
+  githubUrl,
+  privacyPolicyUrl,
+  termsOfServiceUrl,
+  useTransferStore,
+  websiteUrl
+} from '@altersend/domain'
 import { bridgeApi } from '../../api/bridgeApi'
 import { Select } from '../Select'
 import { closeSentry, initSentry } from '../../sentry'
-import { isCrashReportingEnabled, setCrashReportingEnabled } from '../../lifecycle/crashReportingStorage'
-import { getSavedLocalePreference, setSavedLocalePreference } from '../../lifecycle/localePreferenceStorage'
+import {
+  isCrashReportingEnabled,
+  setCrashReportingEnabled
+} from '../../lifecycle/crashReportingStorage'
+import {
+  getSavedLocalePreference,
+  setSavedLocalePreference
+} from '../../lifecycle/localePreferenceStorage'
 import { getDesktopSystemLocales } from '../../lifecycle/systemLocale'
 
 function getLocaleOptionFontFamily(option: LocaleOption): string | undefined {
@@ -43,7 +56,8 @@ export function SettingsPanel({ onNavigate, onClose }: SettingsPanelProps) {
   const { t } = useTranslation(['settings', 'common'])
   const peers = useTransferStore((s) => s.peers)
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
-  const [localePreference, setLocalePreference] = useState<LocalePreference>(getSavedLocalePreference)
+  const [localePreference, setLocalePreference] =
+    useState<LocalePreference>(getSavedLocalePreference)
 
   const handleCrashReportingToggle = (next: boolean) => {
     setCrashReporting(next)
@@ -51,8 +65,7 @@ export function SettingsPanel({ onNavigate, onClose }: SettingsPanelProps) {
 
     if (next) {
       initSentry()
-    }
-    else {
+    } else {
       closeSentry()
     }
 
@@ -119,7 +132,9 @@ export function SettingsPanel({ onNavigate, onClose }: SettingsPanelProps) {
             <SmartphoneIcon size={15} />
             <span className='flex-1 text-left'>{t('settings:pairing.pairedDevices')}</span>
             <span className='text-[12px] text-text-muted'>
-              {peers.length === 0 ? t('settings:rows.noDevices') : t('settings:rows.pairedCount', { count: peers.length })}
+              {peers.length === 0
+                ? t('settings:rows.noDevices')
+                : t('settings:rows.pairedCount', { count: peers.length })}
             </span>
             <ChevronRightIcon size={13} />
           </button>
@@ -135,11 +150,11 @@ export function SettingsPanel({ onNavigate, onClose }: SettingsPanelProps) {
         </div>
 
         <div className='border-t border-border-primary py-1'>
-          {([
+          {[
             { icon: DiscordIcon, key: 'discord' as const, label: t('settings:rows.discord') },
             { icon: GithubIcon, key: 'github' as const, label: 'GitHub' },
             { icon: GlobeIcon, key: 'website' as const, label: t('settings:rows.website') }
-          ]).map(({ icon: Icon, key, label }) => (
+          ].map(({ icon: Icon, key, label }) => (
             <button
               key={key}
               type='button'

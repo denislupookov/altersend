@@ -27,7 +27,9 @@ export function BottomSheetHeader({ title, subtitle, onBack, onClose }: BottomSh
         </Pressable>
       ) : null}
       <View style={styles.titleGroup}>
-        <Text style={[styles.title, { color: c.colorTextPrimary }]} numberOfLines={1}>{title}</Text>
+        <Text style={[styles.title, { color: c.colorTextPrimary }]} numberOfLines={1}>
+          {title}
+        </Text>
         {subtitle && <Text style={[styles.subtitle, { color: c.colorTextMuted }]}>{subtitle}</Text>}
       </View>
       <Pressable
@@ -45,7 +47,13 @@ export function BottomSheetHeader({ title, subtitle, onBack, onClose }: BottomSh
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  backButton: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center', marginRight: 4 },
+  backButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 4
+  },
   titleGroup: { flex: 1, marginRight: 8 },
   title: { fontSize: 16, fontWeight: '700' },
   subtitle: { fontSize: 12, marginTop: 2 },

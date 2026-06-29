@@ -82,9 +82,7 @@ export const Layout = ({
       </View>
 
       {noScroll ? (
-        <View style={styles.scrollView}>
-          {children}
-        </View>
+        <View style={styles.scrollView}>{children}</View>
       ) : (
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           {children}

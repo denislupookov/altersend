@@ -127,7 +127,6 @@ export class TransferSender {
     const offers: FileOffer[] = []
 
     for (const file of files) {
-      // Per-file granularity — MirrorDrive in flight is not abortable.
       if (signal?.aborted) throw new AbortError()
       onStaging(file)
       if (!file.alreadyStaged) {

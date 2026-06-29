@@ -30,7 +30,9 @@ export class RememberedPeerStore {
 
   async get(pubkeyHex: string): Promise<RememberedPeer | null> {
     return this.run(async () => {
-      const record = await this.open().get(COLLECTION, { remoteDevicePubkey: normalizeKey(pubkeyHex) })
+      const record = await this.open().get(COLLECTION, {
+        remoteDevicePubkey: normalizeKey(pubkeyHex)
+      })
       return isValidRememberedPeer(record) ? record : null
     })
   }

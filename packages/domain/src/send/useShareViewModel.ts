@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { RememberedPeer } from '@altersend/core'
-import { formatFileSize, formatRelativeTime, type InviteStatus, inviteStatusSubtitle } from '../format'
+import {
+  formatFileSize,
+  formatRelativeTime,
+  type InviteStatus,
+  inviteStatusSubtitle
+} from '../format'
 import { forgetPeer, inviteDevice, requestPair, startSendSession } from '../transfer/commands'
 import { useTransferStore } from '../transfer/store'
 import { applyPairState, getPeerListEntries } from './peerListUi'
 import type { PairState, PeerListEntryWithPair } from './peerListUi'
 import type { Translate } from '../i18n'
 
-// Delay the "peer connected" toast briefly so recognition can resolve a known
-// device's name first (the name arrives a beat after the connection itself).
 const PEER_JOIN_TOAST_DELAY_MS = 600
 
 export type SubtitleTone = 'muted' | 'success' | 'danger' | 'info'
@@ -104,13 +107,19 @@ function connectedDeviceSubtitle(
   t: Translate
 ): { subtitle: string; subtitleTone: SubtitleTone } {
   if (entry.status === 'downloaded') {
-    return { subtitle: `${t('common:files.count', { count: fileCount })} downloaded`, subtitleTone: 'success' }
+    return {
+      subtitle: `${t('common:files.count', { count: fileCount })} downloaded`,
+      subtitleTone: 'success'
+    }
   }
   if (entry.status === 'online') {
     return { subtitle: `● ${t('send:status.online')}`, subtitleTone: 'info' }
   }
   if (entry.status === 'failed') {
-    return { subtitle: detailLabel(entry.detail, t) ?? statusLabel('failed', t), subtitleTone: 'danger' }
+    return {
+      subtitle: detailLabel(entry.detail, t) ?? statusLabel('failed', t),
+      subtitleTone: 'danger'
+    }
   }
   return {
     subtitle: detailLabel(entry.detail, t) ?? statusLabel(entry.status, t),
@@ -207,8 +216,7 @@ export function useShareViewModel(
       rememberedPeers
         .filter(
           (p: RememberedPeer) =>
-            !connectedKeySet.has(p.remoteDevicePubkey) &&
-            !connectedDisplayNames.has(p.displayName)
+            !connectedKeySet.has(p.remoteDevicePubkey) && !connectedDisplayNames.has(p.displayName)
         )
         .sort((a: RememberedPeer, b: RememberedPeer) => b.lastSeenAt - a.lastSeenAt),
     [rememberedPeers, connectedKeySet, connectedDisplayNames]
@@ -237,7 +245,9 @@ export function useShareViewModel(
   const offlineRows: OfflineDeviceRow[] = offlineRemembered.map((peer: RememberedPeer) => {
     const st = inviteStatuses[peer.remoteDevicePubkey]?.status
     const subtitleStr =
-      st === 'offline' ? (inviteStatusSubtitle(st) ?? 'Unreachable') : formatRelativeTime(peer.lastSeenAt)
+      st === 'offline'
+        ? (inviteStatusSubtitle(st) ?? 'Unreachable')
+        : formatRelativeTime(peer.lastSeenAt)
     return {
       kind: 'offline',
       peerKey: peer.remoteDevicePubkey,

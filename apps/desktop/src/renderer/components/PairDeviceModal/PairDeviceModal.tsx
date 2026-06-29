@@ -14,7 +14,7 @@ export function PairDeviceModal({ open, onPair, onSkip }: PairDeviceModalProps) 
 
   return (
     <Modal open={open} title={t('settings:pairPrompt.title')} width={560} onClose={onSkip}>
-      <div className='flex flex-col items-center px-6 pb-2 pt-1 text-center'>
+      <div className='flex flex-col items-center px-6 pb-2 pt-9 text-center'>
         <img src={syncDevicesSvg} alt='' aria-hidden className='mb-12 w-[240px] opacity-90' />
         <h2 className='m-0 text-[20px] font-bold leading-snug text-text-primary'>
           {t('settings:pairPrompt.heading')}

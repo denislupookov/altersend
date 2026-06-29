@@ -17,7 +17,13 @@ interface PairingQrSheetProps {
   onClose: () => void
 }
 
-export function PairingQrSheet({ open, topic, isWaiting = false, onBack, onClose }: PairingQrSheetProps) {
+export function PairingQrSheet({
+  open,
+  topic,
+  isWaiting = false,
+  onBack,
+  onClose
+}: PairingQrSheetProps) {
   const { t } = useTranslation(['settings', 'send'])
   const { theme } = useTheme()
   const c = theme.colors
@@ -31,7 +37,12 @@ export function PairingQrSheet({ open, topic, isWaiting = false, onBack, onClose
   }
 
   return (
-    <BottomSheet open={open} onClose={onClose} onBack={onBack} title={t('settings:pairing.showQrCode')}>
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      onBack={onBack}
+      title={t('settings:pairing.showQrCode')}
+    >
       <View style={styles.qrPanel}>
         {pairUrl ? (
           <QRCode
@@ -41,19 +52,33 @@ export function PairingQrSheet({ open, topic, isWaiting = false, onBack, onClose
             color={c.colorTextPrimary}
           />
         ) : (
-          <Text style={[styles.generatingText, { color: c.colorTextMuted }]}>{t('settings:pairing.generating')}</Text>
+          <Text style={[styles.generatingText, { color: c.colorTextMuted }]}>
+            {t('settings:pairing.generating')}
+          </Text>
         )}
 
         {isWaiting && (
-          <View style={[styles.waitingOverlay, { backgroundColor: withAlpha(c.colorBackground, 0.92), borderColor: c.colorBorderPrimary }]}>
+          <View
+            style={[
+              styles.waitingOverlay,
+              {
+                backgroundColor: withAlpha(c.colorBackground, 0.92),
+                borderColor: c.colorBorderPrimary
+              }
+            ]}
+          >
             <Spinner size={28} color={c.colorInfo} />
-            <Text style={[styles.waitingText, { color: c.colorTextPrimary }]}>{t('settings:pairing.pairingDevice')}</Text>
+            <Text style={[styles.waitingText, { color: c.colorTextPrimary }]}>
+              {t('settings:pairing.pairingDevice')}
+            </Text>
           </View>
         )}
       </View>
 
       <View style={styles.linkBlock}>
-        <Text style={[styles.linkLabel, { color: c.colorTextMuted }]}>{t('settings:pairing.orShareCode')}</Text>
+        <Text style={[styles.linkLabel, { color: c.colorTextMuted }]}>
+          {t('settings:pairing.orShareCode')}
+        </Text>
         <Input
           key={topic}
           aria-label={t('settings:pairing.codeLabel')}
@@ -66,7 +91,9 @@ export function PairingQrSheet({ open, topic, isWaiting = false, onBack, onClose
               iconOnly
               aria-label={t('settings:pairing.copyShareLabel')}
               disabled={!topic}
-              onClick={() => { copyAndShare().catch(() => {}) }}
+              onClick={() => {
+                copyAndShare().catch(() => {})
+              }}
               icon={<CopyIcon size={16} />}
             />
           }

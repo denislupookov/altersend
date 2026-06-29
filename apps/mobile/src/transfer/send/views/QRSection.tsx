@@ -48,13 +48,20 @@ export function QRSection({ topic, showWaitingState, size = 200, style }: QRSect
             { backgroundColor: theme.colors.colorTextPrimary, height: size, width: size }
           ]}
         >
-          <Text style={{ color: theme.colors.colorTextSecondary }}>{t('send:connection.generating')}</Text>
+          <Text style={{ color: theme.colors.colorTextSecondary }}>
+            {t('send:connection.generating')}
+          </Text>
         </View>
       )}
 
       {showWaitingState && (
         <View style={styles.waitingIndicator}>
-          <Animated.View style={[styles.waitingDot, { opacity: pulseAnim, backgroundColor: theme.colors.colorTextMuted }]} />
+          <Animated.View
+            style={[
+              styles.waitingDot,
+              { opacity: pulseAnim, backgroundColor: theme.colors.colorTextMuted }
+            ]}
+          />
           <Text style={[styles.waitingText, { color: theme.colors.colorTextMuted }]}>
             {t('send:connection.waitingForConnection')}
           </Text>

@@ -17,11 +17,20 @@ export function PairDeviceSheet({ open, onPair, onClose }: PairDeviceSheetProps)
   const c = theme.colors
 
   return (
-    <BottomSheet open={open} onClose={onClose} title={t('settings:pairPrompt.title')} sheetStyle={styles.sheet}>
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      title={t('settings:pairPrompt.title')}
+      sheetStyle={styles.sheet}
+    >
       <View style={styles.content}>
         <SyncDevicesSvg width={240} height={170} />
-        <Text style={[styles.heading, { color: c.colorTextPrimary }]}>{t('settings:pairPrompt.heading')}</Text>
-        <Text style={[styles.body, { color: c.colorTextMuted }]}>{t('settings:pairPrompt.body')}</Text>
+        <Text style={[styles.heading, { color: c.colorTextPrimary }]}>
+          {t('settings:pairPrompt.heading')}
+        </Text>
+        <Text style={[styles.body, { color: c.colorTextMuted }]}>
+          {t('settings:pairPrompt.body')}
+        </Text>
       </View>
       <View style={styles.actions}>
         <Button variant='primary' width='full' size='lg' onClick={onPair}>
@@ -37,7 +46,7 @@ export function PairDeviceSheet({ open, onPair, onClose }: PairDeviceSheetProps)
 
 const styles = StyleSheet.create({
   sheet: { paddingBottom: 48, gap: 24 },
-  content: { alignItems: 'center', gap: 8, paddingHorizontal: 20 },
+  content: { alignItems: 'center', gap: 8, paddingHorizontal: 20, paddingTop: 36 },
   heading: { fontSize: 20, fontWeight: '700', textAlign: 'center', marginTop: 40 },
   body: { fontSize: 14, lineHeight: 20, textAlign: 'center' },
   actions: { gap: 10, paddingHorizontal: 20 }

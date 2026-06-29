@@ -73,7 +73,7 @@ export class RememberCoordinator {
           this.sendPairingInfo(peerKey)
         }
       })
-      .catch(() => { })
+      .catch(() => {})
   }
 
   async handlePairingInfo(message: PairingInfo, session: PairingSession): Promise<void> {
@@ -149,7 +149,7 @@ export class RememberCoordinator {
     this.ourVotes.set(peerKey, { transferId, decision: vote, isMine })
     if (vote === 'remember') {
       this.startTimeout(peerKey, transferId)
-      await this.deviceIdentityReady.catch(() => { })
+      await this.deviceIdentityReady.catch(() => {})
       if (this.ourVotes.has(peerKey)) this.sendPairingInfo(peerKey)
     } else {
       this.clearTimer(peerKey)
@@ -164,7 +164,9 @@ export class RememberCoordinator {
     const remote = this.remoteVotes.get(peerKey)
 
     if (our || remote) {
-      this.deps.emit(createRememberDeclinedEvent(peerKey, our?.transferId ?? remote?.transferId ?? ''))
+      this.deps.emit(
+        createRememberDeclinedEvent(peerKey, our?.transferId ?? remote?.transferId ?? '')
+      )
     }
 
     this.cleanupPeer(peerKey)
@@ -191,7 +193,11 @@ export class RememberCoordinator {
     if (status === 'confirmed') {
       const pending = this.pendingPairings.get(peerKey)
       if (!pending || !our) return
-      const peer = buildRememberedPeer(pending, { decision: our.decision, isMine: our.isMine }, Date.now())
+      const peer = buildRememberedPeer(
+        pending,
+        { decision: our.decision, isMine: our.isMine },
+        Date.now()
+      )
       void this.deps.rememberedStore
         .remember(peer)
         .then((saved) => this.deps.emit(createRememberConfirmedEvent(peerKey, saved)))

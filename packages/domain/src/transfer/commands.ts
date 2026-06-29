@@ -155,7 +155,7 @@ export const forgetPeer = async (pubkey: string): Promise<boolean> => {
 
 export const requestPair = (transferId: string, peerKey: string): void => {
   dispatchToTransferStore({ type: 'request_pair_peer', peerKey })
-  
+
   rememberVote({ transferId, peerKey, vote: 'remember', isMine: false })
 }
 
@@ -193,7 +193,7 @@ export const dismissInvite = (): void => {
 
 export const declineInvite = (invite: IncomingInvite): void => {
   dispatchToTransferStore({ type: 'dismiss_invite' })
-  
+
   respondToInvite({
     remoteDevicePubkey: invite.remoteDevicePubkey,
     topic: invite.topic,
@@ -236,7 +236,7 @@ export const continueShare = async (files: SelectedFile[]): Promise<void> => {
     path: file.path,
     isTemporary: file.isTemporary
   }))
-  
+
   dispatchToTransferStore({
     type: 'init_upload_items',
     items: createInitialUploadItems(files)

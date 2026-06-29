@@ -1,5 +1,14 @@
 import { type ReactNode } from 'react'
-import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native'
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+  type StyleProp,
+  type ViewStyle
+} from 'react-native'
 import { useTheme, withAlpha } from '@altersend/components'
 import { BottomSheetHeader } from '../BottomSheetHeader'
 
@@ -15,16 +24,38 @@ interface BottomSheetProps {
   children: ReactNode
 }
 
-export function BottomSheet({ open, onClose, title, subtitle, onBack, keyboardAvoiding, onDismiss, sheetStyle, children }: BottomSheetProps) {
+export function BottomSheet({
+  open,
+  onClose,
+  title,
+  subtitle,
+  onBack,
+  keyboardAvoiding,
+  onDismiss,
+  sheetStyle,
+  children
+}: BottomSheetProps) {
   const { theme } = useTheme()
   const c = theme.colors
 
   const sheet = (
-    <View style={[styles.sheet, !keyboardAvoiding && styles.sheetAnchored, { backgroundColor: c.colorBackground, borderColor: c.colorBorderPrimary }, sheetStyle]}>
+    <View
+      style={[
+        styles.sheet,
+        !keyboardAvoiding && styles.sheetAnchored,
+        { backgroundColor: c.colorBackground, borderColor: c.colorBorderPrimary },
+        sheetStyle
+      ]}
+    >
       <View style={[styles.grabber, { backgroundColor: c.colorBorderStrong }]} />
       {(title || onBack) && (
         <View style={styles.header}>
-          <BottomSheetHeader title={title ?? ''} subtitle={subtitle} onBack={onBack} onClose={onClose} />
+          <BottomSheetHeader
+            title={title ?? ''}
+            subtitle={subtitle}
+            onBack={onBack}
+            onClose={onClose}
+          />
         </View>
       )}
       {children}
@@ -32,8 +63,17 @@ export function BottomSheet({ open, onClose, title, subtitle, onBack, keyboardAv
   )
 
   return (
-    <Modal visible={open} transparent animationType='slide' onDismiss={onDismiss} onRequestClose={onClose}>
-      <Pressable style={[styles.backdrop, { backgroundColor: withAlpha(c.colorScrim, 0.55) }]} onPress={onClose} />
+    <Modal
+      visible={open}
+      transparent
+      animationType='slide'
+      onDismiss={onDismiss}
+      onRequestClose={onClose}
+    >
+      <Pressable
+        style={[styles.backdrop, { backgroundColor: withAlpha(c.colorScrim, 0.55) }]}
+        onPress={onClose}
+      />
       {keyboardAvoiding ? (
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -42,7 +82,9 @@ export function BottomSheet({ open, onClose, title, subtitle, onBack, keyboardAv
         >
           {sheet}
         </KeyboardAvoidingView>
-      ) : sheet}
+      ) : (
+        sheet
+      )}
     </Modal>
   )
 }

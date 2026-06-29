@@ -12,9 +12,7 @@
       "indexes": [],
       "schema": "@altersend/remembered-peer",
       "derived": false,
-      "key": [
-        "remoteDevicePubkey"
-      ],
+      "key": ["remoteDevicePubkey"],
       "trigger": null
     }
   ]

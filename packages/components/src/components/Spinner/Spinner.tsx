@@ -27,7 +27,10 @@ export function Spinner({ size = 14, color = 'currentColor' }: SpinnerProps) {
   const borderWidth = Math.max(1.5, Math.round(size * 0.12))
   return (
     <html.div
-      style={[styles.root, { width: size, height: size, borderWidth, borderTopColor: color } as never]}
+      style={[
+        styles.root,
+        { width: size, height: size, borderWidth, borderTopColor: color } as never
+      ]}
     />
   )
 }

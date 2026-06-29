@@ -6,7 +6,10 @@ export function usePressState() {
   const press = () => setIsPressed(true)
   const release = () => setIsPressed(false)
   const hoverIn = () => setIsHovered(true)
-  const hoverOut = () => { setIsHovered(false); setIsPressed(false) }
+  const hoverOut = () => {
+    setIsHovered(false)
+    setIsPressed(false)
+  }
 
   return {
     isPressed,

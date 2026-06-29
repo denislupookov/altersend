@@ -3,10 +3,15 @@ import { Modal, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Button, useTheme } from '@altersend/components'
 import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
-import { declineInvite, dismissInvite, formatFileSize, joinSession, useTransferStore } from '@altersend/domain'
+import {
+  declineInvite,
+  dismissInvite,
+  formatFileSize,
+  joinSession,
+  useTransferStore
+} from '@altersend/domain'
 import { Text } from '@/src/components/ThemedText'
 import { useRouter } from 'expo-router'
-
 
 export function InviteBanner() {
   const { theme } = useTheme()
@@ -37,7 +42,6 @@ export function InviteBanner() {
 
   const Icon = invite ? deviceIcon(invite.deviceType) : null
 
-
   return (
     <Modal
       visible={visible}
@@ -67,12 +71,26 @@ export function InviteBanner() {
 
           <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 36) }]}>
             <View style={styles.actionWrap}>
-              <Button variant='danger' size='lg' pill width='full' icon={<CloseIcon size={18} color={c.colorDanger} />} onClick={decline}>
+              <Button
+                variant='danger'
+                size='lg'
+                pill
+                width='full'
+                icon={<CloseIcon size={18} color={c.colorDanger} />}
+                onClick={decline}
+              >
                 Decline
               </Button>
             </View>
             <View style={styles.actionWrap}>
-              <Button variant='success' size='lg' pill width='full' icon={<CheckIcon size={18} color={c.colorSuccess} />} onClick={accept}>
+              <Button
+                variant='success'
+                size='lg'
+                pill
+                width='full'
+                icon={<CheckIcon size={18} color={c.colorSuccess} />}
+                onClick={accept}
+              >
                 Accept
               </Button>
             </View>
@@ -118,7 +136,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-actionWrap: {
+  actionWrap: {
     flex: 1
   }
 })

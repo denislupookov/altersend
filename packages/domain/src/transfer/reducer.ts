@@ -39,7 +39,13 @@ export const initialTransferSessionState: TransferSessionState = {
   errorCode: null,
   errorMessage: null,
   transferId: null,
-  remember: { pairStatus: {}, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null, inviteResponses: {} },
+  remember: {
+    pairStatus: {},
+    peerDisplayNames: {},
+    incomingRequest: null,
+    incomingInvite: null,
+    inviteResponses: {}
+  },
   peers: []
 }
 
@@ -78,7 +84,13 @@ function endSession(state: TransferSessionState): TransferSessionState {
     errorCode: null,
     errorMessage: null,
     transferId: null,
-    remember: { pairStatus: {}, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null, inviteResponses: {} }
+    remember: {
+      pairStatus: {},
+      peerDisplayNames: {},
+      incomingRequest: null,
+      incomingInvite: null,
+      inviteResponses: {}
+    }
   }
 }
 
@@ -341,7 +353,10 @@ export function transferSessionReducer(
         remember: {
           ...state.remember,
           pairStatus: { ...state.remember.pairStatus, [action.peerKey]: 'paired' },
-          peerDisplayNames: { ...state.remember.peerDisplayNames, [action.peerKey]: action.displayName },
+          peerDisplayNames: {
+            ...state.remember.peerDisplayNames,
+            [action.peerKey]: action.displayName
+          },
           incomingRequest: clearIncomingFor(state.remember.incomingRequest, action.peerKey)
         }
       }

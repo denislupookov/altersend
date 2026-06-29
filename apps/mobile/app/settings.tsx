@@ -67,7 +67,7 @@ export default function SettingsScreen() {
   )
 
   const openUrl = (url: string) => {
-    void Linking.openURL(url).catch(() => { })
+    void Linking.openURL(url).catch(() => {})
   }
 
   return (

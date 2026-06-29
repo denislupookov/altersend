@@ -54,7 +54,11 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
         message: event.message
       })
     case 'remember-confirmed':
-      dispatchToTransferStore({ type: 'remember_confirmed', peerKey: event.peerKey, displayName: event.peer.displayName })
+      dispatchToTransferStore({
+        type: 'remember_confirmed',
+        peerKey: event.peerKey,
+        displayName: event.peer.displayName
+      })
       loadPeers()
       return
     case 'remember-declined':
@@ -141,7 +145,7 @@ export function bindTransferApi(
   impl: TransferApi,
   options: BindTransferApiOptions = {}
 ): () => void {
-  if (api === impl) return unbindCurrent ?? (() => { })
+  if (api === impl) return unbindCurrent ?? (() => {})
   if (unbindCurrent) unbindCurrent()
 
   api = impl

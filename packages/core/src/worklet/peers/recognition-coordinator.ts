@@ -30,9 +30,7 @@ export class RecognitionCoordinator {
   }
 
   onPeerConnected(peerKey: string): void {
-    this.deviceIdentityReady
-      .then(() => this.sendRecognition(peerKey))
-      .catch(() => {})
+    this.deviceIdentityReady.then(() => this.sendRecognition(peerKey)).catch(() => {})
   }
 
   async handleRecognition(message: Recognition, peerKey: string): Promise<void> {

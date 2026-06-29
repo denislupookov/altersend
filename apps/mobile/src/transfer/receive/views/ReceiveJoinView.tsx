@@ -63,7 +63,9 @@ export function ReceiveJoinView({
               iconOnly
               aria-label={t('common:actions.paste')}
               disabled={isLoading}
-              onClick={() => { handlePaste().catch(() => {}) }}
+              onClick={() => {
+                handlePaste().catch(() => {})
+              }}
               icon={<ClipboardIcon size={16} />}
             />
           }

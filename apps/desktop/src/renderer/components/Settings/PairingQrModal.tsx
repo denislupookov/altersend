@@ -17,14 +17,16 @@ export function PairingQrModal({ open, topic, onClose }: PairingQrModalProps) {
   const pairUrl = topic ? buildPairUrl(topic) : ''
 
   useEffect(() => {
-    if (!open) { setCopied(false) }
+    if (!open) {
+      setCopied(false)
+    }
   }, [open])
 
   const handleCopy = async () => {
     if (!topic) return
     await navigator.clipboard.writeText(topic)
     setCopied(true)
-    
+
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -40,14 +42,18 @@ export function PairingQrModal({ open, topic, onClose }: PairingQrModalProps) {
       </div>
 
       <div className='px-4 pb-2 pt-1'>
-        <span className='text-[13px] font-medium text-text-muted'>{t('settings:pairing.orShareCode')}</span>
+        <span className='text-[13px] font-medium text-text-muted'>
+          {t('settings:pairing.orShareCode')}
+        </span>
       </div>
 
       <div className='flex px-4 pb-4 pt-1'>
         <TopicCopyButton
           topic={topic}
           copied={copied}
-          onCopy={() => { handleCopy().catch(() => {}) }}
+          onCopy={() => {
+            handleCopy().catch(() => {})
+          }}
           placeholder={t('settings:pairing.generating')}
         />
       </div>

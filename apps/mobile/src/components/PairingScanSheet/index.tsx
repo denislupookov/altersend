@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Linking, StyleSheet, View } from 'react-native'
-import { CameraView, scanFromURLAsync, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera'
+import {
+  CameraView,
+  scanFromURLAsync,
+  useCameraPermissions,
+  type BarcodeScanningResult
+} from 'expo-camera'
 import * as ImagePicker from 'expo-image-picker'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { extractJoinCode, joinPairingSession, useTransferStore } from '@altersend/domain'
@@ -55,7 +60,10 @@ export function PairingScanSheet({
         const now = Date.now()
         if (now - invalidScanAtRef.current > 1500) {
           invalidScanAtRef.current = now
-          toast.show({ title: t('settings:pairing.unsupportedQr'), hint: t('settings:pairing.unsupportedQrHint') })
+          toast.show({
+            title: t('settings:pairing.unsupportedQr'),
+            hint: t('settings:pairing.unsupportedQrHint')
+          })
         }
         return
       }
@@ -121,53 +129,110 @@ export function PairingScanSheet({
   }, [resolveCode, role, toast, t])
 
   return (
-    <BottomSheet open={open} onClose={onClose} onBack={onBack} title={t('settings:pairing.scanQrCode')}>
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      onBack={onBack}
+      title={t('settings:pairing.scanQrCode')}
+    >
       <View style={[styles.cameraShell, { borderColor: c.colorBorderPrimary }]}>
-          {cameraGranted ? (
-            <>
-              <CameraView
-                barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
-                facing='back'
-                onBarcodeScanned={canScan ? handleBarcodeScanned : undefined}
-                style={styles.camera}
+        {cameraGranted ? (
+          <>
+            <CameraView
+              barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+              facing='back'
+              onBarcodeScanned={canScan ? handleBarcodeScanned : undefined}
+              style={styles.camera}
+            />
+            <View pointerEvents='none' style={styles.scanOverlay}>
+              <View
+                style={[styles.maskVertical, { backgroundColor: withAlpha(c.colorScrim, 0.3) }]}
               />
-              <View pointerEvents='none' style={styles.scanOverlay}>
-                <View style={[styles.maskVertical, { backgroundColor: withAlpha(c.colorScrim, 0.3) }]} />
-                <View style={styles.maskMiddle}>
-                  <View style={[styles.maskSide, { backgroundColor: withAlpha(c.colorScrim, 0.3) }]} />
-                  <View style={styles.frameRow}>
-                    <View style={[styles.frameCorner, styles.frameTopLeft, { borderColor: c.colorTextPrimary }]} />
-                    <View style={[styles.frameCorner, styles.frameTopRight, { borderColor: c.colorTextPrimary }]} />
-                    <View style={[styles.frameCorner, styles.frameBottomLeft, { borderColor: c.colorTextPrimary }]} />
-                    <View style={[styles.frameCorner, styles.frameBottomRight, { borderColor: c.colorTextPrimary }]} />
-                  </View>
-                  <View style={[styles.maskSide, { backgroundColor: withAlpha(c.colorScrim, 0.3) }]} />
+              <View style={styles.maskMiddle}>
+                <View
+                  style={[styles.maskSide, { backgroundColor: withAlpha(c.colorScrim, 0.3) }]}
+                />
+                <View style={styles.frameRow}>
+                  <View
+                    style={[
+                      styles.frameCorner,
+                      styles.frameTopLeft,
+                      { borderColor: c.colorTextPrimary }
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.frameCorner,
+                      styles.frameTopRight,
+                      { borderColor: c.colorTextPrimary }
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.frameCorner,
+                      styles.frameBottomLeft,
+                      { borderColor: c.colorTextPrimary }
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.frameCorner,
+                      styles.frameBottomRight,
+                      { borderColor: c.colorTextPrimary }
+                    ]}
+                  />
                 </View>
-                <View style={[styles.maskVertical, { backgroundColor: withAlpha(c.colorScrim, 0.3) }]} />
+                <View
+                  style={[styles.maskSide, { backgroundColor: withAlpha(c.colorScrim, 0.3) }]}
+                />
               </View>
-            </>
-          ) : (
-            <View style={styles.permissionCard}>
-              <Text style={[styles.permissionTitle, { color: c.colorTextPrimary }]}>{t('settings:pairing.cameraAccessNeeded')}</Text>
-              <Text style={[styles.permissionText, { color: c.colorTextMuted }]}>{t('settings:pairing.cameraAccessText')}</Text>
-              <Button onClick={() => { handlePermissionAction().catch(() => {}) }} size='lg' variant='secondary' width='full'>
-                {canAskAgain ? t('settings:pairing.allowCamera') : t('common:actions.openSettings')}
-              </Button>
+              <View
+                style={[styles.maskVertical, { backgroundColor: withAlpha(c.colorScrim, 0.3) }]}
+              />
             </View>
-          )}
+          </>
+        ) : (
+          <View style={styles.permissionCard}>
+            <Text style={[styles.permissionTitle, { color: c.colorTextPrimary }]}>
+              {t('settings:pairing.cameraAccessNeeded')}
+            </Text>
+            <Text style={[styles.permissionText, { color: c.colorTextMuted }]}>
+              {t('settings:pairing.cameraAccessText')}
+            </Text>
+            <Button
+              onClick={() => {
+                handlePermissionAction().catch(() => {})
+              }}
+              size='lg'
+              variant='secondary'
+              width='full'
+            >
+              {canAskAgain ? t('settings:pairing.allowCamera') : t('common:actions.openSettings')}
+            </Button>
+          </View>
+        )}
 
-          {isResolving || isWaiting ? (
-            <View style={[styles.statusOverlay, { backgroundColor: withAlpha(c.colorScrim, 0.5) }]}>
-              <ActivityIndicator color={c.colorTextPrimary} />
-              <Text style={[styles.statusText, { color: c.colorTextPrimary }]}>
-                {isWaiting ? t('settings:pairing.pairingInProgress') : t('settings:pairing.connecting')}
-              </Text>
-            </View>
-          ) : null}
-        </View>
+        {isResolving || isWaiting ? (
+          <View style={[styles.statusOverlay, { backgroundColor: withAlpha(c.colorScrim, 0.5) }]}>
+            <ActivityIndicator color={c.colorTextPrimary} />
+            <Text style={[styles.statusText, { color: c.colorTextPrimary }]}>
+              {isWaiting
+                ? t('settings:pairing.pairingInProgress')
+                : t('settings:pairing.connecting')}
+            </Text>
+          </View>
+        ) : null}
+      </View>
 
       <View style={styles.actions}>
-        <Button onClick={() => { importFromImage().catch(() => {}) }} size='lg' variant='secondary' width='full'>
+        <Button
+          onClick={() => {
+            importFromImage().catch(() => {})
+          }}
+          size='lg'
+          variant='secondary'
+          width='full'
+        >
           {t('settings:pairing.importFromImage')}
         </Button>
       </View>

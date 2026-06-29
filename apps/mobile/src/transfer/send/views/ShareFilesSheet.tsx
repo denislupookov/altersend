@@ -21,7 +21,15 @@ export function ShareFilesSheet({ open, files, totalSize, onClose }: ShareFilesS
     >
       <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
         {files.map((file, index) => (
-          <LinkRow key={file.path} file bare label={file.name} size={file.size} isFirst={index === 0} isLast={index === files.length - 1} />
+          <LinkRow
+            key={file.path}
+            file
+            bare
+            label={file.name}
+            size={file.size}
+            isFirst={index === 0}
+            isLast={index === files.length - 1}
+          />
         ))}
       </ScrollView>
     </BottomSheet>

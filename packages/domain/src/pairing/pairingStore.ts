@@ -9,7 +9,5 @@ interface PairingSessionState {
 export const usePairingSessionStore = create<PairingSessionState>((set) => ({
   activeCount: 0,
   startPairing: () => set((s) => ({ activeCount: s.activeCount + 1 })),
-  endPairing: () => set((s) => ({ activeCount: Math.max(0, s.activeCount - 1) })),
+  endPairing: () => set((s) => ({ activeCount: Math.max(0, s.activeCount - 1) }))
 }))
-
-export const isPairingActive = () => usePairingSessionStore.getState().activeCount > 0

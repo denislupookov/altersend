@@ -25,7 +25,10 @@ declare module 'hyperdb' {
     insert(collection: string, record: unknown): Promise<void>
     get(collection: string, key: Record<string, string>): Promise<Record<string, unknown> | null>
     delete(collection: string, key: Record<string, string>): Promise<void>
-    find(collection: string, query?: Record<string, unknown>): AsyncIterable<Record<string, unknown>>
+    find(
+      collection: string,
+      query?: Record<string, unknown>
+    ): AsyncIterable<Record<string, unknown>>
     flush(): Promise<void>
     close(): Promise<void>
   }

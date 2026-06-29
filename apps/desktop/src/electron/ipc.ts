@@ -158,8 +158,6 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     setReportingEnabled(enabled)
   })
 
-  // macOS gates camera access behind TCC; request it lazily when the user opens the
-  // webcam scanner. Other platforms grant via the OS/renderer prompt, so report ready.
   ipcMain.handle('app:requestCameraAccess', async () => {
     if (!isMac) return true
     if (systemPreferences.getMediaAccessStatus('camera') === 'granted') return true

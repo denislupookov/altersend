@@ -12,7 +12,12 @@ interface ShareQrSheetProps {
 export function ShareQrSheet({ open, topic, onClose }: ShareQrSheetProps) {
   const { t } = useTranslation(['send'])
   return (
-    <BottomSheet open={open} onClose={onClose} title={t('send:connection.scanToConnect')} sheetStyle={styles.sheet}>
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      title={t('send:connection.scanToConnect')}
+      sheetStyle={styles.sheet}
+    >
       <QRSection topic={topic} showWaitingState={false} />
     </BottomSheet>
   )

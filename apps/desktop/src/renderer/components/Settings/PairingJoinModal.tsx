@@ -19,7 +19,7 @@ export function PairingJoinModal({ open, isLoading, onClose, onJoin }: PairingJo
 
   useEffect(() => {
     if (!open) {
-      setValue('');
+      setValue('')
       setError(false)
     }
   }, [open])
@@ -51,23 +51,34 @@ export function PairingJoinModal({ open, isLoading, onClose, onJoin }: PairingJo
               size='sm'
               iconOnly
               aria-label={t('common:actions.paste')}
-              onClick={() => { handlePaste().catch(() => { }) }}
+              onClick={() => {
+                handlePaste().catch(() => {})
+              }}
               icon={<ClipboardIcon size={16} />}
             />
           }
-          onChange={(e: { target: { value: string } }) => { setValue(e.target.value); setError(false) }}
-          onKeyDown={(e: { key: string }) => { if (e.key === 'Enter') handleJoin().catch(() => { }) }}
+          onChange={(e: { target: { value: string } }) => {
+            setValue(e.target.value)
+            setError(false)
+          }}
+          onKeyDown={(e: { key: string }) => {
+            if (e.key === 'Enter') handleJoin().catch(() => {})
+          }}
         />
       </div>
 
       <div className='flex items-center justify-end gap-2 px-4 pb-4 pt-3'>
-        <Button variant='secondary' size='sm' onClick={onClose}>{t('settings:pairing.discard')}</Button>
+        <Button variant='secondary' size='sm' onClick={onClose}>
+          {t('settings:pairing.discard')}
+        </Button>
         <Button
           variant='primary'
           size='sm'
           disabled={!value.trim()}
           loading={isLoading}
-          onClick={() => { handleJoin().catch(() => { }) }}
+          onClick={() => {
+            handleJoin().catch(() => {})
+          }}
         >
           {isLoading ? t('settings:pairing.pairingInProgress') : t('settings:pairing.joinButton')}
         </Button>

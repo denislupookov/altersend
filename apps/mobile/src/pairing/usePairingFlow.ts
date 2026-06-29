@@ -57,7 +57,9 @@ export function usePairingFlow() {
     setActionsTarget(null)
     if (!target) return
     const removed = await forgetPeer(target.peerKey)
-    toast.show({ title: t(removed ? 'settings:pairing.deviceRemoved' : 'settings:pairing.removeFailed') })
+    toast.show({
+      title: t(removed ? 'settings:pairing.deviceRemoved' : 'settings:pairing.removeFailed')
+    })
   }
 
   return {
@@ -73,28 +75,50 @@ export function usePairingFlow() {
     addSheet: {
       open: addSheetOpen,
       onClose: () => setAddSheetOpen(false),
-      onShowQrCode: () => { setAddSheetOpen(false); setTimeout(() => setQrSheetOpen(true), SHEET_TRANSITION_MS) },
-      onScanQrCode: () => { setAddSheetOpen(false); setTimeout(() => setScanSheetOpen(true), SHEET_TRANSITION_MS) },
-      onEnterCode: () => { setAddSheetOpen(false); setTimeout(() => setManualSheetOpen(true), SHEET_TRANSITION_MS) }
+      onShowQrCode: () => {
+        setAddSheetOpen(false)
+        setTimeout(() => setQrSheetOpen(true), SHEET_TRANSITION_MS)
+      },
+      onScanQrCode: () => {
+        setAddSheetOpen(false)
+        setTimeout(() => setScanSheetOpen(true), SHEET_TRANSITION_MS)
+      },
+      onEnterCode: () => {
+        setAddSheetOpen(false)
+        setTimeout(() => setManualSheetOpen(true), SHEET_TRANSITION_MS)
+      }
     },
     qrSheet: {
       open: qrSheetOpen,
       topic: pairingTopic,
       isWaiting: isHostWaiting,
-      onBack: () => { setQrSheetOpen(false); reopenAddSheet() },
+      onBack: () => {
+        setQrSheetOpen(false)
+        reopenAddSheet()
+      },
       onClose: () => setQrSheetOpen(false)
     },
     scanSheet: {
       open: scanSheetOpen,
-      onBack: () => { setScanSheetOpen(false); reopenAddSheet() },
+      onBack: () => {
+        setScanSheetOpen(false)
+        reopenAddSheet()
+      },
       onClose: () => setScanSheetOpen(false),
       onJoined: setJoinedTopic,
       isWaiting: isJoinWaiting
     },
     manualSheet: {
       open: manualSheetOpen,
-      onBack: () => { setManualSheetOpen(false); setDeepLinkCode(''); reopenAddSheet() },
-      onClose: () => { setManualSheetOpen(false); setDeepLinkCode('') },
+      onBack: () => {
+        setManualSheetOpen(false)
+        setDeepLinkCode('')
+        reopenAddSheet()
+      },
+      onClose: () => {
+        setManualSheetOpen(false)
+        setDeepLinkCode('')
+      },
       onJoined: setJoinedTopic,
       isWaiting: isJoinWaiting,
       initialCode: deepLinkCode

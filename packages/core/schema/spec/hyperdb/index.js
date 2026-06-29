@@ -7,11 +7,9 @@ import { version, getEncoding, setVersion } from './messages.js'
 const versions = { schema: version, db: 1 }
 
 // '@altersend/remembered-peers' collection key
-const collection0_key = new IndexEncoder([
-  IndexEncoder.STRING
-], { prefix: 0 })
+const collection0_key = new IndexEncoder([IndexEncoder.STRING], { prefix: 0 })
 
-function collection0_indexify (record) {
+function collection0_indexify(record) {
   const a = record.remoteDevicePubkey
   return a === undefined ? [] : [a]
 }
@@ -20,7 +18,7 @@ function collection0_indexify (record) {
 const collection0_enc = getEncoding('@altersend/remembered-peer/hyperdb#0')
 
 // '@altersend/remembered-peers' reconstruction function
-function collection0_reconstruct (schemaVersion, keyBuf, valueBuf) {
+function collection0_reconstruct(schemaVersion, keyBuf, valueBuf) {
   const key = collection0_key.decode(keyBuf)
   setVersion(schemaVersion)
   const state = { start: 0, end: valueBuf.byteLength, buffer: valueBuf }
@@ -32,7 +30,7 @@ function collection0_reconstruct (schemaVersion, keyBuf, valueBuf) {
   return record
 }
 // '@altersend/remembered-peers' key reconstruction function
-function collection0_reconstruct_key (keyBuf) {
+function collection0_reconstruct_key(keyBuf) {
   const key = collection0_key.decode(keyBuf)
   return {
     remoteDevicePubkey: key[0]
@@ -44,11 +42,11 @@ const collection0 = {
   name: '@altersend/remembered-peers',
   id: 0,
   version: 1,
-  encodeKey (record) {
+  encodeKey(record) {
     const key = [record.remoteDevicePubkey]
     return collection0_key.encode(key)
   },
-  encodeKeyRange ({ gt, lt, gte, lte } = {}) {
+  encodeKeyRange({ gt, lt, gte, lte } = {}) {
     return collection0_key.encodeRange({
       gt: gt ? collection0_indexify(gt) : null,
       lt: lt ? collection0_indexify(lt) : null,
@@ -56,7 +54,7 @@ const collection0 = {
       lte: lte ? collection0_indexify(lte) : null
     })
   },
-  encodeValue (schemaVersion, collectionVersion, record) {
+  encodeValue(schemaVersion, collectionVersion, record) {
     setVersion(schemaVersion)
     const state = { start: 0, end: 2, buffer: null }
     collection0_enc.preencode(state, record)
@@ -73,24 +71,24 @@ const collection0 = {
   decodedVersion: 0
 }
 
-const collections = [
-  collection0
-]
+const collections = [collection0]
 
-const indexes = [
-]
+const indexes = []
 
 export default { versions, collections, indexes, resolveCollection, resolveIndex }
 
-function resolveCollection (name) {
+function resolveCollection(name) {
   switch (name) {
-    case '@altersend/remembered-peers': return collection0
-    default: return null
+    case '@altersend/remembered-peers':
+      return collection0
+    default:
+      return null
   }
 }
 
-function resolveIndex (name) {
+function resolveIndex(name) {
   switch (name) {
-    default: return null
+    default:
+      return null
   }
 }

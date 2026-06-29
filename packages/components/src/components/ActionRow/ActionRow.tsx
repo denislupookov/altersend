@@ -66,7 +66,14 @@ const styles = css.create({
   subtitleCompact: { fontSize: 11 }
 })
 
-export function ActionRow({ icon, title, subtitle, onClick, compact = false, tone = 'default' }: ActionRowProps) {
+export function ActionRow({
+  icon,
+  title,
+  subtitle,
+  onClick,
+  compact = false,
+  tone = 'default'
+}: ActionRowProps) {
   const { theme } = useTheme()
   const c = theme.colors
   const { isHovered, isPressed, pressHandlers } = usePressState()
@@ -75,7 +82,10 @@ export function ActionRow({ icon, title, subtitle, onClick, compact = false, ton
   const contentColor = isDanger ? c.colorDanger : c.colorTextPrimary
   const iconSize = compact ? 14 : 15
   const iconEl = isValidElement(icon)
-    ? cloneElement(icon as ReactElement<{ color?: string; size?: number }>, { color: contentColor, size: iconSize })
+    ? cloneElement(icon as ReactElement<{ color?: string; size?: number }>, {
+        color: contentColor,
+        size: iconSize
+      })
     : icon
 
   const resolveBackgroundColor = () => {
@@ -92,16 +102,26 @@ export function ActionRow({ icon, title, subtitle, onClick, compact = false, ton
       role='button'
       tabIndex={0}
       onClick={onClick}
-      onKeyDown={(e: { key: string }) => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
+      onKeyDown={(e: { key: string }) => {
+        if (e.key === 'Enter' || e.key === ' ') onClick()
+      }}
       style={[styles.row, compact && styles.rowCompact, { backgroundColor } as never]}
     >
       <html.div style={[styles.iconSlot, compact && styles.iconSlotCompact]}>{iconEl}</html.div>
       <html.div style={[styles.textGroup, compact && styles.textGroupCompact]}>
-        <html.span style={[styles.title, compact && styles.titleCompact, { color: contentColor } as never]}>
+        <html.span
+          style={[styles.title, compact && styles.titleCompact, { color: contentColor } as never]}
+        >
           {title}
         </html.span>
         {subtitle ? (
-          <html.span style={[styles.subtitle, compact && styles.subtitleCompact, { color: c.colorTextMuted } as never]}>
+          <html.span
+            style={[
+              styles.subtitle,
+              compact && styles.subtitleCompact,
+              { color: c.colorTextMuted } as never
+            ]}
+          >
             {subtitle}
           </html.span>
         ) : null}

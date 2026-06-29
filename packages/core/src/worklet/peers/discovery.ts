@@ -2,10 +2,18 @@ import b4a from 'b4a'
 import crypto from 'hypercore-crypto'
 import Hyperswarm, { type NoiseKeyPair, type PeerInfo, type PeerSocket } from 'hyperswarm'
 import { PeerControlChannel } from '../transfer/control-channel'
-import type { DeviceInvite, DeviceInviteResponse, PeerControlMessage } from '../transfer/control-channel'
+import type {
+  DeviceInvite,
+  DeviceInviteResponse,
+  PeerControlMessage
+} from '../transfer/control-channel'
 import type { DeviceIdentity } from '../identity/device-identity-store'
 import type { RememberedPeer } from './remembered-peer'
-import { createInviteReceivedEvent, createInviteResponseReceivedEvent, type TransferIPCMessage } from '../rpc/events'
+import {
+  createInviteReceivedEvent,
+  createInviteResponseReceivedEvent,
+  type TransferIPCMessage
+} from '../rpc/events'
 import { BadRequestError, type InviteDeviceReply, type InviteResponseReply } from '../rpc/protocol'
 
 export const INVITE_WAIT_MS = 30_000
@@ -16,7 +24,7 @@ export interface DiscoverySwarm {
   destroy(): Promise<void>
 }
 
-export type CreateDiscoverySwarm = (opts: {
+type CreateDiscoverySwarm = (opts: {
   keyPair: NoiseKeyPair
   firewall: (remotePublicKey: Uint8Array) => boolean
 }) => DiscoverySwarm
@@ -93,7 +101,12 @@ export class DiscoveryCoordinator {
     }
   }
 
-  async invite(remoteDevicePubkey: string, topic: string, fileCount?: number, totalSize?: number): Promise<InviteDeviceReply> {
+  async invite(
+    remoteDevicePubkey: string,
+    topic: string,
+    fileCount?: number,
+    totalSize?: number
+  ): Promise<InviteDeviceReply> {
     if (typeof remoteDevicePubkey !== 'string' || remoteDevicePubkey.length === 0) {
       throw new BadRequestError('inviteDevice: remoteDevicePubkey required')
     }
@@ -123,7 +136,11 @@ export class DiscoveryCoordinator {
     return { delivered: true }
   }
 
-  async respondToInvite(remoteDevicePubkey: string, topic: string, response: DeviceInviteResponse['response']): Promise<InviteResponseReply> {
+  async respondToInvite(
+    remoteDevicePubkey: string,
+    topic: string,
+    response: DeviceInviteResponse['response']
+  ): Promise<InviteResponseReply> {
     if (typeof remoteDevicePubkey !== 'string' || remoteDevicePubkey.length === 0) {
       throw new BadRequestError('respondToInvite: remoteDevicePubkey required')
     }

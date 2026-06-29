@@ -50,16 +50,19 @@ const pressedTextStyle: Partial<Record<ButtonVariant, (typeof styles)[keyof type
   success: styles.textOnBackground
 }
 
-const normalIconColor: Record<ButtonVariant, keyof ReturnType<typeof useTheme>['theme']['colors']> = {
-  primary: 'colorBackground',
-  secondary: 'colorTextPrimary',
-  ghost: 'colorTextSecondary',
-  light: 'colorOnAccent',
-  danger: 'colorDanger',
-  success: 'colorSuccess'
-}
+const normalIconColor: Record<ButtonVariant, keyof ReturnType<typeof useTheme>['theme']['colors']> =
+  {
+    primary: 'colorBackground',
+    secondary: 'colorTextPrimary',
+    ghost: 'colorTextSecondary',
+    light: 'colorOnAccent',
+    danger: 'colorDanger',
+    success: 'colorSuccess'
+  }
 
-const pressedIconColor: Partial<Record<ButtonVariant, keyof ReturnType<typeof useTheme>['theme']['colors']>> = {
+const pressedIconColor: Partial<
+  Record<ButtonVariant, keyof ReturnType<typeof useTheme>['theme']['colors']>
+> = {
   danger: 'colorBackground',
   success: 'colorBackground'
 }

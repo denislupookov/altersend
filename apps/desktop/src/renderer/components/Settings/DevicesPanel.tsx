@@ -1,7 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ActionRow, Button, LinkCard, LinkRow, useTheme } from '@altersend/components'
-import { ArrowLeftIcon, ClipboardIcon, CloseIcon, MoreVerticalIcon, PlusIcon, QrCodeIcon, TrashIcon, deviceIcon } from '@altersend/components/icons'
+import {
+  ArrowLeftIcon,
+  ClipboardIcon,
+  CloseIcon,
+  MoreVerticalIcon,
+  PlusIcon,
+  QrCodeIcon,
+  TrashIcon,
+  deviceIcon
+} from '@altersend/components/icons'
 import { forgetPeer, usePairingSession } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import syncDevicesSvg from '../../../../../../assets/sync_devices.svg'
@@ -54,15 +63,26 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
         <Button variant='ghost' size='sm' icon={<ArrowLeftIcon size={13} />} onClick={onBack}>
           {t('settings:pairing.pairedDevices')}
         </Button>
-        <Button variant='ghost' size='sm' iconOnly aria-label={t('common:actions.close')} icon={<CloseIcon size={14} />} onClick={onClose} />
+        <Button
+          variant='ghost'
+          size='sm'
+          iconOnly
+          aria-label={t('common:actions.close')}
+          icon={<CloseIcon size={14} />}
+          onClick={onClose}
+        />
       </div>
 
       <div className='flex-1 overflow-y-auto'>
         {peers.length === 0 ? (
           <div className='flex h-full flex-col items-center justify-center px-6 py-10 text-center'>
             <img src={syncDevicesSvg} alt='' aria-hidden className='mb-6 w-[230px] opacity-90' />
-            <p className='m-0 text-[17px] font-bold text-text-primary'>{t('settings:pairing.noPairedDevices')}</p>
-            <p className='m-0 mt-2 max-w-[260px] text-[13px] leading-relaxed text-text-muted'>{t('settings:pairing.noPairedDevicesHint')}</p>
+            <p className='m-0 text-[17px] font-bold text-text-primary'>
+              {t('settings:pairing.noPairedDevices')}
+            </p>
+            <p className='m-0 mt-2 max-w-[260px] text-[13px] leading-relaxed text-text-muted'>
+              {t('settings:pairing.noPairedDevicesHint')}
+            </p>
           </div>
         ) : (
           <div className='px-5 py-4'>
@@ -78,7 +98,13 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
                     trailing={
                       <Popover
                         trigger={
-                          <Button variant='ghost' size='sm' iconOnly aria-label={t('settings:pairing.deviceActions')} icon={<MoreVerticalIcon size={14} />} />
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            iconOnly
+                            aria-label={t('settings:pairing.deviceActions')}
+                            icon={<MoreVerticalIcon size={14} />}
+                          />
                         }
                       >
                         {(close) => (
@@ -90,8 +116,22 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
                             onClick={() => {
                               close()
                               forgetPeer(peer.remoteDevicePubkey)
-                                .then((removed) => toast.show(removed ? { title: t('settings:pairing.deviceRemoved') } : { title: t('settings:pairing.removeFailed'), variant: 'error' }))
-                                .catch(() => toast.show({ title: t('settings:pairing.removeFailed'), variant: 'error' }))
+                                .then((removed) =>
+                                  toast.show(
+                                    removed
+                                      ? { title: t('settings:pairing.deviceRemoved') }
+                                      : {
+                                          title: t('settings:pairing.removeFailed'),
+                                          variant: 'error'
+                                        }
+                                  )
+                                )
+                                .catch(() =>
+                                  toast.show({
+                                    title: t('settings:pairing.removeFailed'),
+                                    variant: 'error'
+                                  })
+                                )
                             }}
                           />
                         )}
@@ -114,7 +154,10 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
               icon={<QrCodeIcon />}
               title={t('settings:pairing.showQrCode')}
               subtitle={t('settings:pairing.showQrCodeHint')}
-              onClick={() => { setAddOpen(false); setQrOpen(true) }}
+              onClick={() => {
+                setAddOpen(false)
+                setQrOpen(true)
+              }}
             />
             <div className='mx-4 h-px bg-border-primary' />
             <ActionRow
@@ -122,17 +165,37 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
               icon={<ClipboardIcon />}
               title={t('settings:pairing.enterCode')}
               subtitle={t('settings:pairing.enterCodeHint')}
-              onClick={() => { setAddOpen(false); setJoinOpen(true) }}
+              onClick={() => {
+                setAddOpen(false)
+                setJoinOpen(true)
+              }}
             />
           </div>
         )}
-        <Button variant='primary' size='sm' width='full' icon={<PlusIcon size={14} />} onClick={() => setAddOpen((v) => !v)}>
+        <Button
+          variant='primary'
+          size='sm'
+          width='full'
+          icon={<PlusIcon size={14} />}
+          onClick={() => setAddOpen((v) => !v)}
+        >
           {t('settings:pairing.pairNewDevice')}
         </Button>
       </div>
 
-      {createPortal(<PairingQrModal open={qrOpen} topic={pairingTopic} onClose={() => setQrOpen(false)} />, document.body)}
-      {createPortal(<PairingJoinModal open={joinOpen} isLoading={isJoining || isJoinWaiting} onClose={() => setJoinOpen(false)} onJoin={join} />, document.body)}
+      {createPortal(
+        <PairingQrModal open={qrOpen} topic={pairingTopic} onClose={() => setQrOpen(false)} />,
+        document.body
+      )}
+      {createPortal(
+        <PairingJoinModal
+          open={joinOpen}
+          isLoading={isJoining || isJoinWaiting}
+          onClose={() => setJoinOpen(false)}
+          onJoin={join}
+        />,
+        document.body
+      )}
     </>
   )
 }

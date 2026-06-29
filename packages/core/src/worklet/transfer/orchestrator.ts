@@ -53,7 +53,11 @@ import { PeerIdentityStore } from './peer-identity-store'
 import { TransferStorage } from './storage'
 import { TransferSwarm, type PeerSession } from './swarm'
 import { isValidHexKey } from './utils'
-import { DeviceIdentityStore, type DeviceIdentityDefaults, type DeviceSecretInit } from '../identity/device-identity-store'
+import {
+  DeviceIdentityStore,
+  type DeviceIdentityDefaults,
+  type DeviceSecretInit
+} from '../identity/device-identity-store'
 import { RememberedPeerStore } from '../peers/store'
 import type { RememberedPeer } from '../peers/remembered-peer'
 import { RememberCoordinator } from '../peers/remember-coordinator'
@@ -146,7 +150,7 @@ export class TransferOrchestrator implements TransferRPC {
       rememberedStore: this.rememberedStore,
       emit: (event) => this.emitIPC(event)
     })
-    
+
     this.recognition = new RecognitionCoordinator({
       deviceIdentityStore: this.deviceIdentityStore,
       rememberedStore: this.rememberedStore,
@@ -211,7 +215,12 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply> {
-    return this.discovery.invite(input.remoteDevicePubkey, input.topic, input.fileCount, input.totalSize)
+    return this.discovery.invite(
+      input.remoteDevicePubkey,
+      input.topic,
+      input.fileCount,
+      input.totalSize
+    )
   }
 
   respondToInvite(input: InviteResponseInput): Promise<InviteResponseReply> {
@@ -462,7 +471,7 @@ export class TransferOrchestrator implements TransferRPC {
   abortInFlight(): void {
     const controller = this.inflightAbort
     if (!controller) return
-    
+
     this.inflightAbort = null
     controller.abort()
   }
@@ -480,7 +489,7 @@ export class TransferOrchestrator implements TransferRPC {
       await this.swarm.endSession()
       await this.storage.receiver.reset()
       await this.storage.wipeAndReinit()
-      
+
       this.setRole(null)
       this.sendStatus('disconnected')
       return { state: 'disconnected' }
@@ -516,7 +525,7 @@ export class TransferOrchestrator implements TransferRPC {
     this.discovery.start()
 
     if (!this.currentTopic) return
-    
+
     try {
       await this.swarm.join(this.currentTopic)
     } catch (err) {

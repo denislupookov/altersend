@@ -35,10 +35,7 @@ export function Input({
   const useWrapper = Boolean(icon || trailing)
 
   const fieldStyle = [styles.field, mono && styles.mono, hasError && styles.invalid]
-  const wrapperStyle = [
-    styles.iconWrapper,
-    hasError && styles.iconWrapperInvalid
-  ]
+  const wrapperStyle = [styles.iconWrapper, hasError && styles.iconWrapperInvalid]
 
   return (
     <html.div style={styles.root}>

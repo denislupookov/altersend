@@ -62,8 +62,12 @@ describe('RememberCoordinator.vote validation', () => {
   it('rejects bad input', async () => {
     const { coord } = setup()
     const k = peer().key
-    await expect(coord.vote({ transferId: '', peerKey: k, vote: 'remember', isMine: true })).rejects.toThrow()
-    await expect(coord.vote({ transferId: 't', peerKey: '', vote: 'remember', isMine: true })).rejects.toThrow()
+    await expect(
+      coord.vote({ transferId: '', peerKey: k, vote: 'remember', isMine: true })
+    ).rejects.toThrow()
+    await expect(
+      coord.vote({ transferId: 't', peerKey: '', vote: 'remember', isMine: true })
+    ).rejects.toThrow()
     await expect(
       coord.vote({ transferId: 't', peerKey: k, vote: 'maybe' as never, isMine: true })
     ).rejects.toThrow()
@@ -79,7 +83,10 @@ describe('RememberCoordinator two-sided vote', () => {
     const k = peer().key
     await coord.vote({ transferId: 't1', peerKey: k, vote: 'no', isMine: false })
     expect(sends).toEqual([
-      { peerKey: k, message: { type: 'remember-vote', transferId: 't1', vote: 'no', isMine: false } }
+      {
+        peerKey: k,
+        message: { type: 'remember-vote', transferId: 't1', vote: 'no', isMine: false }
+      }
     ])
   })
 

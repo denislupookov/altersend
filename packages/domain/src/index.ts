@@ -7,7 +7,14 @@ export * from './send/shareModel'
 export * from './send/peerListUi'
 export { usePeerEventLog } from './send/usePeerEventLog'
 export { useShareViewModel } from './send/useShareViewModel'
-export type { ShareViewModel, DeviceRow, ConnectedDeviceRow, OfflineDeviceRow, FileRow, SubtitleTone } from './send/useShareViewModel'
+export type {
+  ShareViewModel,
+  DeviceRow,
+  ConnectedDeviceRow,
+  OfflineDeviceRow,
+  FileRow,
+  SubtitleTone
+} from './send/useShareViewModel'
 export * from './send/pageUi'
 export * from './send/uploadItemUi'
 export * from './receive/pageUi'

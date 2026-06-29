@@ -30,7 +30,12 @@ export function PairRequestBanner() {
     if (!request || respondedRef.current) return
     respondedRef.current = true
     setResponded(true)
-    rememberVote({ transferId: request.transferId, peerKey: request.peerKey, vote, isMine: false }).catch(() => {})
+    rememberVote({
+      transferId: request.transferId,
+      peerKey: request.peerKey,
+      vote,
+      isMine: false
+    }).catch(() => {})
   }
 
   const Icon = request ? deviceIcon(request.deviceType) : null
@@ -61,12 +66,26 @@ export function PairRequestBanner() {
 
           <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 36) }]}>
             <View style={styles.actionWrap}>
-              <Button variant='danger' size='lg' pill width='full' icon={<CloseIcon size={18} color={c.colorDanger} />} onClick={() => respond('no')}>
+              <Button
+                variant='danger'
+                size='lg'
+                pill
+                width='full'
+                icon={<CloseIcon size={18} color={c.colorDanger} />}
+                onClick={() => respond('no')}
+              >
                 Decline
               </Button>
             </View>
             <View style={styles.actionWrap}>
-              <Button variant='success' size='lg' pill width='full' icon={<CheckIcon size={18} color={c.colorSuccess} />} onClick={() => respond('remember')}>
+              <Button
+                variant='success'
+                size='lg'
+                pill
+                width='full'
+                icon={<CheckIcon size={18} color={c.colorSuccess} />}
+                onClick={() => respond('remember')}
+              >
                 Pair
               </Button>
             </View>

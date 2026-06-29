@@ -71,5 +71,12 @@ export function usePairingJoin(isOpen: boolean): UsePairingJoinResult {
     setJoiningTopic(topic)
   }
 
-  return { join, setJoinedTopic, isJoining, isWaitingForPair: joiningTopic !== '', isPaired, isFailed }
+  return {
+    join,
+    setJoinedTopic,
+    isJoining,
+    isWaitingForPair: joiningTopic !== '',
+    isPaired,
+    isFailed
+  }
 }

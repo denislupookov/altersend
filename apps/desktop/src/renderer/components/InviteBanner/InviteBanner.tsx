@@ -15,12 +15,12 @@ export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }
 
   const Icon = deviceIcon(invite.deviceType)
 
-  const fileLabel = invite.fileCount != null
-    ? `${invite.fileCount} ${invite.fileCount === 1 ? 'file' : 'files'}`
-    : 'files'
-  const sizeLabel = invite.totalSize != null && invite.totalSize > 0
-    ? ` · ${formatFileSize(invite.totalSize)}`
-    : ''
+  const fileLabel =
+    invite.fileCount != null
+      ? `${invite.fileCount} ${invite.fileCount === 1 ? 'file' : 'files'}`
+      : 'files'
+  const sizeLabel =
+    invite.totalSize != null && invite.totalSize > 0 ? ` · ${formatFileSize(invite.totalSize)}` : ''
 
   const accept = () => {
     setAccepted(true)
@@ -54,15 +54,30 @@ export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }
             {invite.displayName}
           </p>
           <p className='m-0 mt-0.5 text-[12px] leading-snug text-text-secondary'>
-            wants to send you {fileLabel}{sizeLabel}
+            wants to send you {fileLabel}
+            {sizeLabel}
           </p>
         </div>
 
         <div className='flex w-full gap-2'>
-          <Button icon={<CloseIcon size={12} />} onClick={decline} pill size='sm' variant='danger' width='full'>
+          <Button
+            icon={<CloseIcon size={12} />}
+            onClick={decline}
+            pill
+            size='sm'
+            variant='danger'
+            width='full'
+          >
             Decline
           </Button>
-          <Button icon={<CheckIcon size={12} />} onClick={accept} pill size='sm' variant='success' width='full'>
+          <Button
+            icon={<CheckIcon size={12} />}
+            onClick={accept}
+            pill
+            size='sm'
+            variant='success'
+            width='full'
+          >
             Accept
           </Button>
         </div>
@@ -70,4 +85,3 @@ export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }
     </div>
   )
 }
-

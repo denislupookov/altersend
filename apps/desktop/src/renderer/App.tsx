@@ -1,8 +1,21 @@
 import { useState } from 'react'
-import { clearSession, dismissInvite, joinSession, useSimulatedLoading, useTransferStore } from '@altersend/domain'
+import {
+  clearSession,
+  dismissInvite,
+  joinSession,
+  useSimulatedLoading,
+  useTransferStore
+} from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi, hasBridge } from './api/bridgeApi'
-import { InviteBanner, openSettingsPanel, PairDeviceModal, PairRequestBanner, ToastProvider, UpdateBanner } from './components'
+import {
+  InviteBanner,
+  openSettingsPanel,
+  PairDeviceModal,
+  PairRequestBanner,
+  ToastProvider,
+  UpdateBanner
+} from './components'
 import { isOnboardingCompleted, markOnboardingCompleted } from './lifecycle/onboardingStorage'
 import { useUpdateReady } from './lifecycle/useUpdateReady'
 import { BridgeUnavailablePage, LoadingPage, OnboardingPage, TransferPage } from './pages'
@@ -61,12 +74,14 @@ export default function App() {
     <ToastProvider>
       <TransferPage version={version} activeTab={activeTab} onTabChange={switchTab} />
       <PairRequestBanner />
-      <InviteBanner onAccept={(topic) => {
-        if (switchTab('receive')) {
-          dismissInvite()
-          void joinSession(topic)
-        }
-      }} />
+      <InviteBanner
+        onAccept={(topic) => {
+          if (switchTab('receive')) {
+            dismissInvite()
+            void joinSession(topic)
+          }
+        }}
+      />
       <UpdateBanner ready={updateReady} />
       <PairDeviceModal
         open={showPairPrompt}

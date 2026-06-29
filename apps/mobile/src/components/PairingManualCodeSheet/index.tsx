@@ -17,7 +17,14 @@ interface PairingManualCodeSheetProps {
   initialCode?: string
 }
 
-export function PairingManualCodeSheet({ open, onBack, onClose, onJoined, isWaiting = false, initialCode }: PairingManualCodeSheetProps) {
+export function PairingManualCodeSheet({
+  open,
+  onBack,
+  onClose,
+  onJoined,
+  isWaiting = false,
+  initialCode
+}: PairingManualCodeSheetProps) {
   const { t } = useTranslation(['settings'])
   const toast = useToast()
   const role = useTransferStore((s) => s.role)
@@ -37,7 +44,8 @@ export function PairingManualCodeSheet({ open, onBack, onClose, onJoined, isWait
 
   const joinCode = extractJoinCode(value)
   const isLoading = isJoining || isWaiting
-  const error = showError && value.trim().length > 0 && !joinCode ? t('settings:pairing.codeError') : undefined
+  const error =
+    showError && value.trim().length > 0 && !joinCode ? t('settings:pairing.codeError') : undefined
 
   const pasteFromClipboard = async () => {
     const text = await Clipboard.getStringAsync()
@@ -66,7 +74,14 @@ export function PairingManualCodeSheet({ open, onBack, onClose, onJoined, isWait
   }
 
   return (
-    <BottomSheet open={open} onClose={onClose} onBack={onBack} title={t('settings:pairing.enterCode')} keyboardAvoiding sheetStyle={styles.sheet}>
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      onBack={onBack}
+      title={t('settings:pairing.enterCode')}
+      keyboardAvoiding
+      sheetStyle={styles.sheet}
+    >
       <View style={styles.form}>
         <Input
           aria-label={t('settings:pairing.codeLabel')}
@@ -85,14 +100,25 @@ export function PairingManualCodeSheet({ open, onBack, onClose, onJoined, isWait
               iconOnly
               aria-label={t('settings:pairing.pasteCodeLabel')}
               disabled={isJoining}
-              onClick={() => { pasteFromClipboard().catch(() => {}) }}
+              onClick={() => {
+                pasteFromClipboard().catch(() => {})
+              }}
               icon={<ClipboardIcon size={16} />}
             />
           }
           value={value}
         />
 
-        <Button disabled={!value.trim()} loading={isLoading} onClick={() => { join().catch(() => {}) }} size='lg' variant='primary' width='full'>
+        <Button
+          disabled={!value.trim()}
+          loading={isLoading}
+          onClick={() => {
+            join().catch(() => {})
+          }}
+          size='lg'
+          variant='primary'
+          width='full'
+        >
           {isLoading ? t('settings:pairing.pairingInProgress') : t('settings:pairing.joinButton')}
         </Button>
       </View>

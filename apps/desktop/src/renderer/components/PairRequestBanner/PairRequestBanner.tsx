@@ -18,7 +18,12 @@ export function PairRequestBanner() {
 
   const respond = (vote: 'remember' | 'no') => {
     setResponded(true)
-    rememberVote({ transferId: request.transferId, peerKey: request.peerKey, vote, isMine: false }).catch(() => {})
+    rememberVote({
+      transferId: request.transferId,
+      peerKey: request.peerKey,
+      vote,
+      isMine: false
+    }).catch(() => {})
   }
 
   return (
@@ -49,10 +54,24 @@ export function PairRequestBanner() {
         </div>
 
         <div className='flex w-full gap-2'>
-          <Button icon={<CloseIcon size={12} />} onClick={() => respond('no')} pill size='sm' variant='danger' width='full'>
+          <Button
+            icon={<CloseIcon size={12} />}
+            onClick={() => respond('no')}
+            pill
+            size='sm'
+            variant='danger'
+            width='full'
+          >
             Decline
           </Button>
-          <Button icon={<CheckIcon size={12} />} onClick={() => respond('remember')} pill size='sm' variant='success' width='full'>
+          <Button
+            icon={<CheckIcon size={12} />}
+            onClick={() => respond('remember')}
+            pill
+            size='sm'
+            variant='success'
+            width='full'
+          >
             Pair
           </Button>
         </div>

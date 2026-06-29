@@ -17,10 +17,6 @@ export function usePairingHost(isOpen: boolean): UsePairingHostResult {
     if (isOpen) setIsPaired(false)
   }, [isOpen])
 
-  // The worklet owns the host swarm and keeps it alive for the whole app
-  // session, so we just (idempotently) start it when the QR is shown and read
-  // the stable topic. No teardown — closing the modal or leaving the screen
-  // leaves the host announcing, and reopening shows the same code.
   useEffect(() => {
     if (!isOpen || topic) return
     hostPairingSession()

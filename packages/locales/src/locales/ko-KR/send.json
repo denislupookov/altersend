@@ -44,10 +44,10 @@
     "downloading": "다운로드 중",
     "downloadingPercent": "{{percent}}% 다운로드 중",
     "waitingForJoin": "Waiting for someone to join",
-    "peerJoinedHint": "{{name}} joined",
     "pairedToast": "Paired with {{name}}",
     "inviteFailedToast": "Couldn't reach {{name}}",
-    "inviteFailedHint": "Make sure it's online and try again"
+    "inviteFailedHint": "Make sure it's online and try again",
+    "deviceConnected": "{{name}} connected"
   },
   "connection": {
     "placeholder": "보안 키 생성 중…",
@@ -85,7 +85,8 @@
     "requested": "Requested…",
     "invite": "Invite",
     "inviting": "Inviting…",
-    "sent": "Sent"
+    "sent": "Sent",
+    "deviceOffline": "Device offline — try again"
   },
   "dropzone": {
     "addMoreDescription": "또는 클릭하여 <link>더 추가</link>",

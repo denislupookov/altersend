@@ -17,15 +17,25 @@ export function DeviceActionsSheet({ open, onClose, onRemove }: DeviceActionsShe
   const c = theme.colors
 
   return (
-    <BottomSheet open={open} onClose={onClose} title={t('settings:pairing.deviceActions')} sheetStyle={styles.sheet}>
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      title={t('settings:pairing.deviceActions')}
+      sheetStyle={styles.sheet}
+    >
       <View style={styles.actionList}>
         <Pressable
           accessibilityRole='button'
           onPress={onRemove}
-          style={({ pressed }) => [styles.actionRow, pressed && { backgroundColor: c.colorDangerSubtle }]}
+          style={({ pressed }) => [
+            styles.actionRow,
+            pressed && { backgroundColor: c.colorDangerSubtle }
+          ]}
         >
           <TrashIcon size={16} color={c.colorDanger} />
-          <Text style={[styles.actionText, { color: c.colorDanger }]}>{t('settings:pairing.removeDevice')}</Text>
+          <Text style={[styles.actionText, { color: c.colorDanger }]}>
+            {t('settings:pairing.removeDevice')}
+          </Text>
         </Pressable>
       </View>
     </BottomSheet>
@@ -35,6 +45,13 @@ export function DeviceActionsSheet({ open, onClose, onRemove }: DeviceActionsShe
 const styles = StyleSheet.create({
   sheet: { paddingBottom: 32, gap: 12 },
   actionList: { overflow: 'hidden' },
-  actionRow: { minHeight: 56, flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingVertical: 16 },
+  actionRow: {
+    minHeight: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16
+  },
   actionText: { fontSize: 15, fontWeight: '600' }
 })

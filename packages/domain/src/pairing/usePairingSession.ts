@@ -11,10 +11,26 @@ interface UsePairingSessionArgs {
   onFailed?: () => void
 }
 
-export function usePairingSession({ hostOpen, joinOpen, onPaired, onFailed }: UsePairingSessionArgs) {
+export function usePairingSession({
+  hostOpen,
+  joinOpen,
+  onPaired,
+  onFailed
+}: UsePairingSessionArgs) {
   const peers = useTransferStore((s) => s.peers)
-  const { topic: pairingTopic, isPaired: isHostPaired, isWaiting: isHostWaiting } = usePairingHost(hostOpen)
-  const { join, setJoinedTopic, isJoining, isWaitingForPair, isPaired: isJoinPaired, isFailed: isJoinFailed } = usePairingJoin(joinOpen)
+  const {
+    topic: pairingTopic,
+    isPaired: isHostPaired,
+    isWaiting: isHostWaiting
+  } = usePairingHost(hostOpen)
+  const {
+    join,
+    setJoinedTopic,
+    isJoining,
+    isWaitingForPair,
+    isPaired: isJoinPaired,
+    isFailed: isJoinFailed
+  } = usePairingJoin(joinOpen)
 
   const onPairedRef = useRef(onPaired)
   onPairedRef.current = onPaired

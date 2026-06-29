@@ -121,7 +121,12 @@ export function LinkRow({
     if (trailing !== undefined) return trailing
     if (onRemove) {
       return (
-        <html.button aria-label={removeLabel} onClick={onRemove} style={[styles.removeButton, compact && styles.removeButtonCompact]} type='button'>
+        <html.button
+          aria-label={removeLabel}
+          onClick={onRemove}
+          style={[styles.removeButton, compact && styles.removeButtonCompact]}
+          type='button'
+        >
           <CloseIcon size={compact ? 14 : 16} />
         </html.button>
       )
@@ -135,9 +140,8 @@ export function LinkRow({
   const rowSubtitle = resolveSubtitle()
   const trailingContent = renderTrailing()
 
-  const clampedProgressPercent = typeof progressPercent === 'number'
-    ? Math.max(0, Math.min(100, progressPercent))
-    : undefined
+  const clampedProgressPercent =
+    typeof progressPercent === 'number' ? Math.max(0, Math.min(100, progressPercent)) : undefined
 
   return (
     <>
@@ -170,11 +174,23 @@ export function LinkRow({
         <html.div style={styles.content}>
           <html.div style={styles.metaRow}>
             <html.div style={styles.text}>
-              <html.p style={[styles.label, disabled && styles.labelDisabled, compact && styles.labelCompact]}>
+              <html.p
+                style={[
+                  styles.label,
+                  disabled && styles.labelDisabled,
+                  compact && styles.labelCompact
+                ]}
+              >
                 {label}
               </html.p>
               {rowSubtitle ? (
-                <html.p style={[styles.subtitle, subtitleToneStyle[subtitleTone], compact && styles.subtitleCompact]}>
+                <html.p
+                  style={[
+                    styles.subtitle,
+                    subtitleToneStyle[subtitleTone],
+                    compact && styles.subtitleCompact
+                  ]}
+                >
                   {rowSubtitle}
                 </html.p>
               ) : null}
@@ -190,7 +206,9 @@ export function LinkRow({
 
           {clampedProgressPercent !== undefined ? (
             <html.div style={styles.progressTrack}>
-              <html.div style={[styles.progressBar, styles.progressDynamic(clampedProgressPercent)]} />
+              <html.div
+                style={[styles.progressBar, styles.progressDynamic(clampedProgressPercent)]}
+              />
             </html.div>
           ) : progress ? (
             <html.div style={styles.progressTrack}>

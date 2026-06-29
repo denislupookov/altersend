@@ -5,7 +5,11 @@ import { isValidHexKey } from '../transfer/utils'
 import { RememberCoordinator } from './remember-coordinator'
 import type { RememberedPeerStore } from './store'
 import type { DeviceIdentityStore } from '../identity/device-identity-store'
-import { createPairingPeerConnectedEvent, TRANSFER_ERROR_CODES, type TransferIPCMessage } from '../rpc/events'
+import {
+  createPairingPeerConnectedEvent,
+  TRANSFER_ERROR_CODES,
+  type TransferIPCMessage
+} from '../rpc/events'
 import {
   BadRequestError,
   type HostReply,

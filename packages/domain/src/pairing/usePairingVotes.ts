@@ -12,10 +12,13 @@ interface UsePairingVotesArgs {
   onStalled?: () => void
 }
 
-// The worklet now drives the remember vote itself (so pairing completes even
-// with no pairing UI mounted). This hook is just the view side: surface when a
-// peer connects, when the pairing is confirmed, and when it stalls.
-export function usePairingVotes({ topic, engaged = true, onPeerConnected, onPaired, onStalled }: UsePairingVotesArgs) {
+export function usePairingVotes({
+  topic,
+  engaged = true,
+  onPeerConnected,
+  onPaired,
+  onStalled
+}: UsePairingVotesArgs) {
   const prevPairStatusRef = useRef<Record<string, string>>({})
   const pairStatus = useTransferStore((s) => s.remember.pairStatus)
 

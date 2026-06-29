@@ -7,11 +7,11 @@ const desktopPackageJson = JSON.parse(
   scripts: Record<string, string>
 }
 const selectSource = readFileSync(
-  new URL('../../../apps/desktop/src/renderer/components/Select.tsx', import.meta.url),
+  new URL('../../../apps/desktop/src/renderer/components/Select/Select.tsx', import.meta.url),
   'utf8'
 )
 const selectBehaviorSource = readFileSync(
-  new URL('../../../apps/desktop/src/renderer/components/selectBehavior.ts', import.meta.url),
+  new URL('../../../apps/desktop/src/renderer/components/Select/selectBehavior.ts', import.meta.url),
   'utf8'
 )
 const desktopMainSource = readFileSync(

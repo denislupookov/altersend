@@ -2,7 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import b4a from 'b4a'
 import crypto from 'hypercore-crypto'
 import type { PeerInfo, PeerSocket } from 'hyperswarm'
-import { DiscoveryCoordinator, INVITE_WAIT_MS, type DiscoveryDeps, type DiscoverySwarm } from './discovery'
+import {
+  DiscoveryCoordinator,
+  INVITE_WAIT_MS,
+  type DiscoveryDeps,
+  type DiscoverySwarm
+} from './discovery'
 import type { RememberedPeer } from './remembered-peer'
 import type { DeviceIdentity } from '../identity/device-identity-store'
 import type { TransferIPCMessage } from '../rpc/events'
@@ -30,7 +35,13 @@ const flush = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 
 
 function makeIdentity(): DeviceIdentity {
   const kp = crypto.keyPair()
-  return { publicKey: kp.publicKey, secretKey: kp.secretKey, displayName: 'My Device', deviceType: 'laptop', createdAt: 0 }
+  return {
+    publicKey: kp.publicKey,
+    secretKey: kp.secretKey,
+    displayName: 'My Device',
+    deviceType: 'laptop',
+    createdAt: 0
+  }
 }
 
 function makePeer(): RememberedPeer {
@@ -105,7 +116,7 @@ describe('DiscoveryCoordinator', () => {
     expect(firewall).toBeTruthy()
     expect(firewall!(b4a.from(peer.remoteDevicePubkey, 'hex'))).toBe(false)
     expect(firewall!(crypto.randomBytes(32))).toBe(true)
-    expect(joins).toHaveLength(1) // joined the remembered peer's rendezvous topic
+    expect(joins).toHaveLength(1)
   })
 
   it('destroys connections from unknown peers without opening a channel', async () => {
@@ -134,7 +145,7 @@ describe('DiscoveryCoordinator', () => {
 
     const topic = hex(crypto.randomBytes(32))
     const invitePromise = coordinator.invite(peer.remoteDevicePubkey, topic, 3, 1024)
-    await flush() // let invite() reach waitForSession and register a waiter
+    await flush()
 
     connect(peer.remoteDevicePubkey)
     expect(await invitePromise).toEqual({ delivered: true })
@@ -181,7 +192,11 @@ describe('DiscoveryCoordinator', () => {
 
     connect(peer.remoteDevicePubkey)
     expect(await respondPromise).toEqual({ delivered: true })
-    expect(channels[0].send).toHaveBeenCalledWith({ type: 'invite-response', topic, response: 'declined' })
+    expect(channels[0].send).toHaveBeenCalledWith({
+      type: 'invite-response',
+      topic,
+      response: 'declined'
+    })
   })
 
   it('emits an event when an invite arrives over the control channel', async () => {
@@ -190,9 +205,17 @@ describe('DiscoveryCoordinator', () => {
     await coordinator.start()
 
     connect(peer.remoteDevicePubkey)
-    channels[0].onmessage({ type: 'invite', displayName: 'Phone', deviceType: 'phone', topic: hex(crypto.randomBytes(32)) })
+    channels[0].onmessage({
+      type: 'invite',
+      displayName: 'Phone',
+      deviceType: 'phone',
+      topic: hex(crypto.randomBytes(32))
+    })
 
     expect(emits).toHaveLength(1)
-    expect(emits[0]).toMatchObject({ type: 'invite-received', remoteDevicePubkey: peer.remoteDevicePubkey })
+    expect(emits[0]).toMatchObject({
+      type: 'invite-received',
+      remoteDevicePubkey: peer.remoteDevicePubkey
+    })
   })
 })

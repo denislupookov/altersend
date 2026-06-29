@@ -14,7 +14,13 @@ const flush = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 
 
 function makeIdentity(displayName = 'Device'): DeviceIdentity {
   const kp = crypto.keyPair()
-  return { publicKey: kp.publicKey, secretKey: kp.secretKey, displayName, deviceType: 'laptop', createdAt: 0 }
+  return {
+    publicKey: kp.publicKey,
+    secretKey: kp.secretKey,
+    displayName,
+    deviceType: 'laptop',
+    createdAt: 0
+  }
 }
 
 function rememberedFrom(identity: DeviceIdentity, displayName: string): RememberedPeer {
@@ -53,7 +59,7 @@ describe('RecognitionCoordinator', () => {
     expect(sends).toHaveLength(1)
     const msg = sends[0].message as Recognition
     expect(msg.type).toBe('recognition')
-    expect(Object.keys(msg).sort()).toEqual(['signature', 'type']) // nothing identifying leaks
+    expect(Object.keys(msg).sort()).toEqual(['signature', 'type'])
     expect(verifyRecognition(msg, handshake, local.publicKey)).toBe(true)
   })
 
