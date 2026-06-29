@@ -8,7 +8,7 @@ import type { RememberedPeer } from './remembered-peer'
 import { createInviteReceivedEvent, createInviteResponseReceivedEvent, type TransferIPCMessage } from '../rpc/events'
 import { BadRequestError, type InviteDeviceReply, type InviteResponseReply } from '../rpc/protocol'
 
-const INVITE_WAIT_MS = 10_000
+export const INVITE_WAIT_MS = 30_000
 
 export interface DiscoverySwarm {
   on(event: 'connection', listener: (socket: PeerSocket, info: PeerInfo) => void): unknown

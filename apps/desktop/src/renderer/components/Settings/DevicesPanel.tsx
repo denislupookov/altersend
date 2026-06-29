@@ -82,20 +82,18 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
                         }
                       >
                         {(close) => (
-                          <Button
-                            variant='danger'
-                            size='sm'
-                            width='full'
-                            icon={<TrashIcon size={14} />}
+                          <ActionRow
+                            compact
+                            tone='danger'
+                            icon={<TrashIcon />}
+                            title={t('settings:pairing.removeDevice')}
                             onClick={() => {
                               close()
                               forgetPeer(peer.remoteDevicePubkey)
                                 .then((removed) => toast.show(removed ? { title: t('settings:pairing.deviceRemoved') } : { title: t('settings:pairing.removeFailed'), variant: 'error' }))
                                 .catch(() => toast.show({ title: t('settings:pairing.removeFailed'), variant: 'error' }))
                             }}
-                          >
-                            {t('settings:pairing.removeDevice')}
-                          </Button>
+                          />
                         )}
                       </Popover>
                     }

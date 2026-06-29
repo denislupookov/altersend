@@ -45,7 +45,9 @@
     "downloadingPercent": "{{percent}} % wird heruntergeladen",
     "waitingForJoin": "Waiting for someone to join",
     "peerJoinedHint": "{{name}} joined",
-    "pairedToast": "Paired with {{name}}"
+    "pairedToast": "Paired with {{name}}",
+    "inviteFailedToast": "Couldn't reach {{name}}",
+    "inviteFailedHint": "Make sure it's online and try again"
   },
   "connection": {
     "placeholder": "Sicherer Schlüssel wird generiert…",

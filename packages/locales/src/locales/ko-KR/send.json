@@ -45,7 +45,9 @@
     "downloadingPercent": "{{percent}}% 다운로드 중",
     "waitingForJoin": "Waiting for someone to join",
     "peerJoinedHint": "{{name}} joined",
-    "pairedToast": "Paired with {{name}}"
+    "pairedToast": "Paired with {{name}}",
+    "inviteFailedToast": "Couldn't reach {{name}}",
+    "inviteFailedHint": "Make sure it's online and try again"
   },
   "connection": {
     "placeholder": "보안 키 생성 중…",

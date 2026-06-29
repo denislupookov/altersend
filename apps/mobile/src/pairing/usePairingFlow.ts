@@ -21,7 +21,6 @@ export function usePairingFlow() {
   const [qrSheetOpen, setQrSheetOpen] = useState(false)
   const [scanSheetOpen, setScanSheetOpen] = useState(false)
   const [manualSheetOpen, setManualSheetOpen] = useState(false)
-  const [pendingPairSheet, setPendingPairSheet] = useState<'qr' | 'scan' | null>(null)
   const [deepLinkCode, setDeepLinkCode] = useState('')
 
   const closePairingSheets = () => {
@@ -51,14 +50,6 @@ export function usePairingFlow() {
     router.setParams({ pairCode: '' })
   }, [params.pairCode])
 
-  const presentPendingPairSheet = () => {
-    if (!pendingPairSheet) return
-    const next = pendingPairSheet
-    setPendingPairSheet(null)
-    if (next === 'qr') setQrSheetOpen(true)
-    else setScanSheetOpen(true)
-  }
-
   const reopenAddSheet = () => setTimeout(() => setAddSheetOpen(true), SHEET_TRANSITION_MS)
 
   const removeDevice = async () => {
@@ -82,9 +73,8 @@ export function usePairingFlow() {
     addSheet: {
       open: addSheetOpen,
       onClose: () => setAddSheetOpen(false),
-      onDismiss: presentPendingPairSheet,
-      onShowQrCode: () => { setPendingPairSheet('qr'); setAddSheetOpen(false) },
-      onScanQrCode: () => { setPendingPairSheet('scan'); setAddSheetOpen(false) },
+      onShowQrCode: () => { setAddSheetOpen(false); setTimeout(() => setQrSheetOpen(true), SHEET_TRANSITION_MS) },
+      onScanQrCode: () => { setAddSheetOpen(false); setTimeout(() => setScanSheetOpen(true), SHEET_TRANSITION_MS) },
       onEnterCode: () => { setAddSheetOpen(false); setTimeout(() => setManualSheetOpen(true), SHEET_TRANSITION_MS) }
     },
     qrSheet: {

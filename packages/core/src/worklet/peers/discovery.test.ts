@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import b4a from 'b4a'
 import crypto from 'hypercore-crypto'
 import type { PeerInfo, PeerSocket } from 'hyperswarm'
-import { DiscoveryCoordinator, type DiscoveryDeps, type DiscoverySwarm } from './discovery'
+import { DiscoveryCoordinator, INVITE_WAIT_MS, type DiscoveryDeps, type DiscoverySwarm } from './discovery'
 import type { RememberedPeer } from './remembered-peer'
 import type { DeviceIdentity } from '../identity/device-identity-store'
 import type { TransferIPCMessage } from '../rpc/events'
@@ -25,7 +25,6 @@ vi.mock('../transfer/control-channel', async (importActual) => {
   }
 })
 
-const INVITE_WAIT_MS = 10_000
 const hex = (bytes: Uint8Array): string => b4a.toString(bytes, 'hex')
 const flush = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0))
 

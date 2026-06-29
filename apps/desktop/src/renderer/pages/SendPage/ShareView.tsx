@@ -18,7 +18,14 @@ export function ShareView() {
         hint: peer.isKnown ? t('send:status.peerJoinedHint', { name: peer.name }) : undefined,
         durationMs: 2500
       }),
-    onPeerPaired: (peer) => toast.show({ title: t('send:status.pairedToast', { name: peer.name }), durationMs: 2500 })
+    onPeerPaired: (peer) => toast.show({ title: t('send:status.pairedToast', { name: peer.name }), durationMs: 2500 }),
+    onInviteFailed: (peer) =>
+      toast.show({
+        title: t('send:status.inviteFailedToast', { name: peer.name }),
+        hint: t('send:status.inviteFailedHint'),
+        variant: 'error',
+        durationMs: 3500
+      })
   })
   const [isQrOpen, setIsQrOpen] = useState(false)
   const hasConnectedDevices = vm.connectedCount > 0
@@ -153,7 +160,6 @@ export function ShareView() {
                     label={row.name}
                     subtitle={row.subtitle}
                     subtitleTone={row.subtitleTone}
-                    isActive={isActive}
                     onPress={() => void vm.invite(row.peerKey)}
                     trailing={
                       <Button disabled={isActive} loading={isActive} onClick={() => void vm.invite(row.peerKey)} size='sm' variant='primary' pill>

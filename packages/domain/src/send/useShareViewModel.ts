@@ -7,6 +7,10 @@ import { applyPairState, getPeerListEntries } from './peerListUi'
 import type { PairState, PeerListEntryWithPair } from './peerListUi'
 import type { Translate } from '../i18n'
 
+// Delay the "peer connected" toast briefly so recognition can resolve a known
+// device's name first (the name arrives a beat after the connection itself).
+const PEER_JOIN_TOAST_DELAY_MS = 600
+
 export type SubtitleTone = 'muted' | 'success' | 'danger' | 'info'
 
 interface InviteStatusState {
@@ -130,6 +134,7 @@ function toInviteAction(st: InviteStatus | undefined): OfflineDeviceRow['action'
 export interface ShareViewModelCallbacks {
   onPeerJoined?: (peer: ConnectedDeviceRow) => void
   onPeerPaired?: (peer: ConnectedDeviceRow) => void
+  onInviteFailed?: (peer: OfflineDeviceRow) => void
 }
 
 export function useShareViewModel(
@@ -248,15 +253,27 @@ export function useShareViewModel(
 
   const callbacksRef = useRef(callbacks)
   callbacksRef.current = callbacks
+  const connectedRowsRef = useRef<ConnectedDeviceRow[]>([])
+  connectedRowsRef.current = connectedRows
   const connectedPeerKeysRef = useRef<Set<string> | null>(null)
   const prevPairActionsRef = useRef<Map<string, ConnectedDeviceRow['action']>>(new Map())
+  const joinTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+  useEffect(() => () => joinTimersRef.current.forEach(clearTimeout), [])
   useEffect(() => {
     const currentKeys = new Set(connectedRows.map((row) => row.peerKey))
     const previousKeys = connectedPeerKeysRef.current
     connectedPeerKeysRef.current = currentKeys
     if (previousKeys) {
       const joined = connectedRows.find((row) => !previousKeys.has(row.peerKey))
-      if (joined) callbacksRef.current.onPeerJoined?.(joined)
+      if (joined) {
+        const peerKey = joined.peerKey
+        joinTimersRef.current.push(
+          setTimeout(() => {
+            const row = connectedRowsRef.current.find((r) => r.peerKey === peerKey)
+            if (row) callbacksRef.current.onPeerJoined?.(row)
+          }, PEER_JOIN_TOAST_DELAY_MS)
+        )
+      }
     }
     for (const row of connectedRows) {
       const prevAction = prevPairActionsRef.current.get(row.peerKey)
@@ -273,6 +290,7 @@ export function useShareViewModel(
 
   const invite = async (peerKey: string) => {
     if (inviteStatuses[peerKey]?.status === 'inviting') return
+    const peer = offlineRows.find((row) => row.peerKey === peerKey)
     const invitedAt = Date.now()
     setInviteStatuses((s) => ({ ...s, [peerKey]: { status: 'inviting', invitedAt } }))
     try {
@@ -285,8 +303,10 @@ export function useShareViewModel(
         ...s,
         [peerKey]: { status: delivered ? 'sent' : 'offline', topic: sessionTopic, invitedAt }
       }))
+      if (!delivered && peer) callbacksRef.current.onInviteFailed?.(peer)
     } catch {
       setInviteStatuses((s) => ({ ...s, [peerKey]: { status: 'offline', invitedAt } }))
+      if (peer) callbacksRef.current.onInviteFailed?.(peer)
     }
   }
 
