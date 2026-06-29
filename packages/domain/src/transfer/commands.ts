@@ -63,16 +63,6 @@ export const joinPairingSession = async (topic: string): Promise<JoinReply> => {
   }
 }
 
-export const clearPairingSession = async (): Promise<void> => {
-  dispatchToTransferStore({ type: 'clear_pairing_session' })
-  try {
-    await getTransferApi().worker.closePairing()
-  } catch (error) {
-    reportError('clearPairingSession', error)
-    throw error
-  }
-}
-
 export const joinSession = async (topic: string): Promise<JoinReply> => {
   dispatchToTransferStore({ type: 'join_requested' })
   try {

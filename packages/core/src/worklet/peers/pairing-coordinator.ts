@@ -70,10 +70,10 @@ export class PairingCoordinator {
     return { state: 'joined' }
   }
 
-  async close(): Promise<void> {
+  async destroy(): Promise<void> {
     this.topic = null
     this.remember.reset()
-    await this.swarm.endSession()
+    await this.swarm.destroy()
   }
 
   vote(input: RememberVoteInput): Promise<RememberVoteReply> {

@@ -151,7 +151,6 @@ export interface TransferRPC {
   initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply>
   hostPairing(): Promise<HostReply>
   joinPairing(topic: string): Promise<JoinReply>
-  closePairing(): Promise<void>
 }
 
 export class BadRequestError extends Error {

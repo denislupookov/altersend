@@ -1,7 +1,4 @@
 import crypto from 'hypercore-crypto'
-import Corestore from 'corestore'
-import fs from 'bare-fs'
-import Hyperdrive from 'hyperdrive'
 import {
   createErrorEvent,
   createRoleEvent,
@@ -51,10 +48,9 @@ import {
   getDownloadFailureMessage,
   type PeerDownloadStatus
 } from './download-events'
-import { TransferReceiver } from './receiver'
 import type { DownloadLifecycleEvent, DownloaderCallbacks } from './download-events'
 import { PeerIdentityStore } from './peer-identity-store'
-import { TransferSender } from './sender'
+import { TransferStorage } from './storage'
 import { TransferSwarm, type PeerSession } from './swarm'
 import { isValidHexKey } from './utils'
 import { DeviceIdentityStore, type DeviceIdentityDefaults, type DeviceSecretInit } from '../identity/device-identity-store'
@@ -79,10 +75,10 @@ async function tryAsync(label: string, op: () => Promise<unknown>): Promise<void
 /**
  * TransferOrchestrator is the top-level orchestrator for the AlterSend P2P file transfer engine.
  *
- * It composes three focused subsystems:
- *   - TransferSwarm      — Hyperswarm peer connectivity and control channels
- *   - TransferSender     — Local file → Hyperdrive staging (sender path)
- *   - TransferReceiver — Remote Hyperdrive → disk writing (receiver path)
+ * It composes focused subsystems:
+ *   - TransferSwarm   — Hyperswarm peer connectivity and control channels
+ *   - TransferStorage — ephemeral Corestore/Hyperdrive plus the file sender/receiver
+ *   - Discovery/Remember/Pairing coordinators — remembered devices and pairing
  *
  * TransferOrchestrator itself is responsible for:
  *   - Lifecycle (initialisation, destroy)
@@ -92,16 +88,9 @@ async function tryAsync(label: string, op: () => Promise<unknown>): Promise<void
  */
 export class TransferOrchestrator implements TransferRPC {
   private readonly emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void
-  private readonly storageRoot: string
-  private coreStore!: Corestore
-  private outgoingStore!: Corestore
-  private incomingStore!: Corestore
-  private drive!: Hyperdrive
-  private readyPromise!: Promise<void>
+  private readonly storage: TransferStorage
 
   private readonly swarm: TransferSwarm
-  private stager!: TransferSender
-  private downloader!: TransferReceiver
 
   private activeTransfer: TransferStart | null = null
   private activeTransferReady: TransferReady | null = null
@@ -124,17 +113,16 @@ export class TransferOrchestrator implements TransferRPC {
     identityDefaults: DeviceIdentityDefaults = {}
   ) {
     this.emitIPC = emitIPC
-    this.storageRoot = storageRoot
-    this.initStorage()
+    this.storage = new TransferStorage(storageRoot)
     this.deviceIdentityStore = new DeviceIdentityStore(identityRoot, identityDefaults)
     this.rememberedStore = new RememberedPeerStore(identityRoot)
     const identityStore = new PeerIdentityStore(identityRoot)
     this.swarm = new TransferSwarm(
       {
-        onReady: () => this.readyPromise,
+        onReady: () => this.storage.ready(),
         onReplicate: (socket) => {
           if (this.suspended) return
-          return this.coreStore.replicate(socket, { live: true })
+          this.storage.replicate(socket)
         },
         onPeerConnected: (session) => {
           if (this.suspended) return
@@ -184,33 +172,6 @@ export class TransferOrchestrator implements TransferRPC {
 
   joinPairing(topic: string): Promise<JoinReply> {
     return this.pairing.join(topic)
-  }
-
-  closePairing(): Promise<void> {
-    return this.pairing.close()
-  }
-
-  private initStorage(): void {
-    this.coreStore = new Corestore(this.storageRoot)
-    this.outgoingStore = this.coreStore.namespace('outgoing-drive')
-    this.incomingStore = this.coreStore.namespace('incoming-drives')
-    this.drive = new Hyperdrive(this.outgoingStore)
-    this.readyPromise = this.drive.ready()
-    this.stager = new TransferSender(this.drive)
-    this.downloader = new TransferReceiver(this.incomingStore)
-  }
-
-  private async wipeStorage(): Promise<void> {
-    await tryAsync('drive.close (wipe)', () => this.drive.close())
-    await tryAsync('coreStore.close (wipe)', () => this.coreStore.close())
-    await tryAsync('storage rm', () =>
-      fs.promises.rm(this.storageRoot, { recursive: true, force: true })
-    )
-  }
-
-  private async wipeAndReinitStorage(): Promise<void> {
-    await this.wipeStorage()
-    this.initStorage()
   }
 
   private onPeerConnected(session: PeerSession): void {
@@ -357,7 +318,7 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   async host(): Promise<HostReply> {
-    await this.readyPromise
+    await this.storage.ready()
     const topic = this.swarm.generateKey()
     this.currentTopic = topic
     return { topic }
@@ -380,7 +341,7 @@ export class TransferOrchestrator implements TransferRPC {
       throw new BadRequestError('Already in a session. Disconnect first.')
     }
 
-    await this.readyPromise
+    await this.storage.ready()
     this.setRole('receiver')
     this.sendStatus('joining')
     try {
@@ -407,10 +368,10 @@ export class TransferOrchestrator implements TransferRPC {
       await this.disconnect()
     }
 
-    await this.readyPromise
+    await this.storage.ready()
 
     try {
-      const { files, totalBytes, errors } = await this.stager.scanFiles(requests)
+      const { files, totalBytes, errors } = await this.storage.sender.scanFiles(requests)
       for (const error of errors) this.sendError(error)
 
       if (files.length === 0) {
@@ -434,7 +395,7 @@ export class TransferOrchestrator implements TransferRPC {
       this.inflightAbort = controller
 
       try {
-        const offers = await this.stager.stageFiles(
+        const offers = await this.storage.sender.stageFiles(
           files,
           transferId,
           (file) => {
@@ -456,7 +417,7 @@ export class TransferOrchestrator implements TransferRPC {
         this.inflightAbort = null
       }
     } finally {
-      await this.stager.closeSourceDrives()
+      await this.storage.sender.closeSourceDrives()
     }
   }
 
@@ -471,7 +432,7 @@ export class TransferOrchestrator implements TransferRPC {
     const controller = new AbortController()
     this.inflightAbort = controller
     try {
-      const results = await this.downloader.downloadFiles(
+      const results = await this.storage.receiver.downloadFiles(
         files,
         this.getDownloaderCallbacks(),
         controller.signal
@@ -500,8 +461,8 @@ export class TransferOrchestrator implements TransferRPC {
       this.currentTopic = null
 
       await this.swarm.endSession()
-      await this.downloader.reset()
-      await this.wipeAndReinitStorage()
+      await this.storage.receiver.reset()
+      await this.storage.wipeAndReinit()
       
       this.setRole(null)
       this.sendStatus('disconnected')
@@ -555,13 +516,9 @@ export class TransferOrchestrator implements TransferRPC {
 
     await tryAsync('discovery.stop', () => this.discovery.stop())
     await tryAsync('swarm.endSession', () => this.swarm.endSession())
-    await tryAsync('downloader.destroy', () => this.downloader.destroy())
+    await tryAsync('pairing.destroy', () => this.pairing.destroy())
     await tryAsync('swarm.destroy', () => this.swarm.destroy())
     await tryAsync('rememberedStore.close', () => this.rememberedStore.close())
-    await tryAsync('drive.close', () => this.drive.close())
-    await tryAsync('coreStore.close', () => this.coreStore.close())
-    await tryAsync('storage rm (destroy)', () =>
-      fs.promises.rm(this.storageRoot, { recursive: true, force: true })
-    )
+    await tryAsync('storage.destroy', () => this.storage.destroy())
   }
 }

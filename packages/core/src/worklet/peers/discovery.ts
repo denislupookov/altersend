@@ -1,6 +1,6 @@
 import b4a from 'b4a'
 import crypto from 'hypercore-crypto'
-import Hyperswarm, { type PeerInfo, type PeerSocket } from 'hyperswarm'
+import Hyperswarm, { type NoiseKeyPair, type PeerInfo, type PeerSocket } from 'hyperswarm'
 import { PeerControlChannel } from '../transfer/control-channel'
 import type { DeviceInvite, DeviceInviteResponse, PeerControlMessage } from '../transfer/control-channel'
 import type { DeviceIdentity } from '../identity/device-identity-store'
@@ -9,7 +9,17 @@ import { createInviteReceivedEvent, createInviteResponseReceivedEvent, type Tran
 import { BadRequestError, type InviteDeviceReply, type InviteResponseReply } from '../rpc/protocol'
 
 const INVITE_WAIT_MS = 10_000
-const INVITE_POLL_MS = 200
+
+export interface DiscoverySwarm {
+  on(event: 'connection', listener: (socket: PeerSocket, info: PeerInfo) => void): unknown
+  join(discoveryKey: Uint8Array, opts?: { server?: boolean; client?: boolean }): unknown
+  destroy(): Promise<void>
+}
+
+export type CreateDiscoverySwarm = (opts: {
+  keyPair: NoiseKeyPair
+  firewall: (remotePublicKey: Uint8Array) => boolean
+}) => DiscoverySwarm
 
 export interface DiscoveryDeps {
   deviceIdentityStore: { getOrCreate(): Promise<DeviceIdentity> }
@@ -18,6 +28,7 @@ export interface DiscoveryDeps {
     get(pubkeyHex: string): Promise<RememberedPeer | null>
   }
   emit: (event: TransferIPCMessage) => void
+  createSwarm?: CreateDiscoverySwarm
 }
 
 interface DiscoverySession {
@@ -25,12 +36,18 @@ interface DiscoverySession {
   control: PeerControlChannel
 }
 
+interface SessionWaiter {
+  resolve: (session: DiscoverySession | null) => void
+  timer: ReturnType<typeof setTimeout>
+}
+
 const normalizeKey = (hex: string): string => hex.toLowerCase()
 
 export class DiscoveryCoordinator {
   private readonly deps: DiscoveryDeps
-  private swarm: Hyperswarm | null = null
+  private swarm: DiscoverySwarm | null = null
   private readonly sessions = new Map<string, DiscoverySession>()
+  private readonly sessionWaiters = new Map<string, Set<SessionWaiter>>()
   private readonly joinedTopics = new Set<string>()
   private readonly knownPubkeys = new Set<string>()
   private starting: Promise<void> | null = null
@@ -54,7 +71,8 @@ export class DiscoveryCoordinator {
     for (const peer of peers) this.knownPubkeys.add(normalizeKey(peer.remoteDevicePubkey))
 
     if (this.swarm) return
-    this.swarm = new Hyperswarm({
+    const createSwarm = this.deps.createSwarm ?? ((opts) => new Hyperswarm(opts))
+    this.swarm = createSwarm({
       keyPair: { publicKey: identity.publicKey, secretKey: identity.secretKey },
       firewall: (remotePublicKey) =>
         !this.knownPubkeys.has(normalizeKey(b4a.toString(remotePublicKey, 'hex')))
@@ -142,6 +160,13 @@ export class DiscoveryCoordinator {
 
   async stop(): Promise<void> {
     this.starting = null
+    for (const waiters of this.sessionWaiters.values()) {
+      for (const waiter of waiters) {
+        clearTimeout(waiter.timer)
+        waiter.resolve(null)
+      }
+    }
+    this.sessionWaiters.clear()
     for (const { socket } of this.sessions.values()) {
       try {
         socket.destroy()
@@ -186,7 +211,9 @@ export class DiscoveryCoordinator {
         previous.socket.destroy()
       } catch {}
     }
-    this.sessions.set(remotePubkey, { socket, control })
+    const session = { socket, control }
+    this.sessions.set(remotePubkey, session)
+    this.resolveSessionWaiters(remotePubkey, session)
 
     const drop = () => {
       if (this.sessions.get(remotePubkey)?.socket === socket) this.sessions.delete(remotePubkey)
@@ -224,17 +251,27 @@ export class DiscoveryCoordinator {
     const existing = this.sessions.get(remotePubkey)
     if (existing) return Promise.resolve(existing)
     return new Promise((resolve) => {
-      const startedAt = Date.now()
-      const timer = setInterval(() => {
-        const session = this.sessions.get(remotePubkey)
-        if (session) {
-          clearInterval(timer)
-          resolve(session)
-        } else if (Date.now() - startedAt > INVITE_WAIT_MS) {
-          clearInterval(timer)
+      const waiters = this.sessionWaiters.get(remotePubkey) ?? new Set<SessionWaiter>()
+      this.sessionWaiters.set(remotePubkey, waiters)
+      const waiter: SessionWaiter = {
+        resolve,
+        timer: setTimeout(() => {
+          waiters.delete(waiter)
+          if (waiters.size === 0) this.sessionWaiters.delete(remotePubkey)
           resolve(null)
-        }
-      }, INVITE_POLL_MS)
+        }, INVITE_WAIT_MS)
+      }
+      waiters.add(waiter)
     })
+  }
+
+  private resolveSessionWaiters(remotePubkey: string, session: DiscoverySession): void {
+    const waiters = this.sessionWaiters.get(remotePubkey)
+    if (!waiters) return
+    this.sessionWaiters.delete(remotePubkey)
+    for (const waiter of waiters) {
+      clearTimeout(waiter.timer)
+      waiter.resolve(session)
+    }
   }
 }

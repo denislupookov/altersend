@@ -13,8 +13,7 @@ export const API = {
     forgetPeer: 11,
     initDeviceSecret: 12,
     hostPairing: 13,
-    joinPairing: 14,
-    closePairing: 15
+    joinPairing: 14
   },
   channels: {
     event: 100,

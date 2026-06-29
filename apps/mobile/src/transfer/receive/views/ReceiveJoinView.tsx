@@ -1,7 +1,8 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
+import * as Clipboard from 'expo-clipboard'
 import { Button, Input, LinkRow, useTheme } from '@altersend/components'
-import { QrCodeIcon } from '@altersend/components/icons'
+import { ClipboardIcon, QrCodeIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
@@ -27,6 +28,11 @@ export function ReceiveJoinView({
   const trimmed = joinCode.trim()
   const canConnect = trimmed.length > 0 && !isLoading
 
+  const handlePaste = async () => {
+    const text = await Clipboard.getStringAsync()
+    if (text) onJoinCodeChange(text)
+  }
+
   return (
     <View style={styles.container}>
       <LinkRow
@@ -50,6 +56,17 @@ export function ReceiveJoinView({
           error={joinCodeError}
           onChange={(e: { target: { value: string } }) => onJoinCodeChange(e.target.value)}
           placeholder={t('receive:form.codePlaceholder')}
+          trailing={
+            <Button
+              variant='ghost'
+              size='sm'
+              iconOnly
+              aria-label={t('common:actions.paste')}
+              disabled={isLoading}
+              onClick={() => { handlePaste().catch(() => {}) }}
+              icon={<ClipboardIcon size={16} />}
+            />
+          }
           type='text'
           value={joinCode}
         />

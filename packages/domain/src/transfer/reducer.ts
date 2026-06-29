@@ -131,16 +131,6 @@ export function transferSessionReducer(
       return { ...state, isReconnecting: true }
     case 'clear_session':
       return endSession(state)
-    case 'clear_pairing_session':
-      return {
-        ...state,
-        remember: {
-          ...state.remember,
-          pairStatus: {},
-          peerDisplayNames: {},
-          incomingRequest: null
-        }
-      }
     case 'join_failed':
       return {
         ...state,

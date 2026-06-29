@@ -342,35 +342,6 @@ describe('transferSessionReducer — misc', () => {
     expect(next.uploadItems).toEqual([])
   })
 
-  it('clear_pairing_session: resets pairing vote state but leaves the transfer session untouched', () => {
-    const peerKey = 'a'.repeat(64)
-    const state = make({
-      role: 'receiver',
-      connectionState: 'peer-connected',
-      topic: 'transfer-topic',
-      selectedFiles: [{ name: 'a', path: '/a', size: 1 }],
-      peers: [rememberedPeer(peerKey)],
-      remember: {
-        pairStatus: { [peerKey]: 'paired' },
-        peerDisplayNames: { [peerKey]: 'Phone' },
-        incomingRequest: null,
-        incomingInvite: null,
-        inviteResponses: {}
-      }
-    })
-    const next = apply(state, { type: 'clear_pairing_session' })
-
-    expect(next.remember.pairStatus).toEqual({})
-    expect(next.remember.peerDisplayNames).toEqual({})
-
-    // pairing runs on its own swarm now, so transfer state must survive
-    expect(next.role).toBe('receiver')
-    expect(next.connectionState).toBe('peer-connected')
-    expect(next.topic).toBe('transfer-topic')
-    expect(next.selectedFiles).toEqual(state.selectedFiles)
-    expect(next.peers).toEqual(state.peers)
-  })
-
   it('request_pair_peer does not downgrade an already-paired peer', () => {
     const state = make({
       remember: { pairStatus: { abc: 'paired' }, peerDisplayNames: {}, incomingRequest: null, incomingInvite: null, inviteResponses: {} }

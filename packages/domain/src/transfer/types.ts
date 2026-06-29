@@ -83,7 +83,6 @@ export type TransferAction =
   | { type: 'share_requested' }
   | { type: 'join_failed'; code?: TransferErrorCode; message: string }
   | { type: 'clear_session' }
-  | { type: 'clear_pairing_session' }
   | { type: 'set_error'; code?: TransferErrorCode; message: string }
   | { type: 'status_changed'; state: ConnectionState; peers?: number }
   | { type: 'role_changed'; role: TransferRole | null }

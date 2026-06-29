@@ -38,7 +38,7 @@ export function PairDeviceSheet({ open, onPair, onClose }: PairDeviceSheetProps)
 const styles = StyleSheet.create({
   sheet: { paddingBottom: 48, gap: 24 },
   content: { alignItems: 'center', gap: 8, paddingHorizontal: 20 },
-  heading: { fontSize: 20, fontWeight: '700', textAlign: 'center', marginTop: 8 },
+  heading: { fontSize: 20, fontWeight: '700', textAlign: 'center', marginTop: 40 },
   body: { fontSize: 14, lineHeight: 20, textAlign: 'center' },
   actions: { gap: 10, paddingHorizontal: 20 }
 })
