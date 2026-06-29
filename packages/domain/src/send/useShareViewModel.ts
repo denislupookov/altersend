@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { RememberedPeer } from '@altersend/core'
-import {
-  formatFileSize,
-  formatRelativeTime,
-  type InviteStatus,
-  inviteStatusSubtitle
-} from '../format'
+import { formatFileSize, formatRelativeTime, type InviteStatus } from '../format'
 import { forgetPeer, inviteDevice, requestPair, startSendSession } from '../transfer/commands'
 import { useTransferStore } from '../transfer/store'
 import { applyPairState, getPeerListEntries } from './peerListUi'
@@ -245,9 +240,7 @@ export function useShareViewModel(
   const offlineRows: OfflineDeviceRow[] = offlineRemembered.map((peer: RememberedPeer) => {
     const st = inviteStatuses[peer.remoteDevicePubkey]?.status
     const subtitleStr =
-      st === 'offline'
-        ? (inviteStatusSubtitle(st) ?? 'Unreachable')
-        : formatRelativeTime(peer.lastSeenAt)
+      st === 'offline' ? t('send:peer.deviceOffline') : formatRelativeTime(peer.lastSeenAt)
     return {
       kind: 'offline',
       peerKey: peer.remoteDevicePubkey,
