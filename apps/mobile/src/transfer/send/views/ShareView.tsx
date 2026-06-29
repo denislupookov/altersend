@@ -1,170 +1,298 @@
-import { useEffect, useMemo, useState } from 'react'
-import { ScrollView, Share, StyleSheet, View } from 'react-native'
+import { useState } from 'react'
+import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import type { PeerListCardEntry } from '@altersend/components'
+import { buildInviteText, formatFileSize, useShareViewModel } from '@altersend/domain'
+import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
 import {
-  buildInviteText,
-  formatFileSize,
-  getPeerListEntries,
-  type PeerListEntry,
-  type PeerListEntryDetail,
-  useTransferStore
-} from '@altersend/domain'
-import { Disclosure, PeerListCard, SendFileListRow, useTheme } from '@altersend/components'
-import { AlertCircleIcon, FolderIcon } from '@altersend/components/icons'
+  CheckIcon,
+  ChevronsUpDownIcon,
+  CopyIcon,
+  deviceIcon,
+  FolderIcon,
+  QrCodeIcon,
+  ShareIcon
+} from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { useToast } from '@/src/components/Toast'
+import { DeviceActionsSheet } from '@/src/components'
 import { QRSection } from './QRSection'
+import { ShareQrSheet } from './ShareQrSheet'
+import { ShareFilesSheet } from './ShareFilesSheet'
 import { Text } from '@/src/components/ThemedText'
 
-function getPeerStatusLabel(t: ReturnType<typeof useTranslation>['t'], entry: PeerListEntry) {
-  switch (entry.status) {
-    case 'failed':
-      return t('send:status.failed')
-    case 'downloaded':
-      return t('send:status.downloaded')
-    case 'disconnected':
-      return t('send:status.disconnected')
-    case 'online':
-      return t('send:status.online')
-    case 'downloading':
-      return entry.progressPercent != null
-        ? t('send:status.downloadingPercent', { percent: entry.progressPercent })
-        : t('send:status.downloading')
-  }
-}
-
-function getPeerDetailLabel(
-  t: ReturnType<typeof useTranslation>['t'],
-  detail: PeerListEntryDetail | null
-) {
-  if (!detail) return null
-
-  switch (detail.type) {
-    case 'failed-file':
-    case 'in-flight-file':
-      return detail.fileName
-    case 'completed-files':
-      return t('common:files.count', { count: detail.count })
-    case 'completed-done':
-      return t('send:peer.completedDone', { count: detail.count })
-    case 'progress-bytes':
-      return `${formatFileSize(detail.transferredBytes)} / ${formatFileSize(detail.totalBytes)}`
-  }
-}
-
-function toPeerListCardEntry(
-  t: ReturnType<typeof useTranslation>['t'],
-  entry: PeerListEntry
-): PeerListCardEntry {
-  return {
-    ...entry,
-    statusLabel: getPeerStatusLabel(t, entry),
-    detail: getPeerDetailLabel(t, entry.detail)
-  }
-}
-
 export function ShareView() {
-  const { t } = useTranslation(['send', 'common'])
+  const { t } = useTranslation(['send', 'common', 'settings'])
   const { theme } = useTheme()
-  const selectedFiles = useTransferStore((s) => s.selectedFiles)
-  const topicRaw = useTransferStore((s) => s.topic)
-  const connectionState = useTransferStore((s) => s.connectionState)
-  const peerDownloads = useTransferStore((s) => s.peerDownloads)
-  const connectedPeers = useTransferStore((s) => s.connectedPeers)
-  const topic = topicRaw ?? ''
-  const isPeerConnected = connectionState === 'peer-connected'
-  const [isFilesExpanded, setIsFilesExpanded] = useState(false)
-  const [isKeyCopied, setIsKeyCopied] = useState(false)
+  const c = theme.colors
   const toast = useToast()
+  const vm = useShareViewModel(t, {
+    onPeerJoined: (peer) =>
+      toast.show({
+        title: peer.isKnown
+          ? t('send:status.deviceConnected', { name: peer.name })
+          : t('send:status.peerConnected'),
+        durationMs: 2500
+      }),
+    onPeerPaired: (peer) =>
+      toast.show({ title: t('send:status.pairedToast', { name: peer.name }), durationMs: 2500 }),
+    onInviteFailed: (peer) =>
+      toast.show({
+        title: t('send:status.inviteFailedToast', { name: peer.name }),
+        hint: t('send:status.inviteFailedHint'),
+        durationMs: 3500
+      })
+  })
+  const [isFilesSheetOpen, setIsFilesSheetOpen] = useState(false)
+  const [isQrOpen, setIsQrOpen] = useState(false)
+  const [actionsTarget, setActionsTarget] = useState<{ peerKey: string; name: string } | null>(null)
 
-  const totalSize = selectedFiles.reduce((sum, file) => sum + (file.size ?? 0), 0)
-  const peerEntries = useMemo(
-    () => getPeerListEntries(connectedPeers, peerDownloads, selectedFiles),
-    [connectedPeers, peerDownloads, selectedFiles]
-  )
-  const peerCardEntries = peerEntries.map((entry) => toPeerListCardEntry(t, entry))
-  const hasActivity = isPeerConnected || peerEntries.length > 0
-  const showWaitingState = !hasActivity
-
-  const onCopy = async () => {
-    if (!topic) return
+  const copyTopic = async () => {
+    if (!vm.topic) return
     try {
-      await Clipboard.setStringAsync(topic)
-      setIsKeyCopied(true)
+      await Clipboard.setStringAsync(vm.topic)
+      vm.markCopied()
       toast.show({ title: t('send:connection.copiedToast') })
-      await Share.share({ message: buildInviteText(topic) })
+      await Share.share({ message: buildInviteText(vm.topic) })
     } catch (error) {
       console.error(error)
     }
   }
 
-  useEffect(() => {
-    if (!isKeyCopied) return
-    const id = setTimeout(() => setIsKeyCopied(false), 2000)
-    return () => clearTimeout(id)
-  }, [isKeyCopied])
-
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.hint}>
-        <AlertCircleIcon size={12} />
-        <Text style={[styles.hintText, { color: theme.colors.colorTextMuted }]}>
-          {t('send:hints.keepOpen')}
-        </Text>
-      </View>
+    <>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        {vm.phase === 'waiting' && (
+          <View style={styles.statusStrip}>
+            <WaitingRadar
+              size={60}
+              color={c.colorInfo}
+              pulsing
+              icon={<ShareIcon size={16} color={c.colorInfo} />}
+            />
+            <View style={styles.statusText}>
+              <Text style={[styles.statusTitle, { color: c.colorTextPrimary }]}>
+                {t('send:status.waitingForJoin')}
+              </Text>
+              <Text style={[styles.statusCaption, { color: c.colorTextMuted }]} numberOfLines={1}>
+                {t('send:hints.keepOpen')}
+              </Text>
+            </View>
+          </View>
+        )}
 
-      <QRSection
-        topic={topic}
-        isKeyCopied={isKeyCopied}
-        onCopy={() => void onCopy()}
-        showWaitingState={showWaitingState}
+        {vm.hasDevices ? (
+          <View style={styles.tiles}>
+            <View style={styles.tile}>
+              <Button
+                variant='secondary'
+                icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+                onClick={() => void copyTopic()}
+              >
+                {vm.isCopied ? t('common:actions.copied') : t('send:connection.copyCode')}
+              </Button>
+            </View>
+            <View style={styles.tile}>
+              <Button
+                variant='secondary'
+                icon={<QrCodeIcon size={16} />}
+                onClick={() => setIsQrOpen(true)}
+              >
+                {t('send:connection.qrCode')}
+              </Button>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.invitePanel}>
+            <QRSection
+              topic={vm.topic}
+              showWaitingState={false}
+              size={200}
+              style={styles.qrPanelSection}
+            />
+            <View style={styles.keyContainer}>
+              <Input
+                aria-label={t('send:connection.copyLabel')}
+                placeholder={t('send:connection.placeholder')}
+                readOnly
+                trailing={
+                  <Button
+                    variant={vm.isCopied ? 'success' : 'ghost'}
+                    size='sm'
+                    iconOnly
+                    aria-label={t('send:connection.copyLabel')}
+                    disabled={!vm.topic}
+                    onClick={() => void copyTopic()}
+                    icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+                  />
+                }
+                value={vm.topic}
+              />
+            </View>
+          </View>
+        )}
+
+        {vm.files.length > 0 && (
+          <View style={styles.filesWrap}>
+            <LinkCard>
+              <LinkRow
+                icon={<FolderIcon size={20} color={c.colorTextSecondary} />}
+                label={t('common:files.count', { count: vm.files.length })}
+                subtitle={formatFileSize(vm.totalSize)}
+                onPress={() => setIsFilesSheetOpen(true)}
+                trailing={<ChevronsUpDownIcon size={18} color={c.colorTextMuted} />}
+                isLast
+              />
+            </LinkCard>
+          </View>
+        )}
+
+        {vm.hasDevices && (
+          <>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionLabel, { color: c.colorTextSecondary }]}>
+                {t('send:peer.devices')}
+              </Text>
+              {vm.connectedCount > 0 && (
+                <Text style={[styles.sectionCount, { color: c.colorTextMuted }]}>
+                  {t('send:peer.connectedCount', { count: vm.connectedCount })}
+                </Text>
+              )}
+            </View>
+            <View style={styles.section}>
+              <LinkCard>
+                {vm.devices.map((row, index) => {
+                  const isLast = index === vm.devices.length - 1
+                  const openActions = () =>
+                    setActionsTarget({ peerKey: row.peerKey, name: row.name })
+                  if (row.kind === 'connected') {
+                    const Icon = row.deviceType ? deviceIcon(row.deviceType) : null
+                    return (
+                      <Pressable key={row.peerKey} onLongPress={openActions}>
+                        <LinkRow
+                          icon={
+                            Icon ? (
+                              <Icon size={18} color={c.colorTextSecondary} />
+                            ) : (
+                              <Text style={[styles.initials, { color: c.colorInfo }]}>
+                                {row.name.slice(0, 2).toUpperCase()}
+                              </Text>
+                            )
+                          }
+                          iconBackground={Icon ? c.colorSurfacePrimary : c.colorInfoSubtle}
+                          label={row.name}
+                          subtitle={row.subtitle}
+                          subtitleTone={row.subtitleTone}
+                          progressPercent={row.progressPercent}
+                          trailing={
+                            row.action === 'pair' ? (
+                              <Button
+                                onClick={() => vm.pair(row.peerKey)}
+                                size='sm'
+                                variant='secondary'
+                                pill
+                              >
+                                {t('send:peer.pair')}
+                              </Button>
+                            ) : row.action === 'pair-requested' ? (
+                              <Button size='sm' variant='secondary' pill loading>
+                                {t('send:peer.requested')}
+                              </Button>
+                            ) : null
+                          }
+                          isLast={isLast}
+                        />
+                      </Pressable>
+                    )
+                  }
+                  const PeerIcon = deviceIcon(row.deviceType)
+                  const isActive = row.action === 'inviting' || row.action === 'invite-sent'
+                  const label =
+                    row.action === 'inviting'
+                      ? t('send:peer.inviting')
+                      : row.action === 'invite-sent'
+                        ? t('send:peer.sent')
+                        : t('send:peer.invite')
+                  return (
+                    <Pressable key={row.peerKey} onLongPress={openActions}>
+                      <LinkRow
+                        icon={<PeerIcon size={18} color={c.colorTextSecondary} />}
+                        label={row.name}
+                        subtitle={row.subtitle}
+                        subtitleTone={row.subtitleTone}
+                        onPress={() => void vm.invite(row.peerKey)}
+                        trailing={
+                          <Button
+                            disabled={isActive}
+                            loading={isActive}
+                            onClick={() => void vm.invite(row.peerKey)}
+                            size='sm'
+                            variant='primary'
+                            pill
+                          >
+                            {label}
+                          </Button>
+                        }
+                        isLast={isLast}
+                      />
+                    </Pressable>
+                  )
+                })}
+              </LinkCard>
+            </View>
+          </>
+        )}
+      </ScrollView>
+
+      <ShareQrSheet open={isQrOpen} topic={vm.topic} onClose={() => setIsQrOpen(false)} />
+
+      <DeviceActionsSheet
+        open={actionsTarget !== null}
+        onClose={() => setActionsTarget(null)}
+        onRemove={async () => {
+          const target = actionsTarget
+          setActionsTarget(null)
+          if (!target) return
+          const removed = await vm.forget(target.peerKey)
+          toast.show({
+            title: t(removed ? 'settings:pairing.deviceRemoved' : 'settings:pairing.removeFailed')
+          })
+        }}
       />
 
-      {peerEntries.length > 0 ? (
-        <View style={styles.peerListWrap}>
-          <PeerListCard
-            entries={peerCardEntries}
-            labels={{
-              title: t('send:peer.devices'),
-              connectedCount: (count) => t('send:peer.connectedCount', { count })
-            }}
-          />
-        </View>
-      ) : null}
-
-      <Disclosure
-        expanded={isFilesExpanded}
-        icon={<FolderIcon size={20} />}
-        onToggle={() => setIsFilesExpanded(!isFilesExpanded)}
-        subtitle={formatFileSize(totalSize)}
-        title={t('common:files.count', { count: selectedFiles.length })}
-      >
-        {selectedFiles.map((file) => (
-          <SendFileListRow key={file.path} bare name={file.name} size={file.size} />
-        ))}
-      </Disclosure>
-    </ScrollView>
+      <ShareFilesSheet
+        open={isFilesSheetOpen}
+        files={vm.files}
+        totalSize={vm.totalSize}
+        onClose={() => setIsFilesSheetOpen(false)}
+      />
+    </>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  hint: {
+  container: { flex: 1 },
+  content: { paddingTop: 0, paddingBottom: 16 },
+  statusStrip: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 24 },
+  statusText: { flex: 1, minWidth: 0 },
+  statusTitle: { fontSize: 16, fontWeight: '700' },
+  statusCaption: { fontSize: 12.5, lineHeight: 17, marginTop: 2 },
+  sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'space-between',
     paddingHorizontal: 4,
-    marginBottom: 10
+    marginBottom: 8
   },
-  hintText: {
-    fontSize: 11.5,
-    lineHeight: 16,
-    flexShrink: 1
+  sectionLabel: { fontSize: 11, fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase' },
+  sectionCount: { fontSize: 11.5, fontWeight: '500' },
+  section: { marginBottom: 16 },
+  filesWrap: { marginBottom: 24 },
+  tiles: { flexDirection: 'row', gap: 12, marginBottom: 24 },
+  tile: { flex: 1, minWidth: 0 },
+  invitePanel: {
+    marginBottom: 20
   },
-  peerListWrap: {
-    marginBottom: 16
-  }
+  keyContainer: { marginTop: 20, width: '100%' },
+  qrPanelSection: { paddingTop: 0 },
+  initials: { fontSize: 14, fontWeight: '700', letterSpacing: 0.5 }
 })

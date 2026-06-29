@@ -1,12 +1,18 @@
-import { isSafeFileName } from './utils'
+import { isSafeFileName, isValidHexKey } from './utils'
+import { isDeviceType } from '../identity/device-type'
 import {
   PROTOCOL_VERSION,
   type DownloadComplete,
   type DownloadFailed,
   type DownloadProgress,
   type DownloadRequest,
+  type DeviceInvite,
+  type DeviceInviteResponse,
   type FileOffer,
   type TextOffer,
+  type PairingInfo,
+  type RememberVote,
+  type Recognition,
   type PeerControlMessage,
   type TransferReady,
   type TransferStart
@@ -17,9 +23,20 @@ const MAX_PATH_LEN = 4096
 const MAX_CONTENT_LEN = 65_536
 const MAX_MESSAGE_LEN = 1024
 const MAX_FILES_PER_TRANSFER = 10_000
+const MAX_DISPLAY_NAME_LEN = 256
+
+const SIGNATURE_HEX_RE = /^[0-9a-f]{128}$/i
 
 function isBoundedString(x: unknown, maxLen: number): x is string {
   return typeof x === 'string' && x.length > 0 && x.length <= maxLen
+}
+
+function isValidSignatureHex(x: unknown): x is string {
+  return typeof x === 'string' && SIGNATURE_HEX_RE.test(x)
+}
+
+function _isOptionalBoundedString(x: unknown, maxLen: number): boolean {
+  return x === undefined || (typeof x === 'string' && x.length <= maxLen)
 }
 
 function isNonNegativeInteger(x: unknown, max = Number.MAX_SAFE_INTEGER): x is number {
@@ -120,6 +137,44 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
         isSafeFileName(v.fileName) &&
         isBoundedString(v.message, MAX_MESSAGE_LEN)
       )
+    }
+    case 'pairing-info': {
+      const v = x as Partial<PairingInfo>
+      return (
+        isValidHexKey(v.devicePubkey) &&
+        isValidSignatureHex(v.signature) &&
+        isBoundedString(v.displayName, MAX_DISPLAY_NAME_LEN) &&
+        isDeviceType(v.deviceType) &&
+        !!v.capabilities &&
+        typeof v.capabilities === 'object' &&
+        typeof v.capabilities.canBackground === 'boolean'
+      )
+    }
+    case 'remember-vote': {
+      const v = x as Partial<RememberVote>
+      return (
+        isBoundedString(v.transferId, MAX_ID_LEN) &&
+        (v.vote === 'remember' || v.vote === 'no') &&
+        typeof v.isMine === 'boolean'
+      )
+    }
+    case 'recognition': {
+      const v = x as Partial<Recognition>
+      return isValidSignatureHex(v.signature)
+    }
+    case 'invite': {
+      const v = x as Partial<DeviceInvite>
+      return (
+        isBoundedString(v.displayName, MAX_DISPLAY_NAME_LEN) &&
+        isDeviceType(v.deviceType) &&
+        isBoundedString(v.topic, MAX_ID_LEN) &&
+        (v.fileCount === undefined || isNonNegativeInteger(v.fileCount, MAX_FILES_PER_TRANSFER)) &&
+        (v.totalSize === undefined || isNonNegativeInteger(v.totalSize))
+      )
+    }
+    case 'invite-response': {
+      const v = x as Partial<DeviceInviteResponse>
+      return isBoundedString(v.topic, MAX_ID_LEN) && v.response === 'declined'
     }
     default:
       return false

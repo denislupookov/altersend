@@ -21,8 +21,16 @@ export type {
   DisconnectReply,
   DownloadFileRequest,
   DownloadFileResult,
-  ShareFileRequest
+  ShareFileRequest,
+  RememberVoteInput,
+  RememberVoteReply,
+  InviteResponseInput,
+  InviteResponseReply,
+  InitDeviceSecretReply,
+  DeviceSecretInit
 } from './worklet/rpc/protocol'
 
 export { TRANSFER_ERROR_CODES } from './worklet/rpc/events'
 export type { TransferStatus, TransferErrorCode } from './worklet/rpc/events'
+export type { RememberedPeer } from './worklet/peers/remembered-peer'
+export type { DeviceType } from './worklet/identity/device-type'

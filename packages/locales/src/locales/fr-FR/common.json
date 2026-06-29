@@ -24,7 +24,8 @@
     "openSettings": "Ouvrir les paramètres",
     "update": "Mettre à jour",
     "downloadAll": "Téléchargez tout",
-    "skip": "Ignorer"
+    "skip": "Ignorer",
+    "paste": "Coller"
   },
   "labels": {
     "settings": "Paramètres",

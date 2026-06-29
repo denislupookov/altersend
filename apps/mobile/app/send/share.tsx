@@ -2,8 +2,7 @@ import { useCallback, useEffect } from 'react'
 import { Platform, Pressable, View } from 'react-native'
 import { Button, useTheme } from '@altersend/components'
 import { ArrowLeftIcon } from '@altersend/components/icons'
-import { getSendPageCopy, getSendStep, useTransferStore } from '@altersend/domain'
-import { clearSenderFlow } from '@altersend/domain'
+import { clearSenderFlow, getSendPageCopy, getSendStep, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Layout } from '@/src/components'
 import { ShareView } from '@/src/transfer/send'
@@ -48,6 +47,7 @@ export default function SendShareScreen() {
       title={copy.title}
       description={copy.description}
       hasNativeHeader
+      noScroll
       footer={
         <View style={{ marginBottom: Platform.OS === 'android' ? 20 : 0 }}>
           <Button onClick={clearSenderFlow} size='lg' variant='secondary' width='full'>

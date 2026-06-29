@@ -5,7 +5,15 @@ export const API = {
     shareFiles: 3,
     downloadFiles: 4,
     disconnect: 5,
-    closePeers: 6
+    closePeers: 6,
+    rememberVote: 7,
+    peersList: 8,
+    inviteDevice: 9,
+    respondToInvite: 10,
+    forgetPeer: 11,
+    initDeviceSecret: 12,
+    hostPairing: 13,
+    joinPairing: 14
   },
   channels: {
     event: 100,

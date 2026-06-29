@@ -42,7 +42,12 @@
     "disconnected": "Déconnecté",
     "online": "En ligne",
     "downloading": "Téléchargement",
-    "downloadingPercent": "Téléchargement de {{percent}} %"
+    "downloadingPercent": "Téléchargement de {{percent}} %",
+    "waitingForJoin": "En attente de quelqu’un",
+    "pairedToast": "Associé à {{name}}",
+    "inviteFailedToast": "Impossible de joindre {{name}}",
+    "inviteFailedHint": "Assurez-vous qu’il est en ligne et réessayez",
+    "deviceConnected": "{{name}} connecté"
   },
   "connection": {
     "placeholder": "Génération de clé sécurisée…",
@@ -54,7 +59,9 @@
     "scanToConnect": "Scannez pour vous connecter",
     "orScan": "ou scannez",
     "generating": "Génération…",
-    "waitingForConnection": "En attente de connexion…"
+    "waitingForConnection": "En attente de connexion…",
+    "copyCode": "Copier le code",
+    "qrCode": "Code QR"
   },
   "errors": {
     "folderUnsupported": "Les dossiers ne sont pas encore pris en charge. Veuillez sélectionner uniquement les fichiers.",
@@ -73,7 +80,13 @@
     "completedDone_other": "{{count}} terminés",
     "devices": "Appareils",
     "connectedCount_one": "{{count}} connecté",
-    "connectedCount_other": "{{count}} connectés"
+    "connectedCount_other": "{{count}} connectés",
+    "pair": "Associer",
+    "requested": "Demandé…",
+    "invite": "Inviter",
+    "inviting": "Invitation…",
+    "sent": "Envoyé",
+    "deviceOffline": "Appareil hors ligne — réessayez"
   },
   "dropzone": {
     "addMoreDescription": "ou cliquez pour <link>en ajouter</link>",

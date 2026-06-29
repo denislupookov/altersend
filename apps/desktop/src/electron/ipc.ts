@@ -1,5 +1,6 @@
 import {
   BrowserWindow,
+  clipboard,
   dialog,
   ipcMain,
   shell,
@@ -130,6 +131,8 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     runtime.restartApp()
   })
 
+  ipcMain.handle('app:clipboardReadText', () => clipboard.readText())
+
   ipcMain.handle('app:showInFolder', (evt, filePath: string) => {
     if (!isPathSafe(filePath)) throw new Error('Refused: path failed safety check')
     if (!isAllowedPath(evt.sender.id, filePath))
@@ -155,8 +158,6 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     setReportingEnabled(enabled)
   })
 
-  // macOS gates camera access behind TCC; request it lazily when the user opens the
-  // webcam scanner. Other platforms grant via the OS/renderer prompt, so report ready.
   ipcMain.handle('app:requestCameraAccess', async () => {
     if (!isMac) return true
     if (systemPreferences.getMediaAccessStatus('camera') === 'granted') return true

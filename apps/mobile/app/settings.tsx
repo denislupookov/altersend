@@ -1,25 +1,27 @@
-import { Image, Linking, Pressable, StyleSheet, View } from 'react-native'
+import { Image, Linking, StyleSheet, View } from 'react-native'
 import Constants from 'expo-constants'
 import { useCallback, useEffect, useState } from 'react'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { LOCALE_OPTIONS, useTranslation, type LocalePreference } from '@altersend/locales'
 import {
   discordUrl,
+  loadPeers,
   privacyPolicyUrl,
   supportEmail,
   termsOfServiceUrl,
+  useTransferStore,
   websiteUrl
 } from '@altersend/domain'
-import { useTheme } from '@altersend/components'
+import { LinkCard, LinkRow, useTheme } from '@altersend/components'
 import {
   AlertCircleIcon,
-  ChevronRightIcon,
   DiscordIcon,
   FileTextIcon,
   GlobeIcon,
   LockIcon,
   MailIcon,
-  ShieldIcon
+  ShieldIcon,
+  SmartphoneIcon
 } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
 import brandLogo from '@/assets/images/brand-logo.png'
@@ -30,45 +32,6 @@ import {
 } from '@/src/lifecycle/localePreferenceStorage'
 import { Text } from '@/src/components/ThemedText'
 
-interface LinkRowProps {
-  label: string
-  hint: string
-  icon: React.ReactNode
-  onPress: () => void
-  isLast?: boolean
-}
-
-function LinkRow({ label, hint, icon, onPress, isLast }: LinkRowProps) {
-  const { theme } = useTheme()
-  return (
-    <>
-      <Pressable
-        accessibilityRole='link'
-        accessibilityLabel={label}
-        onPress={onPress}
-        style={({ pressed }) => [
-          styles.row,
-          pressed && { backgroundColor: theme.colors.colorSurfacePrimary }
-        ]}
-      >
-        <View style={[styles.rowIcon, { backgroundColor: theme.colors.colorSurfacePrimary }]}>
-          {icon}
-        </View>
-        <View style={styles.rowText}>
-          <Text style={[styles.rowLabel, { color: theme.colors.colorTextPrimary }]}>{label}</Text>
-          <Text style={[styles.rowHint, { color: theme.colors.colorTextMuted }]} numberOfLines={1}>
-            {hint}
-          </Text>
-        </View>
-        <ChevronRightIcon size={14} color={theme.colors.colorTextMuted} />
-      </Pressable>
-      {!isLast && (
-        <View style={[styles.divider, { backgroundColor: theme.colors.colorBorderPrimary }]} />
-      )}
-    </>
-  )
-}
-
 export default function SettingsScreen() {
   const { t } = useTranslation(['settings', 'common'])
   const { theme } = useTheme()
@@ -77,6 +40,11 @@ export default function SettingsScreen() {
   const [localePreference, setLocalePreference] = useState<LocalePreference>(
     getLocalePreferenceSnapshot
   )
+  const peers = useTransferStore((s) => s.peers)
+
+  useEffect(() => {
+    void loadPeers()
+  }, [])
 
   useEffect(() => subscribeLocalePreference(setLocalePreference), [])
 
@@ -102,11 +70,6 @@ export default function SettingsScreen() {
     void Linking.openURL(url).catch(() => {})
   }
 
-  const cardStyle = {
-    backgroundColor: theme.colors.colorBackgroundSubtle,
-    borderColor: theme.colors.colorBorderPrimary
-  }
-
   return (
     <Layout title={t('settings:title')} description='' hasNativeHeader>
       <View style={styles.content}>
@@ -114,10 +77,20 @@ export default function SettingsScreen() {
           <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>
             {t('settings:sections.general')}
           </Text>
-          <View style={[styles.card, cardStyle]}>
+          <LinkCard>
+            <LinkRow
+              label={t('settings:pairing.pairedDevices')}
+              subtitle={
+                peers.length === 0
+                  ? t('settings:rows.noDevices')
+                  : t('settings:rows.pairedCount', { count: peers.length })
+              }
+              icon={<SmartphoneIcon size={16} color={theme.colors.colorTextSecondary} />}
+              onPress={() => router.push('/devices')}
+            />
             <LinkRow
               label={t('common:labels.language')}
-              hint={
+              subtitle={
                 LOCALE_OPTIONS.find((option) => option.preference === localePreference)
                   ?.nativeName ?? t('common:labels.systemDefault')
               }
@@ -126,69 +99,77 @@ export default function SettingsScreen() {
             />
             <LinkRow
               label={t('settings:rows.security')}
-              hint={t('settings:crashReports.label')}
+              subtitle={t('settings:crashReports.label')}
               icon={<ShieldIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => router.push('/security')}
               isLast
             />
-          </View>
+          </LinkCard>
         </View>
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>
             {t('settings:sections.support')}
           </Text>
-          <View style={[styles.card, cardStyle]}>
+          <LinkCard>
             <LinkRow
               label={t('settings:rows.feedback')}
-              hint={t('settings:rows.feedbackHint')}
+              subtitle={t('settings:rows.feedbackHint')}
               icon={<AlertCircleIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => router.push('/report')}
             />
             <LinkRow
               label={t('settings:rows.discord')}
-              hint={t('settings:rows.discordHint')}
+              subtitle={t('settings:rows.discordHint')}
               icon={<DiscordIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(discordUrl)}
             />
             <LinkRow
               label={t('settings:rows.contact')}
-              hint={supportEmail}
+              subtitle={supportEmail}
               icon={<MailIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(`mailto:${supportEmail}`)}
               isLast
             />
-          </View>
+          </LinkCard>
         </View>
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.colors.colorTextMuted }]}>
             {t('settings:sections.about')}
           </Text>
-          <View style={[styles.card, cardStyle]}>
+          <LinkCard>
             <LinkRow
               label={t('settings:rows.privacyPolicy')}
-              hint={t('settings:rows.privacyPolicyHint')}
+              subtitle={t('settings:rows.privacyPolicyHint')}
               icon={<LockIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(privacyPolicyUrl)}
             />
             <LinkRow
               label={t('settings:rows.terms')}
-              hint={t('settings:rows.termsHint')}
+              subtitle={t('settings:rows.termsHint')}
               icon={<FileTextIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(termsOfServiceUrl)}
             />
             <LinkRow
               label={t('settings:rows.website')}
-              hint={websiteUrl.replace(/^https?:\/\//, '')}
+              subtitle={websiteUrl.replace(/^https?:\/\//, '')}
               icon={<GlobeIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => openUrl(websiteUrl)}
               isLast
             />
-          </View>
+          </LinkCard>
         </View>
 
-        <View style={[styles.brandRow, cardStyle]}>
+        <View
+          style={[
+            styles.brandRow,
+            {
+              backgroundColor: theme.colors.colorBackgroundSubtle,
+              borderColor: theme.colors.colorBorderPrimary
+            }
+          ]}
+        >
           <Image source={brandLogo} style={styles.brandLogo} resizeMode='contain' />
           <View style={styles.brandInfo}>
             <Text style={[styles.brandName, { color: theme.colors.colorTextPrimary }]}>
@@ -222,42 +203,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     paddingHorizontal: 4
-  },
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: 'hidden'
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 13
-  },
-  rowIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  rowText: {
-    flex: 1,
-    gap: 0
-  },
-  rowLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 18
-  },
-  rowHint: {
-    fontSize: 12,
-    lineHeight: 16
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    marginLeft: 60
   },
   brandRow: {
     flexDirection: 'row',

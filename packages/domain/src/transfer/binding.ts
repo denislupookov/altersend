@@ -1,6 +1,7 @@
 import { dispatchToTransferStore } from './store'
 import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES } from './types'
+import { loadPeers } from './commands'
 import type { SharingStatusEvent } from '../send/draftModel'
 import type { RendererTransferEvent, TransferRPC } from '@altersend/core'
 
@@ -51,6 +52,48 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
         type: 'set_error',
         code: event.code ?? TRANSFER_ERROR_CODES.transferFailed,
         message: event.message
+      })
+    case 'remember-confirmed':
+      dispatchToTransferStore({
+        type: 'remember_confirmed',
+        peerKey: event.peerKey,
+        displayName: event.peer.displayName
+      })
+      loadPeers()
+      return
+    case 'remember-declined':
+      return dispatchToTransferStore({ type: 'remember_declined', peerKey: event.peerKey })
+    case 'remember-requested':
+      return dispatchToTransferStore({
+        type: 'remember_requested',
+        request: {
+          transferId: event.transferId,
+          peerKey: event.peerKey,
+          displayName: event.displayName,
+          deviceType: event.deviceType
+        }
+      })
+    case 'invite-received':
+      return dispatchToTransferStore({
+        type: 'invite_received',
+        invite: {
+          remoteDevicePubkey: event.remoteDevicePubkey,
+          displayName: event.displayName,
+          deviceType: event.deviceType,
+          topic: event.topic,
+          ...(event.fileCount !== undefined ? { fileCount: event.fileCount } : {}),
+          ...(event.totalSize !== undefined ? { totalSize: event.totalSize } : {})
+        }
+      })
+    case 'invite-response-received':
+      return dispatchToTransferStore({
+        type: 'invite_response_received',
+        response: {
+          remoteDevicePubkey: event.remoteDevicePubkey,
+          topic: event.topic,
+          response: event.response,
+          receivedAt: Date.now()
+        }
       })
   }
 }
@@ -111,7 +154,10 @@ export function bindTransferApi(
 
   void impl
     .startP2P()
-    .then(() => dispatchToTransferStore({ type: 'booted' }))
+    .then(() => {
+      dispatchToTransferStore({ type: 'booted' })
+      loadPeers()
+    })
     .catch((err) => {
       reportError('bindTransferApi.startP2P', err)
       dispatchToTransferStore({

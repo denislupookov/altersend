@@ -1,14 +1,42 @@
+declare function setTimeout(callback: () => void, ms: number): unknown
+declare function clearTimeout(handle: unknown): void
+
 declare module 'hypercore-crypto' {
   export function randomBytes(n: number): Buffer
   export function discoveryKey(topic: Uint8Array): Uint8Array
   export function keyPair(seed?: Uint8Array): { publicKey: Uint8Array; secretKey: Uint8Array }
+  export function hash(data: Uint8Array | Uint8Array[], out?: Uint8Array): Uint8Array
+  export function sign(message: Uint8Array, secretKey: Uint8Array): Uint8Array
+  export function verify(message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array): boolean
 
   const _default: {
     randomBytes: typeof randomBytes
     discoveryKey: typeof discoveryKey
     keyPair: typeof keyPair
+    hash: typeof hash
+    sign: typeof sign
+    verify: typeof verify
   }
   export default _default
+}
+
+declare module 'hyperdb' {
+  export interface HyperDBInstance {
+    insert(collection: string, record: unknown): Promise<void>
+    get(collection: string, key: Record<string, string>): Promise<Record<string, unknown> | null>
+    delete(collection: string, key: Record<string, string>): Promise<void>
+    find(
+      collection: string,
+      query?: Record<string, unknown>
+    ): AsyncIterable<Record<string, unknown>>
+    flush(): Promise<void>
+    close(): Promise<void>
+  }
+  const HyperDB: {
+    rocks(path: string, definition: unknown): HyperDBInstance
+    bee(core: unknown, definition: unknown): HyperDBInstance
+  }
+  export default HyperDB
 }
 
 declare module 'corestore' {
@@ -87,6 +115,7 @@ declare module 'hyperswarm' {
     publicKey: Uint8Array
   }
   export interface PeerSocket {
+    handshakeHash: Uint8Array | null
     on(event: 'close', cb: () => void): this
     on(event: 'error', cb: (err: Error) => void): this
     destroy(err?: Error): void

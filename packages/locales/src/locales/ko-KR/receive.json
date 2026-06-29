@@ -46,8 +46,8 @@
   },
   "form": {
     "codeLabel": "연결 코드",
-    "codePlaceholder": "64자 코드 붙여넣기…",
-    "orPasteCode": "또는 코드 붙여넣기"
+    "codePlaceholder": "코드 붙여넣기…",
+    "orPasteCode": "또는 연결 코드 붙여넣기"
   },
   "actions": {
     "scanQr": "QR 코드 스캔",

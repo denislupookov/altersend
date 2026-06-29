@@ -38,7 +38,8 @@ function applyKey(key: WatchdogKey): void {
   if (!key.shouldWatch) return
   timer = setTimeout(() => {
     dispatchToTransferStore({ type: 'peer_unreachable' })
-    void getTransferApi()
+
+    getTransferApi()
       .worker.disconnect()
       .catch((err: unknown) => {
         reportError('peerWatchdog.disconnect', err)

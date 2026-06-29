@@ -1,7 +1,4 @@
 import crypto from 'hypercore-crypto'
-import Corestore from 'corestore'
-import fs from 'bare-fs'
-import Hyperdrive from 'hyperdrive'
 import {
   createErrorEvent,
   createRoleEvent,
@@ -19,7 +16,14 @@ import type {
   DownloadFileRequest,
   DownloadFilesReply,
   HostReply,
+  InviteDeviceInput,
+  InviteDeviceReply,
+  InviteResponseInput,
+  InviteResponseReply,
+  InitDeviceSecretReply,
   JoinReply,
+  RememberVoteInput,
+  RememberVoteReply,
   ShareFileRequest,
   ShareFilesReply,
   TransferRPC
@@ -46,12 +50,22 @@ import {
   getDownloadFailureMessage,
   type PeerDownloadStatus
 } from './download-events'
-import { TransferReceiver } from './receiver'
 import type { DownloadLifecycleEvent, DownloaderCallbacks } from './download-events'
 import { PeerIdentityStore } from './peer-identity-store'
-import { TransferSender } from './sender'
+import { TransferStorage } from './storage'
 import { TransferSwarm, type PeerSession } from './swarm'
 import { isValidHexKey } from './utils'
+import {
+  DeviceIdentityStore,
+  type DeviceIdentityDefaults,
+  type DeviceSecretInit
+} from '../identity/device-identity-store'
+import { RememberedPeerStore } from '../peers/store'
+import type { RememberedPeer } from '../peers/remembered-peer'
+import { RememberCoordinator } from '../peers/remember-coordinator'
+import { RecognitionCoordinator } from '../peers/recognition-coordinator'
+import { DiscoveryCoordinator } from '../peers/discovery'
+import { PairingCoordinator } from '../peers/pairing-coordinator'
 
 function createTransferId(): string {
   return crypto.randomBytes(16).toString('hex')
@@ -68,10 +82,10 @@ async function tryAsync(label: string, op: () => Promise<unknown>): Promise<void
 /**
  * TransferOrchestrator is the top-level orchestrator for the AlterSend P2P file transfer engine.
  *
- * It composes three focused subsystems:
- *   - TransferSwarm      — Hyperswarm peer connectivity and control channels
- *   - TransferSender     — Local file → Hyperdrive staging (sender path)
- *   - TransferReceiver — Remote Hyperdrive → disk writing (receiver path)
+ * It composes focused subsystems:
+ *   - TransferSwarm   — Hyperswarm peer connectivity and control channels
+ *   - TransferStorage — ephemeral Corestore/Hyperdrive plus the file sender/receiver
+ *   - Discovery/Remember/Pairing coordinators — remembered devices and pairing
  *
  * TransferOrchestrator itself is responsible for:
  *   - Lifecycle (initialisation, destroy)
@@ -81,16 +95,9 @@ async function tryAsync(label: string, op: () => Promise<unknown>): Promise<void
  */
 export class TransferOrchestrator implements TransferRPC {
   private readonly emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void
-  private readonly storageRoot: string
-  private coreStore!: Corestore
-  private outgoingStore!: Corestore
-  private incomingStore!: Corestore
-  private drive!: Hyperdrive
-  private readyPromise!: Promise<void>
+  private readonly storage: TransferStorage
 
   private readonly swarm: TransferSwarm
-  private stager!: TransferSender
-  private downloader!: TransferReceiver
 
   private activeTransfer: TransferStart | null = null
   private activeTransferReady: TransferReady | null = null
@@ -99,21 +106,31 @@ export class TransferOrchestrator implements TransferRPC {
   private suspended: boolean = false
   private inflightAbort: AbortController | null = null
 
+  private readonly deviceIdentityStore: DeviceIdentityStore
+  private readonly rememberedStore: RememberedPeerStore
+  private readonly recognition: RecognitionCoordinator
+  private readonly remember: RememberCoordinator
+  private readonly discovery: DiscoveryCoordinator
+
+  private readonly pairing: PairingCoordinator
+
   constructor(
     emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void,
     storageRoot: string,
-    identityRoot: string
+    identityRoot: string,
+    identityDefaults: DeviceIdentityDefaults = {}
   ) {
     this.emitIPC = emitIPC
-    this.storageRoot = storageRoot
-    this.initStorage()
+    this.storage = new TransferStorage(storageRoot)
+    this.deviceIdentityStore = new DeviceIdentityStore(identityRoot, identityDefaults)
+    this.rememberedStore = new RememberedPeerStore(identityRoot)
     const identityStore = new PeerIdentityStore(identityRoot)
     this.swarm = new TransferSwarm(
       {
-        onReady: () => this.readyPromise,
+        onReady: () => this.storage.ready(),
         onReplicate: (socket) => {
           if (this.suspended) return
-          return this.coreStore.replicate(socket, { live: true })
+          this.storage.replicate(socket)
         },
         onPeerConnected: (session) => {
           if (this.suspended) return
@@ -130,46 +147,111 @@ export class TransferOrchestrator implements TransferRPC {
       },
       { identityStore }
     )
+    this.discovery = new DiscoveryCoordinator({
+      deviceIdentityStore: this.deviceIdentityStore,
+      rememberedStore: this.rememberedStore,
+      emit: (event) => this.emitIPC(event)
+    })
+
+    this.recognition = new RecognitionCoordinator({
+      deviceIdentityStore: this.deviceIdentityStore,
+      rememberedStore: this.rememberedStore,
+      sendTo: (peerKey, message) => this.swarm.sendTo(peerKey, message),
+      getHandshakeHash: (peerKey) => this.swarm.getHandshakeHash(peerKey),
+      emit: (event) => this.emitIPC(event)
+    })
+
+    this.remember = new RememberCoordinator({
+      deviceIdentityStore: this.deviceIdentityStore,
+      rememberedStore: this.rememberedStore,
+      sendTo: (peerKey, message) => this.swarm.sendTo(peerKey, message),
+      getHandshakeHash: (peerKey) => this.swarm.getHandshakeHash(peerKey),
+      emit: (event) => {
+        this.emitIPC(event)
+        if (event.type === 'remember-confirmed') void this.discovery.refresh()
+      }
+    })
+
+    this.pairing = new PairingCoordinator({
+      identityStore,
+      deviceIdentityStore: this.deviceIdentityStore,
+      rememberedStore: this.rememberedStore,
+      emit: (event) => this.emitIPC(event),
+      onRememberConfirmed: () => void this.discovery.refresh()
+    })
+
+    this.discovery.start()
   }
 
-  private initStorage(): void {
-    this.coreStore = new Corestore(this.storageRoot)
-    this.outgoingStore = this.coreStore.namespace('outgoing-drive')
-    this.incomingStore = this.coreStore.namespace('incoming-drives')
-    this.drive = new Hyperdrive(this.outgoingStore)
-    this.readyPromise = this.drive.ready()
-    this.stager = new TransferSender(this.drive)
-    this.downloader = new TransferReceiver(this.incomingStore)
+  hostPairing(): Promise<HostReply> {
+    return this.pairing.host()
   }
 
-  private async wipeStorage(): Promise<void> {
-    await tryAsync('drive.close (wipe)', () => this.drive.close())
-    await tryAsync('coreStore.close (wipe)', () => this.coreStore.close())
-    await tryAsync('storage rm', () =>
-      fs.promises.rm(this.storageRoot, { recursive: true, force: true })
-    )
-  }
-
-  private async wipeAndReinitStorage(): Promise<void> {
-    await this.wipeStorage()
-    this.initStorage()
+  joinPairing(topic: string): Promise<JoinReply> {
+    return this.pairing.join(topic)
   }
 
   private onPeerConnected(session: PeerSession): void {
     this.sendStatus('peer-connected', { peer: session.peerKey, peers: this.swarm.peerCount })
-
     if (this.activeTransfer) session.controlChannel.send(this.activeTransfer)
     if (this.activeTransferReady) session.controlChannel.send(this.activeTransferReady)
+    this.recognition.onPeerConnected(session.peerKey)
+  }
+
+  rememberVote(input: RememberVoteInput): Promise<RememberVoteReply> {
+    return this.remember.vote(input)
+  }
+
+  peersList(): Promise<RememberedPeer[]> {
+    return this.rememberedStore.list()
+  }
+
+  async forgetPeer(pubkey: string): Promise<void> {
+    await this.rememberedStore.forget(pubkey)
+    this.discovery.forget(pubkey)
+  }
+
+  async initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply> {
+    const secretKey = await this.deviceIdentityStore.provideSecret(init)
+    return { secretKey }
+  }
+
+  inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply> {
+    return this.discovery.invite(
+      input.remoteDevicePubkey,
+      input.topic,
+      input.fileCount,
+      input.totalSize
+    )
+  }
+
+  respondToInvite(input: InviteResponseInput): Promise<InviteResponseReply> {
+    return this.discovery.respondToInvite(input.remoteDevicePubkey, input.topic, input.response)
   }
 
   private onPeerDisconnected(peerKey: string | null, remainingCount: number): void {
     if (peerKey) {
+      this.recognition.onPeerDisconnected(peerKey)
+      this.remember.onPeerDisconnected(peerKey)
       this.sendStatus('peer-disconnected', { peer: peerKey, peers: remainingCount })
     }
     this.sendStatus(remainingCount > 0 ? 'peer-connected' : 'joined', { peers: remainingCount })
   }
 
   private onControlMessage(message: PeerControlMessage, session: PeerSession): void {
+    if (message.type === 'recognition') {
+      void this.recognition.handleRecognition(message, session.peerKey)
+      return
+    }
+    if (message.type === 'pairing-info') {
+      void this.remember.handlePairingInfo(message, session)
+      return
+    }
+    if (message.type === 'remember-vote') {
+      this.remember.handleRememberVote(message, session.peerKey)
+      return
+    }
+
     if (message.type === 'transfer-start' || message.type === 'transfer-ready') {
       if (this.role !== 'receiver') {
         console.warn(`TransferOrchestrator: dropping inbound ${message.type} in role=${this.role}`)
@@ -263,7 +345,7 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   async host(): Promise<HostReply> {
-    await this.readyPromise
+    await this.storage.ready()
     const topic = this.swarm.generateKey()
     this.currentTopic = topic
     return { topic }
@@ -286,7 +368,7 @@ export class TransferOrchestrator implements TransferRPC {
       throw new BadRequestError('Already in a session. Disconnect first.')
     }
 
-    await this.readyPromise
+    await this.storage.ready()
     this.setRole('receiver')
     this.sendStatus('joining')
     try {
@@ -313,13 +395,13 @@ export class TransferOrchestrator implements TransferRPC {
       await this.disconnect()
     }
 
-    await this.readyPromise
+    await this.storage.ready()
 
     try {
       const fileRequests = requests.filter((r) => r.kind !== 'text')
       const textRequests = requests.filter((r) => r.kind === 'text')
 
-      const { files, totalBytes, errors } = await this.stager.scanFiles(fileRequests)
+      const { files, totalBytes, errors } = await this.storage.sender.scanFiles(fileRequests)
       for (const error of errors) this.sendError(error)
 
       if (files.length === 0 && textRequests.length === 0) {
@@ -343,7 +425,7 @@ export class TransferOrchestrator implements TransferRPC {
       this.inflightAbort = controller
 
       try {
-        const offers: TransferOffer[] = await this.stager.stageFiles(
+        const offers: TransferOffer[] = await this.storage.sender.stageFiles(
           files,
           transferId,
           (file) => {
@@ -376,7 +458,7 @@ export class TransferOrchestrator implements TransferRPC {
         this.inflightAbort = null
       }
     } finally {
-      await this.stager.closeSourceDrives()
+      await this.storage.sender.closeSourceDrives()
     }
   }
 
@@ -391,7 +473,7 @@ export class TransferOrchestrator implements TransferRPC {
     const controller = new AbortController()
     this.inflightAbort = controller
     try {
-      const results = await this.downloader.downloadFiles(
+      const results = await this.storage.receiver.downloadFiles(
         files,
         this.getDownloaderCallbacks(),
         controller.signal
@@ -405,6 +487,7 @@ export class TransferOrchestrator implements TransferRPC {
   abortInFlight(): void {
     const controller = this.inflightAbort
     if (!controller) return
+
     this.inflightAbort = null
     controller.abort()
   }
@@ -412,13 +495,17 @@ export class TransferOrchestrator implements TransferRPC {
   async disconnect(): Promise<DisconnectReply> {
     this.suspended = true
     this.abortInFlight()
+    this.recognition.reset()
+    this.remember.reset()
     try {
       this.activeTransfer = null
       this.activeTransferReady = null
       this.currentTopic = null
+
       await this.swarm.endSession()
-      await this.downloader.reset()
-      await this.wipeAndReinitStorage()
+      await this.storage.receiver.reset()
+      await this.storage.wipeAndReinit()
+
       this.setRole(null)
       this.sendStatus('disconnected')
       return { state: 'disconnected' }
@@ -427,24 +514,34 @@ export class TransferOrchestrator implements TransferRPC {
     }
   }
 
-  /** Tears down the swarm but keeps role/drive/state. Use `disconnect()` for full cleanup. */
   async closePeers(): Promise<void> {
     this.abortInFlight()
+    this.recognition.reset()
+    this.remember.reset()
     this.currentTopic = null
     await this.swarm.endSession()
   }
 
   async suspend(): Promise<void> {
     if (this.suspended) return
+
     this.suspended = true
     this.abortInFlight()
+    this.recognition.reset()
+    this.remember.reset()
+
+    await tryAsync('discovery.stop (suspend)', () => this.discovery.stop())
     await tryAsync('swarm.endSession (suspend)', () => this.swarm.endSession())
   }
 
   async resume(): Promise<void> {
     if (!this.suspended) return
+
     this.suspended = false
+    this.discovery.start()
+
     if (!this.currentTopic) return
+
     try {
       await this.swarm.join(this.currentTopic)
     } catch (err) {
@@ -455,18 +552,18 @@ export class TransferOrchestrator implements TransferRPC {
 
   async destroy(): Promise<void> {
     this.abortInFlight()
+    this.recognition.reset()
+    this.remember.reset()
     this.activeTransfer = null
     this.activeTransferReady = null
     this.currentTopic = null
     this.setRole(null)
 
+    await tryAsync('discovery.stop', () => this.discovery.stop())
     await tryAsync('swarm.endSession', () => this.swarm.endSession())
-    await tryAsync('downloader.destroy', () => this.downloader.destroy())
+    await tryAsync('pairing.destroy', () => this.pairing.destroy())
     await tryAsync('swarm.destroy', () => this.swarm.destroy())
-    await tryAsync('drive.close', () => this.drive.close())
-    await tryAsync('coreStore.close', () => this.coreStore.close())
-    await tryAsync('storage rm (destroy)', () =>
-      fs.promises.rm(this.storageRoot, { recursive: true, force: true })
-    )
+    await tryAsync('rememberedStore.close', () => this.rememberedStore.close())
+    await tryAsync('storage.destroy', () => this.storage.destroy())
   }
 }

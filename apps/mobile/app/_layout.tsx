@@ -28,6 +28,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { mobileApi } from '../src/api/mobileApi'
 import { ToastProvider } from '../src/components/Toast'
 import { UpdateBanner } from '../src/components/UpdateBanner'
+import { PairRequestBanner } from '../src/components/PairRequestBanner'
+import { InviteBanner } from '../src/components/InviteBanner'
 import { useAlterSendFonts } from '../src/theme/useAlterSendFonts'
 import { startAppStateBridge } from '../src/lifecycle/appStateBridge'
 import { startDeepLinkHandler } from '../src/lifecycle/deepLinkHandler'
@@ -91,6 +93,7 @@ function ThemedStack() {
       <Stack.Screen name='settings' options={flowScreenOptions} />
       <Stack.Screen name='language' options={flowScreenOptions} />
       <Stack.Screen name='security' options={flowScreenOptions} />
+      <Stack.Screen name='devices' options={flowScreenOptions} />
       <Stack.Screen name='report' options={flowScreenOptions} />
       <Stack.Screen
         name='send/preparing'
@@ -133,6 +136,8 @@ function AppShell() {
               <ShareIntentHandler />
               <ThemedStack />
               <UpdateBanner />
+              <PairRequestBanner />
+              <InviteBanner />
             </ToastProvider>
           </ErrorBoundary>
         </ThemeProvider>

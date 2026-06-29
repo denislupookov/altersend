@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, StyleSheet, Linking } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import { SendFileListRow, Button, useTheme } from '@altersend/components'
+import { LinkRow, Button, useTheme } from '@altersend/components'
 import { getDownloadRowDisplay, getOfferKey, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
@@ -66,11 +66,12 @@ export function ReceiveIncomingView() {
             if (file.kind !== 'file') return null
             const row = getDownloadRowDisplay(file, downloadStates[getOfferKey(file)])
             return (
-              <SendFileListRow
+              <LinkRow
                 key={getOfferKey(file)}
+                file
                 bare
                 isFirst={index === 0}
-                name={file.name}
+                label={file.name}
                 size={file.size}
                 description={row.isActive ? `${row.description} · ${row.percent}%` : undefined}
                 progressPercent={row.isActive || row.isCompleted ? row.percent : undefined}

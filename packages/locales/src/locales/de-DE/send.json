@@ -42,7 +42,12 @@
     "disconnected": "Nicht verbunden",
     "online": "Verbunden",
     "downloading": "Herunterladen",
-    "downloadingPercent": "{{percent}} % wird heruntergeladen"
+    "downloadingPercent": "{{percent}} % wird heruntergeladen",
+    "waitingForJoin": "Warten, dass jemand beitritt",
+    "pairedToast": "Mit {{name}} gekoppelt",
+    "inviteFailedToast": "{{name}} nicht erreichbar",
+    "inviteFailedHint": "Stellen Sie sicher, dass es online ist, und versuchen Sie es erneut",
+    "deviceConnected": "{{name}} verbunden"
   },
   "connection": {
     "placeholder": "Sicherer Schlüssel wird generiert…",
@@ -54,7 +59,9 @@
     "scanToConnect": "Zum Verbinden scannen",
     "orScan": "oder scannen",
     "generating": "Wird erstellt…",
-    "waitingForConnection": "Warte auf Verbindung…"
+    "waitingForConnection": "Warte auf Verbindung…",
+    "copyCode": "Code kopieren",
+    "qrCode": "QR-Code"
   },
   "errors": {
     "folderUnsupported": "Ordner werden noch nicht unterstützt. Bitte wählen Sie nur Dateien aus.",
@@ -73,7 +80,13 @@
     "completedDone_other": "{{count}} abgeschlossen",
     "devices": "Geräte",
     "connectedCount_one": "{{count}} verbunden",
-    "connectedCount_other": "{{count}} verbunden"
+    "connectedCount_other": "{{count}} verbunden",
+    "pair": "Koppeln",
+    "requested": "Angefragt…",
+    "invite": "Einladen",
+    "inviting": "Wird eingeladen…",
+    "sent": "Gesendet",
+    "deviceOffline": "Gerät offline – erneut versuchen"
   },
   "dropzone": {
     "addMoreDescription": "oder klicken, um <link>weitere hinzuzufügen</link>",

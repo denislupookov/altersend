@@ -10,7 +10,7 @@ import {
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
-import { Select } from '../../components/Select'
+import { Select } from '../../components'
 
 interface WebcamScanViewProps {
   onCancel: () => void

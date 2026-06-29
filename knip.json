@@ -10,7 +10,8 @@
       ]
     },
     "packages/core": {
-      "entry": ["src/**/*.test.ts"]
+      "entry": ["src/**/*.test.ts"],
+      "ignore": ["schema/**"]
     },
     "packages/domain": {
       "entry": ["src/**/*.test.ts"]

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "offset": 0,
+  "schema": [
+    {
+      "name": "remembered-peers",
+      "namespace": "altersend",
+      "id": 0,
+      "type": 1,
+      "version": 1,
+      "versionField": null,
+      "indexes": [],
+      "schema": "@altersend/remembered-peer",
+      "derived": false,
+      "key": ["remoteDevicePubkey"],
+      "trigger": null
+    }
+  ]
+}

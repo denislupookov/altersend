@@ -7,11 +7,18 @@ import 'bare-tcp'
 import 'bare-tls'
 import 'bare-zlib'
 import bareProcess from 'bare-process'
+import os from 'bare-os'
 import fs from 'bare-fs'
 import { TransferOrchestrator } from './transfer/orchestrator'
+import { isDeviceType } from './identity/device-type'
 import { createReadyEvent } from './rpc/events'
 import { API, encodeRPCPayload } from './rpc/protocol'
 import { createTransferWorkerRPCServer } from './rpc/server'
+
+function readArg(prefix: string): string | undefined {
+  const flag = (Bare.argv as string[]).find((arg) => arg.startsWith(prefix))
+  return flag?.slice(prefix.length)
+}
 
 const ipc = Bare.IPC
 const storageFlag = (Bare.argv as string[]).find((arg) => arg.startsWith('--storage='))
@@ -55,7 +62,14 @@ function pipeLog(level: 'log' | 'warn' | 'error', args: unknown[]) {
 }
 
 // rpc must be created before the console hijack installs — pipeLog reads it.
-const orchestrator = new TransferOrchestrator(sendTransferEvent, storageRoot, identityRoot)
+const providedName = readArg('--device-name=')?.trim()
+const displayName = providedName || os.hostname().replace(/\.local$/, '') || 'AlterSend Device'
+const providedType = readArg('--device-type=')
+const deviceType = isDeviceType(providedType) ? providedType : undefined
+const orchestrator = new TransferOrchestrator(sendTransferEvent, storageRoot, identityRoot, {
+  displayName,
+  deviceType
+})
 const rpc = createTransferWorkerRPCServer(ipc, orchestrator, sendTransferEvent, () =>
   orchestrator.abortInFlight()
 )

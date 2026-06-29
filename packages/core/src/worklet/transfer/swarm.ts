@@ -9,6 +9,7 @@ export interface PeerSession {
   socket: PeerSocket
   peerKey: string
   controlChannel: PeerControlChannel
+  handshakeHash: Uint8Array | null
 }
 
 export interface TransferSwarmCallbacks {
@@ -84,7 +85,14 @@ export class TransferSwarm {
     let session: PeerSession | null = null
     const controlChannel = PeerControlChannel.create(socket, (message) => {
       if (!session) return
-      this.callbacks.onControlMessage(message, session)
+      try {
+        this.callbacks.onControlMessage(message, session)
+      } catch (err) {
+        console.error(
+          'TransferSwarm: onControlMessage handler threw',
+          err instanceof Error ? err.message : String(err)
+        )
+      }
     })
     if (!controlChannel) {
       try {
@@ -93,7 +101,7 @@ export class TransferSwarm {
       return
     }
 
-    session = { socket, peerKey, controlChannel }
+    session = { socket, peerKey, controlChannel, handshakeHash: socket.handshakeHash ?? null }
     this.peerSessions.set(socket, session)
     this.callbacks.onPeerConnected(session)
 
@@ -172,6 +180,22 @@ export class TransferSwarm {
     for (const session of this.peerSessions.values()) {
       session.controlChannel.send(message)
     }
+  }
+
+  sendTo(peerKey: string, message: PeerControlMessage): void {
+    for (const session of this.peerSessions.values()) {
+      if (session.peerKey === peerKey) {
+        session.controlChannel.send(message)
+        return
+      }
+    }
+  }
+
+  getHandshakeHash(peerKey: string): Uint8Array | null {
+    for (const session of this.peerSessions.values()) {
+      if (session.peerKey === peerKey) return session.handshakeHash
+    }
+    return null
   }
 
   get peerCount(): number {

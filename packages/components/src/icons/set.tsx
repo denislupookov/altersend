@@ -10,8 +10,11 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronUp,
+  ChevronsUpDown,
   CloudUpload,
   Code,
+  Clipboard,
+  ClipboardPaste,
   Copy,
   Database,
   Download,
@@ -21,17 +24,24 @@ import {
   Folder,
   Globe,
   Image,
+  Laptop,
   Lock,
   Mail,
   Menu,
+  Monitor,
   MoreHorizontal,
+  MoreVertical,
   Music,
+  Pencil,
+  Plus,
   QrCode,
   Send,
   Settings,
   Share2,
   Shield,
   Smartphone,
+  Tablet,
+  Trash2,
   Upload,
   Video,
   X
@@ -50,8 +60,11 @@ export const CheckIcon = adaptLucide(Check)
 export const ChevronDownIcon = adaptLucide(ChevronDown)
 export const ChevronRightIcon = adaptLucide(ChevronRight)
 export const ChevronUpIcon = adaptLucide(ChevronUp)
+export const ChevronsUpDownIcon = adaptLucide(ChevronsUpDown)
 export const CloudUploadIcon = adaptLucide(CloudUpload)
 export const CodeIcon = adaptLucide(Code)
+export const ClipboardIcon = adaptLucide(Clipboard)
+export const ClipboardPasteIcon = adaptLucide(ClipboardPaste)
 export const CopyIcon = adaptLucide(Copy)
 export const DatabaseIcon = adaptLucide(Database)
 export const DownloadIcon = adaptLucide(Download)
@@ -61,17 +74,24 @@ export const FileTextIcon = adaptLucide(FileText)
 export const FolderIcon = adaptLucide(Folder)
 export const GlobeIcon = adaptLucide(Globe)
 export const ImageIcon = adaptLucide(Image)
+export const LaptopIcon = adaptLucide(Laptop)
+export const MonitorIcon = adaptLucide(Monitor)
+export const TabletIcon = adaptLucide(Tablet)
 export const LockIcon = adaptLucide(Lock)
 export const MailIcon = adaptLucide(Mail)
 export const MenuIcon = adaptLucide(Menu)
 export const MoreHorizontalIcon = adaptLucide(MoreHorizontal)
+export const MoreVerticalIcon = adaptLucide(MoreVertical)
 export const MusicIcon = adaptLucide(Music)
+export const PencilIcon = adaptLucide(Pencil)
+export const PlusIcon = adaptLucide(Plus)
 export const QrCodeIcon = adaptLucide(QrCode)
 export const SendIcon = adaptLucide(Send)
 export const SettingsIcon = adaptLucide(Settings)
 export const ShareIcon = adaptLucide(Share2)
 export const ShieldIcon = adaptLucide(Shield)
 export const SmartphoneIcon = adaptLucide(Smartphone)
+export const TrashIcon = adaptLucide(Trash2)
 export const UploadIcon = adaptLucide(Upload)
 export const VideoIcon = adaptLucide(Video)
 export const CloseIcon = adaptLucide(X)

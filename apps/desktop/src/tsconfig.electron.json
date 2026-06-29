@@ -4,6 +4,7 @@
     "outDir": "../dist",
     "rootDir": ".",
     "paths": {
+      "@altersend/core": ["../../../packages/core/dist"],
       "@altersend/domain": ["../../../packages/domain/dist"],
       "@altersend/components": ["../../../packages/components/dist"],
       "@altersend/components/icons": ["../../../packages/components/dist/icons"],

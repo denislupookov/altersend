@@ -9,11 +9,12 @@ import { Text } from '@/src/components/ThemedText'
 
 interface LayoutProps {
   title: string
-  description: string
+  description?: string
   badge?: React.ReactElement
   footer?: React.ReactElement
   hasNativeHeader?: boolean
   compactHeader?: boolean
+  noScroll?: boolean
   onMenuPress?: () => void
 }
 
@@ -25,6 +26,7 @@ export const Layout = ({
   children,
   hasNativeHeader,
   compactHeader,
+  noScroll,
   onMenuPress
 }: PropsWithChildren<LayoutProps>) => {
   const { t } = useTranslation(['common'])
@@ -79,11 +81,14 @@ export const Layout = ({
         ) : null}
       </View>
 
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        {children}
-        {footer && <View style={styles.spacer} />}
-        {footer && <View style={styles.footer}>{footer}</View>}
-      </ScrollView>
+      {noScroll ? (
+        <View style={styles.scrollView}>{children}</View>
+      ) : (
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+          {children}
+        </ScrollView>
+      )}
+      {footer ? <View style={styles.footer}>{footer}</View> : null}
     </View>
   )
 }
@@ -144,11 +149,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 8
   },
-  spacer: {
-    flex: 1
-  },
   footer: {
     gap: 8,
-    marginTop: 12
+    paddingTop: 12
   }
 })

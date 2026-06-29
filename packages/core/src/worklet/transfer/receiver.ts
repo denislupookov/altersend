@@ -357,7 +357,6 @@ export class TransferReceiver {
       if (signal && onAbort) signal.removeEventListener('abort', onAbort)
     }
 
-    // Outside the try/catch: a rename failure must NOT discard fully-received bytes.
     const finalPath = await this.findUniqueTargetPath(targetPath)
     await fs.promises.rename(partPath, finalPath)
   }

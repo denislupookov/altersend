@@ -189,4 +189,70 @@ describe('isValidControlMessage', () => {
       expect(isValidControlMessage({ ...valid, message: '' })).toBe(false)
     })
   })
+
+  describe('pairing-info', () => {
+    const valid = {
+      ...base,
+      type: 'pairing-info',
+      devicePubkey: 'a'.repeat(64),
+      displayName: "Denis's MacBook",
+      deviceType: 'laptop',
+      capabilities: { canBackground: false },
+      signature: 'a'.repeat(128)
+    }
+
+    it('accepts a valid message', () => {
+      expect(isValidControlMessage(valid)).toBe(true)
+    })
+
+    it('rejects a non-hex or wrong-length pubkey', () => {
+      expect(isValidControlMessage({ ...valid, devicePubkey: 'xyz' })).toBe(false)
+      expect(isValidControlMessage({ ...valid, devicePubkey: 'a'.repeat(63) })).toBe(false)
+    })
+
+    it('rejects a missing or wrong-length signature', () => {
+      const { signature: _signature, ...rest } = valid
+      expect(isValidControlMessage(rest)).toBe(false)
+      expect(isValidControlMessage({ ...valid, signature: 'a'.repeat(64) })).toBe(false)
+    })
+
+    it('rejects an unknown device type', () => {
+      expect(isValidControlMessage({ ...valid, deviceType: 'toaster' })).toBe(false)
+    })
+
+    it('rejects an empty display name', () => {
+      expect(isValidControlMessage({ ...valid, displayName: '' })).toBe(false)
+    })
+
+    it('rejects malformed capabilities', () => {
+      expect(isValidControlMessage({ ...valid, capabilities: undefined })).toBe(false)
+      expect(isValidControlMessage({ ...valid, capabilities: { canBackground: 'yes' } })).toBe(
+        false
+      )
+    })
+  })
+
+  describe('remember-vote', () => {
+    const valid = {
+      ...base,
+      type: 'remember-vote',
+      transferId: 'transfer-1',
+      vote: 'remember',
+      isMine: true
+    }
+
+    it('accepts a valid message', () => {
+      expect(isValidControlMessage(valid)).toBe(true)
+      expect(isValidControlMessage({ ...valid, vote: 'no', isMine: false })).toBe(true)
+    })
+
+    it('rejects an unknown vote value', () => {
+      expect(isValidControlMessage({ ...valid, vote: 'maybe' })).toBe(false)
+    })
+
+    it('rejects a non-boolean isMine or empty transferId', () => {
+      expect(isValidControlMessage({ ...valid, isMine: 'yes' })).toBe(false)
+      expect(isValidControlMessage({ ...valid, transferId: '' })).toBe(false)
+    })
+  })
 })

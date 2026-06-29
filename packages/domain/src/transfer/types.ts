@@ -1,6 +1,7 @@
 import {
   TRANSFER_ERROR_CODES,
   type IncomingFileOffer,
+  type RememberedPeer,
   type RendererTransferEvent,
   type TransferErrorCode,
   type TransferRole
@@ -21,6 +22,39 @@ export type { TransferErrorCode }
 
 export type ConnectionState = 'disconnected' | 'joining' | 'joined' | 'peer-connected'
 
+export type PeerPairStatus = 'requested' | 'paired'
+
+export interface IncomingPairRequest {
+  transferId: string
+  peerKey: string
+  displayName: string
+  deviceType: string
+}
+
+export interface IncomingInvite {
+  remoteDevicePubkey: string
+  displayName: string
+  deviceType: string
+  topic: string
+  fileCount?: number
+  totalSize?: number
+}
+
+export interface InviteResponse {
+  remoteDevicePubkey: string
+  topic: string
+  response: 'declined'
+  receivedAt: number
+}
+
+export interface RememberState {
+  pairStatus: Record<string, PeerPairStatus>
+  peerDisplayNames: Record<string, string>
+  incomingRequest: IncomingPairRequest | null
+  incomingInvite: IncomingInvite | null
+  inviteResponses: Record<string, InviteResponse>
+}
+
 export interface TransferSessionState {
   topic: string
   connectionState: ConnectionState
@@ -36,6 +70,9 @@ export interface TransferSessionState {
   connectedPeers: Record<string, ConnectedPeer>
   errorCode: TransferErrorCode | null
   errorMessage: string | null
+  transferId: string | null
+  remember: RememberState
+  peers: RememberedPeer[]
 }
 
 export type TransferAction =
@@ -71,3 +108,12 @@ export type TransferAction =
   | { type: 'transfer_ready'; files: IncomingFileOffer[] }
   | { type: 'reconnecting' }
   | { type: 'peer_unreachable' }
+  | { type: 'remember_confirmed'; peerKey: string; displayName: string }
+  | { type: 'remember_declined'; peerKey: string }
+  | { type: 'remember_requested'; request: IncomingPairRequest }
+  | { type: 'set_peers'; peers: RememberedPeer[] }
+  | { type: 'forget_peer'; peerKey: string }
+  | { type: 'request_pair_peer'; peerKey: string }
+  | { type: 'invite_received'; invite: IncomingInvite }
+  | { type: 'invite_response_received'; response: InviteResponse }
+  | { type: 'dismiss_invite' }

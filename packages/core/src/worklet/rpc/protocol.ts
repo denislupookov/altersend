@@ -1,8 +1,16 @@
 import b4a from 'b4a'
 import type { TransferOffer, PeerControlMessage } from '../transfer/control-channel'
+import type { RememberedPeer } from '../peers/remembered-peer'
+import type { DeviceSecretInit } from '../identity/device-identity-store'
 import type {
   ErrorEvent,
+  InviteReceivedEvent,
+  InviteResponseReceivedEvent,
+  PairingPeerConnectedEvent,
   ReadyEvent,
+  RememberConfirmedEvent,
+  RememberDeclinedEvent,
+  RememberRequestedEvent,
   RoleEvent,
   StatusEvent,
   TransferErrorCode,
@@ -13,6 +21,7 @@ import type { TransferMethod } from './commands'
 
 export { API, API_BY_VALUE }
 export type { TransferErrorCode, TransferRole, TransferMethod }
+export type { DeviceSecretInit }
 
 export interface DownloadFileRequest {
   transferId: string
@@ -60,6 +69,42 @@ export interface DisconnectReply {
   state: 'disconnected'
 }
 
+export interface RememberVoteInput {
+  transferId: string
+  peerKey: string
+  vote: 'remember' | 'no'
+  isMine: boolean
+}
+
+export interface RememberVoteReply {
+  ok: true
+}
+
+export interface InviteDeviceInput {
+  remoteDevicePubkey: string
+  topic: string
+  fileCount?: number
+  totalSize?: number
+}
+
+export interface InviteDeviceReply {
+  delivered: boolean
+}
+
+export interface InviteResponseInput {
+  remoteDevicePubkey: string
+  topic: string
+  response: 'declined'
+}
+
+export interface InviteResponseReply {
+  delivered: boolean
+}
+
+export interface InitDeviceSecretReply {
+  secretKey: string | null
+}
+
 export interface RPCErrorPayload {
   code: 'BAD_REQUEST' | 'UNKNOWN_COMMAND' | 'INTERNAL_ERROR'
   message: string
@@ -79,7 +124,17 @@ interface RPCErrorResponse {
 export type RPCResponse<T> = RPCSuccessPayload<T> | RPCErrorResponse
 
 type WorkerReadyEvent = ReadyEvent
-export type RendererTransferEvent = StatusEvent | ErrorEvent | RoleEvent | PeerControlMessage
+export type RendererTransferEvent =
+  | StatusEvent
+  | ErrorEvent
+  | RoleEvent
+  | RememberConfirmedEvent
+  | RememberDeclinedEvent
+  | RememberRequestedEvent
+  | InviteReceivedEvent
+  | InviteResponseReceivedEvent
+  | PairingPeerConnectedEvent
+  | PeerControlMessage
 export type WorkerTransferEvent = WorkerReadyEvent | RendererTransferEvent
 export type IncomingFileOffer = TransferOffer
 
@@ -91,6 +146,14 @@ export interface TransferRPC {
   downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply>
   disconnect(): Promise<DisconnectReply>
   closePeers(): Promise<void>
+  rememberVote(input: RememberVoteInput): Promise<RememberVoteReply>
+  peersList(): Promise<RememberedPeer[]>
+  inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply>
+  respondToInvite(input: InviteResponseInput): Promise<InviteResponseReply>
+  forgetPeer(pubkey: string): Promise<void>
+  initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply>
+  hostPairing(): Promise<HostReply>
+  joinPairing(topic: string): Promise<JoinReply>
 }
 
 export class BadRequestError extends Error {

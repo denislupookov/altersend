@@ -46,8 +46,8 @@
   },
   "form": {
     "codeLabel": "接続コード",
-    "codePlaceholder": "64文字のコードを貼り付け…",
-    "orPasteCode": "またはコードを貼り付け"
+    "codePlaceholder": "コードを貼り付け…",
+    "orPasteCode": "または接続コードを貼り付け"
   },
   "actions": {
     "scanQr": "QRコードをスキャン",

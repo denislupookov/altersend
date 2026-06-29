@@ -13,7 +13,7 @@ import {
   DropZoneLink,
   ErrorBanner,
   FileDropZone,
-  SendFileListRow,
+  LinkRow,
   Input,
   Button
 } from '@altersend/components'
@@ -157,9 +157,11 @@ export function SelectFilesView() {
       {hasSelectedFiles && (
         <View style={styles.fileList}>
           {selectedFiles.map((file) => (
-            <SendFileListRow
+            <LinkRow
               key={file.path}
-              name={file.name}
+              file
+              standalone
+              label={file.name}
               onRemove={() => removeSelectedFile(file.path)}
               removeLabel={t('send:files.removeLabel', { name: file.name })}
               size={file.size}

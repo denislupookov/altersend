@@ -7,11 +7,14 @@ const desktopPackageJson = JSON.parse(
   scripts: Record<string, string>
 }
 const selectSource = readFileSync(
-  new URL('../../../apps/desktop/src/renderer/components/Select.tsx', import.meta.url),
+  new URL('../../../apps/desktop/src/renderer/components/Select/Select.tsx', import.meta.url),
   'utf8'
 )
 const selectBehaviorSource = readFileSync(
-  new URL('../../../apps/desktop/src/renderer/components/selectBehavior.ts', import.meta.url),
+  new URL(
+    '../../../apps/desktop/src/renderer/components/Select/selectBehavior.ts',
+    import.meta.url
+  ),
   'utf8'
 )
 const desktopMainSource = readFileSync(
@@ -22,8 +25,11 @@ const desktopIndexCssSource = readFileSync(
   new URL('../../../apps/desktop/src/renderer/index.css', import.meta.url),
   'utf8'
 )
-const footerBarSource = readFileSync(
-  new URL('../../../apps/desktop/src/renderer/pages/TransferPage/FooterBar.tsx', import.meta.url),
+const settingsPanelSource = readFileSync(
+  new URL(
+    '../../../apps/desktop/src/renderer/components/Settings/SettingsPanel.tsx',
+    import.meta.url
+  ),
   'utf8'
 )
 
@@ -42,7 +48,7 @@ describe('desktop Select implementation', () => {
 
   it('forces plain form controls to inherit the locale font', () => {
     expect(desktopIndexCssSource).toMatch(
-      /button,\s*\n\s*input,\s*\n\s*select,\s*\n\s*textarea\s*\{\s*\n\s*font: inherit;\s*\n\s*\}/
+      /button,\s*\n\s*input,\s*\n\s*select,\s*\n\s*textarea\s*\{\s*\n\s*font-family: inherit;\s*\n\s*\}/
     )
   })
 
@@ -51,9 +57,9 @@ describe('desktop Select implementation', () => {
     expect(selectSource).toContain(
       'style={option.fontFamily ? { fontFamily: option.fontFamily } : undefined}'
     )
-    expect(footerBarSource).toContain('getLocaleFontFamily')
-    expect(footerBarSource).toContain('getFontFamilyCssVariables')
-    expect(footerBarSource).toContain('fontFamily: getLocaleOptionFontFamily(option)')
+    expect(settingsPanelSource).toContain('getLocaleFontFamily')
+    expect(settingsPanelSource).toContain('getFontFamilyCssVariables')
+    expect(settingsPanelSource).toContain('fontFamily: getLocaleOptionFontFamily(option)')
   })
 
   it('keeps the desktop build script portable across Windows and Unix shells', () => {

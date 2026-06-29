@@ -10,49 +10,68 @@ export const styles = css.create({
     minWidth: 0,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderRadius: tokens.radiusSm,
+    borderRadius: tokens.radiusLg,
     padding: tokens.space3,
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: tokens.fontFamilySans,
     fontSize: tokens.fontSizeMd,
     fontWeight: tokens.fontWeightSemibold,
-    lineHeight: 1,
+    lineHeight: 1.1,
     letterSpacing: '-0.005em',
     textAlign: 'center',
     whiteSpace: 'nowrap',
     cursor: 'pointer',
     userSelect: 'none',
     transitionDuration: '160ms',
-    transitionProperty: 'background-color, border-color, color, box-shadow, opacity, transform',
+    transitionProperty: 'background-color, border-color, color, box-shadow, opacity',
     transitionTimingFunction: 'ease'
   },
   sm: {
     paddingTop: tokens.space3,
     paddingBottom: tokens.space3,
-    paddingLeft: tokens.space6,
-    paddingRight: tokens.space6,
-    fontSize: tokens.fontSizeMd,
-    borderRadius: tokens.radiusSm
+    paddingLeft: tokens.space5,
+    paddingRight: tokens.space5,
+    fontSize: tokens.fontSizeMd
   },
   md: {
-    paddingTop: tokens.space3,
-    paddingBottom: tokens.space3,
+    paddingTop: tokens.space4,
+    paddingBottom: tokens.space4,
     paddingLeft: 26,
     paddingRight: 26,
-    fontSize: tokens.fontSizeBase,
-    borderRadius: tokens.radiusMd
+    fontSize: tokens.fontSizeBase
   },
   lg: {
     paddingTop: tokens.space35,
     paddingBottom: tokens.space35,
-    paddingLeft: tokens.space7,
-    paddingRight: tokens.space7,
-    fontSize: tokens.fontSizeLg,
-    borderRadius: tokens.radiusMd
+    paddingLeft: tokens.space4,
+    paddingRight: tokens.space4,
+    gap: tokens.space2,
+    fontSize: tokens.fontSizeLg
   },
   full: {
     width: '100%'
+  },
+  iconOnlySm: {
+    paddingTop: tokens.space2,
+    paddingBottom: tokens.space2,
+    paddingLeft: tokens.space15,
+    paddingRight: tokens.space15,
+    borderRadius: tokens.radiusSm
+  },
+  iconOnlyMd: {
+    paddingTop: tokens.space25,
+    paddingBottom: tokens.space25,
+    paddingLeft: tokens.space2,
+    paddingRight: tokens.space2,
+    borderRadius: tokens.radiusMd
+  },
+  iconOnlyLg: {
+    paddingTop: tokens.space3,
+    paddingBottom: tokens.space3,
+    paddingLeft: tokens.space25,
+    paddingRight: tokens.space25,
+    borderRadius: tokens.radiusLg
   },
   primary: {
     backgroundColor: tokens.colorTextPrimary,
@@ -70,8 +89,7 @@ export const styles = css.create({
   },
   primaryPressed: {
     backgroundColor: tokens.colorAccentActive,
-    borderColor: tokens.colorBorderPrimary,
-    transform: 'translateY(1px)'
+    borderColor: tokens.colorBorderPrimary
   },
   secondary: {
     backgroundColor: tokens.colorBackgroundSubtle,
@@ -123,6 +141,40 @@ export const styles = css.create({
   lightPressed: {
     backgroundColor: tokens.colorAccentActive
   },
+  danger: {
+    backgroundColor: tokens.colorDangerSubtle,
+    borderColor: 'transparent',
+    color: tokens.colorDanger,
+    ':hover': {
+      backgroundColor: tokens.colorDanger,
+      color: tokens.colorBackground
+    },
+    ':focus-visible': {
+      outline: 'none',
+      boxShadow: `0 0 0 2px ${tokens.colorDanger}`
+    }
+  },
+  dangerPressed: {
+    backgroundColor: tokens.colorDanger,
+    color: tokens.colorBackground
+  },
+  success: {
+    backgroundColor: tokens.colorSuccessSubtle,
+    borderColor: 'transparent',
+    color: tokens.colorSuccess,
+    ':hover': {
+      backgroundColor: tokens.colorSuccess,
+      color: tokens.colorBackground
+    },
+    ':focus-visible': {
+      outline: 'none',
+      boxShadow: `0 0 0 2px ${tokens.colorSuccess}`
+    }
+  },
+  successPressed: {
+    backgroundColor: tokens.colorSuccess,
+    color: tokens.colorBackground
+  },
   disabled: {
     backgroundColor: tokens.colorSurfaceTertiary,
     borderColor: tokens.colorBorderPrimary,
@@ -130,6 +182,14 @@ export const styles = css.create({
     cursor: 'not-allowed',
     boxShadow: 'none',
     opacity: 1
+  },
+  disabledGhost: {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    color: tokens.colorTextMuted,
+    cursor: 'not-allowed',
+    boxShadow: 'none',
+    opacity: 0.5
   },
   textBase: {
     fontFamily: tokens.fontFamilySans,
@@ -145,5 +205,9 @@ export const styles = css.create({
   textSecondary: { color: tokens.colorTextPrimary },
   textGhost: { color: tokens.colorTextSecondary },
   textLight: { color: tokens.colorOnAccent },
+  textDanger: { color: tokens.colorDanger },
+  textSuccess: { color: tokens.colorSuccess },
+  textOnBackground: { color: tokens.colorBackground },
+  pill: { borderRadius: tokens.radiusFull },
   textDisabled: { color: tokens.colorTextMuted }
 })

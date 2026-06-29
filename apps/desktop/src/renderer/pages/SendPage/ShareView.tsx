@@ -1,134 +1,265 @@
-import { useEffect, useMemo, useState } from 'react'
-import type { PeerListCardEntry } from '@altersend/components'
+import { useState } from 'react'
+import { buildJoinUrl, formatFileSize, useShareViewModel } from '@altersend/domain'
+import { Button, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
 import {
-  formatFileSize,
-  getPeerListEntries,
-  type PeerListEntry,
-  type PeerListEntryDetail,
-  useTransferStore
-} from '@altersend/domain'
-import { Disclosure, PeerListCard, SendFileListRow } from '@altersend/components'
-import { AlertCircleIcon, FolderIcon } from '@altersend/components/icons'
+  ChevronsUpDownIcon,
+  deviceIcon,
+  FolderIcon,
+  QrCodeIcon,
+  ShareIcon
+} from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { QRModal } from '../../components/QRModal'
-import { ConnectionCard } from './ConnectionCard'
-
-function getPeerStatusLabel(t: ReturnType<typeof useTranslation>['t'], entry: PeerListEntry) {
-  switch (entry.status) {
-    case 'failed':
-      return t('send:status.failed')
-    case 'downloaded':
-      return t('send:status.downloaded')
-    case 'disconnected':
-      return t('send:status.disconnected')
-    case 'online':
-      return t('send:status.online')
-    case 'downloading':
-      return entry.progressPercent != null
-        ? t('send:status.downloadingPercent', { percent: entry.progressPercent })
-        : t('send:status.downloading')
-  }
-}
-
-function getPeerDetailLabel(
-  t: ReturnType<typeof useTranslation>['t'],
-  detail: PeerListEntryDetail | null
-) {
-  if (!detail) return null
-
-  switch (detail.type) {
-    case 'failed-file':
-    case 'in-flight-file':
-      return detail.fileName
-    case 'completed-files':
-      return t('common:files.count', { count: detail.count })
-    case 'completed-done':
-      return t('send:peer.completedDone', { count: detail.count })
-    case 'progress-bytes':
-      return `${formatFileSize(detail.transferredBytes)} / ${formatFileSize(detail.totalBytes)}`
-  }
-}
-
-function toPeerListCardEntry(
-  t: ReturnType<typeof useTranslation>['t'],
-  entry: PeerListEntry
-): PeerListCardEntry {
-  return {
-    ...entry,
-    statusLabel: getPeerStatusLabel(t, entry),
-    detail: getPeerDetailLabel(t, entry.detail)
-  }
-}
+import { Popover, QRCode, QRModal, useToast } from '../../components'
+import { TopicCopyButton } from './TopicCopyButton'
 
 export function ShareView() {
   const { t } = useTranslation(['send', 'common'])
-  const selectedFiles = useTransferStore((s) => s.selectedFiles)
-  const connectionState = useTransferStore((s) => s.connectionState)
-  const topic = useTransferStore((s) => s.topic)
-  const peerDownloads = useTransferStore((s) => s.peerDownloads)
-  const connectedPeers = useTransferStore((s) => s.connectedPeers)
-  const isPeerConnected = connectionState === 'peer-connected'
-  const [isKeyCopied, setIsKeyCopied] = useState(false)
-  const [isFilesExpanded, setIsFilesExpanded] = useState(false)
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false)
-
-  const totalSize = selectedFiles.reduce((sum, file) => sum + (file.size ?? 0), 0)
-  const peerEntries = useMemo(
-    () => getPeerListEntries(connectedPeers, peerDownloads, selectedFiles),
-    [connectedPeers, peerDownloads, selectedFiles]
-  )
-  const peerCardEntries = peerEntries.map((entry) => toPeerListCardEntry(t, entry))
-  const hasActivity = isPeerConnected || peerEntries.length > 0
-
-  useEffect(() => {
-    if (!isKeyCopied) return
-    const timer = window.setTimeout(() => setIsKeyCopied(false), 2000)
-    return () => window.clearTimeout(timer)
-  }, [isKeyCopied])
+  const { theme } = useTheme()
+  const c = theme.colors
+  const toast = useToast()
+  const vm = useShareViewModel(t, {
+    onPeerJoined: (peer) =>
+      toast.show({
+        title: peer.isKnown
+          ? t('send:status.deviceConnected', { name: peer.name })
+          : t('send:status.peerConnected'),
+        durationMs: 2500
+      }),
+    onPeerPaired: (peer) =>
+      toast.show({ title: t('send:status.pairedToast', { name: peer.name }), durationMs: 2500 }),
+    onInviteFailed: (peer) =>
+      toast.show({
+        title: t('send:status.inviteFailedToast', { name: peer.name }),
+        hint: t('send:status.inviteFailedHint'),
+        variant: 'error',
+        durationMs: 3500
+      })
+  })
+  const [isQrOpen, setIsQrOpen] = useState(false)
+  const hasConnectedDevices = vm.connectedCount > 0
 
   const copyTopic = async () => {
-    if (!topic) return
-    await navigator.clipboard.writeText(topic)
-    setIsKeyCopied(true)
+    if (!vm.topic) return
+    await navigator.clipboard.writeText(vm.topic)
+    vm.markCopied()
   }
 
+  const filesCard = (
+    <Popover
+      variant='plain'
+      align='left'
+      trigger={
+        <LinkCard>
+          <LinkRow
+            compact
+            icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
+            label={t('common:files.count', { count: vm.files.length })}
+            subtitle={formatFileSize(vm.totalSize)}
+            trailing={<ChevronsUpDownIcon size={16} color={c.colorTextMuted} />}
+            isLast
+          />
+        </LinkCard>
+      }
+    >
+      {() => (
+        <div style={{ maxHeight: 280, overflowY: 'auto' }}>
+          <LinkCard>
+            {vm.files.map((file, index) => (
+              <LinkRow
+                key={file.path}
+                compact
+                file
+                label={file.name}
+                size={file.size}
+                isLast={index === vm.files.length - 1}
+              />
+            ))}
+          </LinkCard>
+        </div>
+      )}
+    </Popover>
+  )
+
   return (
-    <div className='flex flex-col gap-3'>
-      <aside aria-live='polite' className='flex items-center gap-2 px-1 text-text-muted'>
-        <AlertCircleIcon size={12} />
-        <span className='text-[11.5px] leading-[1.4]'>{t('send:hints.keepOpen')}</span>
-      </aside>
+    <>
+      <div className='flex flex-col gap-6 pt-5'>
+        {hasConnectedDevices ? (
+          <div className='flex w-full gap-2'>
+            <TopicCopyButton
+              topic={vm.topic}
+              copied={vm.isCopied}
+              onCopy={() => void copyTopic()}
+              placeholder={t('send:connection.placeholder')}
+            />
+            <div className='flex aspect-square shrink-0'>
+              <Button
+                variant='secondary'
+                iconOnly
+                width='full'
+                aria-label={t('send:connection.showQrLabel')}
+                icon={<QrCodeIcon size={18} />}
+                onClick={() => setIsQrOpen(true)}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className='flex flex-col gap-5'>
+            <div className='flex gap-6'>
+              <aside
+                className={`flex w-[240px] shrink-0 justify-center ${vm.hasDevices ? 'self-start' : ''}`}
+              >
+                {vm.topic ? (
+                  <QRCode
+                    imageLabel={t('send:connection.qrCodeLabel')}
+                    loadingLabel={t('send:connection.generating')}
+                    size={216}
+                    value={buildJoinUrl(vm.topic)}
+                  />
+                ) : (
+                  <div
+                    className='flex items-center justify-center rounded-lg bg-surface-primary text-[12px] text-text-muted'
+                    style={{ width: 216, height: 216 }}
+                  >
+                    {t('send:connection.generating')}
+                  </div>
+                )}
+              </aside>
 
-      <ConnectionCard
-        topic={topic}
-        hasActivity={hasActivity}
-        isKeyCopied={isKeyCopied}
-        onCopy={() => void copyTopic()}
-        onOpenQR={() => setIsQRModalOpen(true)}
-      />
+              <div
+                className={`flex min-w-0 flex-1 flex-col gap-5 ${vm.hasDevices ? '' : 'justify-center'}`}
+              >
+                {vm.phase === 'waiting' && (
+                  <div className='flex items-center gap-3'>
+                    <WaitingRadar
+                      size={44}
+                      color={c.colorInfo}
+                      pulsing
+                      icon={<ShareIcon size={17} color={c.colorInfo} />}
+                    />
+                    <div className='min-w-0'>
+                      <p className='m-0 text-[15px] font-bold leading-snug text-text-primary'>
+                        {t('send:status.waitingForJoin')}
+                      </p>
+                      <p className='m-0 mt-0.5 text-[12px] leading-snug text-text-muted'>
+                        {t('send:hints.keepOpen')}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                <div className='flex w-full'>
+                  <TopicCopyButton
+                    topic={vm.topic}
+                    copied={vm.isCopied}
+                    onCopy={() => void copyTopic()}
+                    placeholder={t('send:connection.placeholder')}
+                  />
+                </div>
+                {vm.hasDevices && filesCard}
+              </div>
+            </div>
+            {!vm.hasDevices && filesCard}
+          </div>
+        )}
 
-      <PeerListCard
-        entries={peerCardEntries}
-        labels={{
-          title: t('send:peer.devices'),
-          connectedCount: (count) => t('send:peer.connectedCount', { count })
-        }}
-      />
+        {hasConnectedDevices && <div>{filesCard}</div>}
 
-      <Disclosure
-        compact
-        expanded={isFilesExpanded}
-        icon={<FolderIcon size={16} />}
-        onToggle={() => setIsFilesExpanded((v) => !v)}
-        subtitle={formatFileSize(totalSize)}
-        title={t('common:files.count', { count: selectedFiles.length })}
-      >
-        {selectedFiles.map((file) => (
-          <SendFileListRow key={file.path} bare compact name={file.name} size={file.size} />
-        ))}
-      </Disclosure>
+        {vm.hasDevices && (
+          <div className='flex flex-col gap-2'>
+            <div className='flex items-center justify-between px-1'>
+              <p className='m-0 text-[11px] font-semibold uppercase tracking-[0.06em] text-text-secondary'>
+                {t('send:peer.devices')}
+              </p>
+              {vm.connectedCount > 0 && (
+                <p className='m-0 text-[11.5px] font-medium text-text-muted'>
+                  {t('send:peer.connectedCount', { count: vm.connectedCount })}
+                </p>
+              )}
+            </div>
+            <LinkCard>
+              {vm.devices.map((row, index) => {
+                const isLast = index === vm.devices.length - 1
+                if (row.kind === 'connected') {
+                  const Icon = row.deviceType ? deviceIcon(row.deviceType) : null
+                  return (
+                    <LinkRow
+                      key={row.peerKey}
+                      compact
+                      icon={
+                        Icon ? (
+                          <Icon size={18} color={c.colorTextSecondary} />
+                        ) : (
+                          <span
+                            style={{ color: c.colorInfo }}
+                            className='font-mono text-[12px] font-semibold uppercase'
+                          >
+                            {row.name.slice(0, 2)}
+                          </span>
+                        )
+                      }
+                      iconBackground={Icon ? c.colorSurfacePrimary : c.colorInfoSubtle}
+                      label={row.name}
+                      subtitle={row.subtitle}
+                      subtitleTone={row.subtitleTone}
+                      progressPercent={row.progressPercent}
+                      trailing={
+                        row.action === 'pair' ? (
+                          <Button
+                            onClick={() => vm.pair(row.peerKey)}
+                            size='sm'
+                            variant='secondary'
+                            pill
+                          >
+                            {t('send:peer.pair')}
+                          </Button>
+                        ) : row.action === 'pair-requested' ? (
+                          <Button size='sm' variant='secondary' pill loading>
+                            {t('send:peer.requested')}
+                          </Button>
+                        ) : undefined
+                      }
+                      isLast={isLast}
+                    />
+                  )
+                }
+                const PeerIcon = deviceIcon(row.deviceType)
+                const isActive = row.action === 'inviting' || row.action === 'invite-sent'
+                const label =
+                  row.action === 'inviting'
+                    ? t('send:peer.inviting')
+                    : row.action === 'invite-sent'
+                      ? t('send:peer.sent')
+                      : t('send:peer.invite')
+                return (
+                  <LinkRow
+                    key={row.peerKey}
+                    compact
+                    icon={<PeerIcon size={18} color={c.colorTextSecondary} />}
+                    label={row.name}
+                    subtitle={row.subtitle}
+                    subtitleTone={row.subtitleTone}
+                    onPress={() => void vm.invite(row.peerKey)}
+                    trailing={
+                      <Button
+                        disabled={isActive}
+                        loading={isActive}
+                        onClick={() => void vm.invite(row.peerKey)}
+                        size='sm'
+                        variant='primary'
+                        pill
+                      >
+                        {label}
+                      </Button>
+                    }
+                    isLast={isLast}
+                  />
+                )
+              })}
+            </LinkCard>
+          </div>
+        )}
+      </div>
 
-      <QRModal topic={topic} open={isQRModalOpen} onClose={() => setIsQRModalOpen(false)} />
-    </div>
+      <QRModal topic={vm.topic} open={isQrOpen} onClose={() => setIsQrOpen(false)} />
+    </>
   )
 }

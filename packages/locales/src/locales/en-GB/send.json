@@ -42,7 +42,12 @@
     "disconnected": "Disconnected",
     "online": "Online",
     "downloading": "Downloading",
-    "downloadingPercent": "Downloading {{percent}}%"
+    "downloadingPercent": "Downloading {{percent}}%",
+    "waitingForJoin": "Waiting for someone to join",
+    "pairedToast": "Paired with {{name}}",
+    "inviteFailedToast": "Couldn't reach {{name}}",
+    "inviteFailedHint": "Make sure it's online and try again",
+    "deviceConnected": "{{name}} connected"
   },
   "connection": {
     "placeholder": "Generating secure key…",
@@ -54,7 +59,9 @@
     "scanToConnect": "Scan to connect",
     "orScan": "or scan",
     "generating": "Generating…",
-    "waitingForConnection": "Waiting for a connection…"
+    "waitingForConnection": "Waiting for a connection…",
+    "copyCode": "Copy code",
+    "qrCode": "QR code"
   },
   "errors": {
     "folderUnsupported": "Folders aren't supported yet. Please select files only.",
@@ -73,7 +80,13 @@
     "completedDone_other": "{{count}} done",
     "devices": "Devices",
     "connectedCount_one": "{{count}} connected",
-    "connectedCount_other": "{{count}} connected"
+    "connectedCount_other": "{{count}} connected",
+    "pair": "Pair",
+    "requested": "Requested…",
+    "invite": "Invite",
+    "inviting": "Inviting…",
+    "sent": "Sent",
+    "deviceOffline": "Device offline — try again"
   },
   "dropzone": {
     "addMoreDescription": "or click to <link>add more</link>",

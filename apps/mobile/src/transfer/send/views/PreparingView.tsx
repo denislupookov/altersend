@@ -5,7 +5,7 @@ import {
   getStatusTone,
   useTransferStore
 } from '@altersend/domain'
-import { SendFileListRow, useTheme } from '@altersend/components'
+import { LinkRow, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
@@ -52,9 +52,11 @@ export function PreparingView() {
         {uploadItems.map((item) => {
           const progress = getProgressState(item)
           return (
-            <SendFileListRow
+            <LinkRow
               key={item.path}
-              name={item.name}
+              file
+              standalone
+              label={item.name}
               size={item.size}
               status={{
                 label:

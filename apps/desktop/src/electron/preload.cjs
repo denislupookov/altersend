@@ -49,4 +49,5 @@ contextBridge.exposeInMainWorld('bridge', {
   },
   setSentryEnabled: (enabled) => ipcRenderer.invoke('sentry:setEnabled', enabled),
   requestCameraAccess: () => ipcRenderer.invoke('app:requestCameraAccess'),
+  clipboardReadText: () => ipcRenderer.invoke('app:clipboardReadText'),
 })

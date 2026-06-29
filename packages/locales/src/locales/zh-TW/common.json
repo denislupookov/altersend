@@ -24,7 +24,8 @@
     "openSettings": "開啟設定",
     "update": "更新",
     "downloadAll": "下載全部",
-    "skip": "略過"
+    "skip": "略過",
+    "paste": "貼上"
   },
   "labels": {
     "settings": "設定",

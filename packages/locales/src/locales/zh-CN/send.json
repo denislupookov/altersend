@@ -42,7 +42,12 @@
     "disconnected": "已断开连接",
     "online": "在线",
     "downloading": "正在下载",
-    "downloadingPercent": "正在下载 {{percent}}%"
+    "downloadingPercent": "正在下载 {{percent}}%",
+    "waitingForJoin": "等待他人加入",
+    "pairedToast": "已与 {{name}} 配对",
+    "inviteFailedToast": "无法连接 {{name}}",
+    "inviteFailedHint": "请确认其在线后重试",
+    "deviceConnected": "{{name}} 已连接"
   },
   "connection": {
     "placeholder": "正在生成安全密钥...",
@@ -54,7 +59,9 @@
     "scanToConnect": "扫描以连接",
     "orScan": "或扫描",
     "generating": "正在生成…",
-    "waitingForConnection": "正在等待连接…"
+    "waitingForConnection": "正在等待连接…",
+    "copyCode": "复制代码",
+    "qrCode": "二维码"
   },
   "errors": {
     "folderUnsupported": "尚不支持文件夹。请仅选择文件。",
@@ -73,7 +80,13 @@
     "completedDone_other": "{{count}} 个已完成",
     "devices": "设备",
     "connectedCount_one": "{{count}} 台设备已连接",
-    "connectedCount_other": "{{count}} 台设备已连接"
+    "connectedCount_other": "{{count}} 台设备已连接",
+    "pair": "配对",
+    "requested": "已请求…",
+    "invite": "邀请",
+    "inviting": "正在邀请…",
+    "sent": "已发送",
+    "deviceOffline": "设备离线 — 请重试"
   },
   "dropzone": {
     "addMoreDescription": "或点击<link>继续添加</link>",

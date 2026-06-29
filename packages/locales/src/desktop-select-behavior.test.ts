@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 const selectBehaviorModulePath = new URL(
-  '../../../apps/desktop/src/renderer/components/selectBehavior.ts',
+  '../../../apps/desktop/src/renderer/components/Select/selectBehavior.ts',
   import.meta.url
 ).pathname
 

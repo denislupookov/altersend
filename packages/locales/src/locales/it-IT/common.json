@@ -24,7 +24,8 @@
     "openSettings": "Apri le impostazioni",
     "update": "Aggiorna",
     "downloadAll": "Scarica tutto",
-    "skip": "Salta"
+    "skip": "Salta",
+    "paste": "Incolla"
   },
   "labels": {
     "settings": "Impostazioni",

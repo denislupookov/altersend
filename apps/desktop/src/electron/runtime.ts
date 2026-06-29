@@ -1,4 +1,5 @@
-import { app } from 'electron'
+import { app, safeStorage } from 'electron'
+import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -77,7 +78,6 @@ const cmd = command(
   flag('--storage <path>', 'pass custom storage to pear-runtime'),
   flag('--no-updates', 'start without OTA updates'),
   flag('--multi', 'allow multiple instances'),
-  // Tolerate OS/installer-injected argv (Squirrel --squirrel-*, deep-link URLs) so module load can't crash
   sloppy({ flags: true, args: true })
 )
 
@@ -95,6 +95,56 @@ function isTransferMethod(method: unknown): method is TransferMethod {
   return typeof method === 'string' && method in API.methods
 }
 
+function migrateIdentityIfNeeded(oldRoot: string, newRoot: string): void {
+  const oldFile = path.join(oldRoot, 'device.json')
+  const newFile = path.join(newRoot, 'device.json')
+  try {
+    if (!fs.existsSync(newFile) && fs.existsSync(oldFile)) {
+      fs.mkdirSync(newRoot, { recursive: true })
+      fs.cpSync(oldRoot, newRoot, { recursive: true })
+    }
+  } catch (err) {
+    console.warn('[runtime] identity migration failed (non-fatal):', err)
+  }
+}
+
+async function initDeviceKeychain(client: WorkerClient, identityRoot: string): Promise<void> {
+  const keyPath = path.join(identityRoot, 'device.key')
+  const available = safeStorage.isEncryptionAvailable()
+
+  let sealed: string | null = null
+  if (available) {
+    try {
+      if (fs.existsSync(keyPath)) sealed = safeStorage.decryptString(fs.readFileSync(keyPath))
+    } catch (err) {
+      console.warn('[runtime] device key decrypt failed:', err)
+    }
+  }
+
+  try {
+    await client.ready
+    const reply = await client.initDeviceSecret(
+      available ? { mode: 'managed', secret: sealed } : { mode: 'legacy' }
+    )
+    if (available && reply.secretKey) {
+      fs.mkdirSync(identityRoot, { recursive: true })
+      const tmp = keyPath + '.tmp'
+      fs.writeFileSync(tmp, safeStorage.encryptString(reply.secretKey))
+      fs.renameSync(tmp, keyPath)
+    }
+  } catch (err) {
+    console.warn('[runtime] device key init failed:', err)
+  }
+}
+
+function appDataDir(name: string): string {
+  return isMac
+    ? path.join(os.homedir(), 'Library', 'Application Support', name)
+    : isLinux
+      ? path.join(os.homedir(), '.config', name)
+      : path.join(os.homedir(), 'AppData', 'Local', name)
+}
+
 export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): DesktopRuntime {
   const workers = new Map<string, WorkerRuntime>()
   let pear: PearRuntimeInstance | null = null
@@ -103,18 +153,7 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
     if (pear) return pear
 
     const appPath = getAppPath()
-    let dir = null
-    if (pearStore) {
-      dir = pearStore
-    } else if (appPath === null) {
-      dir = path.join(os.tmpdir(), 'pear', productName)
-    } else {
-      dir = isMac
-        ? path.join(os.homedir(), 'Library', 'Application Support', productName)
-        : isLinux
-          ? path.join(os.homedir(), '.config', productName)
-          : path.join(os.homedir(), 'AppData', 'Local', productName)
-    }
+    const dir = pearStore || appDataDir(appPath === null ? `${productName}-dev` : productName)
 
     const extension = isLinux ? '.AppImage' : isMac ? '.app' : '.msix'
     const instance: PearRuntimeInstance = new PearRuntime({
@@ -153,12 +192,21 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
       ) => WorkerClient
     }
 
-    const worker = pear.run(workerPath, [`--storage=${pear.storage}`, ...args])
+    const identityRoot = path.join(path.dirname(pear.storage), 'identity')
+    migrateIdentityIfNeeded(path.join(pear.storage, 'identities'), identityRoot)
+
+    const worker = pear.run(workerPath, [
+      `--storage=${pear.storage}`,
+      `--identity=${identityRoot}`,
+      '--device-type=desktop',
+      ...args
+    ])
     const client = createTransferWorkerClient(worker, {
       onEvent: (message: RendererTransferEvent) => {
         broadcast('pear:worker:event:' + specifier, message)
       }
     })
+    initDeviceKeychain(client, identityRoot).catch(() => {})
     const runtime: WorkerRuntime = {
       worker,
       client,

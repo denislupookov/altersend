@@ -45,6 +45,7 @@ export default tseslint.config(
       'packages/components/storybook-static/**',
       'packages/components/.storybook/**',
       'packages/components/src/theme/tailwind-theme.css',
+      'packages/core/schema/**',
     ],
   },
 

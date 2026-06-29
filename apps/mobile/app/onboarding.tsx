@@ -16,6 +16,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { OnboardingIllustration } from '@/src/onboarding/OnboardingIllustration'
 import { markOnboardingCompleted } from '@/src/onboarding/onboardingStorage'
+import { markPairPromptPending } from '@/src/onboarding/pairPromptSignal'
 import brandLogo from '@/assets/images/brand-logo.png'
 import { Text } from '@/src/components/ThemedText'
 
@@ -43,6 +44,7 @@ export default function OnboardingScreen() {
 
   const finish = () => {
     markOnboardingCompleted()
+    markPairPromptPending()
     router.replace('/send')
   }
 

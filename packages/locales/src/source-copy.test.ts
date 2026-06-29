@@ -13,12 +13,8 @@ const hardcodedCopyChecks = [
     ]
   },
   {
-    file: 'apps/desktop/src/renderer/components/QRCode.tsx',
+    file: 'apps/desktop/src/renderer/components/QRCode/QRCode.tsx',
     snippets: ['Generating…', 'QR code for connection key']
-  },
-  {
-    file: 'packages/components/src/components/SendFileListRow/SendFileListRow.tsx',
-    snippets: ['Remove ${name}']
   },
   {
     file: 'packages/components/src/components/PeerListCard/PeerListCard.tsx',
@@ -29,7 +25,7 @@ const hardcodedCopyChecks = [
     snippets: ['Transfer issue']
   },
   {
-    file: 'apps/desktop/src/renderer/pages/TransferPage/FooterBar.tsx',
+    file: 'apps/desktop/src/renderer/components/Settings/SettingsPanel.tsx',
     snippets: ["{' and '}", "{'.'}"]
   },
   {

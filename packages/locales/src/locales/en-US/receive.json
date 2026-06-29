@@ -46,8 +46,8 @@
   },
   "form": {
     "codeLabel": "Connection code",
-    "codePlaceholder": "Paste 64-char code…",
-    "orPasteCode": "or paste code"
+    "codePlaceholder": "Paste the code…",
+    "orPasteCode": "or paste the connection code"
   },
   "actions": {
     "scanQr": "Scan QR code",

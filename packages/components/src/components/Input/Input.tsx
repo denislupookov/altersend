@@ -1,6 +1,5 @@
 import { useId, type ReactNode } from 'react'
 import { html } from 'react-strict-dom'
-import { LockIcon } from '../../icons'
 import { styles } from './styles'
 
 type InputElementProps = Parameters<typeof html.input>[0]
@@ -11,7 +10,6 @@ export interface InputProps extends Omit<InputElementProps, 'style'> {
   icon?: ReactNode
   label?: string
   mono?: boolean
-  secure?: boolean
   trailing?: ReactNode
 }
 
@@ -22,7 +20,6 @@ export function Input({
   id,
   label,
   mono = false,
-  secure = false,
   trailing,
   ...props
 }: InputProps) {
@@ -35,15 +32,10 @@ export function Input({
       .filter((value): value is string => typeof value === 'string')
       .join(' ') || undefined
   const hasError = Boolean(error)
-  const resolvedIcon = secure ? <LockIcon size={13} /> : icon
-  const useWrapper = Boolean(resolvedIcon || trailing)
+  const useWrapper = Boolean(icon || trailing)
 
   const fieldStyle = [styles.field, mono && styles.mono, hasError && styles.invalid]
-  const wrapperStyle = [
-    styles.iconWrapper,
-    hasError && styles.iconWrapperInvalid,
-    Boolean(trailing) && styles.iconWrapperWithTrailing
-  ]
+  const wrapperStyle = [styles.iconWrapper, hasError && styles.iconWrapperInvalid]
 
   return (
     <html.div style={styles.root}>
@@ -55,7 +47,7 @@ export function Input({
 
       {useWrapper ? (
         <html.div style={wrapperStyle}>
-          {resolvedIcon ? <html.div style={styles.iconSlot}>{resolvedIcon}</html.div> : null}
+          {icon ? <html.div style={styles.iconSlot}>{icon}</html.div> : null}
           <html.input
             {...props}
             aria-describedby={describedBy}

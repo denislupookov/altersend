@@ -137,12 +137,34 @@ export const styles = css.create({
     fontSize: tokens.fontSizeXs,
     lineHeight: tokens.lineHeightNormal
   },
+  rowRight: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.space3,
+    flexShrink: 0
+  },
   status: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     gap: tokens.space15,
     flexShrink: 0
+  },
+  pairedText: {
+    margin: 0,
+    color: tokens.colorSuccess,
+    fontFamily: tokens.fontFamilySans,
+    fontSize: tokens.fontSizeSm,
+    fontWeight: tokens.fontWeightSemibold
+  },
+  requestedText: {
+    margin: 0,
+    color: tokens.colorTextMuted,
+    fontFamily: tokens.fontFamilySans,
+    fontSize: tokens.fontSizeSm,
+    fontWeight: tokens.fontWeightMedium,
+    lineHeight: tokens.lineHeightNormal
   },
   statusDot: {
     width: tokens.space15,

@@ -7,12 +7,30 @@ import {
   type TransferWorkerProcess,
   type WorkerClient
 } from '@altersend/core'
+import Constants from 'expo-constants'
 import { Directory, Paths } from 'expo-file-system'
+import * as SecureStore from 'expo-secure-store'
 import { Platform } from 'react-native'
 import { Worklet } from 'react-native-bare-kit'
 
 const STORAGE_ROOT_DIRNAME = 'altersend'
 const IDENTITY_ROOT_DIRNAME = 'altersend-identity'
+const DEVICE_SECRET_KEY = 'altersend.device.secret'
+
+async function initDeviceKeychain(client: WorkerClient): Promise<void> {
+  let sealed: string | null = null
+  try {
+    sealed = await SecureStore.getItemAsync(DEVICE_SECRET_KEY)
+  } catch (err) {
+    console.warn('mobileApi: device secret read failed', err)
+  }
+  try {
+    const reply = await client.initDeviceSecret({ mode: 'managed', secret: sealed })
+    if (reply.secretKey) await SecureStore.setItemAsync(DEVICE_SECRET_KEY, reply.secretKey)
+  } catch (err) {
+    console.warn('mobileApi: device secret init failed', err)
+  }
+}
 
 export function uriToPath(uri: string): string {
   return uri.replace(/^file:\/\//, '')
@@ -40,7 +58,15 @@ async function getWorkletArgs() {
     identityRoot.create({ idempotent: true, intermediates: true })
   }
 
-  return [`--storage=${uriToPath(storageRoot.uri)}`, `--identity=${uriToPath(identityRoot.uri)}`]
+  const args = [
+    `--storage=${uriToPath(storageRoot.uri)}`,
+    `--identity=${uriToPath(identityRoot.uri)}`
+  ]
+  const deviceName = Constants.deviceName?.trim()
+  if (deviceName) args.push(`--device-name=${deviceName}`)
+  const isPad = Platform.OS === 'ios' && (Platform as { isPad?: boolean }).isPad === true
+  args.push(`--device-type=${isPad ? 'tablet' : 'phone'}`)
+  return args
 }
 
 class MobileApi {
@@ -93,6 +119,7 @@ class MobileApi {
       )
 
       await client.ready
+      await initDeviceKeychain(client)
       this.client = client
     })().catch(async (error: unknown) => {
       const failure = error instanceof Error ? error : new Error(String(error))

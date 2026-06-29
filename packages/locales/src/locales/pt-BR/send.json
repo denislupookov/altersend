@@ -42,7 +42,12 @@
     "disconnected": "Desconectado",
     "online": "On-line",
     "downloading": "Baixando",
-    "downloadingPercent": "Baixando {{percent}}%"
+    "downloadingPercent": "Baixando {{percent}}%",
+    "waitingForJoin": "Aguardando alguém entrar",
+    "pairedToast": "Emparelhado com {{name}}",
+    "inviteFailedToast": "Não foi possível alcançar {{name}}",
+    "inviteFailedHint": "Verifique se está on-line e tente novamente",
+    "deviceConnected": "{{name}} conectado"
   },
   "connection": {
     "placeholder": "Gerando chave segura…",
@@ -54,7 +59,9 @@
     "scanToConnect": "Escaneie para conectar",
     "orScan": "ou escaneie",
     "generating": "Gerando…",
-    "waitingForConnection": "Aguardando conexão…"
+    "waitingForConnection": "Aguardando conexão…",
+    "copyCode": "Copiar código",
+    "qrCode": "Código QR"
   },
   "errors": {
     "folderUnsupported": "As pastas ainda não são suportadas. Selecione apenas arquivos.",
@@ -73,7 +80,13 @@
     "completedDone_other": "{{count}} concluídos",
     "devices": "Dispositivos",
     "connectedCount_one": "{{count}} conectado",
-    "connectedCount_other": "{{count}} conectados"
+    "connectedCount_other": "{{count}} conectados",
+    "pair": "Emparelhar",
+    "requested": "Solicitado…",
+    "invite": "Convidar",
+    "inviting": "Convidando…",
+    "sent": "Enviado",
+    "deviceOffline": "Dispositivo off-line — tente novamente"
   },
   "dropzone": {
     "addMoreDescription": "ou clique para <link>adicionar mais</link>",

@@ -46,8 +46,8 @@
   },
   "form": {
     "codeLabel": "Codice di connessione",
-    "codePlaceholder": "Incolla il codice di 64 caratteri…",
-    "orPasteCode": "oppure incolla il codice"
+    "codePlaceholder": "Incolla il codice…",
+    "orPasteCode": "oppure incolla il codice di connessione"
   },
   "actions": {
     "scanQr": "Scansiona il codice QR",

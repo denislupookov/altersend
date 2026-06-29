@@ -1,7 +1,9 @@
 import { html } from 'react-strict-dom'
+import { Button } from '../Button'
 import { styles } from './styles'
 
 export type PeerListCardStatus = 'online' | 'downloading' | 'downloaded' | 'failed' | 'disconnected'
+export type PeerPairState = 'pairable' | 'requested' | 'paired'
 
 export interface PeerListCardEntry {
   peerKey: string
@@ -10,14 +12,13 @@ export interface PeerListCardEntry {
   statusLabel: string
   detail: string | null
   progressPercent?: number
+  pairState?: PeerPairState
 }
 
 interface PeerListCardProps {
   entries: PeerListCardEntry[]
-  labels: {
-    title: string
-    connectedCount: (count: number) => string
-  }
+  label?: string
+  onPair?: (peerKey: string) => void
 }
 
 const DOT_TONE = {
@@ -36,22 +37,25 @@ const TEXT_TONE = {
   disconnected: styles.textDisconnected
 } as const
 
-export function PeerListCard({ entries, labels }: PeerListCardProps) {
+export function PeerListCard({ entries, label, onPair }: PeerListCardProps) {
   if (entries.length === 0) return null
-
-  const activeCount = entries.filter((entry) => entry.status !== 'disconnected').length
-  const peersLabel = labels.connectedCount(activeCount)
 
   return (
     <html.section style={styles.section}>
-      <html.div style={styles.header}>
-        <html.p style={styles.headerLabel}>{labels.title}</html.p>
-        <html.p style={styles.headerCount}>{peersLabel}</html.p>
-      </html.div>
-
+      {label ? (
+        <html.div style={styles.header}>
+          <html.p style={styles.headerLabel}>{label}</html.p>
+          <html.p style={styles.headerCount}>{entries.length} connected</html.p>
+        </html.div>
+      ) : null}
       <html.div style={styles.list}>
         {entries.map((entry, index) => (
-          <PeerRow key={entry.peerKey} entry={entry} isLast={index === entries.length - 1} />
+          <PeerRow
+            key={entry.peerKey}
+            entry={entry}
+            isLast={index === entries.length - 1}
+            onPair={onPair}
+          />
         ))}
       </html.div>
     </html.section>
@@ -61,9 +65,27 @@ export function PeerListCard({ entries, labels }: PeerListCardProps) {
 interface PeerRowProps {
   entry: PeerListCardEntry
   isLast: boolean
+  onPair?: (peerKey: string) => void
 }
 
-function PeerRow({ entry, isLast }: PeerRowProps) {
+function PairControl({ entry, onPair }: PeerRowProps) {
+  switch (entry.pairState) {
+    case 'pairable':
+      return (
+        <Button size='sm' variant='secondary' onClick={() => onPair?.(entry.peerKey)}>
+          Pair
+        </Button>
+      )
+    case 'requested':
+      return <html.p style={styles.requestedText}>Requested…</html.p>
+    case 'paired':
+      return <html.p style={styles.pairedText}>Paired</html.p>
+    default:
+      return null
+  }
+}
+
+function PeerRow({ entry, isLast, onPair }: PeerRowProps) {
   const isDimmed = entry.status === 'disconnected'
   const showBar = entry.status === 'downloading' && typeof entry.progressPercent === 'number'
   const clampedPercent = showBar ? Math.max(0, Math.min(100, entry.progressPercent ?? 0)) : 0
@@ -81,9 +103,14 @@ function PeerRow({ entry, isLast }: PeerRowProps) {
           </html.div>
         </html.div>
 
-        <html.div style={styles.status}>
-          <html.span style={[styles.statusDot, DOT_TONE[entry.status]]} />
-          <html.p style={[styles.statusText, TEXT_TONE[entry.status]]}>{entry.statusLabel}</html.p>
+        <html.div style={styles.rowRight}>
+          <html.div style={styles.status}>
+            <html.span style={[styles.statusDot, DOT_TONE[entry.status]]} />
+            <html.p style={[styles.statusText, TEXT_TONE[entry.status]]}>
+              {entry.statusLabel}
+            </html.p>
+          </html.div>
+          <PairControl entry={entry} isLast={isLast} onPair={onPair} />
         </html.div>
       </html.div>
 

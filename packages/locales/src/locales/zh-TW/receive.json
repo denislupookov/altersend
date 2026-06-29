@@ -46,8 +46,8 @@
   },
   "form": {
     "codeLabel": "連線代碼",
-    "codePlaceholder": "貼上 64 字元代碼...",
-    "orPasteCode": "或貼上代碼"
+    "codePlaceholder": "貼上代碼...",
+    "orPasteCode": "或貼上連線代碼"
   },
   "actions": {
     "scanQr": "掃描QR代碼",
