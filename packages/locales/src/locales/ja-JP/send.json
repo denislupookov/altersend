@@ -43,7 +43,9 @@
     "online": "オンライン",
     "downloading": "ダウンロード中",
     "downloadingPercent": "{{percent}}% ダウンロード中",
-    "waitingForJoin": "Waiting for someone to join"
+    "waitingForJoin": "Waiting for someone to join",
+    "peerJoinedHint": "{{name}} joined",
+    "pairedToast": "Paired with {{name}}"
   },
   "connection": {
     "placeholder": "安全なキーを生成中…",
@@ -55,7 +57,9 @@
     "scanToConnect": "スキャンして接続",
     "orScan": "またはスキャン",
     "generating": "生成中…",
-    "waitingForConnection": "接続を待機中…"
+    "waitingForConnection": "接続を待機中…",
+    "copyCode": "Copy code",
+    "qrCode": "QR code"
   },
   "errors": {
     "folderUnsupported": "フォルダはまだ対応していません。ファイルのみ選択してください。",
@@ -74,7 +78,12 @@
     "completedDone_other": "{{count}} 個完了",
     "devices": "デバイス",
     "connectedCount_one": "{{count}} 台接続済み",
-    "connectedCount_other": "{{count}} 台接続済み"
+    "connectedCount_other": "{{count}} 台接続済み",
+    "pair": "Pair",
+    "requested": "Requested…",
+    "invite": "Invite",
+    "inviting": "Inviting…",
+    "sent": "Sent"
   },
   "dropzone": {
     "addMoreDescription": "またはクリックして<link>さらに追加</link>",

@@ -43,7 +43,9 @@
     "online": "在线",
     "downloading": "正在下载",
     "downloadingPercent": "正在下载 {{percent}}%",
-    "waitingForJoin": "Waiting for someone to join"
+    "waitingForJoin": "Waiting for someone to join",
+    "peerJoinedHint": "{{name}} joined",
+    "pairedToast": "Paired with {{name}}"
   },
   "connection": {
     "placeholder": "正在生成安全密钥...",
@@ -55,7 +57,9 @@
     "scanToConnect": "扫描以连接",
     "orScan": "或扫描",
     "generating": "正在生成…",
-    "waitingForConnection": "正在等待连接…"
+    "waitingForConnection": "正在等待连接…",
+    "copyCode": "Copy code",
+    "qrCode": "QR code"
   },
   "errors": {
     "folderUnsupported": "尚不支持文件夹。请仅选择文件。",
@@ -74,7 +78,12 @@
     "completedDone_other": "{{count}} 个已完成",
     "devices": "设备",
     "connectedCount_one": "{{count}} 台设备已连接",
-    "connectedCount_other": "{{count}} 台设备已连接"
+    "connectedCount_other": "{{count}} 台设备已连接",
+    "pair": "Pair",
+    "requested": "Requested…",
+    "invite": "Invite",
+    "inviting": "Inviting…",
+    "sent": "Sent"
   },
   "dropzone": {
     "addMoreDescription": "或点击<link>继续添加</link>",

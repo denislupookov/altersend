@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { RememberedPeer } from '@altersend/core'
 import { formatFileSize, formatRelativeTime, type InviteStatus, inviteStatusSubtitle } from '../format'
 import { forgetPeer, inviteDevice, requestPair, startSendSession } from '../transfer/commands'
@@ -127,7 +127,15 @@ function toInviteAction(st: InviteStatus | undefined): OfflineDeviceRow['action'
   return 'invite'
 }
 
-export function useShareViewModel(t: Translate): ShareViewModel {
+export interface ShareViewModelCallbacks {
+  onPeerJoined?: (peer: ConnectedDeviceRow) => void
+  onPeerPaired?: (peer: ConnectedDeviceRow) => void
+}
+
+export function useShareViewModel(
+  t: Translate,
+  callbacks: ShareViewModelCallbacks = {}
+): ShareViewModel {
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const connectionState = useTransferStore((s) => s.connectionState)
   const topic = useTransferStore((s) => s.topic) ?? ''
@@ -237,6 +245,27 @@ export function useShareViewModel(t: Translate): ShareViewModel {
   })
 
   const devices: DeviceRow[] = [...connectedRows, ...offlineRows]
+
+  const callbacksRef = useRef(callbacks)
+  callbacksRef.current = callbacks
+  const connectedPeerKeysRef = useRef<Set<string> | null>(null)
+  const prevPairActionsRef = useRef<Map<string, ConnectedDeviceRow['action']>>(new Map())
+  useEffect(() => {
+    const currentKeys = new Set(connectedRows.map((row) => row.peerKey))
+    const previousKeys = connectedPeerKeysRef.current
+    connectedPeerKeysRef.current = currentKeys
+    if (previousKeys) {
+      const joined = connectedRows.find((row) => !previousKeys.has(row.peerKey))
+      if (joined) callbacksRef.current.onPeerJoined?.(joined)
+    }
+    for (const row of connectedRows) {
+      const prevAction = prevPairActionsRef.current.get(row.peerKey)
+      if (prevAction === 'pair-requested' && row.action === 'pair-done') {
+        callbacksRef.current.onPeerPaired?.(row)
+      }
+    }
+    prevPairActionsRef.current = new Map(connectedRows.map((row) => [row.peerKey, row.action]))
+  }, [connectedRows])
 
   const pair = (peerKey: string) => {
     if (transferId) requestPair(transferId, peerKey)

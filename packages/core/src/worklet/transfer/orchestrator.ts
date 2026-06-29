@@ -57,6 +57,7 @@ import { DeviceIdentityStore, type DeviceIdentityDefaults, type DeviceSecretInit
 import { RememberedPeerStore } from '../peers/store'
 import type { RememberedPeer } from '../peers/remembered-peer'
 import { RememberCoordinator } from '../peers/remember-coordinator'
+import { RecognitionCoordinator } from '../peers/recognition-coordinator'
 import { DiscoveryCoordinator } from '../peers/discovery'
 import { PairingCoordinator } from '../peers/pairing-coordinator'
 
@@ -101,6 +102,7 @@ export class TransferOrchestrator implements TransferRPC {
 
   private readonly deviceIdentityStore: DeviceIdentityStore
   private readonly rememberedStore: RememberedPeerStore
+  private readonly recognition: RecognitionCoordinator
   private readonly remember: RememberCoordinator
   private readonly discovery: DiscoveryCoordinator
 
@@ -144,6 +146,15 @@ export class TransferOrchestrator implements TransferRPC {
       rememberedStore: this.rememberedStore,
       emit: (event) => this.emitIPC(event)
     })
+    
+    this.recognition = new RecognitionCoordinator({
+      deviceIdentityStore: this.deviceIdentityStore,
+      rememberedStore: this.rememberedStore,
+      sendTo: (peerKey, message) => this.swarm.sendTo(peerKey, message),
+      getHandshakeHash: (peerKey) => this.swarm.getHandshakeHash(peerKey),
+      emit: (event) => this.emitIPC(event)
+    })
+
     this.remember = new RememberCoordinator({
       deviceIdentityStore: this.deviceIdentityStore,
       rememberedStore: this.rememberedStore,
@@ -178,11 +189,11 @@ export class TransferOrchestrator implements TransferRPC {
     this.sendStatus('peer-connected', { peer: session.peerKey, peers: this.swarm.peerCount })
     if (this.activeTransfer) session.controlChannel.send(this.activeTransfer)
     if (this.activeTransferReady) session.controlChannel.send(this.activeTransferReady)
-    this.remember.onPeerConnected(session.peerKey)
+    this.recognition.onPeerConnected(session.peerKey)
   }
 
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply> {
-    return this.pairing.vote(input)
+    return this.remember.vote(input)
   }
 
   peersList(): Promise<RememberedPeer[]> {
@@ -209,6 +220,7 @@ export class TransferOrchestrator implements TransferRPC {
 
   private onPeerDisconnected(peerKey: string | null, remainingCount: number): void {
     if (peerKey) {
+      this.recognition.onPeerDisconnected(peerKey)
       this.remember.onPeerDisconnected(peerKey)
       this.sendStatus('peer-disconnected', { peer: peerKey, peers: remainingCount })
     }
@@ -216,6 +228,10 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   private onControlMessage(message: PeerControlMessage, session: PeerSession): void {
+    if (message.type === 'recognition') {
+      void this.recognition.handleRecognition(message, session.peerKey)
+      return
+    }
     if (message.type === 'pairing-info') {
       void this.remember.handlePairingInfo(message, session)
       return
@@ -454,6 +470,7 @@ export class TransferOrchestrator implements TransferRPC {
   async disconnect(): Promise<DisconnectReply> {
     this.suspended = true
     this.abortInFlight()
+    this.recognition.reset()
     this.remember.reset()
     try {
       this.activeTransfer = null
@@ -474,6 +491,7 @@ export class TransferOrchestrator implements TransferRPC {
 
   async closePeers(): Promise<void> {
     this.abortInFlight()
+    this.recognition.reset()
     this.remember.reset()
     this.currentTopic = null
     await this.swarm.endSession()
@@ -484,6 +502,7 @@ export class TransferOrchestrator implements TransferRPC {
 
     this.suspended = true
     this.abortInFlight()
+    this.recognition.reset()
     this.remember.reset()
 
     await tryAsync('discovery.stop (suspend)', () => this.discovery.stop())
@@ -508,6 +527,7 @@ export class TransferOrchestrator implements TransferRPC {
 
   async destroy(): Promise<void> {
     this.abortInFlight()
+    this.recognition.reset()
     this.remember.reset()
     this.activeTransfer = null
     this.activeTransferReady = null

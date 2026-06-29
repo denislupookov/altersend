@@ -1,10 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
-import { CheckIcon } from '@altersend/components/icons'
+import { AlertCircleIcon, CheckIcon } from '@altersend/components/icons'
 
 export interface ShowToastInput {
   title: string
   hint?: string
   durationMs?: number
+  variant?: 'success' | 'error'
 }
 
 interface ToastPayload extends ShowToastInput {
@@ -54,8 +55,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             className='pointer-events-auto flex max-w-[420px] items-center gap-3 rounded-[12px] border border-border-primary bg-surface-primary px-4 py-3 shadow-[0_12px_32px_color-mix(in_oklab,var(--as-color-scrim)_45%,transparent)]'
             style={{ animation: 'as-toast-in 220ms cubic-bezier(0.16, 1, 0.3, 1)' }}
           >
-            <span className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-success text-text-primary'>
-              <CheckIcon size={14} />
+            <span className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-text-primary ${current.variant === 'error' ? 'bg-danger' : 'bg-success'}`}>
+              {current.variant === 'error' ? <AlertCircleIcon size={11} /> : <CheckIcon size={11} />}
             </span>
             <div className='flex flex-col gap-0.5'>
               <span className='text-[13px] font-semibold text-text-primary'>{current.title}</span>

@@ -43,7 +43,9 @@
     "online": "網路",
     "downloading": "正在下載",
     "downloadingPercent": "正在下載 {{percent}}%",
-    "waitingForJoin": "Waiting for someone to join"
+    "waitingForJoin": "Waiting for someone to join",
+    "peerJoinedHint": "{{name}} joined",
+    "pairedToast": "Paired with {{name}}"
   },
   "connection": {
     "placeholder": "正在生成安全密钥...",
@@ -55,7 +57,9 @@
     "scanToConnect": "掃描以連線",
     "orScan": "或掃描",
     "generating": "產生中…",
-    "waitingForConnection": "正在等待連線…"
+    "waitingForConnection": "正在等待連線…",
+    "copyCode": "Copy code",
+    "qrCode": "QR code"
   },
   "errors": {
     "folderUnsupported": "尚不支持文件夹。请仅选择文件。",
@@ -74,7 +78,12 @@
     "completedDone_other": "{{count}} 個已完成",
     "devices": "裝置",
     "connectedCount_one": "{{count}} 台裝置已連線",
-    "connectedCount_other": "{{count}} 台裝置已連線"
+    "connectedCount_other": "{{count}} 台裝置已連線",
+    "pair": "Pair",
+    "requested": "Requested…",
+    "invite": "Invite",
+    "inviting": "Inviting…",
+    "sent": "Sent"
   },
   "dropzone": {
     "addMoreDescription": "或點擊<link>繼續新增</link>",

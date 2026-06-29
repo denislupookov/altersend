@@ -36,7 +36,7 @@ export class PairingCoordinator {
         onReady: () => Promise.resolve(),
         onReplicate: () => {},
         onPeerConnected: (session) => this.onPeerConnected(session),
-        onPeerDisconnected: () => {},
+        onPeerDisconnected: (peerKey) => this.onPeerDisconnected(peerKey),
         onControlMessage: (message, session) => this.onControlMessage(message, session)
       },
       { identityStore: deps.identityStore }
@@ -56,7 +56,7 @@ export class PairingCoordinator {
   async host(): Promise<HostReply> {
     const topic = this.swarm.generateKey()
     this.topic = topic
-    this.isMine = true
+    this.isMine = false
     return { topic }
   }
 
@@ -91,6 +91,10 @@ export class PairingCoordinator {
         isMine: this.isMine
       })
     }
+  }
+
+  private onPeerDisconnected(peerKey: string | null): void {
+    if (peerKey) this.remember.onPeerDisconnected(peerKey)
   }
 
   private onControlMessage(message: PeerControlMessage, session: PeerSession): void {

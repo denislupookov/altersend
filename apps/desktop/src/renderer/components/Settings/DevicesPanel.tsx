@@ -16,7 +16,7 @@ interface DevicesPanelProps {
 }
 
 export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
-  const { t } = useTranslation(['settings'])
+  const { t } = useTranslation(['settings', 'common'])
   const { theme } = useTheme()
   const c = theme.colors
   const toast = useToast()
@@ -34,7 +34,7 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
       setJoinOpen(false)
       toast.show({ title: t('settings:pairing.devicePaired') })
     },
-    onFailed: () => toast.show({ title: t('settings:pairing.pairFailed') })
+    onFailed: () => toast.show({ title: t('settings:pairing.pairFailed'), variant: 'error' })
   })
 
   useEffect(() => {
@@ -54,14 +54,7 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
         <Button variant='ghost' size='sm' icon={<ArrowLeftIcon size={13} />} onClick={onBack}>
           {t('settings:pairing.pairedDevices')}
         </Button>
-        <button
-          type='button'
-          onClick={onClose}
-          className='inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-[8px] border-none bg-transparent p-0 text-text-primary transition-colors hover:bg-surface-secondary'
-          style={{ appearance: 'none' }}
-        >
-          <CloseIcon size={14} />
-        </button>
+        <Button variant='ghost' size='sm' iconOnly aria-label={t('common:actions.close')} icon={<CloseIcon size={14} />} onClick={onClose} />
       </div>
 
       <div className='flex-1 overflow-y-auto'>
@@ -89,19 +82,20 @@ export function DevicesPanel({ onBack, onClose }: DevicesPanelProps) {
                         }
                       >
                         {(close) => (
-                          <button
-                            type='button'
-                            className='flex w-full cursor-pointer appearance-none items-center gap-2.5 border-0 bg-transparent px-3.5 py-2.5 text-[13px] font-medium text-danger transition-colors hover:bg-surface-secondary'
+                          <Button
+                            variant='danger'
+                            size='sm'
+                            width='full'
+                            icon={<TrashIcon size={14} />}
                             onClick={() => {
                               close()
                               forgetPeer(peer.remoteDevicePubkey)
-                                .then((removed) => toast.show({ title: t(removed ? 'settings:pairing.deviceRemoved' : 'settings:pairing.removeFailed') }))
-                                .catch(() => toast.show({ title: t('settings:pairing.removeFailed') }))
+                                .then((removed) => toast.show(removed ? { title: t('settings:pairing.deviceRemoved') } : { title: t('settings:pairing.removeFailed'), variant: 'error' }))
+                                .catch(() => toast.show({ title: t('settings:pairing.removeFailed'), variant: 'error' }))
                             }}
                           >
-                            <TrashIcon size={13} />
                             {t('settings:pairing.removeDevice')}
-                          </button>
+                          </Button>
                         )}
                       </Popover>
                     }

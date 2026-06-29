@@ -3,14 +3,23 @@ import { buildJoinUrl, formatFileSize, useShareViewModel } from '@altersend/doma
 import { Button, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
 import { ChevronsUpDownIcon, deviceIcon, FolderIcon, QrCodeIcon, ShareIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { Popover, QRCode, QRModal } from '../../components'
+import { Popover, QRCode, QRModal, useToast } from '../../components'
 import { TopicCopyButton } from './TopicCopyButton'
 
 export function ShareView() {
   const { t } = useTranslation(['send', 'common'])
   const { theme } = useTheme()
   const c = theme.colors
-  const vm = useShareViewModel(t)
+  const toast = useToast()
+  const vm = useShareViewModel(t, {
+    onPeerJoined: (peer) =>
+      toast.show({
+        title: t('send:status.peerConnected'),
+        hint: peer.isKnown ? t('send:status.peerJoinedHint', { name: peer.name }) : undefined,
+        durationMs: 2500
+      }),
+    onPeerPaired: (peer) => toast.show({ title: t('send:status.pairedToast', { name: peer.name }), durationMs: 2500 })
+  })
   const [isQrOpen, setIsQrOpen] = useState(false)
   const hasConnectedDevices = vm.connectedCount > 0
 
@@ -55,9 +64,16 @@ export function ShareView() {
         {hasConnectedDevices ? (
           <div className='flex w-full gap-2'>
             <TopicCopyButton topic={vm.topic} copied={vm.isCopied} onCopy={() => void copyTopic()} placeholder={t('send:connection.placeholder')} />
-            <Button variant='secondary' aria-label={t('send:connection.showQrLabel')} onClick={() => setIsQrOpen(true)}>
-              <QrCodeIcon size={18} />
-            </Button>
+            <div className='flex aspect-square shrink-0'>
+              <Button
+                variant='secondary'
+                iconOnly
+                width='full'
+                aria-label={t('send:connection.showQrLabel')}
+                icon={<QrCodeIcon size={18} />}
+                onClick={() => setIsQrOpen(true)}
+              />
+            </div>
           </div>
         ) : (
           <div className='flex flex-col gap-5'>
@@ -118,8 +134,8 @@ export function ShareView() {
                       subtitleTone={row.subtitleTone}
                       progressPercent={row.progressPercent}
                       trailing={
-                        row.action === 'pair' ? <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>Pair</Button>
-                        : row.action === 'pair-requested' ? <span className='text-[12px] text-text-muted'>Requested…</span>
+                        row.action === 'pair' ? <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>{t('send:peer.pair')}</Button>
+                        : row.action === 'pair-requested' ? <Button size='sm' variant='secondary' pill loading>{t('send:peer.requested')}</Button>
                         : undefined
                       }
                       isLast={isLast}
@@ -128,7 +144,7 @@ export function ShareView() {
                 }
                 const PeerIcon = deviceIcon(row.deviceType)
                 const isActive = row.action === 'inviting' || row.action === 'invite-sent'
-                const label = row.action === 'inviting' ? 'Inviting…' : row.action === 'invite-sent' ? 'Sent' : 'Invite'
+                const label = row.action === 'inviting' ? t('send:peer.inviting') : row.action === 'invite-sent' ? t('send:peer.sent') : t('send:peer.invite')
                 return (
                   <LinkRow
                     key={row.peerKey}
@@ -140,7 +156,7 @@ export function ShareView() {
                     isActive={isActive}
                     onPress={() => void vm.invite(row.peerKey)}
                     trailing={
-                      <Button disabled={isActive} onClick={() => void vm.invite(row.peerKey)} size='sm' variant='primary' pill>
+                      <Button disabled={isActive} loading={isActive} onClick={() => void vm.invite(row.peerKey)} size='sm' variant='primary' pill>
                         {label}
                       </Button>
                     }

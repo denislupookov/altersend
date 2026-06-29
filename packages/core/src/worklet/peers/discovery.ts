@@ -26,6 +26,7 @@ export interface DiscoveryDeps {
   rememberedStore: {
     list(): Promise<RememberedPeer[]>
     get(pubkeyHex: string): Promise<RememberedPeer | null>
+    touch(pubkeyHex: string, lastSeenAt: number): Promise<RememberedPeer | null>
   }
   emit: (event: TransferIPCMessage) => void
   createSwarm?: CreateDiscoverySwarm
@@ -214,6 +215,7 @@ export class DiscoveryCoordinator {
     const session = { socket, control }
     this.sessions.set(remotePubkey, session)
     this.resolveSessionWaiters(remotePubkey, session)
+    void this.deps.rememberedStore.touch(remotePubkey, Date.now()).catch(() => {})
 
     const drop = () => {
       if (this.sessions.get(remotePubkey)?.socket === socket) this.sessions.delete(remotePubkey)

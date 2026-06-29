@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import { buildInviteText, formatFileSize, useShareViewModel, type ConnectedDeviceRow } from '@altersend/domain'
+import { buildInviteText, formatFileSize, useShareViewModel } from '@altersend/domain'
 import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
 import { CheckIcon, ChevronsUpDownIcon, CopyIcon, deviceIcon, FolderIcon, QrCodeIcon, ShareIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
@@ -16,33 +16,19 @@ export function ShareView() {
   const { t } = useTranslation(['send', 'common', 'settings'])
   const { theme } = useTheme()
   const c = theme.colors
-  const vm = useShareViewModel(t)
+  const toast = useToast()
+  const vm = useShareViewModel(t, {
+    onPeerJoined: (peer) =>
+      toast.show({
+        title: t('send:status.peerConnected'),
+        hint: peer.isKnown ? t('send:status.peerJoinedHint', { name: peer.name }) : undefined,
+        durationMs: 2500
+      }),
+    onPeerPaired: (peer) => toast.show({ title: t('send:status.pairedToast', { name: peer.name }), durationMs: 2500 })
+  })
   const [isFilesSheetOpen, setIsFilesSheetOpen] = useState(false)
   const [isQrOpen, setIsQrOpen] = useState(false)
   const [actionsTarget, setActionsTarget] = useState<{ peerKey: string; name: string } | null>(null)
-  const toast = useToast()
-  const connectedPeerKeysRef = useRef<Set<string> | null>(null)
-  const connectedRows = useMemo(
-    () => vm.devices.filter((row): row is ConnectedDeviceRow => row.kind === 'connected'),
-    [vm.devices]
-  )
-
-  useEffect(() => {
-    const currentKeys = new Set(connectedRows.map((row) => row.peerKey))
-    const previousKeys = connectedPeerKeysRef.current
-    connectedPeerKeysRef.current = currentKeys
-
-    if (!previousKeys) return
-
-    const joinedPeer = connectedRows.find((row) => !previousKeys.has(row.peerKey))
-    if (!joinedPeer) return
-
-    toast.show({
-      title: t('send:status.peerConnected'),
-      hint: joinedPeer.isKnown ? `${joinedPeer.name} joined` : undefined,
-      durationMs: 2500
-    })
-  }, [connectedRows, t, toast])
 
   const copyTopic = async () => {
     if (!vm.topic) return
@@ -72,13 +58,13 @@ export function ShareView() {
         {vm.hasDevices ? (
           <View style={styles.tiles}>
             <View style={styles.tile}>
-              <Button variant='secondary' width='full' icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />} onClick={() => void copyTopic()}>
-                {vm.isCopied ? 'Copied' : 'Copy code'}
+              <Button variant='secondary' icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />} onClick={() => void copyTopic()}>
+                {vm.isCopied ? t('common:actions.copied') : t('send:connection.copyCode')}
               </Button>
             </View>
             <View style={styles.tile}>
-              <Button variant='secondary' width='full' icon={<QrCodeIcon size={16} />} onClick={() => setIsQrOpen(true)}>
-                QR code
+              <Button variant='secondary' icon={<QrCodeIcon size={16} />} onClick={() => setIsQrOpen(true)}>
+                {t('send:connection.qrCode')}
               </Button>
             </View>
           </View>
@@ -112,7 +98,7 @@ export function ShareView() {
             <LinkCard>
               <LinkRow
                 icon={<FolderIcon size={20} color={c.colorTextSecondary} />}
-                label={vm.files.length === 1 ? '1 file' : `${vm.files.length} files`}
+                label={t('common:files.count', { count: vm.files.length })}
                 subtitle={formatFileSize(vm.totalSize)}
                 onPress={() => setIsFilesSheetOpen(true)}
                 trailing={<ChevronsUpDownIcon size={18} color={c.colorTextMuted} />}
@@ -128,7 +114,7 @@ export function ShareView() {
               <Text style={[styles.sectionLabel, { color: c.colorTextSecondary }]}>{t('send:peer.devices')}</Text>
               {vm.connectedCount > 0 && (
                 <Text style={[styles.sectionCount, { color: c.colorTextMuted }]}>
-                  {vm.connectedCount === 1 ? '1 connected' : `${vm.connectedCount} connected`}
+                  {t('send:peer.connectedCount', { count: vm.connectedCount })}
                 </Text>
               )}
             </View>
@@ -152,7 +138,11 @@ export function ShareView() {
                           subtitle={row.subtitle}
                           subtitleTone={row.subtitleTone}
                           progressPercent={row.progressPercent}
-                          trailing={row.action === 'pair' ? <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>Pair</Button> : null}
+                          trailing={
+                            row.action === 'pair' ? <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>{t('send:peer.pair')}</Button>
+                            : row.action === 'pair-requested' ? <Button size='sm' variant='secondary' pill loading>{t('send:peer.requested')}</Button>
+                            : null
+                          }
                           isLast={isLast}
                         />
                       </Pressable>
@@ -160,7 +150,7 @@ export function ShareView() {
                   }
                   const PeerIcon = deviceIcon(row.deviceType)
                   const isActive = row.action === 'inviting' || row.action === 'invite-sent'
-                  const label = row.action === 'inviting' ? 'Inviting…' : row.action === 'invite-sent' ? 'Sent' : 'Invite'
+                  const label = row.action === 'inviting' ? t('send:peer.inviting') : row.action === 'invite-sent' ? t('send:peer.sent') : t('send:peer.invite')
                   return (
                     <Pressable key={row.peerKey} onLongPress={openActions}>
                       <LinkRow
@@ -171,7 +161,7 @@ export function ShareView() {
                         isActive={isActive}
                         onPress={() => void vm.invite(row.peerKey)}
                         trailing={
-                          <Button disabled={isActive} onClick={() => void vm.invite(row.peerKey)} size='sm' variant='primary' pill>
+                          <Button disabled={isActive} loading={isActive} onClick={() => void vm.invite(row.peerKey)} size='sm' variant='primary' pill>
                             {label}
                           </Button>
                         }

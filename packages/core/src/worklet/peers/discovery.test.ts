@@ -52,6 +52,7 @@ function setup(peers: RememberedPeer[] = []) {
   const emits: TransferIPCMessage[] = []
   const joins: Uint8Array[] = []
   const destroy = vi.fn(async () => {})
+  const touch = vi.fn(async () => null)
   let firewall: ((pk: Uint8Array) => boolean) | null = null
   let onConnection: ((socket: PeerSocket, info: PeerInfo) => void) | null = null
 
@@ -71,7 +72,8 @@ function setup(peers: RememberedPeer[] = []) {
     deviceIdentityStore: { getOrCreate: async () => makeIdentity() },
     rememberedStore: {
       list: async () => peers,
-      get: async (pk) => peers.find((p) => p.remoteDevicePubkey === pk) ?? null
+      get: async (pk) => peers.find((p) => p.remoteDevicePubkey === pk) ?? null,
+      touch
     },
     emit: (e) => emits.push(e),
     createSwarm: (opts) => {
@@ -87,7 +89,7 @@ function setup(peers: RememberedPeer[] = []) {
     return socket
   }
 
-  return { coordinator, emits, joins, destroy, connect, getFirewall: () => firewall }
+  return { coordinator, emits, joins, destroy, touch, connect, getFirewall: () => firewall }
 }
 
 describe('DiscoveryCoordinator', () => {
@@ -108,12 +110,22 @@ describe('DiscoveryCoordinator', () => {
   })
 
   it('destroys connections from unknown peers without opening a channel', async () => {
-    const { coordinator, connect } = setup([])
+    const { coordinator, connect, touch } = setup([])
     await coordinator.start()
 
     const socket = connect(hex(crypto.randomBytes(32)))
     expect(socket.destroy).toHaveBeenCalled()
     expect(channels).toHaveLength(0)
+    expect(touch).not.toHaveBeenCalled()
+  })
+
+  it('updates lastSeenAt when a remembered peer connects', async () => {
+    const peer = makePeer()
+    const { coordinator, connect, touch } = setup([peer])
+    await coordinator.start()
+
+    connect(peer.remoteDevicePubkey)
+    expect(touch).toHaveBeenCalledWith(peer.remoteDevicePubkey, expect.any(Number))
   })
 
   it('invite resolves and sends once the remembered peer connects', async () => {

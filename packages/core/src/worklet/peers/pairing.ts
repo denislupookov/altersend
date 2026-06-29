@@ -1,7 +1,7 @@
 import b4a from 'b4a'
 import crypto from 'hypercore-crypto'
 import type { DeviceIdentity, DeviceType } from '../identity/device-identity-store'
-import type { PairingInfo } from '../transfer/control-channel'
+import type { PairingInfo, Recognition } from '../transfer/control-channel'
 import { deriveRendezvousTopic, DEVICE_PUBKEY_LEN } from './rendezvous'
 
 export interface DeviceCapabilities {
@@ -40,6 +40,27 @@ export function verifyPairingInfo(message: PairingInfo, handshakeHash: Uint8Arra
     if (devicePubkey.byteLength !== DEVICE_PUBKEY_LEN || signature.byteLength !== SIGNATURE_LEN) {
       return false
     }
+    return crypto.verify(deviceAuthChallenge(handshakeHash), signature, devicePubkey)
+  } catch {
+    return false
+  }
+}
+
+export function buildRecognition(identity: DeviceIdentity, handshakeHash: Uint8Array): Recognition {
+  return {
+    type: 'recognition',
+    signature: b4a.toString(crypto.sign(deviceAuthChallenge(handshakeHash), identity.secretKey), 'hex')
+  }
+}
+
+export function verifyRecognition(
+  message: Recognition,
+  handshakeHash: Uint8Array,
+  devicePubkey: Uint8Array
+): boolean {
+  try {
+    const signature = b4a.from(message.signature, 'hex')
+    if (signature.byteLength !== SIGNATURE_LEN) return false
     return crypto.verify(deviceAuthChallenge(handshakeHash), signature, devicePubkey)
   } catch {
     return false

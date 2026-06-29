@@ -11,6 +11,7 @@ import {
   type FileOffer,
   type PairingInfo,
   type RememberVote,
+  type Recognition,
   type PeerControlMessage,
   type TransferReady,
   type TransferStart
@@ -135,6 +136,10 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
         (v.vote === 'remember' || v.vote === 'no') &&
         typeof v.isMine === 'boolean'
       )
+    }
+    case 'recognition': {
+      const v = x as Partial<Recognition>
+      return isValidSignatureHex(v.signature)
     }
     case 'invite': {
       const v = x as Partial<DeviceInvite>

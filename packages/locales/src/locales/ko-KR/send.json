@@ -43,7 +43,9 @@
     "online": "온라인",
     "downloading": "다운로드 중",
     "downloadingPercent": "{{percent}}% 다운로드 중",
-    "waitingForJoin": "Waiting for someone to join"
+    "waitingForJoin": "Waiting for someone to join",
+    "peerJoinedHint": "{{name}} joined",
+    "pairedToast": "Paired with {{name}}"
   },
   "connection": {
     "placeholder": "보안 키 생성 중…",
@@ -55,7 +57,9 @@
     "scanToConnect": "스캔하여 연결",
     "orScan": "또는 스캔",
     "generating": "생성 중…",
-    "waitingForConnection": "연결을 기다리는 중…"
+    "waitingForConnection": "연결을 기다리는 중…",
+    "copyCode": "Copy code",
+    "qrCode": "QR code"
   },
   "errors": {
     "folderUnsupported": "폴더는 아직 지원되지 않습니다. 파일만 선택하세요.",
@@ -74,7 +78,12 @@
     "completedDone_other": "{{count}}개 완료",
     "devices": "장치",
     "connectedCount_one": "{{count}}대 연결됨",
-    "connectedCount_other": "{{count}}대 연결됨"
+    "connectedCount_other": "{{count}}대 연결됨",
+    "pair": "Pair",
+    "requested": "Requested…",
+    "invite": "Invite",
+    "inviting": "Inviting…",
+    "sent": "Sent"
   },
   "dropzone": {
     "addMoreDescription": "또는 클릭하여 <link>더 추가</link>",

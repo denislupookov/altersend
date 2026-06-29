@@ -79,6 +79,11 @@ export interface RememberVote {
   isMine: boolean
 }
 
+export interface Recognition {
+  type: 'recognition'
+  signature: string
+}
+
 export interface DeviceInvite {
   type: 'invite'
   displayName: string
@@ -103,6 +108,7 @@ export type PeerControlMessage =
   | DownloadFailed
   | PairingInfo
   | RememberVote
+  | Recognition
   | DeviceInvite
   | DeviceInviteResponse
 

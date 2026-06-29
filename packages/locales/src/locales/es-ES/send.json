@@ -43,7 +43,9 @@
     "online": "En línea",
     "downloading": "Descargando",
     "downloadingPercent": "Descargando {{percent}}%",
-    "waitingForJoin": "Waiting for someone to join"
+    "waitingForJoin": "Waiting for someone to join",
+    "peerJoinedHint": "{{name}} joined",
+    "pairedToast": "Paired with {{name}}"
   },
   "connection": {
     "placeholder": "Generando clave segura…",
@@ -55,7 +57,9 @@
     "scanToConnect": "Escanea para conectar",
     "orScan": "o escanea",
     "generating": "Generando…",
-    "waitingForConnection": "Esperando una conexión…"
+    "waitingForConnection": "Esperando una conexión…",
+    "copyCode": "Copy code",
+    "qrCode": "QR code"
   },
   "errors": {
     "folderUnsupported": "Las carpetas aún no son compatibles. Seleccione solo archivos.",
@@ -74,7 +78,12 @@
     "completedDone_other": "{{count}} completados",
     "devices": "Dispositivos",
     "connectedCount_one": "{{count}} conectado",
-    "connectedCount_other": "{{count}} conectados"
+    "connectedCount_other": "{{count}} conectados",
+    "pair": "Pair",
+    "requested": "Requested…",
+    "invite": "Invite",
+    "inviting": "Inviting…",
+    "sent": "Sent"
   },
   "dropzone": {
     "addMoreDescription": "o haz clic para <link>añadir más</link>",
