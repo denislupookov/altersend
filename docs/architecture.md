@@ -52,12 +52,12 @@ The protocol layer. Runs entirely inside a **Bare worklet** — a lightweight JS
 Key modules:
 
 - `worklet/index.ts` — entrypoint; wires Bare IPC → RPC server → orchestrator
-- `worklet/transfer/orchestrator.ts` — top-level coordinator; owns session lifecycle + state and composes the transfer and remembered-device subsystems below
+- `worklet/transfer/orchestrator.ts` — top-level coordinator, owns session lifecycle + state and composes the transfer and remembered-device subsystems below
 - `worklet/transfer/swarm.ts` — `TransferSwarm`: Hyperswarm peer connectivity, Corestore replication, and per-peer control channels
 - `worklet/transfer/storage.ts` — `TransferStorage`: the ephemeral Corestore + Hyperdrive backing a session, plus the sender/receiver bound to them (wiped on every disconnect)
 - `worklet/transfer/sender.ts` — `TransferSender`: stages local files into the writable Hyperdrive (sender path)
 - `worklet/transfer/receiver.ts` — `TransferReceiver`: writes replicated remote Hyperdrive contents to disk (receiver path)
-- `worklet/identity/device-identity-store.ts` — `DeviceIdentityStore`: the stable device keypair; its secret is sealed in the OS keychain and injected at startup (see [Remembered devices & pairing](#remembered-devices--pairing))
+- `worklet/identity/device-identity-store.ts` — `DeviceIdentityStore`: the stable device keypair, its secret is sealed in the OS keychain and injected at startup (see [Remembered devices & pairing](#remembered-devices--pairing))
 - `worklet/peers/store.ts` — `RememberedPeerStore`: persistent (HyperDB) list of paired devices
 - `worklet/peers/pairing-coordinator.ts` — `PairingCoordinator`: the dedicated pairing swarm + QR / code pairing handshake
 - `worklet/peers/discovery.ts` — `DiscoveryCoordinator`: background swarm to remembered devices (firewalled to known device keys) + code-free invites
@@ -84,7 +84,7 @@ Shared React components using **React Strict DOM** (works on both web and native
 
 ### `packages/locales`
 
-Shared internationalization package used by desktop and mobile. It owns supported locale metadata, locale preference resolution, i18next initialization, and bundled translation catalogs. The app-facing language UI is currently release-gated by `isMultiLangEnabled = false`; while disabled, desktop and mobile hide language pickers and force the active locale to `en-US`. See [i18n.md](i18n.md) for catalog structure and translation workflow.
+Shared internationalization package used by desktop and mobile. It owns supported locale metadata, locale preference resolution, i18next initialization, and bundled translation catalogs. Desktop and mobile let users pick from 12 supported locales; the active locale resolves from the user's preference, falling back to the system locale and then `en-US`. See [i18n.md](i18n.md) for catalog structure and translation workflow.
 
 ## Transfer flow
 
