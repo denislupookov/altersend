@@ -85,6 +85,14 @@ UI ────────────► commands ──► dispatchToTransfer
 - `shareFiles(paths)` / `downloadFiles(files)`
 - `addSelectedFiles(files)` / `removeSelectedFile(path)` / `continueShare(files)` / `clearSenderFlow()`
 
+**Remembered devices (pairing)**
+
+- `hostPairingSession()` / `joinPairingSession(topic)` — pair via QR / code
+- `requestPair(transferId, peerKey)` / `rememberVote(input)` — pair a connected peer
+- `inviteDevice(input)` / `respondToInvite(input)` — code-free invites to remembered devices
+- `loadPeers()` / `forgetPeer(pubkey)` — list / remove remembered devices
+- `usePairingSession(options)` — React hook driving the pairing & devices UI
+
 **Effects** (mobile-only setup)
 
 - `startPeerWatchdog()` — fires `peer_unreachable` after a connection grace period.

@@ -1,14 +1,14 @@
 <div align="center">
   <img src="assets/altersend-logo.png" alt="AlterSend" width="380" />
 
-  ### File transfer without the cloud.
+### File transfer without the cloud.
 
-  Files go directly between your devices — end-to-end encrypted, no accounts, no servers, no limits.
+Files go directly between your devices — end-to-end encrypted, no accounts, no servers, no limits.
 
-  [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-  [![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20iOS%20%7C%20Android-lightgrey)](#download)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20iOS%20%7C%20Android-lightgrey)](#download)
 
-  [Website](https://altersend.com) · [Download](https://altersend.com/download) · [Discord](https://discord.gg/R6tmrk85Vx)
+[Website](https://altersend.com) · [Download](https://altersend.com/download) · [Discord](https://discord.gg/R6tmrk85Vx)
 
   <br/>
 
@@ -51,6 +51,7 @@ Why use WeTransfer, Dropbox, or Google Drive when you can send files directly �
 - **No servers** — files transfer directly device-to-device, nothing stored in the cloud
 - **End-to-end encrypted** — only your devices can read your files, always
 - **No file size limit** — send a 100 MB photo or 500 GB video archive, same experience
+- **Pair your devices** — pair a device once, then send to it without scanning or typing a code each time
 - **Cross-platform** — macOS, Windows, Linux, iOS, Android
 - **Works everywhere** — local network or across continents, same code path
 - **Open source** — Apache-2.0, audit every line yourself
@@ -59,14 +60,13 @@ Why use WeTransfer, Dropbox, or Google Drive when you can send files directly �
 
 Get the latest release from [altersend.com/download](https://altersend.com/download) or directly from the table below.
 
-| Platform | Download |
-|---|---|
-| **Windows** | [Microsoft Store](https://apps.microsoft.com/detail/9NHLK9GLVDLW) (signed) · [EXE installer](https://github.com/denislupookov/altersend/releases/latest) |
-| **macOS** | [DMG — Apple Silicon](https://github.com/denislupookov/altersend/releases/latest) · [DMG — Intel](https://github.com/denislupookov/altersend/releases/latest) |
-| **Linux** | [AppImage](https://github.com/denislupookov/altersend/releases/latest) |
-| **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.altersend.mobile) · [APK](https://github.com/denislupookov/altersend/releases/latest) |
-| **iOS** | [App Store](https://apps.apple.com/us/app/altersend-file-transfer/id6772496271) |
-
+| Platform    | Download                                                                                                                                                      |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Windows** | [Microsoft Store](https://apps.microsoft.com/detail/9NHLK9GLVDLW) (signed) · [EXE installer](https://github.com/denislupookov/altersend/releases/latest)      |
+| **macOS**   | [DMG — Apple Silicon](https://github.com/denislupookov/altersend/releases/latest) · [DMG — Intel](https://github.com/denislupookov/altersend/releases/latest) |
+| **Linux**   | [AppImage](https://github.com/denislupookov/altersend/releases/latest)                                                                                        |
+| **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.altersend.mobile) · [APK](https://github.com/denislupookov/altersend/releases/latest)         |
+| **iOS**     | [App Store](https://apps.apple.com/us/app/altersend-file-transfer/id6772496271)                                                                               |
 
 > **Windows `.exe`** — not yet signed, so Windows will show "Windows protected your PC" on first run. Click **More info → Run anyway** to install. The Microsoft Store version is signed and avoids this warning.
 
@@ -89,6 +89,8 @@ Get the latest release from [altersend.com/download](https://altersend.com/downl
 ```
 
 Discovery uses [Hyperswarm](https://github.com/holepunchto/hyperswarm) (a DHT) — once peers find each other, no central infrastructure is involved. Transfers run over [Hyperdrive](https://github.com/holepunchto/hyperdrive): encrypted, content-addressed, resumable.
+
+**Pair once, skip the code.** You can pair devices you own so future transfers go straight through — no code to scan or type. Pairing only stores a public device key, the secret stays in your OS keychain, and a paired device is recognized without exposing your identity to anyone else. See [docs/architecture.md](docs/architecture.md#remembered-devices--pairing) for the full design.
 
 ---
 

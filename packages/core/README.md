@@ -20,8 +20,12 @@ This package has two halves:
 │ Bare worklet (this pkg)     │
 │   - TransferOrchestrator    │
 │   - TransferSwarm (DHT)     │
-│   - TransferSender          │
-│   - TransferReceiver        │
+│   - TransferStorage         │
+│   - Sender / Receiver       │
+│   - Pairing / Discovery /   │
+│     Recognition / Remember  │
+│   - DeviceIdentityStore     │
+│   - RememberedPeerStore     │
 │   - PeerControlChannel      │
 └─────────────────────────────┘
 ```
@@ -46,6 +50,15 @@ await client.shareFiles(['/path/to/file']);  // stage + announce files
 await client.downloadFiles([...]);           // pull from a peer
 await client.disconnect();                   // tear down + wipe storage
 await client.closePeers();                   // tear down without ending session
+
+await client.initDeviceSecret({ ... });      // inject the keychain-sealed device secret
+await client.hostPairing();                  // open the pairing swarm (show a QR)
+await client.joinPairing(topicHex);          // join a pairing code (scan a QR)
+await client.rememberVote({ ... });          // vote to remember a connected peer
+await client.peersList();                    // list remembered devices
+await client.inviteDevice({ ... });          // invite a remembered device (no code)
+await client.respondToInvite({ ... });       // accept / decline an incoming invite
+await client.forgetPeer(devicePubkeyHex);    // remove a remembered device
 ```
 
 ### Wire protocol
@@ -77,7 +90,7 @@ The worklet exports nothing — it sets up RPC over IPC and handles `SIGTERM`, `
 
 ## Storage
 
-The corestore is wiped on every worklet launch — transfers do not resume across app restarts. This is an intentional simplification; persistent identity and resumable transfers are planned for a future release.
+The transfer corestore (the Hyperdrive working copy) is wiped on every disconnect — transfers do not resume across sessions, by design. What **does** persist: the device keypair (secret sealed in the OS keychain and injected via `initDeviceSecret`; only the public key + metadata hit disk) and the remembered-peer list (`RememberedPeerStore`, on HyperDB). Resumable transfers remain out of scope.
 
 ## Security
 
@@ -88,7 +101,7 @@ Input that comes from peers (control messages) and from the renderer (download r
 - Per-file size cap (50 GB) and per-download timeout (30 min)
 - Hyperdrive entry signature check against wire-claimed size — sender can't lie about file size
 
-**Out of scope:** no rate limit on inbound peer control messages. A connected peer is already paired (we shared a topic with them), so a flood of `download-progress` events is treated as a connectivity nuisance, not a security boundary. If your threat model includes hostile paired peers, gate or throttle in the host before forwarding to the renderer.
+**Out of scope:** no rate limit on inbound peer control messages. A connected peer already shares our transfer topic, so a flood of `download-progress` events is treated as a connectivity nuisance, not a security boundary. If your threat model includes hostile paired peers, gate or throttle in the host before forwarding to the renderer.
 
 ## Building
 
