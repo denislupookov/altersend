@@ -79,8 +79,12 @@ export default function SettingsScreen() {
           </Text>
           <LinkCard>
             <LinkRow
-              label='Paired devices'
-              subtitle={peers.length === 0 ? 'No devices yet' : `${peers.length} paired`}
+              label={t('settings:pairing.pairedDevices')}
+              subtitle={
+                peers.length === 0
+                  ? t('settings:rows.noDevices')
+                  : t('settings:rows.pairedCount', { count: peers.length })
+              }
               icon={<SmartphoneIcon size={16} color={theme.colors.colorTextSecondary} />}
               onPress={() => router.push('/devices')}
             />

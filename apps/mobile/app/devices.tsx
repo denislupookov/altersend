@@ -22,7 +22,7 @@ export default function DevicesScreen() {
 
   return (
     <Layout
-      title='Paired Devices'
+      title={t('settings:pairing.pairedDevices')}
       hasNativeHeader
       footer={
         <Button
@@ -63,7 +63,7 @@ export default function DevicesScreen() {
                       variant='ghost'
                       size='sm'
                       iconOnly
-                      aria-label='Device actions'
+                      aria-label={t('settings:pairing.deviceActions')}
                       icon={<MoreVerticalIcon size={14} />}
                       onClick={() =>
                         flow.openDeviceActions(peer.remoteDevicePubkey, peer.displayName)
