@@ -267,7 +267,7 @@ export function groupReceiveRows(offers: IncomingFileOffer[]): ReceiveRow[] {
 
     const name = segments[0]
     const existing = folderRowIndex.get(name)
-    
+
     if (existing === undefined) {
       folderRowIndex.set(name, rows.length)
       rows.push({ kind: 'folder', name, offers: [offer], totalSize: offer.size })

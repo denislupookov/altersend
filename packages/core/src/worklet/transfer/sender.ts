@@ -37,7 +37,10 @@ function resolveSource(
   const suffix = `/${relativePath}`
 
   if (relativePath && normalizedPath.endsWith(suffix)) {
-    return { root: normalizedPath.slice(0, normalizedPath.length - suffix.length) || '/', relativePath }
+    return {
+      root: normalizedPath.slice(0, normalizedPath.length - suffix.length) || '/',
+      relativePath
+    }
   }
 
   return { root: getDirname(path), relativePath: fileName }

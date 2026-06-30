@@ -1,10 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import type { IncomingFileOffer } from '@altersend/core'
-import {
-  groupReceiveRows,
-  getFolderRowDisplay,
-  type DownloadItemState
-} from './downloadModel'
+import { groupReceiveRows, getFolderRowDisplay, type DownloadItemState } from './downloadModel'
 
 type FileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
 

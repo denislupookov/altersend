@@ -35,7 +35,7 @@ export function isSafeRelativePath(value: unknown): value is string {
   if (value.includes('\0')) return false
 
   const segments = value.split(/[/\\]/).filter((segment) => segment.length > 0)
-  
+
   if (segments.length === 0) return false
   for (const segment of segments) {
     if (segment === '.' || segment === '..') return false

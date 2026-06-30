@@ -1,5 +1,10 @@
 import { useState } from 'react'
-import { buildJoinUrl, formatFileSize, groupSelectedFiles, useShareViewModel } from '@altersend/domain'
+import {
+  buildJoinUrl,
+  formatFileSize,
+  groupSelectedFiles,
+  useShareViewModel
+} from '@altersend/domain'
 import { Button, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
 import {
   ChevronsUpDownIcon,
@@ -55,7 +60,9 @@ export function ShareView() {
           <LinkRow
             compact
             icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
-            label={singleFolder ? singleFolder.name : t('common:files.count', { count: vm.files.length })}
+            label={
+              singleFolder ? singleFolder.name : t('common:files.count', { count: vm.files.length })
+            }
             subtitle={formatFileSize(vm.totalSize)}
             trailing={<ChevronsUpDownIcon size={16} color={c.colorTextMuted} />}
             isLast
