@@ -14,18 +14,45 @@ import {
 import { bridgeApi } from '../../api/bridgeApi'
 import { Input, Button } from '@altersend/components'
 
-interface DataTransferEntryLike {
-  isDirectory: boolean
+function readAllEntries(reader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
+  return new Promise((resolve, reject) => {
+    const all: FileSystemEntry[] = []
+    const readBatch = () =>
+      reader.readEntries((batch) => {
+        if (batch.length === 0) resolve(all)
+        else {
+          all.push(...batch)
+          readBatch()
+        }
+      }, reject)
+    readBatch()
+  })
 }
 
-function getEntry(item: DataTransferItem) {
-  return (
-    (
-      item as DataTransferItem & {
-        webkitGetAsEntry?: () => DataTransferEntryLike | null
-      }
-    ).webkitGetAsEntry?.() ?? null
-  )
+function entryToFile(entry: FileSystemFileEntry): Promise<File> {
+  return new Promise((resolve, reject) => entry.file(resolve, reject))
+}
+
+async function collectDroppedEntries(
+  entry: FileSystemEntry,
+  getPathForFile: (file: File) => string,
+  out: BrowserFileLike[]
+): Promise<void> {
+  if (entry.isFile) {
+    const file = await entryToFile(entry as FileSystemFileEntry)
+    const path = getPathForFile(file)
+    if (path) {
+      out.push({
+        name: file.name,
+        path,
+        size: file.size,
+        relativePath: entry.fullPath.replace(/^\/+/, '')
+      })
+    }
+  } else if (entry.isDirectory) {
+    const entries = await readAllEntries((entry as FileSystemDirectoryEntry).createReader())
+    for (const child of entries) await collectDroppedEntries(child, getPathForFile, out)
+  }
 }
 
 export function SelectFilesView() {
@@ -52,41 +79,22 @@ export function SelectFilesView() {
     event.preventDefault()
     setIsDropZoneDragging(false)
 
-    // Snapshot synchronously — the DataTransfer is invalidated once this handler returns.
     const items = Array.from(event.dataTransfer.items ?? [])
-    const snapshot = items.map((item) => ({
-      isDirectory: Boolean(getEntry(item)?.isDirectory),
-      file: item.kind === 'file' ? item.getAsFile() : null
-    }))
-    const fallbackFiles = snapshot.length === 0 ? Array.from(event.dataTransfer.files ?? []) : []
+    const entries = items
+      .map((item) => (item.kind === 'file' ? item.webkitGetAsEntry() : null))
+      .filter((entry): entry is FileSystemEntry => entry !== null)
+    const fallbackFiles = entries.length === 0 ? Array.from(event.dataTransfer.files ?? []) : []
 
-    void ingestDrop(snapshot, fallbackFiles)
+    void ingestDrop(entries, fallbackFiles)
   }
 
-  const ingestDrop = async (
-    snapshot: { isDirectory: boolean; file: File | null }[],
-    fallbackFiles: File[]
-  ) => {
+  const ingestDrop = async (entries: FileSystemEntry[], fallbackFiles: File[]) => {
     const dropped: Array<File | BrowserFileLike> = [...fallbackFiles]
-    let unresolvedFolder = false
-
-    for (const { isDirectory, file } of snapshot) {
-      if (!file) continue
-
-      if (isDirectory) {
-        const dirPath = bridgeApi.getPathForFile(file)
-        if (!dirPath) {
-          unresolvedFolder = true
-          continue
-        }
-
-        dropped.push(...(await bridgeApi.expandFolder(dirPath)))
-      } else {
-        dropped.push(file)
-      }
+    for (const entry of entries) {
+      await collectDroppedEntries(entry, bridgeApi.getPathForFile, dropped)
     }
 
-    setSelectionError(unresolvedFolder ? t('send:errors.folderUnsupported') : null)
+    setSelectionError(null)
 
     const normalizedFiles = normalizeSelectedFiles(dropped, bridgeApi.getPathForFile)
     if (normalizedFiles.length > 0) {

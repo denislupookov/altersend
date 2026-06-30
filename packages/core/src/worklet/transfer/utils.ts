@@ -34,6 +34,9 @@ export function isSafeRelativePath(value: unknown): value is string {
   if (value.length === 0 || value.length > 4096) return false
   if (value.includes('\0')) return false
 
+  if (value.startsWith('/') || value.startsWith('\\')) return false
+  if (/^[a-zA-Z]:/.test(value)) return false
+
   const segments = value.split(/[/\\]/).filter((segment) => segment.length > 0)
 
   if (segments.length === 0) return false

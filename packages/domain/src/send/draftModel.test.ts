@@ -38,4 +38,13 @@ describe('groupSelectedFiles', () => {
       'loose.txt'
     ])
   })
+
+  it('keeps two same-named folders from different source paths as separate rows', () => {
+    const rows = groupSelectedFiles([
+      file('/Users/d/Desktop/Photos/a.png', 'Photos/a.png'),
+      file('/Users/d/Work/Photos/b.png', 'Photos/b.png')
+    ])
+    expect(rows).toHaveLength(2)
+    expect(rows.every((r) => r.kind === 'folder' && r.name === 'Photos')).toBe(true)
+  })
 })

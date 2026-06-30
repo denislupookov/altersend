@@ -63,7 +63,6 @@ declare global {
     ) => TransferMethodReturn<T>
     onTransferEvent: (cb: (message: RendererTransferEvent) => void) => () => void
     pickFiles: () => Promise<PickedFile[] | null>
-    expandFolder: (dirPath: string) => Promise<PickedFile[]>
     pickDirectory: () => Promise<PickedFile | null>
     pickSaveFile: (defaultName: string) => Promise<PickedFile | null>
     getPathForFile: (file: File) => string

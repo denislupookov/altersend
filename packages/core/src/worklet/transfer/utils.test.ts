@@ -196,8 +196,14 @@ describe('isSafeRelativePath', () => {
     expect(isSafeRelativePath('Photos/2024/img.png')).toBe(true)
   })
 
-  it('accepts a leading slash (drive-style path)', () => {
-    expect(isSafeRelativePath('/Photos/img.png')).toBe(true)
+  it('rejects a rooted POSIX path (leading slash)', () => {
+    expect(isSafeRelativePath('/Photos/img.png')).toBe(false)
+  })
+
+  it('rejects a rooted Windows path (drive prefix)', () => {
+    expect(isSafeRelativePath('C:\\foo\\bar')).toBe(false)
+    expect(isSafeRelativePath('C:/foo/bar')).toBe(false)
+    expect(isSafeRelativePath('\\\\server\\share')).toBe(false)
   })
 
   it('rejects empty string', () => {

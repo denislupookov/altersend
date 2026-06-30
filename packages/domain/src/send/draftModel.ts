@@ -67,16 +67,23 @@ export function groupSelectedFiles(files: SelectedFile[]): SelectedRow[] {
   const folderRowIndex = new Map<string, number>()
 
   for (const file of files) {
-    const segments = (file.relativePath ?? '').replace(/\\/g, '/').split('/').filter(Boolean)
+    const relativePath = (file.relativePath ?? '').replace(/\\/g, '/')
+    const segments = relativePath.split('/').filter(Boolean)
     if (segments.length <= 1) {
       rows.push({ kind: 'file', file })
       continue
     }
 
     const name = segments[0]
-    const existing = folderRowIndex.get(name)
+
+    const normalizedPath = file.path.replace(/\\/g, '/')
+    const key = normalizedPath.endsWith(relativePath)
+      ? normalizedPath.slice(0, normalizedPath.length - relativePath.length) + name
+      : name
+
+    const existing = folderRowIndex.get(key)
     if (existing === undefined) {
-      folderRowIndex.set(name, rows.length)
+      folderRowIndex.set(key, rows.length)
       rows.push({ kind: 'folder', name, files: [file], totalSize: file.size ?? 0 })
     } else {
       const row = rows[existing] as SelectedFolderRow

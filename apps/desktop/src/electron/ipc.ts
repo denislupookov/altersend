@@ -38,13 +38,38 @@ interface PickedFile {
   relativePath?: string
 }
 
-async function collectFolderFiles(
-  rootDir: string,
-  rootName: string = path.basename(rootDir)
-): Promise<PickedFile[]> {
+const FOLDER_SCAN_CONCURRENCY = 16
+
+function createLimit(max: number) {
+  let active = 0
+  const queue: (() => void)[] = []
+  const next = () => {
+    if (active >= max) return
+    const run = queue.shift()
+    if (!run) return
+    active++
+    run()
+  }
+  
+  return <T>(task: () => Promise<T>): Promise<T> =>
+    new Promise<T>((resolve, reject) => {
+      queue.push(() => {
+        task()
+          .then(resolve, reject)
+          .finally(() => {
+            active--
+            next()
+          })
+      })
+      next()
+    })
+}
+
+async function collectFolderFiles(rootDir: string): Promise<PickedFile[]> {
   const files: PickedFile[] = []
+  const limit = createLimit(FOLDER_SCAN_CONCURRENCY)
   const walk = async (absDir: string, relDir: string): Promise<void> => {
-    const entries = await readdir(absDir, { withFileTypes: true })
+    const entries = await limit(() => readdir(absDir, { withFileTypes: true }))
     await Promise.all(
       entries.map(async (entry) => {
         const abs = path.join(absDir, entry.name)
@@ -52,21 +77,14 @@ async function collectFolderFiles(
         if (entry.isDirectory()) {
           await walk(abs, rel)
         } else if (entry.isFile()) {
-          const fileStats = await stat(abs)
+          const fileStats = await limit(() => stat(abs))
           files.push({ path: abs, name: entry.name, size: fileStats.size, relativePath: rel })
         }
       })
     )
   }
-  await walk(rootDir, rootName)
+  await walk(rootDir, path.basename(rootDir))
   return files
-}
-
-function uniqueFolderName(base: string, used: Set<string>): string {
-  let name = base
-  for (let i = 2; used.has(name); i++) name = `${base} (${i})`
-  used.add(name)
-  return name
 }
 
 export function registerIpcHandlers(runtime: DesktopRuntime) {
@@ -106,30 +124,18 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     }
 
     const id = evt.sender.id
-    const usedFolderNames = new Set<string>()
     const picked: PickedFile[] = []
     for (const filePath of result.filePaths) {
       recordPickedPath(id, filePath)
       const fileStats = await stat(filePath)
       if (fileStats.isDirectory()) {
-        const rootName = uniqueFolderName(path.basename(filePath), usedFolderNames)
-        picked.push(...(await collectFolderFiles(filePath, rootName)))
+        picked.push(...(await collectFolderFiles(filePath)))
       } else {
         picked.push({ path: filePath, name: path.basename(filePath), size: fileStats.size })
       }
     }
 
     return picked
-  })
-
-  // Expands a folder dropped onto the window (path resolved by the renderer via
-  // webUtils.getPathForFile) into its files, preserving relative structure.
-  ipcMain.handle('app:expandFolder', async (evt, dirPath: string) => {
-    if (!isPathSafe(dirPath)) return []
-    const dirStats = await stat(dirPath).catch(() => null)
-    if (!dirStats?.isDirectory()) return []
-    recordPickedPath(evt.sender.id, dirPath)
-    return collectFolderFiles(dirPath)
   })
 
   ipcMain.handle('app:pickSaveFile', async (evt, defaultName) => {

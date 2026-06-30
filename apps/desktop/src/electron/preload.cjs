@@ -17,7 +17,6 @@ contextBridge.exposeInMainWorld('bridge', {
   },
 
   pickFiles: () => ipcRenderer.invoke('app:pickFiles'),
-  expandFolder: (dirPath) => ipcRenderer.invoke('app:expandFolder', dirPath),
   pickDirectory: () => ipcRenderer.invoke('app:pickDirectory'),
   pickSaveFile: (defaultName) => {
     if (typeof defaultName !== 'string' || defaultName.length === 0 || defaultName.length > 255) {
