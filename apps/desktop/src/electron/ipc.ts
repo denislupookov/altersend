@@ -50,7 +50,7 @@ function createLimit(max: number) {
     active++
     run()
   }
-  
+
   return <T>(task: () => Promise<T>): Promise<T> =>
     new Promise<T>((resolve, reject) => {
       queue.push(() => {
