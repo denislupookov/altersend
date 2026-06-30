@@ -110,7 +110,7 @@ function migrateIdentityIfNeeded(oldRoot: string, newRoot: string): void {
 
 async function initDeviceKeychain(client: WorkerClient, identityRoot: string): Promise<void> {
   const keyPath = path.join(identityRoot, 'device.key')
-  const available = safeStorage.isEncryptionAvailable()
+  const available = app.isPackaged && safeStorage.isEncryptionAvailable()
 
   let sealed: string | null = null
   if (available) {
@@ -126,7 +126,7 @@ async function initDeviceKeychain(client: WorkerClient, identityRoot: string): P
     const reply = await client.initDeviceSecret(
       available ? { mode: 'managed', secret: sealed } : { mode: 'legacy' }
     )
-    if (available && reply.secretKey) {
+    if (available && reply.secretKey && reply.secretKey !== sealed) {
       fs.mkdirSync(identityRoot, { recursive: true })
       const tmp = keyPath + '.tmp'
       fs.writeFileSync(tmp, safeStorage.encryptString(reply.secretKey))

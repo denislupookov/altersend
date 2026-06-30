@@ -405,7 +405,7 @@ export class TransferOrchestrator implements TransferRPC {
       for (const error of errors) this.sendError(error)
 
       if (files.length === 0 && textRequests.length === 0) {
-        this.sendError('No valid items were selected to share. Folders are not supported yet.')
+        this.sendError('No valid items were selected to share.')
         return { acceptedFiles: 0 }
       }
 

@@ -8,7 +8,7 @@ import {
   type OpenDialogOptions
 } from 'electron'
 import { isMac } from 'which-runtime'
-import { stat } from 'fs/promises'
+import { readdir, stat } from 'fs/promises'
 import path from 'path'
 import { isPathSafe, type TransferMethod } from '@altersend/core'
 import type { DesktopRuntime } from './runtime.js'
@@ -29,6 +29,44 @@ function isAllowedPath(senderId: number, filePath: string): boolean {
     if (filePath.startsWith(p + path.sep) || filePath.startsWith(p + '/')) return true
   }
   return false
+}
+
+interface PickedFile {
+  path: string
+  name: string
+  size: number
+  relativePath?: string
+}
+
+async function collectFolderFiles(
+  rootDir: string,
+  rootName: string = path.basename(rootDir)
+): Promise<PickedFile[]> {
+  const files: PickedFile[] = []
+  const walk = async (absDir: string, relDir: string): Promise<void> => {
+    const entries = await readdir(absDir, { withFileTypes: true })
+    await Promise.all(
+      entries.map(async (entry) => {
+        const abs = path.join(absDir, entry.name)
+        const rel = `${relDir}/${entry.name}`
+        if (entry.isDirectory()) {
+          await walk(abs, rel)
+        } else if (entry.isFile()) {
+          const fileStats = await stat(abs)
+          files.push({ path: abs, name: entry.name, size: fileStats.size, relativePath: rel })
+        }
+      })
+    )
+  }
+  await walk(rootDir, rootName)
+  return files
+}
+
+function uniqueFolderName(base: string, used: Set<string>): string {
+  let name = base
+  for (let i = 2; used.has(name); i++) name = `${base} (${i})`
+  used.add(name)
+  return name
 }
 
 export function registerIpcHandlers(runtime: DesktopRuntime) {
@@ -56,8 +94,8 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.handle('app:pickFiles', async (evt) => {
     const parentWindow = BrowserWindow.fromWebContents(evt.sender) ?? undefined
     const dialogOptions: OpenDialogOptions = {
-      title: 'Select files to share',
-      properties: ['openFile', 'multiSelections']
+      title: 'Select files or folders to share',
+      properties: ['openFile', 'openDirectory', 'multiSelections']
     }
     const result = parentWindow
       ? await dialog.showOpenDialog(parentWindow, dialogOptions)
@@ -68,19 +106,30 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     }
 
     const id = evt.sender.id
-    return Promise.all(
-      result.filePaths.map(async (filePath) => {
-        recordPickedPath(id, filePath)
-        const fileName = path.basename(filePath)
-        const fileStats = await stat(filePath)
+    const usedFolderNames = new Set<string>()
+    const picked: PickedFile[] = []
+    for (const filePath of result.filePaths) {
+      recordPickedPath(id, filePath)
+      const fileStats = await stat(filePath)
+      if (fileStats.isDirectory()) {
+        const rootName = uniqueFolderName(path.basename(filePath), usedFolderNames)
+        picked.push(...(await collectFolderFiles(filePath, rootName)))
+      } else {
+        picked.push({ path: filePath, name: path.basename(filePath), size: fileStats.size })
+      }
+    }
 
-        return {
-          path: filePath,
-          name: fileName,
-          size: fileStats.size
-        }
-      })
-    )
+    return picked
+  })
+
+  // Expands a folder dropped onto the window (path resolved by the renderer via
+  // webUtils.getPathForFile) into its files, preserving relative structure.
+  ipcMain.handle('app:expandFolder', async (evt, dirPath: string) => {
+    if (!isPathSafe(dirPath)) return []
+    const dirStats = await stat(dirPath).catch(() => null)
+    if (!dirStats?.isDirectory()) return []
+    recordPickedPath(evt.sender.id, dirPath)
+    return collectFolderFiles(dirPath)
   })
 
   ipcMain.handle('app:pickSaveFile', async (evt, defaultName) => {

@@ -29,6 +29,25 @@ export function isSafeFileName(name: unknown): name is string {
   return true
 }
 
+export function isSafeRelativePath(value: unknown): value is string {
+  if (typeof value !== 'string') return false
+  if (value.length === 0 || value.length > 4096) return false
+  if (value.includes('\0')) return false
+
+  const segments = value.split(/[/\\]/).filter((segment) => segment.length > 0)
+  
+  if (segments.length === 0) return false
+  for (const segment of segments) {
+    if (segment === '.' || segment === '..') return false
+    if (segment.length > 255) return false
+  }
+  return true
+}
+
+export function toRelativePath(drivePath: string): string {
+  return drivePath.replace(/\\/g, '/').replace(/^\/+/, '')
+}
+
 export function shortKey(hex: string | null | undefined): string {
   return hex ? hex.slice(0, 8) : '(none)'
 }

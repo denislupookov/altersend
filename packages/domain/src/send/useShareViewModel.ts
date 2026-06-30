@@ -45,6 +45,7 @@ export interface FileRow {
   path: string
   name: string
   size?: number
+  relativePath?: string
 }
 
 export interface ShareViewModel {
@@ -316,7 +317,12 @@ export function useShareViewModel(
   return {
     phase: connectionState === 'peer-connected' ? 'connected' : 'waiting',
     topic,
-    files: selectedFiles.map((f) => ({ path: f.path, name: f.name, size: f.size })),
+    files: selectedFiles.map((f) => ({
+      path: f.path,
+      name: f.name,
+      size: f.size,
+      relativePath: f.relativePath
+    })),
     totalSize: selectedFiles.reduce((sum, f) => sum + (f.size ?? 0), 0),
     devices,
     connectedCount: connectedRows.length,

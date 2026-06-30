@@ -5,6 +5,7 @@ export interface SelectedFile {
   isTemporary?: boolean
   kind?: 'file' | 'text'
   content?: string
+  relativePath?: string
 }
 
 export type SenderUploadStatus = 'waiting' | 'uploading' | 'completed'
@@ -17,4 +18,5 @@ export interface BrowserFileLike {
   name: string
   path?: string
   size?: number
+  relativePath?: string
 }

@@ -46,6 +46,9 @@ export const bridgeApi = {
   pickFiles() {
     return requireBridge().pickFiles()
   },
+  expandFolder(dirPath: string) {
+    return requireBridge().expandFolder(dirPath)
+  },
   pickDirectory() {
     return requireBridge().pickDirectory()
   },

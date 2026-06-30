@@ -44,6 +44,7 @@ export interface JoinReply {
 
 export interface ShareFileRequest {
   path: string
+  relativePath?: string
   isTemporary?: boolean
   kind?: 'file' | 'text'
   content?: string

@@ -4,7 +4,7 @@ import b4a from 'b4a'
 import Localdrive from 'localdrive'
 import MirrorDrive from 'mirror-drive'
 import type Hyperdrive from 'hyperdrive'
-import { AbortError, getDirname, getFileName } from './utils'
+import { AbortError, getDirname, getFileName, toRelativePath } from './utils'
 import type { FileOffer } from './control-channel'
 
 export interface ScannedFile {
@@ -25,6 +25,22 @@ export interface ScanResult {
 
 function createFileId(): string {
   return crypto.randomBytes(12).toString('hex')
+}
+
+function resolveSource(
+  path: string,
+  requestedRelativePath: string | undefined,
+  fileName: string
+): { root: string; relativePath: string } {
+  const normalizedPath = path.replace(/\\/g, '/')
+  const relativePath = toRelativePath(requestedRelativePath ?? fileName)
+  const suffix = `/${relativePath}`
+
+  if (relativePath && normalizedPath.endsWith(suffix)) {
+    return { root: normalizedPath.slice(0, normalizedPath.length - suffix.length) || '/', relativePath }
+  }
+
+  return { root: getDirname(path), relativePath: fileName }
 }
 
 /**
@@ -50,7 +66,9 @@ export class TransferSender {
     return b4a.toString(this.drive.key, 'hex')
   }
 
-  async scanFiles(requests: { path: string; isTemporary?: boolean }[]): Promise<ScanResult> {
+  async scanFiles(
+    requests: { path: string; relativePath?: string; isTemporary?: boolean }[]
+  ): Promise<ScanResult> {
     const files: ScannedFile[] = []
     const errors: string[] = []
     let totalBytes = 0
@@ -60,12 +78,12 @@ export class TransferSender {
     for (const req of requests) {
       const path = req.path
       const fileName = getFileName(path)
-      const sourcePath = `/${fileName}`
-      const dir = getDirname(path)
-      let sourceDrive = driveByDir.get(dir)
+      const { root, relativePath } = resolveSource(path, req.relativePath, fileName)
+      const sourcePath = `/${relativePath}`
+      let sourceDrive = driveByDir.get(root)
       if (!sourceDrive) {
-        sourceDrive = new Localdrive(dir)
-        driveByDir.set(dir, sourceDrive)
+        sourceDrive = new Localdrive(root)
+        driveByDir.set(root, sourceDrive)
         this.scanDrives.add(sourceDrive)
         await sourceDrive.ready()
       }

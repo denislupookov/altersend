@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { buildJoinUrl, formatFileSize, useShareViewModel } from '@altersend/domain'
+import { buildJoinUrl, formatFileSize, groupSelectedFiles, useShareViewModel } from '@altersend/domain'
 import { Button, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
 import {
   ChevronsUpDownIcon,
@@ -37,6 +37,8 @@ export function ShareView() {
   })
   const [isQrOpen, setIsQrOpen] = useState(false)
   const hasConnectedDevices = vm.connectedCount > 0
+  const fileRows = groupSelectedFiles(vm.files)
+  const singleFolder = fileRows.length === 1 && fileRows[0].kind === 'folder' ? fileRows[0] : null
 
   const copyTopic = async () => {
     if (!vm.topic) return
@@ -53,7 +55,7 @@ export function ShareView() {
           <LinkRow
             compact
             icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
-            label={t('common:files.count', { count: vm.files.length })}
+            label={singleFolder ? singleFolder.name : t('common:files.count', { count: vm.files.length })}
             subtitle={formatFileSize(vm.totalSize)}
             trailing={<ChevronsUpDownIcon size={16} color={c.colorTextMuted} />}
             isLast
@@ -64,16 +66,28 @@ export function ShareView() {
       {() => (
         <div style={{ maxHeight: 280, overflowY: 'auto' }}>
           <LinkCard>
-            {vm.files.map((file, index) => (
-              <LinkRow
-                key={file.path}
-                compact
-                file
-                label={file.name}
-                size={file.size}
-                isLast={index === vm.files.length - 1}
-              />
-            ))}
+            {fileRows.map((row, index) =>
+              row.kind === 'folder' ? (
+                <LinkRow
+                  key={`folder:${row.name}`}
+                  compact
+                  icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
+                  label={row.name}
+                  size={row.totalSize}
+                  subtitle={t('common:files.count', { count: row.files.length })}
+                  isLast={index === fileRows.length - 1}
+                />
+              ) : (
+                <LinkRow
+                  key={row.file.path}
+                  compact
+                  file
+                  label={row.file.name}
+                  size={row.file.size}
+                  isLast={index === fileRows.length - 1}
+                />
+              )
+            )}
           </LinkCard>
         </div>
       )}
@@ -91,7 +105,7 @@ export function ShareView() {
               onCopy={() => void copyTopic()}
               placeholder={t('send:connection.placeholder')}
             />
-            <div className='flex aspect-square shrink-0'>
+            <div className='flex h-12 w-12 shrink-0'>
               <Button
                 variant='secondary'
                 iconOnly

@@ -7,9 +7,10 @@ import {
   getDirname,
   getFileName,
   isPathSafe,
-  isSafeFileName,
+  isSafeRelativePath,
   isValidHexKey,
-  joinFilePath
+  joinFilePath,
+  toRelativePath
 } from './utils'
 import type { DownloadFileRequest, DownloadFileResult } from '../rpc/protocol'
 import type { DownloaderCallbacks } from './download-events'
@@ -80,12 +81,12 @@ export class TransferReceiver {
         continue
       }
 
-      if (!isSafeFileName(resolvedName)) {
-        const fileName = typeof resolvedName === 'string' ? resolvedName : ''
+      const relativeTarget = toRelativePath(file.path)
+      if (!isSafeRelativePath(relativeTarget)) {
         fail(
-          fileName,
+          resolvedName,
           file.targetPath ?? file.targetDir ?? '',
-          'Rejected unsafe file name from sender'
+          'Rejected unsafe file path from sender'
         )
         continue
       }
@@ -96,7 +97,7 @@ export class TransferReceiver {
         continue
       }
 
-      const targetPath = file.targetPath ?? joinFilePath(file.targetDir!, resolvedName)
+      const targetPath = file.targetPath ?? joinFilePath(file.targetDir!, relativeTarget)
 
       try {
         const outcome = await this.downloadFile(file, targetPath, callbacks, signal)

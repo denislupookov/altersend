@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { DropZoneLink, ErrorBanner, FileDropZone, LinkRow } from '@altersend/components'
+import { FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import {
   addSelectedFiles,
+  type BrowserFileLike,
+  groupSelectedFiles,
   normalizeSelectedFiles,
   removeSelectedFile,
   useTransferStore,
@@ -49,25 +52,43 @@ export function SelectFilesView() {
     event.preventDefault()
     setIsDropZoneDragging(false)
 
+    // Snapshot synchronously — the DataTransfer is invalidated once this handler returns.
     const items = Array.from(event.dataTransfer.items ?? [])
-    let hasFolderSelection = false
-    const droppedFiles =
-      items.length > 0
-        ? items.flatMap((item) => {
-            const entry = getEntry(item)
-            if (entry?.isDirectory) {
-              hasFolderSelection = true
-              return []
-            }
+    const snapshot = items.map((item) => ({
+      isDirectory: Boolean(getEntry(item)?.isDirectory),
+      file: item.kind === 'file' ? item.getAsFile() : null
+    }))
+    const fallbackFiles = snapshot.length === 0 ? Array.from(event.dataTransfer.files ?? []) : []
 
-            const file = item.kind === 'file' ? item.getAsFile() : null
-            return file ? [file] : []
-          })
-        : Array.from(event.dataTransfer.files ?? [])
+    void ingestDrop(snapshot, fallbackFiles)
+  }
 
-    setSelectionError(hasFolderSelection ? t('send:errors.folderUnsupported') : null)
+  const ingestDrop = async (
+    snapshot: { isDirectory: boolean; file: File | null }[],
+    fallbackFiles: File[]
+  ) => {
+    const dropped: Array<File | BrowserFileLike> = [...fallbackFiles]
+    let unresolvedFolder = false
 
-    const normalizedFiles = normalizeSelectedFiles(droppedFiles, bridgeApi.getPathForFile)
+    for (const { isDirectory, file } of snapshot) {
+      if (!file) continue
+
+      if (isDirectory) {
+        const dirPath = bridgeApi.getPathForFile(file)
+        if (!dirPath) {
+          unresolvedFolder = true
+          continue
+        }
+
+        dropped.push(...(await bridgeApi.expandFolder(dirPath)))
+      } else {
+        dropped.push(file)
+      }
+    }
+
+    setSelectionError(unresolvedFolder ? t('send:errors.folderUnsupported') : null)
+
+    const normalizedFiles = normalizeSelectedFiles(dropped, bridgeApi.getPathForFile)
     if (normalizedFiles.length > 0) {
       addSelectedFiles(normalizedFiles)
     }
@@ -125,18 +146,31 @@ export function SelectFilesView() {
 
       {hasSelectedFiles ? (
         <div className='flex flex-col gap-1.5'>
-          {selectedFiles.map((file) => (
-            <LinkRow
-              key={file.path}
-              file
-              standalone
-              compact
-              label={file.name}
-              onRemove={() => removeSelectedFile(file.path)}
-              removeLabel={t('send:files.removeLabel', { name: file.name })}
-              size={file.size}
-            />
-          ))}
+          {groupSelectedFiles(selectedFiles).map((row) =>
+            row.kind === 'file' ? (
+              <LinkRow
+                key={row.file.path}
+                file
+                standalone
+                compact
+                label={row.file.name}
+                onRemove={() => removeSelectedFile(row.file.path)}
+                removeLabel={t('send:files.removeLabel', { name: row.file.name })}
+                size={row.file.size}
+              />
+            ) : (
+              <LinkRow
+                key={`folder:${row.name}`}
+                icon={<FolderIcon size={16} />}
+                standalone
+                compact
+                label={row.name}
+                onRemove={() => row.files.forEach((file) => removeSelectedFile(file.path))}
+                removeLabel={t('send:files.removeLabel', { name: row.name })}
+                size={row.totalSize}
+              />
+            )
+          )}
         </div>
       ) : null}
 

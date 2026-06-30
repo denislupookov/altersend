@@ -5,8 +5,10 @@ import {
   joinFilePath,
   isPathSafe,
   isSafeFileName,
+  isSafeRelativePath,
   isValidHexKey,
-  shortKey
+  shortKey,
+  toRelativePath
 } from './utils'
 
 describe('getDirname', () => {
@@ -182,6 +184,65 @@ describe('isPathSafe', () => {
 
   it('rejects mixed-separator parent traversal', () => {
     expect(isPathSafe('/Users/alice\\..\\bob')).toBe(false)
+  })
+})
+
+describe('isSafeRelativePath', () => {
+  it('accepts a plain file name', () => {
+    expect(isSafeRelativePath('report.pdf')).toBe(true)
+  })
+
+  it('accepts a nested relative path', () => {
+    expect(isSafeRelativePath('Photos/2024/img.png')).toBe(true)
+  })
+
+  it('accepts a leading slash (drive-style path)', () => {
+    expect(isSafeRelativePath('/Photos/img.png')).toBe(true)
+  })
+
+  it('rejects empty string', () => {
+    expect(isSafeRelativePath('')).toBe(false)
+  })
+
+  it('rejects a path with no real segments', () => {
+    expect(isSafeRelativePath('///')).toBe(false)
+  })
+
+  it('rejects parent traversal in any segment', () => {
+    expect(isSafeRelativePath('Photos/../../etc/passwd')).toBe(false)
+    expect(isSafeRelativePath('..')).toBe(false)
+  })
+
+  it('rejects a current-dir segment', () => {
+    expect(isSafeRelativePath('Photos/./img.png')).toBe(false)
+  })
+
+  it('rejects null-byte injection', () => {
+    expect(isSafeRelativePath('Photos/img\0.png')).toBe(false)
+  })
+
+  it('rejects a segment over 255 chars', () => {
+    expect(isSafeRelativePath(`Photos/${'a'.repeat(256)}.png`)).toBe(false)
+  })
+
+  it('rejects non-string input', () => {
+    expect(isSafeRelativePath(null)).toBe(false)
+    expect(isSafeRelativePath(42)).toBe(false)
+    expect(isSafeRelativePath(undefined)).toBe(false)
+  })
+})
+
+describe('toRelativePath', () => {
+  it('strips a leading slash', () => {
+    expect(toRelativePath('/Photos/img.png')).toBe('Photos/img.png')
+  })
+
+  it('normalizes backslashes to forward slashes', () => {
+    expect(toRelativePath('\\Photos\\img.png')).toBe('Photos/img.png')
+  })
+
+  it('leaves an already-relative path unchanged', () => {
+    expect(toRelativePath('img.png')).toBe('img.png')
   })
 })
 

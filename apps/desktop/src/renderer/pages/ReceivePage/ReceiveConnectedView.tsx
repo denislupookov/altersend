@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
-import { Button, LinkRow } from '@altersend/components'
-import { DownloadIcon } from '@altersend/components/icons'
+import { Fragment, useMemo, useState } from 'react'
+import { Button, LinkRow, useTheme } from '@altersend/components'
+import { ChevronRightIcon, DownloadIcon, FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
 import {
@@ -10,10 +10,15 @@ import {
   downloadFiles,
   getDownloadRowDisplay,
   getDownloadTotals,
+  getFolderRowDisplay,
   getOfferKey,
+  groupReceiveRows,
+  type ReceiveFolderRow,
   useTransferStore
 } from '@altersend/domain'
+import type { IncomingFileOffer } from '@altersend/core'
 
+type FileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
 type DownloadRow = ReturnType<typeof getDownloadRowDisplay>
 
 function getDownloadStatusLabel(t: ReturnType<typeof useTranslation>['t'], row: DownloadRow) {
@@ -31,15 +36,80 @@ function getDownloadStatusLabel(t: ReturnType<typeof useTranslation>['t'], row: 
 
 export function ReceiveConnectedView() {
   const { t } = useTranslation(['receive', 'common', 'errors'])
+  const { theme } = useTheme()
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const peerCount = useTransferStore((s) => s.peerCount)
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
 
   const hasIncomingFiles = incomingFileOffers.length > 0
+  const rows = useMemo(() => groupReceiveRows(incomingFileOffers), [incomingFileOffers])
   const totals = useMemo(
     () => getDownloadTotals(incomingFileOffers, downloadStates),
     [downloadStates, incomingFileOffers]
   )
+
+  const toggleFolder = (name: string) =>
+    setExpandedFolders((prev) => {
+      const next = new Set(prev)
+      if (next.has(name)) next.delete(name)
+      else next.add(name)
+      return next
+    })
+
+  const statusFor = (row: DownloadRow) =>
+    row.status.kind === 'ready'
+      ? undefined
+      : { label: getDownloadStatusLabel(t, row), tone: row.status.tone }
+
+  const renderFileRow = (offer: FileOffer, isFirst = false) => {
+    const row = getDownloadRowDisplay(offer, downloadStates[getOfferKey(offer)])
+    return (
+      <LinkRow
+        key={getOfferKey(offer)}
+        file
+        bare
+        compact
+        isFirst={isFirst}
+        label={offer.name}
+        size={offer.size}
+        description={row.description}
+        status={statusFor(row)}
+        progressPercent={row.progressPercent}
+      />
+    )
+  }
+
+  const renderFolderRow = (folderRow: ReceiveFolderRow, isFirst = false) => {
+    const folder = getFolderRowDisplay(folderRow.offers, downloadStates)
+    const isExpanded = expandedFolders.has(folderRow.name)
+    return (
+      <Fragment key={`folder:${folderRow.name}`}>
+        <LinkRow
+          icon={<FolderIcon size={16} />}
+          bare
+          compact
+          isFirst={isFirst}
+          label={folderRow.name}
+          size={folderRow.totalSize}
+          description={folder.description}
+          status={statusFor(folder)}
+          progressPercent={folder.progressPercent}
+          onPress={() => toggleFolder(folderRow.name)}
+          trailing={
+            <span
+              className={`inline-flex transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
+            >
+              <ChevronRightIcon size={14} color={theme.colors.colorTextMuted} />
+            </span>
+          }
+        />
+        {isExpanded ? (
+          <div className='pl-10'>{folderRow.offers.map((offer) => renderFileRow(offer))}</div>
+        ) : null}
+      </Fragment>
+    )
+  }
 
   const isDownloading = totals.activeCount > 0
   const allCompleted = hasIncomingFiles && totals.completedCount === incomingFileOffers.length
@@ -61,7 +131,9 @@ export function ReceiveConnectedView() {
     const fileOffers = incomingFileOffers.filter((f) => f.kind === 'file')
     if (fileOffers.length === 0 || isDownloading) return
 
-    if (fileOffers.length === 1) {
+    const isSingleLooseFile = rows.length === 1 && rows[0].kind === 'file'
+
+    if (isSingleLooseFile) {
       const selected = await bridgeApi.pickSaveFile(fileOffers[0].name)
       if (!selected?.path) return
 
@@ -77,9 +149,7 @@ export function ReceiveConnectedView() {
     if (!selectedDirectory?.path) return
 
     try {
-      await downloadFiles(
-        createDirectoryDownloadRequests(incomingFileOffers, selectedDirectory.path)
-      )
+      await downloadFiles(createDirectoryDownloadRequests(fileOffers, selectedDirectory.path))
     } catch (error) {
       console.error('ReceiveConnectedView: directory download failed', error)
     }
@@ -96,23 +166,11 @@ export function ReceiveConnectedView() {
       ) : (
         <div className='min-h-0 flex-1 overflow-y-auto pr-1'>
           <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
-            {incomingFileOffers.map((file) => {
-              if (file.kind !== 'file') return null
-              const row = getDownloadRowDisplay(file, downloadStates[getOfferKey(file)])
-              return (
-                <LinkRow
-                  key={getOfferKey(file)}
-                  file
-                  bare
-                  compact
-                  label={file.name}
-                  size={file.size}
-                  description={row.description}
-                  status={{ label: getDownloadStatusLabel(t, row), tone: row.status.tone }}
-                  progressPercent={row.progressPercent}
-                />
-              )
-            })}
+            {rows.map((row, index) =>
+              row.kind === 'file'
+                ? renderFileRow(row.offer, index === 0)
+                : renderFolderRow(row, index === 0)
+            )}
           </div>
         </div>
       )}

@@ -233,6 +233,104 @@ export function getDownloadTotals(
   }
 }
 
+function pathSegments(p: string): string[] {
+  return p.replace(/\\/g, '/').split('/').filter(Boolean)
+}
+
+type FileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
+
+export interface ReceiveFileRow {
+  kind: 'file'
+  offer: FileOffer
+}
+
+export interface ReceiveFolderRow {
+  kind: 'folder'
+  name: string
+  offers: FileOffer[]
+  totalSize: number
+}
+
+export type ReceiveRow = ReceiveFileRow | ReceiveFolderRow
+
+export function groupReceiveRows(offers: IncomingFileOffer[]): ReceiveRow[] {
+  const rows: ReceiveRow[] = []
+  const folderRowIndex = new Map<string, number>()
+
+  for (const offer of offers) {
+    if (offer.kind !== 'file') continue
+    const segments = pathSegments(offer.path)
+    if (segments.length <= 1) {
+      rows.push({ kind: 'file', offer })
+      continue
+    }
+
+    const name = segments[0]
+    const existing = folderRowIndex.get(name)
+    
+    if (existing === undefined) {
+      folderRowIndex.set(name, rows.length)
+      rows.push({ kind: 'folder', name, offers: [offer], totalSize: offer.size })
+    } else {
+      const row = rows[existing] as ReceiveFolderRow
+      row.offers.push(offer)
+      row.totalSize += offer.size
+    }
+  }
+
+  return rows
+}
+
+export function getFolderRowDisplay(
+  offers: FileOffer[],
+  states: Record<string, DownloadItemState>
+): DownloadRowDisplay {
+  const totals = getDownloadTotals(offers, states)
+  const anyFailed = offers.some((offer) => states[getOfferKey(offer)]?.status === 'failed')
+
+  if (totals.completedCount === offers.length) {
+    return {
+      description: undefined,
+      progressPercent: 100,
+      status: { kind: 'saved', tone: 'success' },
+      percent: 100,
+      isActive: false,
+      isCompleted: true
+    }
+  }
+
+  if (anyFailed) {
+    return {
+      description: undefined,
+      progressPercent: totals.bytesTransferred > 0 ? totals.percent : undefined,
+      status: { kind: 'failed', tone: 'muted' },
+      percent: totals.percent,
+      isActive: false,
+      isCompleted: false
+    }
+  }
+
+  if (totals.activeCount > 0 || totals.completedCount > 0) {
+    return {
+      description: `${formatFileSize(totals.bytesTransferred)} / ${formatFileSize(totals.totalBytes)}`,
+      progressPercent: totals.percent,
+      status: { kind: 'progress', tone: totals.percent > 0 ? 'active' : 'muted' },
+      percent: totals.percent,
+      isActive: totals.activeCount > 0,
+      isCompleted: false
+    }
+  }
+
+  return {
+    description: undefined,
+    progressPercent: undefined,
+    status: { kind: 'ready', tone: 'muted' },
+    percent: 0,
+    isActive: false,
+    isCompleted: false
+  }
+}
+
 export function createSingleDownloadRequest(
   file: IncomingFileOffer,
   targetPath: string
