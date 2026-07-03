@@ -28,7 +28,9 @@
     "paste": "粘贴",
     "openLink": "打开链接",
     "copyText": "复制文本",
-    "add": "添加"
+    "add": "添加",
+    "showMore": "显示更多",
+    "showLess": "收起"
   },
   "labels": {
     "settings": "设置",
@@ -59,7 +61,8 @@
     "items_one": "{{count}} 项",
     "items_other": "{{count}} 项",
     "texts_one": "{{count}} 条文本",
-    "texts_other": "{{count}} 条文本"
+    "texts_other": "{{count}} 条文本",
+    "filesGeneric": "文件"
   },
   "update": {
     "ready": "更新准备就绪",
@@ -72,7 +75,8 @@
     "notNow": "以后再说"
   },
   "status": {
-    "connected": "已连接"
+    "connected": "已连接",
+    "wantsToSend": "想要发送 {{label}}{{size}} 给你"
   },
   "confirm": {
     "leaveShareSession": "离开将结束您的活跃共享会话。继续？",

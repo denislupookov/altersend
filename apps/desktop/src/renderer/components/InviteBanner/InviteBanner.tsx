@@ -26,7 +26,9 @@ export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }
   const textCount = invite.textCount ?? 0
   const hasCounts = fileCount > 0 || textCount > 0
 
-  const fileLabel = hasCounts ? formatItemsCount(fileCount, textCount, t) : 'files'
+  const fileLabel = hasCounts
+    ? formatItemsCount(fileCount, textCount, t)
+    : t('common:files.filesGeneric')
   const sizeLabel =
     fileCount > 0 && invite.totalSize != null ? ` · ${formatFileSize(invite.totalSize)}` : ''
 
@@ -62,8 +64,7 @@ export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }
             {invite.displayName}
           </p>
           <p className='m-0 mt-0.5 text-[12px] leading-snug text-text-secondary'>
-            wants to send you {fileLabel}
-            {sizeLabel}
+            {t('common:status.wantsToSend', { label: fileLabel, size: sizeLabel })}
           </p>
         </div>
 

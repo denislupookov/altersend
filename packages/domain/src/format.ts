@@ -9,6 +9,13 @@ export function formatItemsCount(fileCount: number, textCount: number, t: Transl
   return t('common:files.count', { count: fileCount })
 }
 
+export function formatSendButtonLabel(fileCount: number, textCount: number, t: Translate): string {
+  if (fileCount > 0 && textCount > 0)
+    return t('send:actions.sendItems', { count: fileCount + textCount })
+  if (textCount > 0) return t('send:actions.sendTexts', { count: textCount })
+  return t('send:actions.sendFiles', { count: fileCount })
+}
+
 export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(1)} KB`

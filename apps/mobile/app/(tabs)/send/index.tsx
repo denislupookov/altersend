@@ -7,7 +7,13 @@ import { Layout, PairDeviceSheet } from '@/src/components'
 import { consumePairPromptPending } from '@/src/onboarding/pairPromptSignal'
 import { SelectFilesView } from '@/src/transfer/send'
 import { usePathname, useRouter } from 'expo-router'
-import { getSendPageCopy, getSendStep, isShareStep, useTransferStore } from '@altersend/domain'
+import {
+  formatSendButtonLabel,
+  getSendPageCopy,
+  getSendStep,
+  isShareStep,
+  useTransferStore
+} from '@altersend/domain'
 import { continueShare } from '@altersend/domain'
 
 function NavigationController() {
@@ -51,6 +57,8 @@ export default function SendSelectScreen() {
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
   const copy = getSendPageCopy(t, step)
   const hasSelectedFiles = selectedFiles.length > 0
+  const fileCount = selectedFiles.filter((file) => file.kind !== 'text').length
+  const textCount = selectedFiles.length - fileCount
 
   const openMenu = useCallback(() => router.push('/settings'), [router])
 
@@ -69,7 +77,7 @@ export default function SendSelectScreen() {
               width='full'
               icon={<SendIcon size={18} />}
             >
-              {t('send:actions.sendFiles', { count: selectedFiles.length })}
+              {formatSendButtonLabel(fileCount, textCount, t)}
             </Button>
           ) : undefined
         }

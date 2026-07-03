@@ -49,7 +49,9 @@ export function InviteBanner() {
   const textCount = invite?.textCount ?? 0
   const hasCounts = fileCount > 0 || textCount > 0
 
-  const fileLabel = hasCounts ? formatItemsCount(fileCount, textCount, t) : 'files'
+  const fileLabel = hasCounts
+    ? formatItemsCount(fileCount, textCount, t)
+    : t('common:files.filesGeneric')
   const sizeLabel =
     fileCount > 0 && invite?.totalSize != null ? ` · ${formatFileSize(invite.totalSize)}` : ''
 
@@ -72,7 +74,7 @@ export function InviteBanner() {
             </Text>
 
             <Text style={[styles.subtitle, { color: c.colorTextSecondary }]}>
-              {`wants to send you ${fileLabel}${sizeLabel}`}
+              {t('common:status.wantsToSend', { label: fileLabel, size: sizeLabel })}
             </Text>
           </View>
 

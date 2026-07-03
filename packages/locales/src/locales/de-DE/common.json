@@ -28,7 +28,9 @@
     "paste": "Einfügen",
     "openLink": "Link öffnen",
     "copyText": "Text kopieren",
-    "add": "Hinzufügen"
+    "add": "Hinzufügen",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen"
   },
   "labels": {
     "settings": "Einstellungen",
@@ -59,7 +61,8 @@
     "items_one": "{{count}} Element",
     "items_other": "{{count}} Elemente",
     "texts_one": "{{count}} Text",
-    "texts_other": "{{count}} Texte"
+    "texts_other": "{{count}} Texte",
+    "filesGeneric": "Dateien"
   },
   "update": {
     "ready": "Update bereit",
@@ -72,7 +75,8 @@
     "notNow": "Später"
   },
   "status": {
-    "connected": "Verbunden"
+    "connected": "Verbunden",
+    "wantsToSend": "möchte dir {{label}}{{size}} senden"
   },
   "confirm": {
     "leaveShareSession": "Durch das Verlassen wird Ihre aktive Freigabesitzung beendet. Weitermachen?",

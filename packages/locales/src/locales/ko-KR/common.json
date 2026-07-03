@@ -28,7 +28,9 @@
     "paste": "붙여넣기",
     "openLink": "링크 열기",
     "copyText": "텍스트 복사",
-    "add": "추가"
+    "add": "추가",
+    "showMore": "더 보기",
+    "showLess": "접기"
   },
   "labels": {
     "settings": "설정",
@@ -59,7 +61,8 @@
     "items_one": "{{count}}개",
     "items_other": "{{count}}개",
     "texts_one": "텍스트 {{count}}개",
-    "texts_other": "텍스트 {{count}}개"
+    "texts_other": "텍스트 {{count}}개",
+    "filesGeneric": "파일"
   },
   "update": {
     "ready": "업데이트 준비됨",
@@ -72,7 +75,8 @@
     "notNow": "나중에"
   },
   "status": {
-    "connected": "연결됨"
+    "connected": "연결됨",
+    "wantsToSend": "님이 {{label}}{{size}}을 보내려고 합니다"
   },
   "confirm": {
     "leaveShareSession": "나가면 활성 공유 세션이 종료됩니다. 계속하다?",

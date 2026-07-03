@@ -28,7 +28,11 @@
     "pickFilesTitle": "Aggiungi file",
     "pickPhotos": "Foto",
     "pickFiles": "File",
-    "typeSnippet": "Digita o incolla uno snippet…"
+    "typeSnippet": "Digita o incolla uno snippet…",
+    "sendTexts_one": "Invia {{count}} testo",
+    "sendTexts_other": "Invia {{count}} testi",
+    "sendItems_one": "Invia {{count}} elemento",
+    "sendItems_other": "Invia {{count}} elementi"
   },
   "status": {
     "waitingForPeer": "In attesa del destinatario",

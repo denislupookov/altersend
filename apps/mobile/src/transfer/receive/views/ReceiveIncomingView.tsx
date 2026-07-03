@@ -1,11 +1,9 @@
-import { View, StyleSheet, Linking } from 'react-native'
+import { Linking, View, StyleSheet } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import { LinkRow, Button, useTheme } from '@altersend/components'
-import { CheckIcon, CopyIcon, MessageSquareIcon } from '@altersend/components/icons'
+import { LinkRow, ReceivedTextRow, useTheme } from '@altersend/components'
 import {
   getDownloadRowDisplay,
   getOfferKey,
-  linkifyText,
   useCopiedFlag,
   useTransferStore
 } from '@altersend/domain'
@@ -80,56 +78,21 @@ export function ReceiveIncomingView() {
             {t('common:files.text')}
           </Text>
           <View style={cardStyle}>
-            {textOffers.map((offer, index) => {
-              const copied = copiedId === offer.id
-              return (
-                <LinkRow
-                  key={getOfferKey(offer)}
-                  bare
-                  isFirst={index === 0}
-                  icon={<MessageSquareIcon size={18} color={c.colorInfo} />}
-                  iconBackground={c.colorInfoSubtle}
-                  label={offer.content}
-                  labelNode={
-                    <Text style={[styles.textBody, { color: c.colorTextPrimary }]}>
-                      {linkifyText(offer.content).map((seg, i) =>
-                        seg.url ? (
-                          <Text
-                            key={i}
-                            style={[styles.link, { color: c.colorInfo }]}
-                            onPress={() => void Linking.openURL(seg.url as string)}
-                          >
-                            {seg.text}
-                          </Text>
-                        ) : (
-                          seg.text
-                        )
-                      )}
-                    </Text>
-                  }
-                  subtitle={t('common:files.text')}
-                  subtitleTone='faint'
-                  trailing={
-                    <Button
-                      size='sm'
-                      variant={copied ? 'success' : 'ghost'}
-                      iconOnly
-                      aria-label={
-                        copied ? t('common:actions.copied') : t('common:actions.copyText')
-                      }
-                      icon={
-                        copied ? (
-                          <CheckIcon size={16} color={c.colorSuccess} />
-                        ) : (
-                          <CopyIcon size={16} color={c.colorTextSecondary} />
-                        )
-                      }
-                      onClick={() => copyText(offer.id, offer.content)}
-                    />
-                  }
-                />
-              )
-            })}
+            {textOffers.map((offer, index) => (
+              <ReceivedTextRow
+                key={getOfferKey(offer)}
+                content={offer.content}
+                isFirst={index === 0}
+                copied={copiedId === offer.id}
+                subtitleLabel={t('common:files.text')}
+                copyLabel={t('common:actions.copyText')}
+                copiedLabel={t('common:actions.copied')}
+                showMoreLabel={t('common:actions.showMore')}
+                showLessLabel={t('common:actions.showLess')}
+                onCopy={() => copyText(offer.id, offer.content)}
+                onOpenLink={(url) => void Linking.openURL(url)}
+              />
+            ))}
           </View>
         </View>
       ) : null}
@@ -153,14 +116,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     overflow: 'hidden'
-  },
-  textBody: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: '500'
-  },
-  link: {
-    textDecorationLine: 'underline'
   },
   waitingText: {
     fontSize: 13

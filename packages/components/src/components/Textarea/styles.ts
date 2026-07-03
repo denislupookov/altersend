@@ -22,6 +22,7 @@ export const styles = css.create({
     flexDirection: 'column',
     width: '100%',
     boxSizing: 'border-box',
+    overflow: 'hidden',
     padding: tokens.space3,
     borderWidth: 1,
     borderStyle: 'solid',
@@ -43,6 +44,8 @@ export const styles = css.create({
   },
   field: {
     flexGrow: 1,
+    flexShrink: 1,
+    minHeight: 0,
     width: '100%',
     minWidth: 0,
     boxSizing: 'border-box',
@@ -68,6 +71,7 @@ export const styles = css.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    flexShrink: 0,
     gap: tokens.space2,
     marginTop: tokens.space3
   },

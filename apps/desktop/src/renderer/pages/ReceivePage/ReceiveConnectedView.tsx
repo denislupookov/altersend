@@ -1,13 +1,6 @@
 import { Fragment, useMemo, useState } from 'react'
-import { Button, LinkRow, useTheme } from '@altersend/components'
-import {
-  CheckIcon,
-  ChevronRightIcon,
-  CopyIcon,
-  DownloadIcon,
-  FolderIcon,
-  MessageSquareIcon
-} from '@altersend/components/icons'
+import { Button, LinkRow, ReceivedTextRow, useTheme } from '@altersend/components'
+import { ChevronRightIcon, DownloadIcon, FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
 import {
@@ -20,7 +13,6 @@ import {
   getFolderRowDisplay,
   getOfferKey,
   groupReceiveRows,
-  linkifyText,
   useCopiedFlag,
   useTransferStore
 } from '@altersend/domain'
@@ -181,51 +173,21 @@ export function ReceiveConnectedView() {
               {t('common:files.text')}
             </p>
             <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
-              {textOffers.map((offer, index) => {
-                const copied = copiedId === offer.id
-                return (
-                  <LinkRow
-                    key={getOfferKey(offer)}
-                    bare
-                    compact
-                    isFirst={index === 0}
-                    icon={<MessageSquareIcon size={16} color={theme.colors.colorInfo} />}
-                    iconBackground={theme.colors.colorInfoSubtle}
-                    label={offer.content}
-                    labelNode={
-                      <p className='m-0 text-[14px] font-medium leading-6 text-text-primary break-words'>
-                        {linkifyText(offer.content).map((seg, i) =>
-                          seg.url ? (
-                            <span
-                              key={i}
-                              className='cursor-pointer text-info underline'
-                              onClick={() => void bridgeApi.openExternalUrl(seg.url as string)}
-                            >
-                              {seg.text}
-                            </span>
-                          ) : (
-                            <span key={i}>{seg.text}</span>
-                          )
-                        )}
-                      </p>
-                    }
-                    subtitle={t('common:files.text')}
-                    subtitleTone='faint'
-                    trailing={
-                      <Button
-                        variant={copied ? 'success' : 'ghost'}
-                        size='sm'
-                        iconOnly
-                        aria-label={
-                          copied ? t('common:actions.copied') : t('common:actions.copyText')
-                        }
-                        onClick={() => copyText(offer.id, offer.content)}
-                        icon={copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
-                      />
-                    }
-                  />
-                )
-              })}
+              {textOffers.map((offer, index) => (
+                <ReceivedTextRow
+                  key={getOfferKey(offer)}
+                  content={offer.content}
+                  isFirst={index === 0}
+                  copied={copiedId === offer.id}
+                  subtitleLabel={t('common:files.text')}
+                  copyLabel={t('common:actions.copyText')}
+                  copiedLabel={t('common:actions.copied')}
+                  showMoreLabel={t('common:actions.showMore')}
+                  showLessLabel={t('common:actions.showLess')}
+                  onCopy={() => copyText(offer.id, offer.content)}
+                  onOpenLink={(url) => void bridgeApi.openExternalUrl(url)}
+                />
+              ))}
             </div>
           </div>
         ) : null}

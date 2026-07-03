@@ -28,7 +28,11 @@
     "pickFilesTitle": "添加文件",
     "pickPhotos": "照片",
     "pickFiles": "文件",
-    "typeSnippet": "输入或粘贴片段…"
+    "typeSnippet": "输入或粘贴片段…",
+    "sendTexts_one": "发送 {{count}} 条文本",
+    "sendTexts_other": "发送 {{count}} 条文本",
+    "sendItems_one": "发送 {{count}} 项",
+    "sendItems_other": "发送 {{count}} 项"
   },
   "status": {
     "waitingForPeer": "等待接收方",

@@ -28,7 +28,11 @@
     "pickFilesTitle": "Dateien hinzufügen",
     "pickPhotos": "Fotos",
     "pickFiles": "Dateien",
-    "typeSnippet": "Textausschnitt eingeben oder einfügen…"
+    "typeSnippet": "Textausschnitt eingeben oder einfügen…",
+    "sendTexts_one": "{{count}} Text senden",
+    "sendTexts_other": "{{count}} Texte senden",
+    "sendItems_one": "{{count}} Element senden",
+    "sendItems_other": "{{count}} Elemente senden"
   },
   "status": {
     "waitingForPeer": "Warten auf Empfänger",

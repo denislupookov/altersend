@@ -28,7 +28,9 @@
     "paste": "貼上",
     "openLink": "開啟連結",
     "copyText": "複製文字",
-    "add": "新增"
+    "add": "新增",
+    "showMore": "顯示更多",
+    "showLess": "收起"
   },
   "labels": {
     "settings": "設定",
@@ -59,7 +61,8 @@
     "items_one": "{{count}} 項",
     "items_other": "{{count}} 項",
     "texts_one": "{{count}} 則文字",
-    "texts_other": "{{count}} 則文字"
+    "texts_other": "{{count}} 則文字",
+    "filesGeneric": "檔案"
   },
   "update": {
     "ready": "更新準備就緒",
@@ -72,7 +75,8 @@
     "notNow": "稍後再說"
   },
   "status": {
-    "connected": "已連線"
+    "connected": "已連線",
+    "wantsToSend": "想要傳送 {{label}}{{size}} 給你"
   },
   "confirm": {
     "leaveShareSession": "離開將結束您的活躍共享會話。繼續？",

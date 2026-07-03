@@ -28,7 +28,9 @@
     "paste": "Paste",
     "openLink": "Open Link",
     "copyText": "Copy Text",
-    "add": "Add"
+    "add": "Add",
+    "showMore": "Show more",
+    "showLess": "Show less"
   },
   "labels": {
     "settings": "Settings",
@@ -59,7 +61,8 @@
     "items_one": "{{count}} item",
     "items_other": "{{count}} items",
     "texts_one": "{{count}} text",
-    "texts_other": "{{count}} texts"
+    "texts_other": "{{count}} texts",
+    "filesGeneric": "files"
   },
   "update": {
     "ready": "Update ready",
@@ -72,7 +75,8 @@
     "notNow": "Not now"
   },
   "status": {
-    "connected": "Connected"
+    "connected": "Connected",
+    "wantsToSend": "wants to send you {{label}}{{size}}"
   },
   "confirm": {
     "leaveShareSession": "Leaving will end your active share session. Continue?",

@@ -28,7 +28,11 @@
     "pickFilesTitle": "ファイルを追加",
     "pickPhotos": "写真",
     "pickFiles": "ファイル",
-    "typeSnippet": "スニペットを入力または貼り付け…"
+    "typeSnippet": "スニペットを入力または貼り付け…",
+    "sendTexts_one": "{{count}} 件のテキストを送信",
+    "sendTexts_other": "{{count}} 件のテキストを送信",
+    "sendItems_one": "{{count}} 個のアイテムを送信",
+    "sendItems_other": "{{count}} 個のアイテムを送信"
   },
   "status": {
     "waitingForPeer": "受信者を待機中",

@@ -29,6 +29,7 @@ interface LinkRowBaseProps {
   compact?: boolean
   bare?: boolean
   standalone?: boolean
+  alignTop?: boolean
   disabled?: boolean
   status?: { label: string; tone?: LinkRowStatusTone }
   progress?: LinkRowProgressState
@@ -94,6 +95,7 @@ export function LinkRow({
   compact = false,
   bare = false,
   standalone = false,
+  alignTop = false,
   disabled = false,
   status,
   progress,
@@ -170,6 +172,7 @@ export function LinkRow({
           standalone && styles.rowStandalone,
           bare && styles.rowBare,
           bare && isFirst && styles.rowBareFirst,
+          alignTop && styles.rowAlignTop,
           onPress && !disabled && styles.rowPressable,
           isActive && styles.rowActive,
           interactive &&

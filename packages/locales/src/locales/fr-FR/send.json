@@ -28,7 +28,11 @@
     "pickFilesTitle": "Ajouter des fichiers",
     "pickPhotos": "Photothèque",
     "pickFiles": "Fichiers",
-    "typeSnippet": "Saisissez ou collez un extrait…"
+    "typeSnippet": "Saisissez ou collez un extrait…",
+    "sendTexts_one": "Envoyer {{count}} texte",
+    "sendTexts_other": "Envoyer {{count}} textes",
+    "sendItems_one": "Envoyer {{count}} élément",
+    "sendItems_other": "Envoyer {{count}} éléments"
   },
   "status": {
     "waitingForPeer": "En attente du destinataire",

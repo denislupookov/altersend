@@ -28,7 +28,9 @@
     "paste": "Coller",
     "openLink": "Ouvrir le lien",
     "copyText": "Copier le texte",
-    "add": "Ajouter"
+    "add": "Ajouter",
+    "showMore": "Afficher plus",
+    "showLess": "Afficher moins"
   },
   "labels": {
     "settings": "Paramètres",
@@ -59,7 +61,8 @@
     "items_one": "{{count}} élément",
     "items_other": "{{count}} éléments",
     "texts_one": "{{count}} texte",
-    "texts_other": "{{count}} textes"
+    "texts_other": "{{count}} textes",
+    "filesGeneric": "des fichiers"
   },
   "update": {
     "ready": "Mise à jour prête",
@@ -72,7 +75,8 @@
     "notNow": "Plus tard"
   },
   "status": {
-    "connected": "Connecté"
+    "connected": "Connecté",
+    "wantsToSend": "veut vous envoyer {{label}}{{size}}"
   },
   "confirm": {
     "leaveShareSession": "Quitter mettra fin à votre session de partage active. Continuer?",

@@ -35,6 +35,9 @@ export const styles = css.create({
     paddingLeft: tokens.space25,
     paddingRight: tokens.space25
   },
+  rowAlignTop: {
+    alignItems: 'flex-start'
+  },
   rowStandalone: {
     borderWidth: 1,
     borderStyle: 'solid',
