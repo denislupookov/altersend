@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, FeedbackTypeSelector } from '@altersend/components'
+import { Button, FeedbackTypeSelector, Textarea } from '@altersend/components'
 import { SendIcon } from '@altersend/components/icons'
 import type { FeedbackType } from '@altersend/components'
 import { submitFeedback } from '@altersend/domain'
@@ -45,9 +45,8 @@ export function FeedbackSection({ version }: { version: string }) {
               disabled={reportState === 'sending'}
             />
           </div>
-          <textarea
-            className='w-full resize-none rounded-lg border border-border-primary bg-background-subtle px-3 py-3 font-sans text-[13px] text-text-primary placeholder:text-text-muted focus:border-border-strong focus:outline-none disabled:opacity-50'
-            rows={5}
+          <Textarea
+            minHeight={120}
             placeholder={
               reportType === 'bug'
                 ? t('feedback:placeholders.desktopBug')
@@ -57,7 +56,7 @@ export function FeedbackSection({ version }: { version: string }) {
             }
             value={reportMessage}
             disabled={reportState === 'sending'}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
               setReportMessage(e.target.value)
               if (reportState === 'error') setReportState('idle')
             }}

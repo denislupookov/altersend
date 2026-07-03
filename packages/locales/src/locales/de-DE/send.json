@@ -27,7 +27,8 @@
     "endSession": "Sitzung beenden",
     "pickFilesTitle": "Dateien hinzufügen",
     "pickPhotos": "Fotos",
-    "pickFiles": "Dateien"
+    "pickFiles": "Dateien",
+    "typeSnippet": "Textausschnitt eingeben oder einfügen…"
   },
   "status": {
     "waitingForPeer": "Warten auf Empfänger",
@@ -94,6 +95,7 @@
   },
   "files": {
     "addedFiles": "Hinzugefügte Dateien",
-    "removeLabel": "Entfernen Sie {{name}}"
+    "removeLabel": "Entfernen Sie {{name}}",
+    "addedText": "Hinzugefügter Text"
   }
 }

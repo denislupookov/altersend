@@ -92,6 +92,7 @@ export interface InviteReceivedEvent {
   deviceType: DeviceType
   topic: string
   fileCount?: number
+  textCount?: number
   totalSize?: number
 }
 

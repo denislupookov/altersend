@@ -27,7 +27,8 @@
     "endSession": "Finalizar sesión",
     "pickFilesTitle": "Agregar archivos",
     "pickPhotos": "Fotos",
-    "pickFiles": "Archivos"
+    "pickFiles": "Archivos",
+    "typeSnippet": "Escribe o pega un fragmento…"
   },
   "status": {
     "waitingForPeer": "Esperando al destinatario",
@@ -94,6 +95,7 @@
   },
   "files": {
     "addedFiles": "Archivos agregados",
-    "removeLabel": "Eliminar {{name}}"
+    "removeLabel": "Eliminar {{name}}",
+    "addedText": "Texto agregado"
   }
 }

@@ -13,6 +13,7 @@ export type {
   ConnectedDeviceRow,
   OfflineDeviceRow,
   FileRow,
+  TextRow,
   SubtitleTone
 } from './send/useShareViewModel'
 export * from './send/pageUi'
@@ -21,9 +22,9 @@ export * from './receive/pageUi'
 export * from './receive/joinCode'
 export * from './receive/downloadModel'
 export * from './transfer'
-export * from './flags'
 
 export * from './onboarding'
 export * from './useSimulatedLoading'
+export * from './useCopiedFlag'
 export * from './pairing'
 export * from './feedback'

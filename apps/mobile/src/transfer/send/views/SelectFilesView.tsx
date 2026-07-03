@@ -1,22 +1,30 @@
 import { useState } from 'react'
 import { View, StyleSheet, ActionSheetIOS, Alert, Platform } from 'react-native'
+import { Text } from '@/src/components/ThemedText'
 import * as DocumentPicker from 'expo-document-picker'
 import * as ImagePicker from 'expo-image-picker'
 import {
   addSelectedFiles,
+  createTextSnippet,
+  formatTextSnippetPreview,
   removeSelectedFile,
   useTransferStore,
-  ENABLE_TEXT_SHARING,
-  type SelectedFile
+  type SelectedFile,
+  type SendComposeMode
 } from '@altersend/domain'
 import {
   DropZoneLink,
   ErrorBanner,
   FileDropZone,
   LinkRow,
-  Input,
-  Button
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  Textarea,
+  Button,
+  useTheme
 } from '@altersend/components'
+import { MessageSquareIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 
 function uriToFilePath(uri: string): string {
@@ -31,11 +39,17 @@ function uriToFilePath(uri: string): string {
 
 export function SelectFilesView() {
   const { t } = useTranslation(['send', 'common'])
+  const { theme } = useTheme()
+  const c = theme.colors
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const [selectionError, setSelectionError] = useState<string | null>(null)
   const [textInput, setTextInput] = useState('')
+  const [mode, setMode] = useState<SendComposeMode>('files')
 
   const hasSelectedFiles = selectedFiles.length > 0
+  const trimmedText = textInput.trim()
+  const fileItems = selectedFiles.filter((file) => file.kind !== 'text')
+  const textItems = selectedFiles.filter((file) => file.kind === 'text')
 
   const pickFromFiles = async () => {
     try {
@@ -115,48 +129,75 @@ export function SelectFilesView() {
   }
 
   const addTextItem = () => {
-    const text = textInput.trim()
-    if (!text) return
-    const name = text.length > 20 ? text.substring(0, 20) + '...' : text
-    addSelectedFiles([
-      {
-        name,
-        path: `text-${Date.now()}`,
-        kind: 'text',
-        content: text,
-        isTemporary: true,
-        size: text.length
-      }
-    ])
+    if (!trimmedText) return
+    addSelectedFiles([createTextSnippet(textInput)])
     setTextInput('')
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.dropZoneContainer}>
-        <FileDropZone
-          description={
-            hasSelectedFiles ? (
-              <>
-                {t('send:dropzone.tapTo')}{' '}
-                <DropZoneLink>{t('send:dropzone.addMoreLink')}</DropZoneLink>
-              </>
-            ) : (
-              <>
-                {t('send:dropzone.tapTo')}{' '}
-                <DropZoneLink>{t('send:dropzone.browseLink')}</DropZoneLink>
-              </>
-            )
-          }
-          hasFiles={hasSelectedFiles}
-          onClick={() => void browse()}
-          title={hasSelectedFiles ? t('send:actions.addMoreFiles') : t('send:actions.addFiles')}
-        />
-      </View>
+      <Tabs stretch value={mode} onValueChange={(value) => setMode(value as SendComposeMode)}>
+        <TabsList>
+          <TabsTrigger value='files'>{t('common:files.files')}</TabsTrigger>
+          <TabsTrigger value='text'>{t('common:files.text')}</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-      {hasSelectedFiles && (
+      {mode === 'text' ? (
+        <Textarea
+          placeholder={t('send:actions.typeSnippet')}
+          height={hasSelectedFiles ? 141 : 198}
+          value={textInput}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTextInput(e.target.value)}
+          footer={
+            <>
+              {trimmedText.length > 0 ? (
+                <Text style={[styles.charCount, { color: c.colorTextFaint }]}>
+                  {t('common:units.chars', { count: textInput.length })}
+                </Text>
+              ) : (
+                <View />
+              )}
+              <Button
+                disabled={trimmedText.length === 0}
+                onClick={addTextItem}
+                size='sm'
+                variant='primary'
+              >
+                {t('common:actions.add')}
+              </Button>
+            </>
+          }
+        />
+      ) : (
+        <View style={styles.dropZoneContainer}>
+          <FileDropZone
+            description={
+              hasSelectedFiles ? (
+                <>
+                  {t('send:dropzone.tapTo')}{' '}
+                  <DropZoneLink>{t('send:dropzone.addMoreLink')}</DropZoneLink>
+                </>
+              ) : (
+                <>
+                  {t('send:dropzone.tapTo')}{' '}
+                  <DropZoneLink>{t('send:dropzone.browseLink')}</DropZoneLink>
+                </>
+              )
+            }
+            hasFiles={hasSelectedFiles}
+            onClick={() => void browse()}
+            title={hasSelectedFiles ? t('send:actions.addMoreFiles') : t('send:actions.addFiles')}
+          />
+        </View>
+      )}
+
+      {fileItems.length > 0 && (
         <View style={styles.fileList}>
-          {selectedFiles.map((file) => (
+          <Text style={[styles.listHeading, { color: c.colorTextMuted }]}>
+            {t('send:files.addedFiles')}
+          </Text>
+          {fileItems.map((file) => (
             <LinkRow
               key={file.path}
               file
@@ -170,25 +211,28 @@ export function SelectFilesView() {
         </View>
       )}
 
-      {ENABLE_TEXT_SHARING && (
-        <View style={styles.textInputRow}>
-          <View style={styles.textInputWrapper}>
-            <Input
-              placeholder={t('send:actions.typeMessageOrLink', {
-                defaultValue: 'Type a message or link...'
-              })}
-              value={textInput}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
-            />
-          </View>
-          <Button
-            disabled={textInput.trim().length === 0}
-            onClick={addTextItem}
-            size='sm'
-            variant='secondary'
-          >
-            {t('common:actions.add', { defaultValue: 'Add' })}
-          </Button>
+      {textItems.length > 0 && (
+        <View style={styles.fileList}>
+          <Text style={[styles.listHeading, { color: c.colorTextMuted }]}>
+            {t('send:files.addedText')}
+          </Text>
+          {textItems.map((file) => {
+            const preview = formatTextSnippetPreview(file.content ?? file.name)
+            const chars = (file.content ?? '').length
+            return (
+              <LinkRow
+                key={file.path}
+                icon={<MessageSquareIcon size={17} color={c.colorInfo} />}
+                iconBackground={c.colorInfoSubtle}
+                standalone
+                label={preview}
+                subtitle={`${t('common:files.text')} · ${t('common:units.chars', { count: chars })}`}
+                subtitleTone='faint'
+                onRemove={() => removeSelectedFile(file.path)}
+                removeLabel={t('send:files.removeLabel', { name: preview })}
+              />
+            )
+          })}
         </View>
       )}
 
@@ -207,13 +251,11 @@ const styles = StyleSheet.create({
   fileList: {
     gap: 8
   },
-  textInputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 8
+  listHeading: {
+    fontSize: 13,
+    fontWeight: '500'
   },
-  textInputWrapper: {
-    flex: 1
+  charCount: {
+    fontSize: 13
   }
 })

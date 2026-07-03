@@ -95,6 +95,24 @@ export function groupSelectedFiles(files: SelectedFile[]): SelectedRow[] {
   return rows
 }
 
+export function createTextSnippet(content: string): SelectedFile {
+  const text = content.trim()
+  const id = `text-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  return {
+    name: formatTextSnippetPreview(text, 40),
+    path: id,
+    kind: 'text',
+    content: text,
+    isTemporary: true,
+    size: text.length
+  }
+}
+
+export function formatTextSnippetPreview(content: string, maxLength = 72): string {
+  const collapsed = content.replace(/\s+/g, ' ').trim()
+  return collapsed.length > maxLength ? `${collapsed.slice(0, maxLength).trimEnd()}…` : collapsed
+}
+
 export function createInitialUploadItems(selectedFiles: SelectedFile[]): SenderUploadItem[] {
   return selectedFiles.map((file) => ({
     ...file,

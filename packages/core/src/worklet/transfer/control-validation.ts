@@ -169,6 +169,7 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
         isDeviceType(v.deviceType) &&
         isBoundedString(v.topic, MAX_ID_LEN) &&
         (v.fileCount === undefined || isNonNegativeInteger(v.fileCount, MAX_FILES_PER_TRANSFER)) &&
+        (v.textCount === undefined || isNonNegativeInteger(v.textCount, MAX_FILES_PER_TRANSFER)) &&
         (v.totalSize === undefined || isNonNegativeInteger(v.totalSize))
       )
     }

@@ -27,7 +27,8 @@
     "endSession": "Fin de séance",
     "pickFilesTitle": "Ajouter des fichiers",
     "pickPhotos": "Photothèque",
-    "pickFiles": "Fichiers"
+    "pickFiles": "Fichiers",
+    "typeSnippet": "Saisissez ou collez un extrait…"
   },
   "status": {
     "waitingForPeer": "En attente du destinataire",
@@ -94,6 +95,7 @@
   },
   "files": {
     "addedFiles": "Fichiers ajoutés",
-    "removeLabel": "Supprimer {{name}}"
+    "removeLabel": "Supprimer {{name}}",
+    "addedText": "Texte ajouté"
   }
 }

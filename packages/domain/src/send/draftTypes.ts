@@ -8,6 +8,8 @@ export interface SelectedFile {
   relativePath?: string
 }
 
+export type SendComposeMode = 'files' | 'text'
+
 export type SenderUploadStatus = 'waiting' | 'uploading' | 'completed'
 
 export interface SenderUploadItem extends SelectedFile {

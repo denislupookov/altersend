@@ -3,6 +3,7 @@ import { tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   base: {
+    position: 'relative',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

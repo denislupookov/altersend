@@ -1,5 +1,7 @@
 import {
+  Children,
   createContext,
+  isValidElement,
   useCallback,
   useEffect,
   useId,
@@ -9,6 +11,7 @@ import {
 } from 'react'
 import { html } from 'react-strict-dom'
 import { styles } from './styles'
+import { TabIndicator } from './TabIndicator'
 
 type DivElementProps = Parameters<typeof html.div>[0]
 type ButtonElementProps = Parameters<typeof html.button>[0]
@@ -35,15 +38,21 @@ interface TabsContextValue {
   focusLast: () => void
   onValueChange: (value: string) => void
   registerTrigger: (registration: TriggerRegistration) => void
+  size: TabsSize
+  stretch: boolean
   unregisterTrigger: (value: string) => void
   value: string
 }
+
+export type TabsSize = 'sm' | 'md'
 
 const TabsContext = createContext<TabsContextValue | null>(null)
 
 export interface TabsProps extends Omit<DivElementProps, 'style'> {
   children: ReactNode
   onValueChange: (value: string) => void
+  size?: TabsSize
+  stretch?: boolean
   value: string
 }
 
@@ -87,7 +96,14 @@ function getEnabledTriggers(
   )
 }
 
-export function Tabs({ children, onValueChange, value, ...props }: TabsProps) {
+export function Tabs({
+  children,
+  onValueChange,
+  size = 'md',
+  stretch = false,
+  value,
+  ...props
+}: TabsProps) {
   const generatedId = useId()
   const baseId = props.id ?? generatedId
   const triggerRegistrationsRef = useRef<Map<string, TriggerRegistration>>(new Map())
@@ -160,11 +176,13 @@ export function Tabs({ children, onValueChange, value, ...props }: TabsProps) {
         focusLast,
         onValueChange,
         registerTrigger,
+        size,
+        stretch,
         unregisterTrigger,
         value
       }}
     >
-      <html.div {...props} style={styles.root}>
+      <html.div {...props} style={[styles.root, stretch && styles.rootStretch]}>
         {children}
       </html.div>
     </TabsContext.Provider>
@@ -172,8 +190,24 @@ export function Tabs({ children, onValueChange, value, ...props }: TabsProps) {
 }
 
 export function TabsList({ children, ...props }: TabsListProps) {
+  const { stretch, value } = useTabsContext('TabsList')
+  const triggerValues = Children.toArray(children)
+    .filter(isValidElement)
+    .map((child) => (child.props as { value?: string }).value)
+    .filter((triggerValue): triggerValue is string => typeof triggerValue === 'string')
+  const count = triggerValues.length
+  const activeIndex = Math.max(0, triggerValues.indexOf(value))
+
   return (
-    <html.div {...props} aria-orientation='horizontal' role='tablist' style={styles.list}>
+    <html.div
+      {...props}
+      aria-orientation='horizontal'
+      role='tablist'
+      style={[styles.list, stretch && styles.listStretch]}
+    >
+      {count > 1 ? (
+        <TabIndicator activeIndex={activeIndex} count={count} stretch={stretch} />
+      ) : null}
       {children}
     </html.div>
   )
@@ -253,11 +287,24 @@ export function TabsTrigger({ children, onClick, value, ...props }: TabsTriggerP
         triggerRef.current = element as FocusableElement | null
       }}
       role='tab'
-      style={[styles.trigger, isActive && styles.triggerActive]}
+      style={[
+        styles.trigger,
+        context.size === 'sm' && styles.triggerSm,
+        context.stretch && styles.triggerStretch,
+        disabled && styles.triggerDisabled
+      ]}
       tabIndex={isActive ? 0 : -1}
       type='button'
     >
-      <html.span style={styles.triggerLabel}>{children}</html.span>
+      <html.span
+        style={[
+          styles.triggerLabel,
+          context.size === 'sm' && styles.triggerLabelSm,
+          isActive && styles.triggerLabelActive
+        ]}
+      >
+        {children}
+      </html.span>
     </html.button>
   )
 }

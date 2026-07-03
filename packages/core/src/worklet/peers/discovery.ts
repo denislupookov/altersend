@@ -105,6 +105,7 @@ export class DiscoveryCoordinator {
     remoteDevicePubkey: string,
     topic: string,
     fileCount?: number,
+    textCount?: number,
     totalSize?: number
   ): Promise<InviteDeviceReply> {
     if (typeof remoteDevicePubkey !== 'string' || remoteDevicePubkey.length === 0) {
@@ -130,6 +131,7 @@ export class DiscoveryCoordinator {
       deviceType: identity.deviceType,
       topic,
       ...(fileCount !== undefined ? { fileCount } : {}),
+      ...(textCount !== undefined ? { textCount } : {}),
       ...(totalSize !== undefined ? { totalSize } : {})
     }
     session.control.send(message)
@@ -250,6 +252,7 @@ export class DiscoveryCoordinator {
           deviceType: message.deviceType,
           topic: message.topic,
           ...(message.fileCount !== undefined ? { fileCount: message.fileCount } : {}),
+          ...(message.textCount !== undefined ? { textCount: message.textCount } : {}),
           ...(message.totalSize !== undefined ? { totalSize: message.totalSize } : {})
         })
       )

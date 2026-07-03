@@ -27,7 +27,8 @@
     "endSession": "세션 종료",
     "pickFilesTitle": "파일 추가",
     "pickPhotos": "사진",
-    "pickFiles": "파일"
+    "pickFiles": "파일",
+    "typeSnippet": "스니펫을 입력하거나 붙여넣기…"
   },
   "status": {
     "waitingForPeer": "수신자를 기다리는 중",
@@ -94,6 +95,7 @@
   },
   "files": {
     "addedFiles": "추가된 파일",
-    "removeLabel": "{{name}} 삭제"
+    "removeLabel": "{{name}} 삭제",
+    "addedText": "추가된 텍스트"
   }
 }

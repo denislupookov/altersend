@@ -1,5 +1,7 @@
-import { type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import {
+  Animated,
+  Easing,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -24,6 +26,10 @@ interface BottomSheetProps {
   children: ReactNode
 }
 
+const ENTER_DURATION = 240
+const EXIT_DURATION = 180
+const SHEET_RISE = 24
+
 export function BottomSheet({
   open,
   onClose,
@@ -37,13 +43,59 @@ export function BottomSheet({
 }: BottomSheetProps) {
   const { theme } = useTheme()
   const c = theme.colors
+  const [mounted, setMounted] = useState(open)
+  const backdropOpacity = useRef(new Animated.Value(0)).current
+  const sheetTranslate = useRef(new Animated.Value(SHEET_RISE)).current
+  const sheetOpacity = useRef(new Animated.Value(0)).current
+  const hasOpenedRef = useRef(open)
+
+  useEffect(() => {
+    if (open) hasOpenedRef.current = true
+    if (!hasOpenedRef.current) return
+
+    if (open) setMounted(true)
+
+    const duration = open ? ENTER_DURATION : EXIT_DURATION
+    const easing = open ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic)
+
+    const animation = Animated.parallel([
+      Animated.timing(backdropOpacity, {
+        toValue: open ? 1 : 0,
+        duration,
+        easing,
+        useNativeDriver: true
+      }),
+      Animated.timing(sheetTranslate, {
+        toValue: open ? 0 : SHEET_RISE,
+        duration,
+        easing,
+        useNativeDriver: true
+      }),
+      Animated.timing(sheetOpacity, {
+        toValue: open ? 1 : 0,
+        duration,
+        easing,
+        useNativeDriver: true
+      })
+    ])
+    animation.start(({ finished }) => {
+      if (finished && !open) {
+        setMounted(false)
+        onDismiss?.()
+      }
+    })
+    return () => animation.stop()
+  }, [open, backdropOpacity, sheetTranslate, sheetOpacity, onDismiss])
+
+  if (!mounted) return null
 
   const sheet = (
-    <View
+    <Animated.View
       style={[
         styles.sheet,
         !keyboardAvoiding && styles.sheetAnchored,
         { backgroundColor: c.colorBackground, borderColor: c.colorBorderPrimary },
+        { opacity: sheetOpacity, transform: [{ translateY: sheetTranslate }] },
         sheetStyle
       ]}
     >
@@ -59,21 +111,19 @@ export function BottomSheet({
         </View>
       )}
       {children}
-    </View>
+    </Animated.View>
   )
 
   return (
-    <Modal
-      visible={open}
-      transparent
-      animationType='slide'
-      onDismiss={onDismiss}
-      onRequestClose={onClose}
-    >
-      <Pressable
-        style={[styles.backdrop, { backgroundColor: withAlpha(c.colorScrim, 0.55) }]}
-        onPress={onClose}
-      />
+    <Modal visible={mounted} transparent animationType='none' onRequestClose={onClose}>
+      <Animated.View
+        style={[
+          styles.backdrop,
+          { backgroundColor: withAlpha(c.colorScrim, 0.55), opacity: backdropOpacity }
+        ]}
+      >
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+      </Animated.View>
       {keyboardAvoiding ? (
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}

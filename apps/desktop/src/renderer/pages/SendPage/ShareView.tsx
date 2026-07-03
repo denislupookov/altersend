@@ -2,6 +2,8 @@ import { useState } from 'react'
 import {
   buildJoinUrl,
   formatFileSize,
+  formatItemsCount,
+  formatTextSnippetPreview,
   groupSelectedFiles,
   useShareViewModel
 } from '@altersend/domain'
@@ -10,6 +12,7 @@ import {
   ChevronsUpDownIcon,
   deviceIcon,
   FolderIcon,
+  MessageSquareIcon,
   QrCodeIcon,
   ShareIcon
 } from '@altersend/components/icons'
@@ -51,53 +54,71 @@ export function ShareView() {
     vm.markCopied()
   }
 
-  const filesCard = (
-    <Popover
-      variant='plain'
-      align='left'
-      trigger={
-        <LinkRow
-          standalone
-          compact
-          icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
-          label={
-            singleFolder ? singleFolder.name : t('common:files.count', { count: vm.files.length })
-          }
-          subtitle={formatFileSize(vm.totalSize)}
-          trailing={<ChevronsUpDownIcon size={16} color={c.colorTextMuted} />}
-        />
-      }
-    >
-      {() => (
-        <div style={{ maxHeight: 280, overflowY: 'auto' }}>
-          <LinkCard>
-            {fileRows.map((row, index) =>
-              row.kind === 'folder' ? (
+  const hasTexts = vm.texts.length > 0
+  const filesCard =
+    vm.files.length === 0 && !hasTexts ? null : (
+      <Popover
+        variant='plain'
+        align='left'
+        trigger={
+          <LinkRow
+            standalone
+            compact
+            icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
+            label={
+              hasTexts
+                ? formatItemsCount(vm.files.length, vm.texts.length, t)
+                : singleFolder
+                  ? singleFolder.name
+                  : t('common:files.count', { count: vm.files.length })
+            }
+            subtitle={vm.totalSize > 0 ? formatFileSize(vm.totalSize) : undefined}
+            trailing={<ChevronsUpDownIcon size={16} color={c.colorTextMuted} />}
+          />
+        }
+      >
+        {() => (
+          <div style={{ maxHeight: 280, overflowY: 'auto' }}>
+            <LinkCard>
+              {fileRows.map((row, index) =>
+                row.kind === 'folder' ? (
+                  <LinkRow
+                    key={`folder:${row.name}`}
+                    compact
+                    icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
+                    label={row.name}
+                    size={row.totalSize}
+                    subtitle={t('common:files.count', { count: row.files.length })}
+                    isLast={!hasTexts && index === fileRows.length - 1}
+                  />
+                ) : (
+                  <LinkRow
+                    key={row.file.path}
+                    compact
+                    file
+                    label={row.file.name}
+                    size={row.file.size}
+                    isLast={!hasTexts && index === fileRows.length - 1}
+                  />
+                )
+              )}
+              {vm.texts.map((text, index) => (
                 <LinkRow
-                  key={`folder:${row.name}`}
+                  key={text.path}
                   compact
-                  icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
-                  label={row.name}
-                  size={row.totalSize}
-                  subtitle={t('common:files.count', { count: row.files.length })}
-                  isLast={index === fileRows.length - 1}
+                  icon={<MessageSquareIcon size={16} color={c.colorInfo} />}
+                  iconBackground={c.colorInfoSubtle}
+                  label={formatTextSnippetPreview(text.content)}
+                  subtitle={t('common:files.text')}
+                  subtitleTone='faint'
+                  isLast={index === vm.texts.length - 1}
                 />
-              ) : (
-                <LinkRow
-                  key={row.file.path}
-                  compact
-                  file
-                  label={row.file.name}
-                  size={row.file.size}
-                  isLast={index === fileRows.length - 1}
-                />
-              )
-            )}
-          </LinkCard>
-        </div>
-      )}
-    </Popover>
-  )
+              ))}
+            </LinkCard>
+          </div>
+        )}
+      </Popover>
+    )
 
   return (
     <>
@@ -180,7 +201,7 @@ export function ShareView() {
           </div>
         )}
 
-        {hasConnectedDevices && <div>{filesCard}</div>}
+        {hasConnectedDevices && filesCard && <div>{filesCard}</div>}
 
         {vm.hasDevices && (
           <div className='flex flex-col gap-2'>

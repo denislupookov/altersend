@@ -27,7 +27,8 @@
     "endSession": "结束会话",
     "pickFilesTitle": "添加文件",
     "pickPhotos": "照片",
-    "pickFiles": "文件"
+    "pickFiles": "文件",
+    "typeSnippet": "输入或粘贴片段…"
   },
   "status": {
     "waitingForPeer": "等待接收方",
@@ -94,6 +95,7 @@
   },
   "files": {
     "addedFiles": "已添加的文件",
-    "removeLabel": "删除{{name}}"
+    "removeLabel": "删除{{name}}",
+    "addedText": "已添加文本"
   }
 }

@@ -37,6 +37,7 @@ export interface IncomingInvite {
   deviceType: string
   topic: string
   fileCount?: number
+  textCount?: number
   totalSize?: number
 }
 

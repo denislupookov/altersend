@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import { buildInviteText, formatFileSize, useShareViewModel } from '@altersend/domain'
+import {
+  buildInviteText,
+  formatFileSize,
+  formatItemsCount,
+  useShareViewModel
+} from '@altersend/domain'
 import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
 import {
   CheckIcon,
@@ -85,6 +90,7 @@ export function ShareView() {
             <View style={styles.tile}>
               <Button
                 variant='secondary'
+                width='full'
                 icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
                 onClick={() => void copyTopic()}
               >
@@ -94,6 +100,7 @@ export function ShareView() {
             <View style={styles.tile}>
               <Button
                 variant='secondary'
+                width='full'
                 icon={<QrCodeIcon size={16} />}
                 onClick={() => setIsQrOpen(true)}
               >
@@ -131,13 +138,13 @@ export function ShareView() {
           </View>
         )}
 
-        {vm.files.length > 0 && (
+        {(vm.files.length > 0 || vm.texts.length > 0) && (
           <View style={styles.filesWrap}>
             <LinkCard>
               <LinkRow
                 icon={<FolderIcon size={20} color={c.colorTextSecondary} />}
-                label={t('common:files.count', { count: vm.files.length })}
-                subtitle={formatFileSize(vm.totalSize)}
+                label={formatItemsCount(vm.files.length, vm.texts.length, t)}
+                subtitle={vm.totalSize > 0 ? formatFileSize(vm.totalSize) : undefined}
                 onPress={() => setIsFilesSheetOpen(true)}
                 trailing={<ChevronsUpDownIcon size={18} color={c.colorTextMuted} />}
                 isLast
@@ -262,6 +269,7 @@ export function ShareView() {
       <ShareFilesSheet
         open={isFilesSheetOpen}
         files={vm.files}
+        texts={vm.texts}
         totalSize={vm.totalSize}
         onClose={() => setIsFilesSheetOpen(false)}
       />

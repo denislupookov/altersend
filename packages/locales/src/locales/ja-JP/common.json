@@ -27,7 +27,8 @@
     "skip": "スキップ",
     "paste": "貼り付け",
     "openLink": "リンクを開く",
-    "copyText": "テキストをコピー"
+    "copyText": "テキストをコピー",
+    "add": "追加"
   },
   "labels": {
     "settings": "設定",
@@ -53,7 +54,12 @@
     "files": "ファイル",
     "downloads": "ファイル › ダウンロード",
     "photosAndAlterSend": "写真 + AlterSend フォルダ",
-    "alterSendFolder": "AlterSend フォルダ"
+    "alterSendFolder": "AlterSend フォルダ",
+    "text": "テキスト",
+    "items_one": "{{count}} 個",
+    "items_other": "{{count}} 個",
+    "texts_one": "テキスト {{count}} 件",
+    "texts_other": "テキスト {{count}} 件"
   },
   "update": {
     "ready": "更新の準備ができました",
@@ -71,5 +77,9 @@
   "confirm": {
     "leaveShareSession": "退出すると、アクティブな共有セッションが終了します。続く？",
     "leaveReceiveSession": "終了すると、アクティブな受信セッションが終了します。続く？"
+  },
+  "units": {
+    "chars_one": "{{count}} 文字",
+    "chars_other": "{{count}} 文字"
   }
 }

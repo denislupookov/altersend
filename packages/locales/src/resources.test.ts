@@ -46,6 +46,8 @@ const identicalValueAllowList = new Set([
 
 const identicalKeyAllowList = new Set([
   'common.files.count_one',
+  'common.files.text',
+  'common.files.items_one',
   'common.labels.desktop',
   'settings.rows.feedback',
   'feedback.title'

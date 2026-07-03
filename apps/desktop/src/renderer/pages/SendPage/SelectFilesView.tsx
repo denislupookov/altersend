@@ -1,19 +1,28 @@
 import { useState } from 'react'
-import { DropZoneLink, ErrorBanner, FileDropZone, LinkRow, useTheme } from '@altersend/components'
-import { FolderIcon } from '@altersend/components/icons'
+import {
+  Button,
+  DropZoneLink,
+  ErrorBanner,
+  FileDropZone,
+  LinkRow,
+  Textarea,
+  useTheme
+} from '@altersend/components'
+import { FolderIcon, MessageSquareIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import {
   addSelectedFiles,
   type BrowserFileLike,
+  createTextSnippet,
   formatFileSize,
+  formatTextSnippetPreview,
   groupSelectedFiles,
   normalizeSelectedFiles,
   removeSelectedFile,
   useTransferStore,
-  ENABLE_TEXT_SHARING
+  type SendComposeMode
 } from '@altersend/domain'
 import { bridgeApi } from '../../api/bridgeApi'
-import { Input, Button } from '@altersend/components'
 
 function readAllEntries(reader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
   return new Promise((resolve, reject) => {
@@ -56,7 +65,7 @@ async function collectDroppedEntries(
   }
 }
 
-export function SelectFilesView() {
+export function SelectFilesView({ mode = 'files' }: { mode?: SendComposeMode }) {
   const { t } = useTranslation(['send', 'common'])
   const { theme } = useTheme()
   const c = theme.colors
@@ -66,6 +75,10 @@ export function SelectFilesView() {
   const [textInput, setTextInput] = useState('')
 
   const hasSelectedFiles = selectedFiles.length > 0
+  const trimmedText = textInput.trim()
+  const fileItems = selectedFiles.filter((file) => file.kind !== 'text')
+  const textItems = selectedFiles.filter((file) => file.kind === 'text')
+  const fileRows = groupSelectedFiles(fileItems)
 
   const browseDescription = (() => {
     const raw = t('send:dropzone.browseDescription')
@@ -127,102 +140,139 @@ export function SelectFilesView() {
   }
 
   const addTextItem = () => {
-    const text = textInput.trim()
-    if (!text) return
-    const name = text.length > 20 ? text.substring(0, 20) + '...' : text
-    addSelectedFiles([
-      {
-        name,
-        path: `text-${Date.now()}`,
-        kind: 'text',
-        content: text,
-        isTemporary: true,
-        size: text.length
-      }
-    ])
+    if (!trimmedText) return
+    addSelectedFiles([createTextSnippet(textInput)])
     setTextInput('')
   }
 
   return (
     <div className='flex h-full min-h-0 flex-col gap-[34px]'>
       <div className={hasSelectedFiles ? 'shrink-0' : ''}>
-        <FileDropZone
-          description={browseDescription}
-          hasFiles={hasSelectedFiles}
-          isDragging={isDropZoneDragging}
-          onClick={() => void browse()}
-          onDragLeave={(event) => {
-            event.preventDefault()
-            setIsDropZoneDragging(false)
-          }}
-          onDragOver={(event) => {
-            event.preventDefault()
-            setIsDropZoneDragging(true)
-          }}
-          onDrop={onDrop}
-          title={t('send:actions.dragAndDrop')}
-        />
+        {mode === 'text' ? (
+          <Textarea
+            placeholder={t('send:actions.typeSnippet')}
+            height={hasSelectedFiles ? 141 : 198}
+            value={textInput}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTextInput(e.target.value)}
+            onKeyDown={(event) => {
+              const e = event as typeof event & {
+                shiftKey?: boolean
+                preventDefault?: () => void
+              }
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault?.()
+                addTextItem()
+              }
+            }}
+            footer={
+              <>
+                {trimmedText.length > 0 ? (
+                  <span className='text-[13px] text-text-faint'>
+                    {t('common:units.chars', { count: textInput.length })}
+                  </span>
+                ) : (
+                  <span />
+                )}
+                <Button
+                  disabled={trimmedText.length === 0}
+                  onClick={addTextItem}
+                  size='sm'
+                  variant='primary'
+                >
+                  {t('common:actions.add')}
+                </Button>
+              </>
+            }
+          />
+        ) : (
+          <FileDropZone
+            description={browseDescription}
+            hasFiles={hasSelectedFiles}
+            isDragging={isDropZoneDragging}
+            onClick={() => void browse()}
+            onDragLeave={(event) => {
+              event.preventDefault()
+              setIsDropZoneDragging(false)
+            }}
+            onDragOver={(event) => {
+              event.preventDefault()
+              setIsDropZoneDragging(true)
+            }}
+            onDrop={onDrop}
+            title={t('send:actions.dragAndDrop')}
+          />
+        )}
       </div>
 
       {hasSelectedFiles ? (
-        <div className='min-h-0 flex-1 overflow-y-auto'>
-          <div className='flex flex-col gap-2'>
-            {groupSelectedFiles(selectedFiles).map((row) =>
-              row.kind === 'file' ? (
-                <LinkRow
-                  key={row.file.path}
-                  file
-                  standalone
-                  compact
-                  label={row.file.name}
-                  subtitle={fileSubtitle(row.file.name, row.file.size)}
-                  subtitleTone='faint'
-                  onRemove={() => removeSelectedFile(row.file.path)}
-                  removeLabel={t('send:files.removeLabel', { name: row.file.name })}
-                />
-              ) : (
-                <LinkRow
-                  key={`folder:${row.name}`}
-                  icon={<FolderIcon size={17} color={c.colorTextMuted} />}
-                  iconBackground={c.colorSurfacePrimary}
-                  standalone
-                  compact
-                  label={row.name}
-                  subtitle={t('common:files.count', { count: row.files.length })}
-                  subtitleTone='faint'
-                  onRemove={() => row.files.forEach((file) => removeSelectedFile(file.path))}
-                  removeLabel={t('send:files.removeLabel', { name: row.name })}
-                />
-              )
-            )}
-          </div>
+        <div className='flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto'>
+          {fileRows.length > 0 ? (
+            <div>
+              <p className='m-0 mb-2 text-[13px] font-medium text-text-muted'>
+                {t('send:files.addedFiles')}
+              </p>
+              <div className='flex flex-col gap-2'>
+                {fileRows.map((row) =>
+                  row.kind === 'folder' ? (
+                    <LinkRow
+                      key={`folder:${row.name}`}
+                      icon={<FolderIcon size={17} color={c.colorTextMuted} />}
+                      iconBackground={c.colorSurfacePrimary}
+                      standalone
+                      compact
+                      label={row.name}
+                      subtitle={t('common:files.count', { count: row.files.length })}
+                      subtitleTone='faint'
+                      onRemove={() => row.files.forEach((file) => removeSelectedFile(file.path))}
+                      removeLabel={t('send:files.removeLabel', { name: row.name })}
+                    />
+                  ) : (
+                    <LinkRow
+                      key={row.file.path}
+                      file
+                      standalone
+                      compact
+                      label={row.file.name}
+                      subtitle={fileSubtitle(row.file.name, row.file.size)}
+                      subtitleTone='faint'
+                      onRemove={() => removeSelectedFile(row.file.path)}
+                      removeLabel={t('send:files.removeLabel', { name: row.file.name })}
+                    />
+                  )
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          {textItems.length > 0 ? (
+            <div>
+              <p className='m-0 mb-2 text-[13px] font-medium text-text-muted'>
+                {t('send:files.addedText')}
+              </p>
+              <div className='flex flex-col gap-2'>
+                {textItems.map((item) => {
+                  const preview = formatTextSnippetPreview(item.content ?? item.name)
+                  const chars = (item.content ?? '').length
+                  return (
+                    <LinkRow
+                      key={item.path}
+                      icon={<MessageSquareIcon size={17} color={c.colorInfo} />}
+                      iconBackground={c.colorInfoSubtle}
+                      standalone
+                      compact
+                      label={preview}
+                      subtitle={`${t('common:files.text')} · ${t('common:units.chars', { count: chars })}`}
+                      subtitleTone='faint'
+                      onRemove={() => removeSelectedFile(item.path)}
+                      removeLabel={t('send:files.removeLabel', { name: preview })}
+                    />
+                  )
+                })}
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : null}
-
-      {ENABLE_TEXT_SHARING && (
-        <div className='flex shrink-0 flex-row gap-2 mt-2 items-center'>
-          <div className='flex-1'>
-            <Input
-              placeholder='Type a message or paste a link...'
-              value={textInput}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && textInput.trim().length > 0) {
-                  addTextItem()
-                }
-              }}
-            />
-          </div>
-          <Button
-            disabled={textInput.trim().length === 0}
-            onClick={addTextItem}
-            size='sm'
-            variant='secondary'
-          >
-            Add
-          </Button>
-        </div>
-      )}
 
       <ErrorBanner message={selectionError} />
     </div>

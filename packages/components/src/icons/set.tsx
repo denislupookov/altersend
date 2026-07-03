@@ -29,6 +29,7 @@ import {
   Lock,
   Mail,
   Menu,
+  MessageSquare,
   Monitor,
   MoreHorizontal,
   MoreVertical,
@@ -86,6 +87,7 @@ export const TabletIcon = adaptLucide(Tablet)
 export const LockIcon = adaptLucide(Lock)
 export const MailIcon = adaptLucide(Mail)
 export const MenuIcon = adaptLucide(Menu)
+export const MessageSquareIcon = adaptLucide(MessageSquare)
 export const MoreHorizontalIcon = adaptLucide(MoreHorizontal)
 export const MoreVerticalIcon = adaptLucide(MoreVertical)
 export const MusicIcon = adaptLucide(Music)

@@ -44,6 +44,28 @@ export function getOfferKey(file: IncomingFileOffer) {
   return file.id
 }
 
+export interface TextSegment {
+  text: string
+  url?: string
+}
+
+export function linkifyText(text: string): TextSegment[] {
+  const pattern = /https?:\/\/[^\s]+/g
+  const segments: TextSegment[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+
+  while ((match = pattern.exec(text)) !== null) {
+    const raw = match[0].replace(/[.,;:!?)\]}'"]+$/, '')
+    if (match.index > lastIndex) segments.push({ text: text.slice(lastIndex, match.index) })
+    segments.push({ text: raw, url: raw })
+    lastIndex = match.index + raw.length
+  }
+
+  if (lastIndex < text.length) segments.push({ text: text.slice(lastIndex) })
+  return segments
+}
+
 function getProgressPercent(bytesTransferred: number, totalBytes: number) {
   if (totalBytes <= 0) return 0
   return Math.max(0, Math.min(100, Math.round((bytesTransferred / totalBytes) * 100)))

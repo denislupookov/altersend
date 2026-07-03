@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native'
 import { Button, LinkRow, useTheme } from '@altersend/components'
-import { MoreVerticalIcon, PlusIcon, deviceIcon } from '@altersend/components/icons'
+import { MoreHorizontalIcon, PlusIcon, deviceIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import {
   AddPairDeviceSheet,
@@ -64,7 +64,7 @@ export default function DevicesScreen() {
                     size='sm'
                     iconOnly
                     aria-label={t('settings:pairing.deviceActions')}
-                    icon={<MoreVerticalIcon size={14} />}
+                    icon={<MoreHorizontalIcon size={14} />}
                     onClick={() =>
                       flow.openDeviceActions(peer.remoteDevicePubkey, peer.displayName)
                     }

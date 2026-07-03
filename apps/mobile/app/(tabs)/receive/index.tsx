@@ -67,8 +67,9 @@ export default function ReceiveScreen() {
     () => getDownloadTotals(incomingFileOffers, receiveDownloadStates),
     [incomingFileOffers, receiveDownloadStates]
   )
+  const downloadableFileCount = incomingFileOffers.filter((offer) => offer.kind === 'file').length
   const allDownloadsCompleted =
-    hasIncomingFiles && totals.completedCount === incomingFileOffers.length
+    downloadableFileCount > 0 && totals.completedCount === downloadableFileCount
 
   const step = getReceiveStep({
     hasIncomingFiles,
@@ -94,11 +95,8 @@ export default function ReceiveScreen() {
     }
   }, [step])
 
-  const totalBytes = incomingFileOffers.reduce(
-    (sum, file) => sum + (file.kind === 'file' ? file.size : 0),
-    0
-  )
-  const copy = getReceivePageCopy(t, step, incomingFileOffers.length, totalBytes)
+  const textCount = incomingFileOffers.length - downloadableFileCount
+  const copy = getReceivePageCopy(t, step, downloadableFileCount, textCount, totals.totalBytes)
   const title = step === 'join' ? t('receive:page.tabTitle') : copy.title
 
   const footer =

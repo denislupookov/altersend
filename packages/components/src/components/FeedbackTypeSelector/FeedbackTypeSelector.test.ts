@@ -1,10 +1,11 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
-const source = readFileSync(new URL('./FeedbackTypeSelector.tsx', import.meta.url), 'utf8')
+const selectorSource = readFileSync(new URL('./FeedbackTypeSelector.tsx', import.meta.url), 'utf8')
+const tabsStyles = readFileSync(new URL('../Tabs/styles.ts', import.meta.url), 'utf8')
 
 function getStyleBlock(name: string, followingName: string): string {
-  const block = source.match(
+  const block = tabsStyles.match(
     new RegExp(`\\n  ${name}: \\{([\\s\\S]*?)\\n  \\},\\n  ${followingName}`)
   )?.[1]
 
@@ -13,14 +14,19 @@ function getStyleBlock(name: string, followingName: string): string {
 }
 
 describe('FeedbackTypeSelector layout', () => {
-  it('keeps long translated labels inside single-line segments', () => {
-    const chipStyle = getStyleBlock('chip', 'chipDefault')
-    const labelStyle = getStyleBlock('label', 'labelDefault')
+  it('renders through the shared Tabs component', () => {
+    expect(selectorSource).toContain('TabsTrigger')
+    expect(selectorSource).toContain('stretch')
+  })
 
-    expect(chipStyle).toContain('minWidth: 0')
-    expect(labelStyle).toContain("overflow: 'hidden'")
-    expect(labelStyle).toContain("textOverflow: 'ellipsis'")
-    expect(labelStyle).toContain("whiteSpace: 'nowrap'")
-    expect(labelStyle).not.toContain('overflowWrap')
+  it('keeps long translated labels inside single-line segments', () => {
+    const triggerStretch = getStyleBlock('triggerStretch', 'triggerDisabled')
+    const triggerLabel = getStyleBlock('triggerLabel', 'triggerLabelActive')
+
+    expect(triggerStretch).toContain('minWidth: 0')
+    expect(triggerLabel).toContain("overflow: 'hidden'")
+    expect(triggerLabel).toContain("textOverflow: 'ellipsis'")
+    expect(triggerLabel).toContain("whiteSpace: 'nowrap'")
+    expect(triggerLabel).not.toContain('overflowWrap')
   })
 })

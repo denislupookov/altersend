@@ -51,6 +51,8 @@ export function Sidebar({
           iconOnly
           size={collapsed ? 'md' : 'sm'}
           aria-label={toggleLabel}
+          tooltip={toggleLabel}
+          tooltipSide={collapsed ? 'right' : 'bottom'}
           onClick={onToggleCollapsed}
           icon={collapsed ? <PanelLeftOpenIcon size={17} /> : <PanelLeftCloseIcon size={17} />}
         />
@@ -65,6 +67,7 @@ export function Sidebar({
         <ListItem
           icon={<SendIcon size={18} />}
           label={t('common:labels.send')}
+          tooltip={t('common:labels.send')}
           collapsed={collapsed}
           active={activeTab === 'send'}
           showDot={role === 'sender'}
@@ -73,6 +76,7 @@ export function Sidebar({
         <ListItem
           icon={<DownloadIcon size={18} />}
           label={t('common:labels.receive')}
+          tooltip={t('common:labels.receive')}
           collapsed={collapsed}
           active={activeTab === 'receive'}
           showDot={role === 'receiver'}
@@ -86,6 +90,7 @@ export function Sidebar({
         <ListItem
           icon={<SlidersHorizontalIcon size={18} />}
           label={t('common:labels.settings')}
+          tooltip={t('common:labels.settings')}
           collapsed={collapsed}
           onClick={() => openSettingsPanel()}
         />

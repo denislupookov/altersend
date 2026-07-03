@@ -85,6 +85,7 @@ export interface InviteDeviceInput {
   remoteDevicePubkey: string
   topic: string
   fileCount?: number
+  textCount?: number
   totalSize?: number
 }
 

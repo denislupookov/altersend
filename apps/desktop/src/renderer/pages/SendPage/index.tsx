@@ -1,14 +1,17 @@
-import { Button } from '@altersend/components'
+import { useState } from 'react'
+import { Button, Tabs, TabsList, TabsTrigger } from '@altersend/components'
 import { SendIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import {
   clearSenderFlow,
   continueShare,
   formatFileSize,
+  formatItemsCount,
   getSendPageCopy,
   getSendStep,
   isShareStep,
-  useTransferStore
+  useTransferStore,
+  type SendComposeMode
 } from '@altersend/domain'
 import { TransferActionGroup, TransferCardFrame } from '../../components'
 import { PreparingView } from './PreparingView'
@@ -20,17 +23,19 @@ export default function SendPage() {
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const draftPhase = useTransferStore((s) => s.draftPhase)
   const connectionState = useTransferStore((s) => s.connectionState)
+  const [mode, setMode] = useState<SendComposeMode>('files')
 
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
   const copy = getSendPageCopy(t, step)
   const hasSelectedFiles = selectedFiles.length > 0
+  const showTabs = !isShareStep(step) && step !== 'preparing'
 
   function renderView() {
     if (isShareStep(step)) {
       return <ShareView />
     }
 
-    return <SelectFilesView />
+    return <SelectFilesView mode={showTabs ? mode : 'files'} />
   }
 
   function renderFooter() {
@@ -52,15 +57,18 @@ export default function SendPage() {
       return null
     }
 
-    const totalSize = selectedFiles.reduce((sum, file) => sum + (file.size ?? 0), 0)
+    const fileItems = selectedFiles.filter((file) => file.kind !== 'text')
+    const textItems = selectedFiles.filter((file) => file.kind === 'text')
+    const totalSize = fileItems.reduce((sum, file) => sum + (file.size ?? 0), 0)
+    const countLabel = formatItemsCount(fileItems.length, textItems.length, t)
 
     return (
       <div className='flex items-center justify-between gap-4'>
         <div className='flex items-baseline gap-2'>
-          <span className='text-[14.5px] font-semibold text-text-primary'>
-            {t('common:files.count', { count: selectedFiles.length })}
-          </span>
-          <span className='text-[13px] text-text-faint'>{formatFileSize(totalSize)}</span>
+          <span className='text-[14.5px] font-semibold text-text-primary'>{countLabel}</span>
+          {totalSize > 0 ? (
+            <span className='text-[13px] text-text-faint'>{formatFileSize(totalSize)}</span>
+          ) : null}
         </div>
         <TransferActionGroup>
           <Button onClick={clearSenderFlow} size='sm' variant='ghost'>
@@ -83,10 +91,20 @@ export default function SendPage() {
     return <PreparingView />
   }
 
+  const headerTabs = showTabs ? (
+    <Tabs size='sm' value={mode} onValueChange={(value) => setMode(value as SendComposeMode)}>
+      <TabsList>
+        <TabsTrigger value='files'>{t('common:files.files')}</TabsTrigger>
+        <TabsTrigger value='text'>{t('common:files.text')}</TabsTrigger>
+      </TabsList>
+    </Tabs>
+  ) : undefined
+
   return (
     <TransferCardFrame
       description={isShareStep(step) ? copy.description : ''}
       footer={renderFooter()}
+      headerRight={headerTabs}
       title={copy.title}
     >
       <div className='h-full overflow-y-auto'>{renderView()}</div>

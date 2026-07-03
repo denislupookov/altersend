@@ -27,7 +27,8 @@
     "skip": "略過",
     "paste": "貼上",
     "openLink": "開啟連結",
-    "copyText": "複製文字"
+    "copyText": "複製文字",
+    "add": "新增"
   },
   "labels": {
     "settings": "設定",
@@ -53,7 +54,12 @@
     "files": "檔案",
     "downloads": "檔案 › 下載",
     "photosAndAlterSend": "照片 + AlterSend 資料夾",
-    "alterSendFolder": "AlterSend 資料夾"
+    "alterSendFolder": "AlterSend 資料夾",
+    "text": "文字",
+    "items_one": "{{count}} 項",
+    "items_other": "{{count}} 項",
+    "texts_one": "{{count}} 則文字",
+    "texts_other": "{{count}} 則文字"
   },
   "update": {
     "ready": "更新準備就緒",
@@ -71,5 +77,9 @@
   "confirm": {
     "leaveShareSession": "離開將結束您的活躍共享會話。繼續？",
     "leaveReceiveSession": "離開將結束您的活動接收會話。繼續？"
+  },
+  "units": {
+    "chars_one": "{{count}} 個字元",
+    "chars_other": "{{count}} 個字元"
   }
 }

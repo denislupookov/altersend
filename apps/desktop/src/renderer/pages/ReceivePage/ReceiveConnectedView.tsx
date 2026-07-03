@@ -1,6 +1,13 @@
 import { Fragment, useMemo, useState } from 'react'
 import { Button, LinkRow, useTheme } from '@altersend/components'
-import { ChevronRightIcon, DownloadIcon, FolderIcon } from '@altersend/components/icons'
+import {
+  CheckIcon,
+  ChevronRightIcon,
+  CopyIcon,
+  DownloadIcon,
+  FolderIcon,
+  MessageSquareIcon
+} from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
 import {
@@ -13,12 +20,14 @@ import {
   getFolderRowDisplay,
   getOfferKey,
   groupReceiveRows,
-  type ReceiveFolderRow,
+  linkifyText,
+  useCopiedFlag,
   useTransferStore
 } from '@altersend/domain'
 import type { IncomingFileOffer } from '@altersend/core'
 
 type FileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
+type TextOffer = Extract<IncomingFileOffer, { kind: 'text' }>
 type DownloadRow = ReturnType<typeof getDownloadRowDisplay>
 
 function getDownloadStatusLabel(t: ReturnType<typeof useTranslation>['t'], row: DownloadRow) {
@@ -41,8 +50,12 @@ export function ReceiveConnectedView() {
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const peerCount = useTransferStore((s) => s.peerCount)
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
+  const { copiedId, flashCopied } = useCopiedFlag()
 
-  const hasIncomingFiles = incomingFileOffers.length > 0
+  const textOffers = useMemo(
+    () => incomingFileOffers.filter((offer): offer is TextOffer => offer.kind === 'text'),
+    [incomingFileOffers]
+  )
   const rows = useMemo(() => groupReceiveRows(incomingFileOffers), [incomingFileOffers])
   const totals = useMemo(
     () => getDownloadTotals(incomingFileOffers, downloadStates),
@@ -80,55 +93,17 @@ export function ReceiveConnectedView() {
     )
   }
 
-  const renderFolderRow = (folderRow: ReceiveFolderRow, isFirst = false) => {
-    const folder = getFolderRowDisplay(folderRow.offers, downloadStates)
-    const isExpanded = expandedFolders.has(folderRow.name)
-    return (
-      <Fragment key={`folder:${folderRow.name}`}>
-        <LinkRow
-          icon={<FolderIcon size={16} />}
-          bare
-          compact
-          isFirst={isFirst}
-          label={folderRow.name}
-          size={folderRow.totalSize}
-          description={folder.description}
-          status={statusFor(folder)}
-          progressPercent={folder.progressPercent}
-          onPress={() => toggleFolder(folderRow.name)}
-          trailing={
-            <span
-              className={`inline-flex transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
-            >
-              <ChevronRightIcon size={14} color={theme.colors.colorTextMuted} />
-            </span>
-          }
-        />
-        {isExpanded ? (
-          <div className='pl-10'>{folderRow.offers.map((offer) => renderFileRow(offer))}</div>
-        ) : null}
-      </Fragment>
-    )
+  const copyText = (id: string, content: string) => {
+    void navigator.clipboard.writeText(content)
+    flashCopied(id)
   }
 
+  const fileOffers = incomingFileOffers.filter((f): f is FileOffer => f.kind === 'file')
+  const hasDownloadableFiles = fileOffers.length > 0
   const isDownloading = totals.activeCount > 0
-  const allCompleted = hasIncomingFiles && totals.completedCount === incomingFileOffers.length
-
-  const textOffer = incomingFileOffers.find((f) => f.kind === 'text')
-  const isTextTransfer = textOffer !== undefined
-
-  const isUrl = useMemo(() => {
-    if (textOffer?.kind !== 'text') return false
-    try {
-      const url = new URL(textOffer.content)
-      return url.protocol === 'https:' || url.protocol === 'http:'
-    } catch {
-      return false
-    }
-  }, [textOffer])
+  const allFilesDownloaded = hasDownloadableFiles && totals.completedCount === fileOffers.length
 
   const downloadAll = async () => {
-    const fileOffers = incomingFileOffers.filter((f) => f.kind === 'file')
     if (fileOffers.length === 0 || isDownloading) return
 
     const isSingleLooseFile = rows.length === 1 && rows[0].kind === 'file'
@@ -157,48 +132,111 @@ export function ReceiveConnectedView() {
 
   return (
     <div className='flex h-full min-h-0 w-full flex-1 flex-col'>
-      {isTextTransfer ? (
-        <div className='flex-1 flex flex-col justify-center items-center'>
-          <div className='p-4 bg-background-subtle rounded-lg border border-border-primary w-full break-words'>
-            <p className='text-text-primary text-center select-text'>{textOffer.content}</p>
+      <div className='flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto pr-1'>
+        {rows.length > 0 ? (
+          <div>
+            <p className='m-0 mb-2 text-[13px] font-medium text-text-muted'>
+              {t('common:files.files')}
+            </p>
+            <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
+              {rows.map((row, index) => {
+                if (row.kind === 'file') return renderFileRow(row.offer, index === 0)
+
+                const folder = getFolderRowDisplay(row.offers, downloadStates)
+                const isExpanded = expandedFolders.has(row.name)
+                return (
+                  <Fragment key={`folder:${row.name}`}>
+                    <LinkRow
+                      icon={<FolderIcon size={16} />}
+                      bare
+                      compact
+                      isFirst={index === 0}
+                      label={row.name}
+                      size={row.totalSize}
+                      description={folder.description}
+                      status={statusFor(folder)}
+                      progressPercent={folder.progressPercent}
+                      onPress={() => toggleFolder(row.name)}
+                      trailing={
+                        <span
+                          className={`inline-flex transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
+                        >
+                          <ChevronRightIcon size={14} color={theme.colors.colorTextMuted} />
+                        </span>
+                      }
+                    />
+                    {isExpanded ? (
+                      <div className='pl-10'>{row.offers.map((offer) => renderFileRow(offer))}</div>
+                    ) : null}
+                  </Fragment>
+                )
+              })}
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className='min-h-0 flex-1 overflow-y-auto pr-1'>
-          <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
-            {rows.map((row, index) =>
-              row.kind === 'file'
-                ? renderFileRow(row.offer, index === 0)
-                : renderFolderRow(row, index === 0)
-            )}
+        ) : null}
+
+        {textOffers.length > 0 ? (
+          <div>
+            <p className='m-0 mb-2 text-[13px] font-medium text-text-muted'>
+              {t('common:files.text')}
+            </p>
+            <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
+              {textOffers.map((offer, index) => {
+                const copied = copiedId === offer.id
+                return (
+                  <LinkRow
+                    key={getOfferKey(offer)}
+                    bare
+                    compact
+                    isFirst={index === 0}
+                    icon={<MessageSquareIcon size={16} color={theme.colors.colorInfo} />}
+                    iconBackground={theme.colors.colorInfoSubtle}
+                    label={offer.content}
+                    labelNode={
+                      <p className='m-0 text-[14px] font-medium leading-6 text-text-primary break-words'>
+                        {linkifyText(offer.content).map((seg, i) =>
+                          seg.url ? (
+                            <span
+                              key={i}
+                              className='cursor-pointer text-info underline'
+                              onClick={() => void bridgeApi.openExternalUrl(seg.url as string)}
+                            >
+                              {seg.text}
+                            </span>
+                          ) : (
+                            <span key={i}>{seg.text}</span>
+                          )
+                        )}
+                      </p>
+                    }
+                    subtitle={t('common:files.text')}
+                    subtitleTone='faint'
+                    trailing={
+                      <Button
+                        variant={copied ? 'success' : 'ghost'}
+                        size='sm'
+                        iconOnly
+                        aria-label={
+                          copied ? t('common:actions.copied') : t('common:actions.copyText')
+                        }
+                        onClick={() => copyText(offer.id, offer.content)}
+                        icon={copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
+                      />
+                    }
+                  />
+                )
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        ) : null}
+      </div>
 
       <div className='mt-4 flex shrink-0 items-center justify-end gap-4'>
         <div className='flex shrink-0 items-center gap-2'>
           <Button onClick={clearSession} size='sm' variant='secondary'>
             {t('common:actions.endSession')}
           </Button>
-          {isTextTransfer ? (
-            isUrl ? (
-              <Button
-                onClick={() => void bridgeApi.openExternalUrl(textOffer.content!)}
-                size='sm'
-                variant='primary'
-              >
-                {t('common:actions.openLink')}
-              </Button>
-            ) : (
-              <Button
-                onClick={() => void navigator.clipboard.writeText(textOffer.content!)}
-                size='sm'
-                variant='primary'
-              >
-                {t('common:actions.copyText')}
-              </Button>
-            )
-          ) : peerCount > 0 && hasIncomingFiles && !allCompleted ? (
+          {hasDownloadableFiles && peerCount > 0 && !allFilesDownloaded ? (
             <Button
               disabled={isDownloading}
               icon={<DownloadIcon size={14} />}

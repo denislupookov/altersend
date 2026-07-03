@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { View, StyleSheet, Pressable } from 'react-native'
 import { Paths } from 'expo-file-system'
-import { Button, useTheme, withAlpha } from '@altersend/components'
+import { Button, useTheme } from '@altersend/components'
 import { ArrowLeftIcon, DownloadIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { useNavigation, useRouter } from 'expo-router'
@@ -40,8 +40,10 @@ export default function ReceiveIncomingScreen() {
   )
 
   const hasIncomingFiles = incomingFileOffers.length > 0
+  const downloadableFileCount = incomingFileOffers.filter((offer) => offer.kind === 'file').length
+  const hasDownloadableFiles = downloadableFileCount > 0
   const allDownloadsCompleted =
-    hasIncomingFiles && totals.completedCount === incomingFileOffers.length
+    hasDownloadableFiles && totals.completedCount === downloadableFileCount
   const step = getReceiveStep({
     hasIncomingFiles,
     allDownloadsCompleted,
@@ -83,11 +85,15 @@ export default function ReceiveIncomingScreen() {
     })
   }, [navigation, handleEndSession, t, theme.colors.colorTextPrimary])
 
-  const totalBytes = incomingFileOffers.reduce(
-    (sum, f) => sum + (f.kind === 'file' ? f.size : 0),
-    0
+  const totalBytes = totals.totalBytes
+  const textCount = incomingFileOffers.length - downloadableFileCount
+  const { title, description } = getReceivePageCopy(
+    t,
+    step,
+    downloadableFileCount,
+    textCount,
+    totalBytes
   )
-  const { title, description } = getReceivePageCopy(t, step, incomingFileOffers.length, totalBytes)
 
   const handleDownloadAll = async () => {
     if (incomingFileOffers.length === 0 || isDownloading) return
@@ -141,15 +147,7 @@ export default function ReceiveIncomingScreen() {
   }
 
   const badge = (
-    <View
-      style={[
-        styles.badge,
-        {
-          borderColor: withAlpha(theme.colors.colorSuccess, 0.22),
-          backgroundColor: withAlpha(theme.colors.colorSuccess, 0.08)
-        }
-      ]}
-    >
+    <View style={[styles.badge, { backgroundColor: theme.colors.colorSuccessSubtle }]}>
       <View style={[styles.badgeDot, { backgroundColor: theme.colors.colorSuccess }]} />
       <Text style={[styles.badgeText, { color: theme.colors.colorSuccess }]}>
         {t('common:status.connected')}
@@ -165,20 +163,22 @@ export default function ReceiveIncomingScreen() {
       hasNativeHeader
       footer={
         <View style={styles.footerStack}>
-          <Button
-            disabled={isDownloading}
-            icon={<DownloadIcon size={18} color={theme.colors.colorOnAccent} />}
-            onClick={() => void handleDownloadAll()}
-            size='lg'
-            variant='light'
-            width='full'
-          >
-            {isDownloading
-              ? t('receive:actions.downloadingPercent', { percent: totals.percent })
-              : sizeLabel
-                ? t('receive:actions.downloadAllWithSize', { size: formatFileSize(totalBytes) })
-                : t('receive:actions.downloadAll')}
-          </Button>
+          {hasDownloadableFiles ? (
+            <Button
+              disabled={isDownloading}
+              icon={<DownloadIcon size={18} color={theme.colors.colorOnAccent} />}
+              onClick={() => void handleDownloadAll()}
+              size='lg'
+              variant='light'
+              width='full'
+            >
+              {isDownloading
+                ? t('receive:actions.downloadingPercent', { percent: totals.percent })
+                : sizeLabel
+                  ? t('receive:actions.downloadAllWithSize', { size: formatFileSize(totalBytes) })
+                  : t('receive:actions.downloadAll')}
+            </Button>
+          ) : null}
           {endSessionButton}
         </View>
       }
@@ -195,20 +195,20 @@ const styles = StyleSheet.create({
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    alignSelf: 'flex-start',
+    gap: 6,
     borderRadius: 100,
-    borderWidth: 1,
     paddingHorizontal: 10,
-    paddingVertical: 5
+    paddingVertical: 4
   },
   badgeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3
+    width: 8,
+    height: 8,
+    borderRadius: 4
   },
   badgeText: {
     fontSize: 12,
-    fontWeight: '500'
+    fontWeight: '600'
   },
   footerStack: {
     gap: 8,

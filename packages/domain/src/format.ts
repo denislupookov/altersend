@@ -1,4 +1,13 @@
+import type { Translate } from './i18n'
+
 export type InviteStatus = 'inviting' | 'sent' | 'offline'
+
+export function formatItemsCount(fileCount: number, textCount: number, t: Translate): string {
+  if (fileCount > 0 && textCount > 0)
+    return t('common:files.items', { count: fileCount + textCount })
+  if (textCount > 0) return t('common:files.texts', { count: textCount })
+  return t('common:files.count', { count: fileCount })
+}
 
 export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`

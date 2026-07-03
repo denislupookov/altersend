@@ -7,13 +7,16 @@ import {
   declineInvite,
   dismissInvite,
   formatFileSize,
+  formatItemsCount,
   joinSession,
   useTransferStore
 } from '@altersend/domain'
+import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 import { useRouter } from 'expo-router'
 
 export function InviteBanner() {
+  const { t } = useTranslation(['common'])
   const { theme } = useTheme()
   const c = theme.colors
   const insets = useSafeAreaInsets()
@@ -42,6 +45,14 @@ export function InviteBanner() {
 
   const Icon = invite ? deviceIcon(invite.deviceType) : null
 
+  const fileCount = invite?.fileCount ?? 0
+  const textCount = invite?.textCount ?? 0
+  const hasCounts = fileCount > 0 || textCount > 0
+
+  const fileLabel = hasCounts ? formatItemsCount(fileCount, textCount, t) : 'files'
+  const sizeLabel =
+    fileCount > 0 && invite?.totalSize != null ? ` · ${formatFileSize(invite.totalSize)}` : ''
+
   return (
     <Modal
       visible={visible}
@@ -61,11 +72,7 @@ export function InviteBanner() {
             </Text>
 
             <Text style={[styles.subtitle, { color: c.colorTextSecondary }]}>
-              {`wants to send you ${
-                invite.fileCount != null
-                  ? `${invite.fileCount} ${invite.fileCount === 1 ? 'file' : 'files'}`
-                  : 'files'
-              }${invite.totalSize != null && invite.totalSize > 0 ? ` · ${formatFileSize(invite.totalSize)}` : ''}`}
+              {`wants to send you ${fileLabel}${sizeLabel}`}
             </Text>
           </View>
 

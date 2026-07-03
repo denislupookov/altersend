@@ -48,13 +48,19 @@ export function Popover({ trigger, children, align = 'right', variant = 'menu' }
         : { top: anchorRect.bottom + 2, left: anchorRect.left }
     : {}
 
+  const transformOrigin = variant === 'plain' || align === 'left' ? 'top left' : 'top right'
+
   return (
     <div ref={triggerRef}>
       <div className='cursor-pointer' onClick={handleToggle}>
         {trigger}
       </div>
       {open && anchorRect && (
-        <div ref={popoverRef} className={`fixed z-[200] ${menuClass}`} style={posStyle}>
+        <div
+          ref={popoverRef}
+          className={`fixed z-[200] ${menuClass}`}
+          style={{ ...posStyle, transformOrigin, animation: 'as-scale-in 130ms ease-out' }}
+        >
           {children(close)}
         </div>
       )}

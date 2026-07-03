@@ -186,6 +186,15 @@ export const styles = css.create({
     fontSize: tokens.fontSizeSm,
     lineHeight: tokens.lineHeightNormal
   },
+  statusLabelMuted: {
+    color: tokens.colorTextSecondary
+  },
+  statusLabelActive: {
+    color: tokens.colorTextPrimary
+  },
+  statusLabelSuccess: {
+    color: tokens.colorSuccess
+  },
   progressTrack: {
     marginTop: tokens.space15,
     height: tokens.space1,

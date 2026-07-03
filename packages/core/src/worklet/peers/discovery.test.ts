@@ -144,14 +144,20 @@ describe('DiscoveryCoordinator', () => {
     await coordinator.start()
 
     const topic = hex(crypto.randomBytes(32))
-    const invitePromise = coordinator.invite(peer.remoteDevicePubkey, topic, 3, 1024)
+    const invitePromise = coordinator.invite(peer.remoteDevicePubkey, topic, 3, 2, 1024)
     await flush()
 
     connect(peer.remoteDevicePubkey)
     expect(await invitePromise).toEqual({ delivered: true })
     expect(channels).toHaveLength(1)
     expect(channels[0].send).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'invite', topic, fileCount: 3, totalSize: 1024 })
+      expect.objectContaining({
+        type: 'invite',
+        topic,
+        fileCount: 3,
+        textCount: 2,
+        totalSize: 1024
+      })
     )
   })
 

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { Button, LinkRow, ListItem, useTheme } from '@altersend/components'
 import {
   ClipboardIcon,
-  MoreVerticalIcon,
+  MoreHorizontalIcon,
   PlusIcon,
   QrCodeIcon,
   TrashIcon,
@@ -103,7 +103,7 @@ export function DevicesSection() {
                         size='sm'
                         iconOnly
                         aria-label={t('settings:pairing.deviceActions')}
-                        icon={<MoreVerticalIcon size={14} />}
+                        icon={<MoreHorizontalIcon size={14} />}
                       />
                     }
                   >

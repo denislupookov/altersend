@@ -3,12 +3,14 @@ import { html } from 'react-strict-dom'
 import { ChevronRightIcon } from '../../icons'
 import { usePressState } from '../../hooks/usePressState'
 import { useTheme } from '../../theme'
+import { Tooltip } from '../Tooltip'
 import { styles } from './styles'
 
 export interface ListItemProps {
   icon: ReactNode
   label: string
   onClick: () => void
+  tooltip?: string
   active?: boolean
   collapsed?: boolean
   showDot?: boolean
@@ -24,6 +26,7 @@ export function ListItem({
   icon,
   label,
   onClick,
+  tooltip,
   active = false,
   collapsed = false,
   showDot = false,
@@ -108,6 +111,8 @@ export function ListItem({
           {chevron ? <ChevronRightIcon size={14} color={contentColor} /> : null}
         </>
       )}
+
+      {collapsed && tooltip ? <Tooltip label={tooltip} visible={isHovered} side='right' /> : null}
     </html.button>
   )
 }

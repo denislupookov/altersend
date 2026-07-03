@@ -28,8 +28,10 @@ export default function ReceivePage() {
     () => getDownloadTotals(incomingFileOffers, receiveDownloadStates),
     [incomingFileOffers, receiveDownloadStates]
   )
-  const allDownloadsCompleted =
-    hasIncomingFiles && totals.completedCount === incomingFileOffers.length
+  const fileCount = incomingFileOffers.filter((f) => f.kind === 'file').length
+  const textCount = incomingFileOffers.length - fileCount
+  const hasDownloadableFiles = fileCount > 0
+  const allDownloadsCompleted = hasDownloadableFiles && totals.completedCount === fileCount
 
   const step = getReceiveStep({
     hasIncomingFiles,
@@ -38,16 +40,18 @@ export default function ReceivePage() {
     peerCount
   })
 
-  const totalBytes = incomingFileOffers.reduce(
-    (sum, f) => sum + (f.kind === 'file' ? f.size : 0),
-    0
+  const { title, description } = getReceivePageCopy(
+    t,
+    step,
+    fileCount,
+    textCount,
+    totals.totalBytes
   )
-  const { title, description } = getReceivePageCopy(t, step, incomingFileOffers.length, totalBytes)
 
   const connectedBadge =
     isConnectedStep(step) && step !== 'completed' && step !== 'interrupted' ? (
-      <div className='inline-flex items-center gap-2 rounded-full border border-success/22 bg-success/8 px-3 py-1.5 text-[12px] font-medium text-success'>
-        <span className='h-1.5 w-1.5 shrink-0 rounded-full bg-success' />
+      <div className='inline-flex items-center gap-1.5 rounded-full bg-success/12 px-2.5 py-1 text-[12px] font-semibold text-success'>
+        <span className='h-2 w-2 shrink-0 rounded-full bg-success' />
         {t('common:status.connected')}
       </div>
     ) : undefined

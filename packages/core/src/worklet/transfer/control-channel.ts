@@ -99,6 +99,7 @@ export interface DeviceInvite {
   deviceType: DeviceType
   topic: string
   fileCount?: number
+  textCount?: number
   totalSize?: number
 }
 

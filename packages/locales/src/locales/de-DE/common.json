@@ -27,7 +27,8 @@
     "skip": "Überspringen",
     "paste": "Einfügen",
     "openLink": "Link öffnen",
-    "copyText": "Text kopieren"
+    "copyText": "Text kopieren",
+    "add": "Hinzufügen"
   },
   "labels": {
     "settings": "Einstellungen",
@@ -53,7 +54,12 @@
     "files": "Dateien",
     "downloads": "Dateien › Downloads",
     "photosAndAlterSend": "Ordner „Fotos + AlterSend“.",
-    "alterSendFolder": "Ordner AlterSend"
+    "alterSendFolder": "Ordner AlterSend",
+    "text": "Text",
+    "items_one": "{{count}} Element",
+    "items_other": "{{count}} Elemente",
+    "texts_one": "{{count}} Text",
+    "texts_other": "{{count}} Texte"
   },
   "update": {
     "ready": "Update bereit",
@@ -71,5 +77,9 @@
   "confirm": {
     "leaveShareSession": "Durch das Verlassen wird Ihre aktive Freigabesitzung beendet. Weitermachen?",
     "leaveReceiveSession": "Durch das Verlassen wird Ihre aktive Empfangssitzung beendet. Weitermachen?"
+  },
+  "units": {
+    "chars_one": "{{count}} Zeichen",
+    "chars_other": "{{count}} Zeichen"
   }
 }

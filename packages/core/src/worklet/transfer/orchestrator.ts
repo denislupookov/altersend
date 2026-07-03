@@ -221,6 +221,7 @@ export class TransferOrchestrator implements TransferRPC {
       input.remoteDevicePubkey,
       input.topic,
       input.fileCount,
+      input.textCount,
       input.totalSize
     )
   }
@@ -420,6 +421,7 @@ export class TransferOrchestrator implements TransferRPC {
       }
       this.activeTransferReady = null
       this.swarm.broadcast(this.activeTransfer)
+      this.sendStatus('sharing', { transferId })
 
       const controller = new AbortController()
       this.inflightAbort = controller

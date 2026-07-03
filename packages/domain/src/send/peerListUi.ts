@@ -12,6 +12,7 @@ export interface PeerListEntry {
   peerKey: string
   shortKey: string
   status: PeerListStatus
+  isConnected: boolean
   detail: PeerListEntryDetail | null
   progressPercent?: number
   sortKey: number
@@ -31,7 +32,7 @@ export function applyPairState(
 ): PeerListEntryWithPair[] {
   return entries.map((entry) => {
     let pairState: PairState | undefined
-    if (entry.status !== 'disconnected') {
+    if (entry.isConnected) {
       pairState = pairStatus[entry.peerKey] ?? 'pairable'
     }
     const displayName = pairState === 'paired' ? peerDisplayNames[entry.peerKey] : undefined
@@ -89,6 +90,7 @@ export function getPeerListEntries(
       peerKey,
       shortKey: peerKey.slice(0, 6),
       status: data.status,
+      isConnected,
       detail: getStatusDetail(data),
       progressPercent: data.progressPercent,
       sortKey: data.sortKey || tracked?.connectedAt || 0

@@ -11,55 +11,77 @@ export const styles = css.create({
     minWidth: 0,
     width: '100%'
   },
+  rootStretch: {
+    flex: 0
+  },
   list: {
+    position: 'relative',
     display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: tokens.space1,
+    gap: tokens.space05,
     alignSelf: 'flex-start',
     padding: tokens.space1,
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: tokens.colorBorderPrimary,
     borderRadius: tokens.radiusMd,
-    backgroundColor: tokens.colorBackgroundSubtle,
-    boxShadow: `inset 0 1px 0 ${tokens.colorBorderPrimary}`
+    backgroundColor: tokens.colorBackgroundSubtle
+  },
+  listStretch: {
+    alignSelf: 'stretch',
+    gap: 0
   },
   trigger: {
+    position: 'relative',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 88,
-    height: tokens.space10,
-    paddingBlock: 0,
-    paddingInline: tokens.space4,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'transparent',
+    paddingBlock: tokens.space25,
+    paddingInline: tokens.space2,
+    borderWidth: 0,
     borderRadius: tokens.radiusSm,
     backgroundColor: 'transparent',
-    color: tokens.colorTextSecondary,
     fontFamily: tokens.fontFamilySans,
     fontSize: tokens.fontSizeBase,
     cursor: 'pointer',
-    transitionDuration: '160ms',
-    transitionProperty: 'color, border-color, background-color, box-shadow',
-    ':hover': {
-      color: tokens.colorTextPrimary,
-      backgroundColor: tokens.colorSurfacePrimary
-    },
+    transitionDuration: '150ms',
+    transitionProperty: 'background-color',
+    transitionTimingFunction: 'ease',
     ':focus-visible': {
       outline: 'none',
-      boxShadow: `0 0 0 2px ${tokens.colorFocusRing}`
+      boxShadow: `inset 0 0 0 2px ${tokens.colorFocusRing}`
     }
   },
-  triggerActive: {
-    backgroundColor: tokens.colorSurfacePrimary,
-    borderColor: tokens.colorBorderStrong,
-    boxShadow: `0 1px 2px ${tokens.colorShadow}`,
-    color: tokens.colorTextPrimary
+  triggerSm: {
+    minWidth: 0,
+    paddingBlock: 7,
+    paddingInline: tokens.space5
+  },
+  triggerStretch: {
+    flex: 1,
+    minWidth: 0
+  },
+  triggerDisabled: {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+    pointerEvents: 'none'
   },
   triggerLabel: {
-    fontWeight: tokens.fontWeightBold,
+    width: '100%',
+    color: tokens.colorTextSecondary,
+    fontWeight: tokens.fontWeightMedium,
+    fontSize: tokens.fontSizeMd,
+    textAlign: 'center',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
+  },
+  triggerLabelActive: {
+    color: tokens.colorTextPrimary
+  },
+  triggerLabelSm: {
     fontSize: tokens.fontSizeMd
   },
   content: {

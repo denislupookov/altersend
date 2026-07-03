@@ -1,5 +1,5 @@
 import type { TransferRole } from '@altersend/core'
-import { formatFileSize } from '../format'
+import { formatFileSize, formatItemsCount } from '../format'
 import type { Translate } from '../i18n'
 
 export type ReceiveStep =
@@ -56,9 +56,11 @@ export function getReceiveStep({
 export function getReceivePageCopy(
   t: Translate,
   step: ReceiveStep,
-  incomingCount: number,
+  fileCount: number,
+  textCount: number,
   totalBytes: number
 ): ReceivePageCopy {
+  const incomingCount = fileCount + textCount
   switch (step) {
     case 'join':
       return {
@@ -70,7 +72,14 @@ export function getReceivePageCopy(
         title: t('receive:page.connecting.title'),
         description: t('receive:page.connecting.description')
       }
-    case 'incoming_transfer':
+    case 'incoming_transfer': {
+      if (textCount > 0) {
+        const label = formatItemsCount(fileCount, textCount, t)
+        return {
+          title: t('receive:page.incomingTransfer.title'),
+          description: totalBytes > 0 ? `${label} · ${formatFileSize(totalBytes)}` : label
+        }
+      }
       return {
         title: t('receive:page.incomingTransfer.title'),
         description: t('receive:page.incomingTransfer.description', {
@@ -78,6 +87,7 @@ export function getReceivePageCopy(
           size: formatFileSize(totalBytes)
         })
       }
+    }
     case 'completed':
       return {
         title: t('receive:page.completed.title', { count: incomingCount }),

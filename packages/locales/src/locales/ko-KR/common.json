@@ -27,7 +27,8 @@
     "skip": "건너뛰기",
     "paste": "붙여넣기",
     "openLink": "링크 열기",
-    "copyText": "텍스트 복사"
+    "copyText": "텍스트 복사",
+    "add": "추가"
   },
   "labels": {
     "settings": "설정",
@@ -53,7 +54,12 @@
     "files": "파일",
     "downloads": "파일 › 다운로드",
     "photosAndAlterSend": "사진 + AlterSend 폴더",
-    "alterSendFolder": "AlterSend 폴더"
+    "alterSendFolder": "AlterSend 폴더",
+    "text": "텍스트",
+    "items_one": "{{count}}개",
+    "items_other": "{{count}}개",
+    "texts_one": "텍스트 {{count}}개",
+    "texts_other": "텍스트 {{count}}개"
   },
   "update": {
     "ready": "업데이트 준비됨",
@@ -71,5 +77,9 @@
   "confirm": {
     "leaveShareSession": "나가면 활성 공유 세션이 종료됩니다. 계속하다?",
     "leaveReceiveSession": "나가면 활성 수신 세션이 종료됩니다. 계속하다?"
+  },
+  "units": {
+    "chars_one": "{{count}}자",
+    "chars_other": "{{count}}자"
   }
 }

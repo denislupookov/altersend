@@ -3,6 +3,7 @@ import { html } from 'react-strict-dom'
 import { usePressState } from '../../hooks/usePressState'
 import { useTheme } from '../../theme'
 import { Spinner } from '../Spinner'
+import { Tooltip, type TooltipSide } from '../Tooltip'
 import { styles } from './styles'
 
 type ButtonElementProps = Parameters<typeof html.button>[0]
@@ -17,6 +18,8 @@ export interface ButtonProps extends Omit<ButtonElementProps, 'children' | 'styl
   loading?: boolean
   pill?: boolean
   size?: ButtonSize
+  tooltip?: string
+  tooltipSide?: TooltipSide
   variant?: ButtonVariant
   width?: 'auto' | 'full'
 }
@@ -83,6 +86,8 @@ export function Button({
   loading = false,
   pill,
   size = 'md',
+  tooltip,
+  tooltipSide = 'top',
   type = 'button',
   variant = 'primary',
   width = 'auto',
@@ -143,6 +148,7 @@ export function Button({
       ) : (
         children
       )}
+      {tooltip ? <Tooltip label={tooltip} visible={showHover} side={tooltipSide} /> : null}
     </html.button>
   )
 }

@@ -27,7 +27,8 @@
     "endSession": "セッション終了",
     "pickFilesTitle": "ファイルを追加",
     "pickPhotos": "写真",
-    "pickFiles": "ファイル"
+    "pickFiles": "ファイル",
+    "typeSnippet": "スニペットを入力または貼り付け…"
   },
   "status": {
     "waitingForPeer": "受信者を待機中",
@@ -94,6 +95,7 @@
   },
   "files": {
     "addedFiles": "追加したファイル",
-    "removeLabel": "{{name}} を削除"
+    "removeLabel": "{{name}} を削除",
+    "addedText": "追加したテキスト"
   }
 }

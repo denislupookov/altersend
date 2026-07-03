@@ -27,7 +27,8 @@
     "skip": "Ignorer",
     "paste": "Coller",
     "openLink": "Ouvrir le lien",
-    "copyText": "Copier le texte"
+    "copyText": "Copier le texte",
+    "add": "Ajouter"
   },
   "labels": {
     "settings": "Paramètres",
@@ -53,7 +54,12 @@
     "files": "Fichiers",
     "downloads": "Fichiers › Téléchargements",
     "photosAndAlterSend": "Photos + dossier AlterSend",
-    "alterSendFolder": "Dossier AlterSend"
+    "alterSendFolder": "Dossier AlterSend",
+    "text": "Texte",
+    "items_one": "{{count}} élément",
+    "items_other": "{{count}} éléments",
+    "texts_one": "{{count}} texte",
+    "texts_other": "{{count}} textes"
   },
   "update": {
     "ready": "Mise à jour prête",
@@ -71,5 +77,9 @@
   "confirm": {
     "leaveShareSession": "Quitter mettra fin à votre session de partage active. Continuer?",
     "leaveReceiveSession": "Quitter mettra fin à votre session de réception active. Continuer?"
+  },
+  "units": {
+    "chars_one": "{{count}} caractère",
+    "chars_other": "{{count}} caractères"
   }
 }

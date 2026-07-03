@@ -48,11 +48,17 @@ export interface FileRow {
   relativePath?: string
 }
 
+export interface TextRow {
+  path: string
+  content: string
+}
+
 export interface ShareViewModel {
   phase: 'waiting' | 'connected'
   topic: string
 
   files: FileRow[]
+  texts: TextRow[]
   totalSize: number
 
   devices: DeviceRow[]
@@ -147,6 +153,8 @@ export function useShareViewModel(
   callbacks: ShareViewModelCallbacks = {}
 ): ShareViewModel {
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
+  const fileOffers = useMemo(() => selectedFiles.filter((f) => f.kind !== 'text'), [selectedFiles])
+  const textOffers = useMemo(() => selectedFiles.filter((f) => f.kind === 'text'), [selectedFiles])
   const connectionState = useTransferStore((s) => s.connectionState)
   const topic = useTransferStore((s) => s.topic) ?? ''
   const peerDownloads = useTransferStore((s) => s.peerDownloads)
@@ -199,8 +207,8 @@ export function useShareViewModel(
   )
 
   const peerEntries = useMemo(
-    () => getPeerListEntries(connectedPeers, peerDownloads, selectedFiles),
-    [connectedPeers, peerDownloads, selectedFiles]
+    () => getPeerListEntries(connectedPeers, peerDownloads, fileOffers),
+    [connectedPeers, peerDownloads, fileOffers]
   )
   const peerEntriesWithPair = useMemo(
     () => applyPairState(peerEntries, pairStatus, peerDisplayNames),
@@ -219,7 +227,7 @@ export function useShareViewModel(
   )
 
   const connectedRows: ConnectedDeviceRow[] = peerEntriesWithPair.map((entry) => {
-    const { subtitle, subtitleTone } = connectedDeviceSubtitle(entry, selectedFiles.length, t)
+    const { subtitle, subtitleTone } = connectedDeviceSubtitle(entry, fileOffers.length, t)
     const rememberedForPeer = rememberedPeers.find(
       (r: RememberedPeer) =>
         r.remoteDevicePubkey === entry.peerKey ||
@@ -234,7 +242,7 @@ export function useShareViewModel(
       subtitle,
       subtitleTone,
       progressPercent: entry.status === 'downloading' ? entry.progressPercent : undefined,
-      action: entry.status === 'disconnected' ? 'pair-done' : toPairAction(entry.pairState)
+      action: !entry.isConnected ? 'pair-done' : toPairAction(entry.pairState)
     }
   })
 
@@ -300,8 +308,9 @@ export function useShareViewModel(
     try {
       const sessionTopic = await startSendSession()
       const delivered = await inviteDevice(peerKey, sessionTopic, {
-        fileCount: selectedFiles.length,
-        totalSize: selectedFiles.reduce((sum, file) => sum + (file.size ?? 0), 0)
+        fileCount: fileOffers.length,
+        textCount: textOffers.length,
+        totalSize: fileOffers.reduce((sum, file) => sum + (file.size ?? 0), 0)
       })
       setInviteStatuses((s) => ({
         ...s,
@@ -317,13 +326,14 @@ export function useShareViewModel(
   return {
     phase: connectionState === 'peer-connected' ? 'connected' : 'waiting',
     topic,
-    files: selectedFiles.map((f) => ({
+    files: fileOffers.map((f) => ({
       path: f.path,
       name: f.name,
       size: f.size,
       relativePath: f.relativePath
     })),
-    totalSize: selectedFiles.reduce((sum, f) => sum + (f.size ?? 0), 0),
+    texts: textOffers.map((f) => ({ path: f.path, content: f.content ?? f.name })),
+    totalSize: fileOffers.reduce((sum, f) => sum + (f.size ?? 0), 0),
     devices,
     connectedCount: connectedRows.length,
     hasDevices: devices.length > 0,

@@ -162,7 +162,7 @@ export const requestPair = (transferId: string, peerKey: string): void => {
 export const inviteDevice = async (
   remoteDevicePubkey: string,
   topic: string,
-  fileInfo?: { fileCount: number; totalSize: number }
+  fileInfo?: { fileCount: number; textCount: number; totalSize: number }
 ): Promise<boolean> => {
   try {
     const { delivered } = await getTransferApi().worker.inviteDevice({

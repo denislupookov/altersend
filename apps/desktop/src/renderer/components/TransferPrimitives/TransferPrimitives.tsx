@@ -7,6 +7,7 @@ interface TransferCardProps {
   children: ReactNode
   footer?: ReactNode
   badge?: ReactNode
+  headerRight?: ReactNode
 }
 
 type TransferTone = 'neutral' | 'success' | 'critical'
@@ -29,7 +30,8 @@ export function TransferCardFrame({
   description,
   footer,
   title,
-  badge
+  badge,
+  headerRight
 }: TransferCardProps) {
   const hasHeader = !!(title || badge)
   return (
@@ -37,13 +39,16 @@ export function TransferCardFrame({
       {hasHeader ? (
         <div className='shrink-0'>
           {badge ? <div className='mb-4'>{badge}</div> : null}
-          <div className='max-w-[720px]'>
-            <h2 className='m-0 text-[23px] font-semibold leading-[1.2] tracking-[-0.02em] text-text-primary'>
-              {title}
-            </h2>
-            {description ? (
-              <p className='m-0 mt-1 text-[14px] leading-6 text-text-secondary'>{description}</p>
-            ) : null}
+          <div className='flex items-center justify-between gap-4'>
+            <div className='max-w-[720px]'>
+              <h2 className='m-0 text-[23px] font-semibold leading-[1.2] tracking-[-0.02em] text-text-primary'>
+                {title}
+              </h2>
+              {description ? (
+                <p className='m-0 mt-1 text-[14px] leading-6 text-text-secondary'>{description}</p>
+              ) : null}
+            </div>
+            {headerRight ? <div className='shrink-0'>{headerRight}</div> : null}
           </div>
         </div>
       ) : null}

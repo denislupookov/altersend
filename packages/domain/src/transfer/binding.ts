@@ -82,6 +82,7 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
           deviceType: event.deviceType,
           topic: event.topic,
           ...(event.fileCount !== undefined ? { fileCount: event.fileCount } : {}),
+          ...(event.textCount !== undefined ? { textCount: event.textCount } : {}),
           ...(event.totalSize !== undefined ? { totalSize: event.totalSize } : {})
         }
       })

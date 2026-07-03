@@ -14,6 +14,7 @@ interface LinkRowBaseProps {
   icon?: ReactNode
   iconBackground?: string
   label: string
+  labelNode?: ReactNode
   labelFontFamily?: string
   size?: number
   subtitle?: string
@@ -62,6 +63,12 @@ const statusToneStyle = {
   success: styles.statusSuccess
 } as const
 
+const statusLabelToneStyle = {
+  muted: styles.statusLabelMuted,
+  active: styles.statusLabelActive,
+  success: styles.statusLabelSuccess
+} as const
+
 const progressStateStyle = {
   waiting: styles.progressWaiting,
   uploading: styles.progressUploading,
@@ -72,6 +79,7 @@ export function LinkRow({
   icon,
   iconBackground,
   label,
+  labelNode,
   labelFontFamily,
   size,
   subtitle,
@@ -184,16 +192,18 @@ export function LinkRow({
         <html.div style={styles.content}>
           <html.div style={styles.metaRow}>
             <html.div style={styles.text}>
-              <html.p
-                style={[
-                  styles.label,
-                  disabled && styles.labelDisabled,
-                  compact && styles.labelCompact,
-                  labelFontFamily ? ({ fontFamily: labelFontFamily } as never) : null
-                ]}
-              >
-                {label}
-              </html.p>
+              {labelNode ?? (
+                <html.p
+                  style={[
+                    styles.label,
+                    disabled && styles.labelDisabled,
+                    compact && styles.labelCompact,
+                    labelFontFamily ? ({ fontFamily: labelFontFamily } as never) : null
+                  ]}
+                >
+                  {label}
+                </html.p>
+              )}
               {rowSubtitle ? (
                 <html.p
                   style={[
@@ -210,7 +220,9 @@ export function LinkRow({
             {status ? (
               <html.div style={styles.statusGroup}>
                 <html.div style={[styles.statusDot, statusToneStyle[status.tone ?? 'muted']]} />
-                <html.p style={styles.statusLabel}>{status.label}</html.p>
+                <html.p style={[styles.statusLabel, statusLabelToneStyle[status.tone ?? 'muted']]}>
+                  {status.label}
+                </html.p>
               </html.div>
             ) : null}
           </html.div>

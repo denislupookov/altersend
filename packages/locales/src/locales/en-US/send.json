@@ -27,7 +27,8 @@
     "endSession": "End session",
     "pickFilesTitle": "Add files",
     "pickPhotos": "Photos",
-    "pickFiles": "Files"
+    "pickFiles": "Files",
+    "typeSnippet": "Type or paste a snippet…"
   },
   "status": {
     "waitingForPeer": "Waiting for peer",
@@ -94,6 +95,7 @@
   },
   "files": {
     "addedFiles": "Added files",
-    "removeLabel": "Remove {{name}}"
+    "removeLabel": "Remove {{name}}",
+    "addedText": "Added text"
   }
 }
