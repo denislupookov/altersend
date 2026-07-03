@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import type { IncomingFileOffer } from '@altersend/core'
-import { groupReceiveRows, getFolderRowDisplay, type DownloadItemState } from './downloadModel'
+import {
+  groupReceiveRows,
+  getFolderRowDisplay,
+  linkifyText,
+  type DownloadItemState
+} from './downloadModel'
 
 type FileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
 
@@ -94,5 +99,49 @@ describe('getFolderRowDisplay', () => {
   it('reports ready before anything starts', () => {
     const display = getFolderRowDisplay(offers, {})
     expect(display.status.kind).toBe('ready')
+  })
+})
+
+describe('linkifyText', () => {
+  it('splits a url from surrounding text', () => {
+    const segments = linkifyText('see https://example.com now')
+    expect(segments).toEqual([
+      { text: 'see ' },
+      { text: 'https://example.com', url: 'https://example.com' },
+      { text: ' now' }
+    ])
+  })
+
+  it('strips trailing punctuation from the link but keeps it as text', () => {
+    const segments = linkifyText('go to https://example.com.')
+    expect(segments).toEqual([
+      { text: 'go to ' },
+      { text: 'https://example.com', url: 'https://example.com' },
+      { text: '.' }
+    ])
+  })
+
+  it('handles two adjacent urls without losing the separator', () => {
+    const segments = linkifyText('https://a.com https://b.com')
+    expect(segments).toEqual([
+      { text: 'https://a.com', url: 'https://a.com' },
+      { text: ' ' },
+      { text: 'https://b.com', url: 'https://b.com' }
+    ])
+  })
+
+  it('returns plain text unchanged when there is no url', () => {
+    expect(linkifyText('just a note')).toEqual([{ text: 'just a note' }])
+  })
+
+  it('processes adversarial punctuation runs in linear time (no ReDoS)', () => {
+    // A url match containing a long run of '!' that is not at the end is the
+    // classic quadratic-backtracking trigger for a `[punct]+$` regex.
+    const hostile = `https://x/${'!'.repeat(200_000)}a`
+    const start = Date.now()
+    const segments = linkifyText(hostile)
+    expect(Date.now() - start).toBeLessThan(1000)
+    // Nothing is stripped because the match does not end in punctuation.
+    expect(segments).toEqual([{ text: hostile, url: hostile }])
   })
 })
