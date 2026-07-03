@@ -1,7 +1,7 @@
 {
   "name": "@altersend/desktop",
   "productName": "AlterSend",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "upgrade": "pear://w5u4xqsncqyfhb1owdqogr3mpg6b5tcdzn65pk88ispgew5jegso",
   "description": "Peer-to-peer file transfer. No servers, no accounts.",
   "license": "Apache-2.0",
@@ -33,10 +33,10 @@
     "pear:build:win:x64": "npx pear-build --package=./package.json --win32-x64-app ./out/AlterSend-win32-x64/AlterSend.msix --target ..\\..\\.\\altersend-desktop-%npm_package_version%"
   },
   "dependencies": {
-    "@altersend/components": "1.4.0",
-    "@altersend/core": "1.4.0",
-    "@altersend/domain": "1.4.0",
-    "@altersend/locales": "1.4.0",
+    "@altersend/components": "1.5.0",
+    "@altersend/core": "1.5.0",
+    "@altersend/domain": "1.5.0",
+    "@altersend/locales": "1.5.0",
     "@sentry/electron": "^7.13.0",
     "b4a": "^1.8.0",
     "bare-rpc": "^1.2.0",

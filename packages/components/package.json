@@ -1,6 +1,6 @@
 {
   "name": "@altersend/components",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "description": "Shared AlterSend UI theme and React Strict DOM setup",
@@ -69,7 +69,7 @@
     }
   },
   "dependencies": {
-    "@altersend/domain": "1.4.0",
+    "@altersend/domain": "1.5.0",
     "react-strict-dom": "^0.0.55"
   },
   "devDependencies": {
