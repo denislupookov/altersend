@@ -30,8 +30,8 @@ export const styles = css.create({
   sm: {
     paddingTop: tokens.space3,
     paddingBottom: tokens.space3,
-    paddingLeft: tokens.space5,
-    paddingRight: tokens.space5,
+    paddingLeft: 22,
+    paddingRight: 22,
     fontSize: tokens.fontSizeMd
   },
   md: {
@@ -181,7 +181,12 @@ export const styles = css.create({
     color: tokens.colorTextMuted,
     cursor: 'not-allowed',
     boxShadow: 'none',
-    opacity: 1
+    opacity: 1,
+    ':hover': {
+      backgroundColor: tokens.colorSurfaceTertiary,
+      borderColor: tokens.colorBorderPrimary,
+      color: tokens.colorTextMuted
+    }
   },
   disabledGhost: {
     backgroundColor: 'transparent',
@@ -189,7 +194,12 @@ export const styles = css.create({
     color: tokens.colorTextMuted,
     cursor: 'not-allowed',
     boxShadow: 'none',
-    opacity: 0.5
+    opacity: 0.5,
+    ':hover': {
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+      color: tokens.colorTextMuted
+    }
   },
   textBase: {
     fontFamily: tokens.fontFamilySans,

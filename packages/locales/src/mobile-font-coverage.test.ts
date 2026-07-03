@@ -55,7 +55,7 @@ describe('mobile font coverage', () => {
   })
 
   it('keeps shared row text metrics explicit for CJK fonts', () => {
-    const settingsSource = readFileSync(join(mobileRoot.pathname, 'app/settings.tsx'), 'utf8')
+    const aboutSource = readFileSync(join(mobileRoot.pathname, 'app/about.tsx'), 'utf8')
     const linkRowSource = readFileSync(
       join(repoRoot.pathname, 'packages/components/src/components/LinkRow/styles.ts'),
       'utf8'
@@ -67,8 +67,8 @@ describe('mobile font coverage', () => {
     expect(linkRowSource).toMatch(
       /subtitle:\s*\{[^}]*fontSize:\s*tokens\.fontSizeSm,[^}]*lineHeight:\s*tokens\.lineHeightNormal/s
     )
-    expect(settingsSource).toMatch(/brandName:\s*\{[^}]*fontSize:\s*13,[^}]*lineHeight:\s*18/s)
-    expect(settingsSource).toMatch(/brandTagline:\s*\{[^}]*fontSize:\s*12,[^}]*lineHeight:\s*16/s)
+    expect(aboutSource).toMatch(/brandName:\s*\{[^}]*fontSize:\s*20,[^}]*lineHeight:\s*26/s)
+    expect(aboutSource).toMatch(/brandTagline:\s*\{[^}]*fontSize:\s*14,[^}]*lineHeight:\s*20/s)
   })
 
   it('returns from the language screen before changing the active i18n language', () => {

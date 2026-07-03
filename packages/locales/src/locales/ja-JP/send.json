@@ -5,7 +5,7 @@
       "description": "1つ以上のファイルを選び、直接暗号化転送用のワンタイムコードを生成します。"
     },
     "preparing": {
-      "title": "転送を準備中",
+      "title": "接続を設定しています",
       "description": "共有コードを表示する前に、選択したファイルを準備しています。"
     },
     "waitingForReceiver": {
@@ -22,7 +22,7 @@
     "sendFiles_other": "{{count}} 個のファイルを送信",
     "addFiles": "ファイルを追加",
     "addMoreFiles": "さらに追加",
-    "dragAndDrop": "ドラッグ＆ドロップ",
+    "dragAndDrop": "ファイルをドロップして追加",
     "clear": "クリア",
     "endSession": "セッション終了",
     "pickFilesTitle": "ファイルを追加",
@@ -32,8 +32,6 @@
   "status": {
     "waitingForPeer": "受信者を待機中",
     "peerConnected": "受信者が接続済み",
-    "uploadComplete": "アップロード完了",
-    "uploadingFiles": "ファイルをアップロード中",
     "uploaded": "アップロード済み",
     "uploading": "アップロード中…",
     "waiting": "待機中",
@@ -89,16 +87,13 @@
     "deviceOffline": "デバイスはオフラインです — もう一度お試しください"
   },
   "dropzone": {
-    "addMoreDescription": "またはクリックして<link>さらに追加</link>",
-    "browseDescription": "またはクリックして<link>参照</link>",
-    "tapAddMoreDescription": "タップして<link>さらに追加</link>",
-    "tapBrowseDescription": "タップして<link>参照</link>",
-    "orClickTo": "またはクリックして",
+    "browseDescription": "または<link>コンピュータを参照</link>",
     "tapTo": "タップして",
     "addMoreLink": "さらに追加",
     "browseLink": "参照"
   },
   "files": {
+    "addedFiles": "追加したファイル",
     "removeLabel": "{{name}} を削除"
   }
 }

@@ -56,18 +56,16 @@ export function ShareView() {
       variant='plain'
       align='left'
       trigger={
-        <LinkCard>
-          <LinkRow
-            compact
-            icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
-            label={
-              singleFolder ? singleFolder.name : t('common:files.count', { count: vm.files.length })
-            }
-            subtitle={formatFileSize(vm.totalSize)}
-            trailing={<ChevronsUpDownIcon size={16} color={c.colorTextMuted} />}
-            isLast
-          />
-        </LinkCard>
+        <LinkRow
+          standalone
+          compact
+          icon={<FolderIcon size={16} color={c.colorTextSecondary} />}
+          label={
+            singleFolder ? singleFolder.name : t('common:files.count', { count: vm.files.length })
+          }
+          subtitle={formatFileSize(vm.totalSize)}
+          trailing={<ChevronsUpDownIcon size={16} color={c.colorTextMuted} />}
+        />
       }
     >
       {() => (

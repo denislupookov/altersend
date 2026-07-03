@@ -39,7 +39,7 @@ export function ReceiveIncomingView() {
                 size='sm'
                 variant='primary'
               >
-                {t('common:actions.openLink', { defaultValue: 'Open Link' })}
+                {t('common:actions.openLink')}
               </Button>
             ) : (
               <Button
@@ -47,7 +47,7 @@ export function ReceiveIncomingView() {
                 size='sm'
                 variant='primary'
               >
-                {t('common:actions.copyText', { defaultValue: 'Copy Text' })}
+                {t('common:actions.copyText')}
               </Button>
             )}
           </View>

@@ -100,7 +100,6 @@ export default function ReceiveScreen() {
   )
   const copy = getReceivePageCopy(t, step, incomingFileOffers.length, totalBytes)
   const title = step === 'join' ? t('receive:page.tabTitle') : copy.title
-  const description = step === 'join' ? t('receive:page.join.mobileDescription') : copy.description
 
   const footer =
     step === 'join' ? undefined : (
@@ -122,7 +121,7 @@ export default function ReceiveScreen() {
 
   if (step === 'join') {
     return (
-      <Layout title={title} description={description}>
+      <Layout title={title}>
         <ReceiveJoinView
           joinCode={joinCode}
           onJoinCodeChange={handleJoinCodeChange}
@@ -137,7 +136,7 @@ export default function ReceiveScreen() {
 
   if (step === 'connecting') {
     return (
-      <ReceiveConnectingView title={title} description={description} footer={footer}>
+      <ReceiveConnectingView title={title} description={copy.description} footer={footer}>
         {errorPanel}
       </ReceiveConnectingView>
     )
@@ -147,7 +146,7 @@ export default function ReceiveScreen() {
     return (
       <ReceiveInterruptedView
         title={title}
-        description={description}
+        description={copy.description}
         footer={footer}
         incomingFileOffers={incomingFileOffers}
         downloadStates={receiveDownloadStates}
@@ -157,7 +156,7 @@ export default function ReceiveScreen() {
   }
 
   return (
-    <ReceiveConnectingView title={title} description={description} footer={footer}>
+    <ReceiveConnectingView title={title} description={copy.description} footer={footer}>
       {errorPanel}
     </ReceiveConnectingView>
   )

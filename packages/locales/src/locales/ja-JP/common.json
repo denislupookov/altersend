@@ -25,10 +25,14 @@
     "update": "更新",
     "downloadAll": "すべてダウンロード",
     "skip": "スキップ",
-    "paste": "貼り付け"
+    "paste": "貼り付け",
+    "openLink": "リンクを開く",
+    "copyText": "テキストをコピー"
   },
   "labels": {
     "settings": "設定",
+    "collapseSidebar": "サイドバーを折りたたむ",
+    "expandSidebar": "サイドバーを展開する",
     "language": "言語",
     "systemDefault": "システム設定",
     "camera": "カメラ",
@@ -56,7 +60,10 @@
     "available": "更新があります",
     "restart": "再起動",
     "update": "更新",
-    "restartFailed": "再起動に失敗しました — 終了して開き直してください"
+    "restartFailed": "再起動に失敗しました — 終了して開き直してください",
+    "description": "最新の修正と改善を含む新しいバージョンが利用可能です。",
+    "updateNow": "今すぐ更新",
+    "notNow": "後で"
   },
   "status": {
     "connected": "接続済み"

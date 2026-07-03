@@ -4,40 +4,12 @@ import { useState } from 'react'
 import { Button, FeedbackTypeSelector, useTheme } from '@altersend/components'
 import { SendIcon } from '@altersend/components/icons'
 import type { FeedbackType } from '@altersend/components'
+import { submitFeedback } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Layout } from '@/src/components'
 import { Text, TextInput } from '@/src/components/ThemedText'
 
 type State = 'idle' | 'sending' | 'sent' | 'error'
-const DISCORD_EMBED_COLOR = 0x5865f2
-
-async function postToDiscord(
-  title: string,
-  message: string,
-  version: string,
-  labels: { version: string; platform: string; mobile: string }
-): Promise<void> {
-  const url = process.env.EXPO_PUBLIC_DISCORD_WEBHOOK_URL
-  if (!url || url.includes('PLACEHOLDER')) throw new Error('Webhook not configured')
-  await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      embeds: [
-        {
-          title,
-          description: message,
-          color: DISCORD_EMBED_COLOR,
-          fields: [
-            { name: labels.version, value: `v${version}`, inline: true },
-            { name: labels.platform, value: labels.mobile, inline: true }
-          ],
-          timestamp: new Date().toISOString()
-        }
-      ]
-    })
-  })
-}
 
 export default function ReportScreen() {
   const { t } = useTranslation(['feedback', 'common'])
@@ -49,16 +21,15 @@ export default function ReportScreen() {
 
   const send = async () => {
     setState('sending')
-    try {
-      await postToDiscord(t(`feedback:types.${type}`), message.trim(), version, {
-        version: t('common:labels.version'),
-        platform: t('common:labels.platform'),
-        mobile: t('common:labels.mobile')
-      })
-      setState('sent')
-    } catch {
-      setState('error')
-    }
+    const sent = await submitFeedback({
+      webhookUrl: process.env.EXPO_PUBLIC_DISCORD_WEBHOOK_URL,
+      title: t(`feedback:types.${type}`),
+      message: message.trim(),
+      version,
+      platform: t('common:labels.mobile'),
+      labels: { version: t('common:labels.version'), platform: t('common:labels.platform') }
+    })
+    setState(sent ? 'sent' : 'error')
   }
 
   const canSend = message.trim().length > 0 && state === 'idle'

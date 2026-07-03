@@ -25,10 +25,14 @@
     "update": "Atualizar",
     "downloadAll": "Baixar tudo",
     "skip": "Pular",
-    "paste": "Colar"
+    "paste": "Colar",
+    "openLink": "Abrir link",
+    "copyText": "Copiar texto"
   },
   "labels": {
     "settings": "Configurações",
+    "collapseSidebar": "Recolher barra lateral",
+    "expandSidebar": "Expandir barra lateral",
     "language": "Idioma",
     "systemDefault": "Padrão do sistema",
     "camera": "Câmera",
@@ -56,7 +60,10 @@
     "available": "Atualização disponível",
     "restart": "Reiniciar",
     "update": "Atualizar",
-    "restartFailed": "Falha na reinicialização – saia e reabra"
+    "restartFailed": "Falha na reinicialização – saia e reabra",
+    "description": "Uma nova versão está disponível com as últimas correções e melhorias.",
+    "updateNow": "Atualizar agora",
+    "notNow": "Agora não"
   },
   "status": {
     "connected": "Conectado"

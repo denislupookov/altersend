@@ -25,10 +25,14 @@
     "update": "Actualizar",
     "downloadAll": "Descargar todo",
     "skip": "Omitir",
-    "paste": "Pegar"
+    "paste": "Pegar",
+    "openLink": "Abrir enlace",
+    "copyText": "Copiar texto"
   },
   "labels": {
     "settings": "Configuración",
+    "collapseSidebar": "Contraer barra lateral",
+    "expandSidebar": "Expandir barra lateral",
     "language": "Idioma",
     "systemDefault": "Predeterminado del sistema",
     "camera": "Cámara",
@@ -56,7 +60,10 @@
     "available": "Actualización disponible",
     "restart": "Reiniciar",
     "update": "Actualizar",
-    "restartFailed": "Error al reiniciar: salga y vuelva a abrir"
+    "restartFailed": "Error al reiniciar: salga y vuelva a abrir",
+    "description": "Hay una nueva versión disponible con las últimas correcciones y mejoras.",
+    "updateNow": "Actualizar ahora",
+    "notNow": "Ahora no"
   },
   "status": {
     "connected": "Conectado"

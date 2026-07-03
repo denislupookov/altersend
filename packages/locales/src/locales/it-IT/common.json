@@ -25,10 +25,14 @@
     "update": "Aggiorna",
     "downloadAll": "Scarica tutto",
     "skip": "Salta",
-    "paste": "Incolla"
+    "paste": "Incolla",
+    "openLink": "Apri link",
+    "copyText": "Copia testo"
   },
   "labels": {
     "settings": "Impostazioni",
+    "collapseSidebar": "Comprimi barra laterale",
+    "expandSidebar": "Espandi barra laterale",
     "language": "Lingua",
     "systemDefault": "Predefinito di sistema",
     "camera": "Fotocamera",
@@ -56,7 +60,10 @@
     "available": "Aggiornamento disponibile",
     "restart": "Riavvia",
     "update": "Aggiorna",
-    "restartFailed": "Riavvio non riuscito: esci e riapri"
+    "restartFailed": "Riavvio non riuscito: esci e riapri",
+    "description": "È disponibile una nuova versione con le ultime correzioni e i miglioramenti più recenti.",
+    "updateNow": "Aggiorna ora",
+    "notNow": "Non ora"
   },
   "status": {
     "connected": "Connesso"

@@ -1,14 +1,14 @@
-import { ArrowUp, X } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
+import { Modal } from '../Modal'
+import updateSvg from '../../../../../../assets/update.svg'
 
 export function UpdateBanner({ ready }: { ready: boolean }) {
   const { t } = useTranslation(['common'])
   const [dismissed, setDismissed] = useState(false)
   const [restartFailed, setRestartFailed] = useState(false)
-
-  if (!ready || dismissed) return null
 
   const restart = async () => {
     setRestartFailed(false)
@@ -21,30 +21,26 @@ export function UpdateBanner({ ready }: { ready: boolean }) {
   }
 
   return (
-    <div className='pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4'>
-      <div className='pointer-events-auto flex items-center gap-2.5 rounded-full border border-border-primary bg-surface-secondary px-5 py-2.5 shadow-lg min-w-[260px]'>
-        <div className='flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-info/15'>
-          <ArrowUp size={12} className='text-info' aria-hidden />
-        </div>
-        <span className='flex-1 text-[13px] font-semibold text-text-primary'>
-          {restartFailed ? t('common:update.restartFailed') : t('common:update.ready')}
-        </span>
-        <div className='flex items-center gap-2'>
-          <button
-            onClick={() => void restart()}
-            className='appearance-none border-0 bg-transparent p-0 text-[13px] font-semibold text-info cursor-pointer'
-          >
-            {t('common:update.restart')}
-          </button>
-          <button
-            aria-label={t('common:actions.dismiss')}
-            onClick={() => setDismissed(true)}
-            className='flex appearance-none border-0 bg-transparent p-0 cursor-pointer text-text-secondary'
-          >
-            <X size={14} aria-hidden />
-          </button>
-        </div>
+    <Modal open={ready && !dismissed} width={420} onClose={() => setDismissed(true)}>
+      <div className='flex flex-col items-center px-6 pb-1 pt-6 text-center'>
+        <img src={updateSvg} alt='' aria-hidden className='mb-4 w-[168px]' />
+        <h2 className='m-0 text-[20px] font-bold text-text-primary'>{t('common:update.ready')}</h2>
+        <p className='m-0 mt-2 max-w-[320px] text-[14px] leading-relaxed text-text-muted'>
+          {t('common:update.description')}
+        </p>
+        {restartFailed && (
+          <p className='m-0 mt-3 text-[13px] text-danger'>{t('common:update.restartFailed')}</p>
+        )}
       </div>
-    </div>
+
+      <div className='flex flex-col gap-2 px-6 pb-6 pt-5'>
+        <Button variant='primary' size='md' width='full' onClick={() => void restart()}>
+          {t('common:update.restart')}
+        </Button>
+        <Button variant='ghost' size='md' width='full' onClick={() => setDismissed(true)}>
+          {t('common:update.notNow')}
+        </Button>
+      </div>
+    </Modal>
   )
 }

@@ -25,10 +25,14 @@
     "update": "Mettre à jour",
     "downloadAll": "Téléchargez tout",
     "skip": "Ignorer",
-    "paste": "Coller"
+    "paste": "Coller",
+    "openLink": "Ouvrir le lien",
+    "copyText": "Copier le texte"
   },
   "labels": {
     "settings": "Paramètres",
+    "collapseSidebar": "Réduire la barre latérale",
+    "expandSidebar": "Développer la barre latérale",
     "language": "Langue",
     "systemDefault": "Valeur système",
     "camera": "Caméra",
@@ -56,7 +60,10 @@
     "available": "Mise à jour disponible",
     "restart": "Redémarrer",
     "update": "Mettre à jour",
-    "restartFailed": "Échec du redémarrage: veuillez quitter et rouvrir"
+    "restartFailed": "Échec du redémarrage: veuillez quitter et rouvrir",
+    "description": "Une nouvelle version est disponible avec les derniers correctifs et améliorations.",
+    "updateNow": "Mettre à jour",
+    "notNow": "Plus tard"
   },
   "status": {
     "connected": "Connecté"

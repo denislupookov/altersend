@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native'
-import { ActionRow, useTheme } from '@altersend/components'
+import { ListItem, useTheme } from '@altersend/components'
 import { ClipboardIcon, CodeIcon, QrCodeIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { BottomSheet } from '../BottomSheet'
@@ -34,24 +34,30 @@ export function AddPairDeviceSheet({
       sheetStyle={styles.sheet}
     >
       <View style={styles.actionList}>
-        <ActionRow
+        <ListItem
           icon={<QrCodeIcon size={15} />}
-          title={t('settings:pairing.showQrCode')}
-          subtitle={t('settings:pairing.showQrCodeHint')}
+          label={t('settings:pairing.showQrCode')}
+          variant='plain'
+          size='large'
+          square
           onClick={onShowQrCode}
         />
         <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
-        <ActionRow
+        <ListItem
           icon={<CodeIcon size={15} />}
-          title={t('settings:pairing.scanQrCode')}
-          subtitle={t('settings:pairing.scanQrCodeHint')}
+          label={t('settings:pairing.scanQrCode')}
+          variant='plain'
+          size='large'
+          square
           onClick={onScanQrCode}
         />
         <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
-        <ActionRow
+        <ListItem
           icon={<ClipboardIcon size={15} />}
-          title={t('settings:pairing.enterCode')}
-          subtitle={t('settings:pairing.enterCodeHint')}
+          label={t('settings:pairing.enterCode')}
+          variant='plain'
+          size='large'
+          square
           onClick={onEnterCode}
         />
       </View>

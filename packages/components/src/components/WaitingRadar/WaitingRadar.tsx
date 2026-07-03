@@ -55,7 +55,8 @@ export function WaitingRadar({ icon, color, pulsing, size = 176 }: WaitingRadarP
                 animationDuration: `${RADAR_DURATION_MS}ms`,
                 animationDelay: `${(i * RADAR_DURATION_MS) / RADAR_RINGS}ms`,
                 animationTimingFunction: 'cubic-bezier(0.25, 0, 0, 1)',
-                animationIterationCount: 'infinite'
+                animationIterationCount: 'infinite',
+                animationFillMode: 'backwards'
               } as never
             ]}
           />

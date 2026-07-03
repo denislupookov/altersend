@@ -25,10 +25,14 @@
     "update": "Aktualisieren",
     "downloadAll": "Alles herunterladen",
     "skip": "Überspringen",
-    "paste": "Einfügen"
+    "paste": "Einfügen",
+    "openLink": "Link öffnen",
+    "copyText": "Text kopieren"
   },
   "labels": {
     "settings": "Einstellungen",
+    "collapseSidebar": "Seitenleiste einklappen",
+    "expandSidebar": "Seitenleiste ausklappen",
     "language": "Sprache",
     "systemDefault": "Systemstandard",
     "camera": "Kamera",
@@ -56,7 +60,10 @@
     "available": "Update verfügbar",
     "restart": "Neu starten",
     "update": "Aktualisieren",
-    "restartFailed": "Neustart fehlgeschlagen – bitte beenden und erneut öffnen"
+    "restartFailed": "Neustart fehlgeschlagen – bitte beenden und erneut öffnen",
+    "description": "Eine neue Version mit den neuesten Fehlerbehebungen und Verbesserungen ist verfügbar.",
+    "updateNow": "Jetzt aktualisieren",
+    "notNow": "Später"
   },
   "status": {
     "connected": "Verbunden"

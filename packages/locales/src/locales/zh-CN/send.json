@@ -5,7 +5,7 @@
       "description": "选择一个或多个文件并生成一次性代码以进行直接加密传输。"
     },
     "preparing": {
-      "title": "准备转移",
+      "title": "正在建立连接",
       "description": "在共享代码公开之前准备好选定的文件。"
     },
     "waitingForReceiver": {
@@ -22,7 +22,7 @@
     "sendFiles_other": "发送 {{count}} 个文件",
     "addFiles": "添加文件",
     "addMoreFiles": "添加更多文件",
-    "dragAndDrop": "拖放",
+    "dragAndDrop": "拖放文件以添加",
     "clear": "清除",
     "endSession": "结束会话",
     "pickFilesTitle": "添加文件",
@@ -32,8 +32,6 @@
   "status": {
     "waitingForPeer": "等待接收方",
     "peerConnected": "接收方已连接",
-    "uploadComplete": "上传完成",
-    "uploadingFiles": "上传文件",
     "uploaded": "已上传",
     "uploading": "正在上传...",
     "waiting": "等待",
@@ -89,16 +87,13 @@
     "deviceOffline": "设备离线 — 请重试"
   },
   "dropzone": {
-    "addMoreDescription": "或点击<link>继续添加</link>",
-    "browseDescription": "或点击<link>浏览</link>",
-    "tapAddMoreDescription": "点按<link>继续添加</link>",
-    "tapBrowseDescription": "点按<link>浏览</link>",
-    "orClickTo": "或点击",
+    "browseDescription": "或<link>浏览</link>你的电脑",
     "tapTo": "点按",
     "addMoreLink": "继续添加",
     "browseLink": "浏览"
   },
   "files": {
+    "addedFiles": "已添加的文件",
     "removeLabel": "删除{{name}}"
   }
 }

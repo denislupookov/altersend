@@ -59,53 +59,41 @@ export default function LanguageScreen() {
       description={t('settings:languageHint')}
       hasNativeHeader
     >
-      <View style={[styles.card, cardStyle]}>
-        {LOCALE_OPTIONS.map((option, index) => {
+      <View style={styles.list}>
+        {LOCALE_OPTIONS.map((option) => {
           const selected = option.preference === preference
           return (
-            <View key={option.preference}>
-              <Pressable
-                accessibilityRole='button'
-                accessibilityState={{ selected }}
-                onPress={() => void handleSelect(option.preference)}
-                style={({ pressed }) => [
-                  styles.row,
-                  pressed && { backgroundColor: theme.colors.colorSurfacePrimary }
-                ]}
-              >
-                <View style={styles.rowText}>
-                  <Text
-                    style={[
-                      styles.label,
-                      {
-                        color: theme.colors.colorTextPrimary,
-                        fontFamily: getOptionNativeNameFontFamily(option)
-                      }
-                    ]}
-                  >
-                    {option.nativeName ?? t('common:labels.systemDefault')}
+            <Pressable
+              key={option.preference}
+              accessibilityRole='button'
+              accessibilityState={{ selected }}
+              onPress={() => void handleSelect(option.preference)}
+              style={({ pressed }) => [
+                styles.rowCard,
+                cardStyle,
+                pressed && { backgroundColor: theme.colors.colorSurfacePrimary }
+              ]}
+            >
+              <View style={styles.rowText}>
+                <Text
+                  style={[
+                    styles.label,
+                    {
+                      color: theme.colors.colorTextPrimary,
+                      fontFamily: getOptionNativeNameFontFamily(option)
+                    }
+                  ]}
+                >
+                  {option.nativeName ?? t('common:labels.systemDefault')}
+                </Text>
+                {option.nativeName ? (
+                  <Text style={[styles.hint, { color: theme.colors.colorTextMuted }]}>
+                    {option.label}
                   </Text>
-                  {option.nativeName ? (
-                    <Text
-                      style={[
-                        styles.hint,
-                        {
-                          color: theme.colors.colorTextMuted
-                        }
-                      ]}
-                    >
-                      {option.label}
-                    </Text>
-                  ) : null}
-                </View>
-                {selected && <CheckIcon size={18} color={theme.colors.colorTextPrimary} />}
-              </Pressable>
-              {index < LOCALE_OPTIONS.length - 1 && (
-                <View
-                  style={[styles.divider, { backgroundColor: theme.colors.colorBorderPrimary }]}
-                />
-              )}
-            </View>
+                ) : null}
+              </View>
+              {selected && <CheckIcon size={18} color={theme.colors.colorTextPrimary} />}
+            </Pressable>
           )
         })}
       </View>
@@ -132,18 +120,18 @@ function getOptionNativeNameFontFamily(option: LocaleOption) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: 'hidden'
+  list: {
+    gap: 10
   },
-  row: {
+  rowCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
     paddingHorizontal: 16,
-    paddingVertical: 13
+    paddingVertical: 13,
+    borderRadius: 10,
+    borderWidth: 1
   },
   rowText: {
     flex: 1,
@@ -158,9 +146,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     includeFontPadding: false,
     lineHeight: 16
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    marginLeft: 16
   }
 })

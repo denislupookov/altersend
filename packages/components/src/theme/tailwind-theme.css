@@ -5,21 +5,23 @@
 :root,
 [data-theme='dark'] {
   --as-color-background: #16181d;
-  --as-color-background-subtle: #1b1f25;
-  --as-color-surface-primary: #20242b;
-  --as-color-surface-secondary: #252b33;
-  --as-color-surface-tertiary: #2d343d;
-  --as-color-surface-hover: #353d47;
-  --as-color-surface-accent: #f3efe8;
-  --as-color-border-primary: rgba(255, 255, 255, 0.06);
-  --as-color-border-strong: rgba(255, 255, 255, 0.12);
-  --as-color-text-primary: #f6f2eb;
-  --as-color-text-secondary: #cbc4b8;
-  --as-color-text-muted: #8f897e;
-  --as-color-accent: #f3efe8;
+  --as-color-background-deep: #0f1116;
+  --as-color-background-subtle: #21262f;
+  --as-color-surface-primary: #2b313c;
+  --as-color-surface-secondary: #323945;
+  --as-color-surface-tertiary: #3a414e;
+  --as-color-surface-hover: #434b58;
+  --as-color-surface-accent: #e7eaf0;
+  --as-color-border-primary: #282d35;
+  --as-color-border-strong: #3d4551;
+  --as-color-text-primary: #e7eaf0;
+  --as-color-text-secondary: #c4ccd9;
+  --as-color-text-muted: #98a1b3;
+  --as-color-text-faint: #5e6678;
+  --as-color-accent: #e8ebf2;
   --as-color-accent-hover: #ffffff;
-  --as-color-accent-active: #ddd7cf;
-  --as-color-on-accent: #141517;
+  --as-color-accent-active: #d5dae3;
+  --as-color-on-accent: #0b0f17;
   --as-color-success: #8ab86d;
   --as-color-success-subtle: rgba(138, 184, 109, 0.12);
   --as-color-warning: #d4a04a;
@@ -28,11 +30,13 @@
   --as-color-danger-subtle: rgba(215, 113, 113, 0.12);
   --as-color-info: #608aff;
   --as-color-info-subtle: rgba(96, 138, 255, 0.12);
-  --as-color-accent-subtle: rgba(243, 239, 232, 0.08);
+  --as-color-accent-subtle: rgba(232, 235, 242, 0.08);
   --as-color-scrim: #000000;
   --as-color-shadow: rgba(0, 0, 0, 0.18);
   --as-color-highlight: rgba(255, 255, 255, 0.22);
-  --as-color-focus-ring: #d7d1c7;
+  --as-color-overlay-selected: rgba(255, 255, 255, 0.06);
+  --as-color-overlay-hover: rgba(255, 255, 255, 0.04);
+  --as-color-focus-ring: #aab2c2;
   --as-space0: 0px;
   --as-space05: 2px;
   --as-space1: 4px;
@@ -74,13 +78,14 @@
   --as-line-height-snug: 1.35;
   --as-line-height-normal: 1.4;
   --as-line-height-relaxed: 1.5;
-  --as-font-family-sans: "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif;
-  --as-font-family-display: "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+  --as-font-family-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  --as-font-family-display: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, system-ui, sans-serif;
   --as-font-family-mono: ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
 }
 
 [data-theme='light'] {
   --as-color-background: #ece8e1;
+  --as-color-background-deep: #e2dccf;
   --as-color-background-subtle: #f3efe8;
   --as-color-surface-primary: #faf7f1;
   --as-color-surface-secondary: #ffffff;
@@ -92,6 +97,7 @@
   --as-color-text-primary: #181a1d;
   --as-color-text-secondary: #4f4a42;
   --as-color-text-muted: #787168;
+  --as-color-text-faint: #9c958a;
   --as-color-accent: #181a1d;
   --as-color-accent-hover: #000000;
   --as-color-accent-active: #31353b;
@@ -108,5 +114,7 @@
   --as-color-scrim: #000000;
   --as-color-shadow: rgba(0, 0, 0, 0.10);
   --as-color-highlight: rgba(255, 255, 255, 0.50);
+  --as-color-overlay-selected: rgba(0, 0, 0, 0.06);
+  --as-color-overlay-hover: rgba(0, 0, 0, 0.04);
   --as-color-focus-ring: #272a2f;
 }

@@ -29,24 +29,23 @@ export const styles = css.create({
     }
   },
   rowCompact: {
-    gap: tokens.space25,
-    paddingTop: tokens.space2,
-    paddingBottom: tokens.space2,
-    paddingLeft: tokens.space35,
-    paddingRight: tokens.space3,
-    borderRadius: tokens.radiusMd
+    gap: tokens.space3,
+    paddingTop: tokens.space25,
+    paddingBottom: tokens.space25,
+    paddingLeft: tokens.space25,
+    paddingRight: tokens.space25
   },
   rowStandalone: {
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: tokens.colorBorderPrimary,
-    borderRadius: tokens.radiusLg,
+    borderRadius: tokens.radiusMd,
     backgroundColor: tokens.colorBackgroundSubtle,
     transitionDuration: '160ms',
     transitionProperty: 'background-color, border-color',
     ':hover': {
       backgroundColor: tokens.colorSurfacePrimary,
-      borderColor: tokens.colorBorderStrong
+      borderColor: tokens.colorBorderPrimary
     }
   },
   rowBare: {
@@ -87,9 +86,9 @@ export const styles = css.create({
     backgroundColor: tokens.colorSurfacePrimary
   },
   iconBoxCompact: {
-    width: 30,
-    height: 30,
-    borderRadius: tokens.radiusXs
+    width: tokens.space9,
+    height: tokens.space9,
+    borderRadius: tokens.radiusMd
   },
   iconBoxCustom: (backgroundColor: string) => ({
     backgroundColor
@@ -126,7 +125,7 @@ export const styles = css.create({
     lineHeight: tokens.lineHeightSnug
   },
   labelCompact: {
-    fontSize: tokens.fontSizeMd
+    fontSize: tokens.fontSizeBase
   },
   labelDisabled: {
     color: tokens.colorTextMuted
@@ -141,10 +140,13 @@ export const styles = css.create({
     lineHeight: tokens.lineHeightNormal
   },
   subtitleCompact: {
-    fontSize: tokens.fontSizeXs
+    fontSize: tokens.fontSizeSm
   },
   subtitleMuted: {
     color: tokens.colorTextMuted
+  },
+  subtitleFaint: {
+    color: tokens.colorTextFaint
   },
   subtitleSuccess: {
     color: tokens.colorSuccess
@@ -204,7 +206,7 @@ export const styles = css.create({
   },
   progressUploading: {
     width: '66.6667%',
-    backgroundColor: tokens.colorTextPrimary
+    backgroundColor: tokens.colorInfo
   },
   progressCompleted: {
     width: '100%',
@@ -212,7 +214,7 @@ export const styles = css.create({
   },
   progressDynamic: (percent: number) => ({
     width: `${percent}%`,
-    backgroundColor: tokens.colorTextPrimary
+    backgroundColor: tokens.colorInfo
   }),
   trailing: {
     marginLeft: 'auto',
@@ -222,9 +224,11 @@ export const styles = css.create({
   },
   divider: {
     height: 1,
-    marginLeft: 64,
     backgroundColor: tokens.colorBorderPrimary
   },
+  dividerInset: (marginLeft: number) => ({
+    marginLeft
+  }),
   removeButton: {
     flexShrink: 0,
     width: tokens.space8,
@@ -237,19 +241,19 @@ export const styles = css.create({
     borderRadius: tokens.radiusSm,
     backgroundColor: 'transparent',
     padding: 0,
-    color: tokens.colorTextMuted,
+    color: tokens.colorTextFaint,
     cursor: 'pointer',
     transitionDuration: '150ms',
     transitionProperty: 'color, background-color',
     transitionTimingFunction: 'ease',
     ':hover': {
-      color: tokens.colorTextPrimary,
+      color: tokens.colorTextSecondary,
       backgroundColor: tokens.colorSurfacePrimary
     }
   },
   removeButtonCompact: {
-    width: 26,
-    height: 26,
-    borderRadius: tokens.radiusXs
+    width: tokens.space7,
+    height: tokens.space7,
+    borderRadius: tokens.radiusSm
   }
 })

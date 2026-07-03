@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { html } from 'react-strict-dom'
 import { ChevronRightIcon, CloseIcon } from '../../icons'
+import { usePressState } from '../../hooks/usePressState'
 import { fileTypeColors, useTheme } from '../../theme'
 import { FileKindIcon, getFileKind } from './fileKinds'
 import { styles } from './styles'
@@ -13,9 +14,10 @@ interface LinkRowBaseProps {
   icon?: ReactNode
   iconBackground?: string
   label: string
+  labelFontFamily?: string
   size?: number
   subtitle?: string
-  subtitleTone?: 'muted' | 'success' | 'danger' | 'info'
+  subtitleTone?: 'muted' | 'faint' | 'success' | 'danger' | 'info'
   description?: string
   isActive?: boolean
   isFirst?: boolean
@@ -48,6 +50,7 @@ export interface LinkCardProps {
 
 const subtitleToneStyle = {
   muted: styles.subtitleMuted,
+  faint: styles.subtitleFaint,
   success: styles.subtitleSuccess,
   danger: styles.subtitleDanger,
   info: styles.subtitleInfo
@@ -69,6 +72,7 @@ export function LinkRow({
   icon,
   iconBackground,
   label,
+  labelFontFamily,
   size,
   subtitle,
   subtitleTone = 'muted',
@@ -90,6 +94,8 @@ export function LinkRow({
   removeLabel
 }: LinkRowProps) {
   const { theme } = useTheme()
+  const { isPressed, pressHandlers } = usePressState()
+  const interactive = !!onPress && !disabled
   const kind = file ? getFileKind(label) : null
   const fileTone = kind ? fileTypeColors[kind] : null
   const renderIcon = (): ReactNode => {
@@ -146,6 +152,7 @@ export function LinkRow({
   return (
     <>
       <html.div
+        {...(interactive ? pressHandlers : {})}
         aria-disabled={disabled || undefined}
         onClick={disabled ? undefined : onPress}
         role={onPress && !disabled ? 'button' : undefined}
@@ -156,7 +163,10 @@ export function LinkRow({
           bare && styles.rowBare,
           bare && isFirst && styles.rowBareFirst,
           onPress && !disabled && styles.rowPressable,
-          isActive && styles.rowActive
+          isActive && styles.rowActive,
+          interactive &&
+            isPressed &&
+            ({ backgroundColor: theme.colors.colorSurfacePrimary } as never)
         ]}
         tabIndex={onPress && !disabled ? 0 : undefined}
       >
@@ -178,7 +188,8 @@ export function LinkRow({
                 style={[
                   styles.label,
                   disabled && styles.labelDisabled,
-                  compact && styles.labelCompact
+                  compact && styles.labelCompact,
+                  labelFontFamily ? ({ fontFamily: labelFontFamily } as never) : null
                 ]}
               >
                 {label}
@@ -218,7 +229,14 @@ export function LinkRow({
         </html.div>
         {trailingContent ? <html.div style={styles.trailing}>{trailingContent}</html.div> : null}
       </html.div>
-      {!isLast && !bare && !standalone ? <html.div style={styles.divider} /> : null}
+      {!isLast && !bare && !standalone ? (
+        <html.div
+          style={[
+            styles.divider,
+            styles.dividerInset((compact ? 10 : 16) + (iconNode ? 36 + 12 : 0))
+          ]}
+        />
+      ) : null}
     </>
   )
 }

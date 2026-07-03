@@ -1,5 +1,8 @@
 <div align="center">
-  <img src="assets/altersend-logo.png" alt="AlterSend" width="380" />
+  <br />
+  <img src="assets/altersend-logo.png" alt="AlterSend" width="340" />
+  <br />
+  <br />
 
 ### File transfer without the cloud storage.
 

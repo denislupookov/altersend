@@ -25,7 +25,7 @@ const hardcodedCopyChecks = [
     snippets: ['Transfer issue']
   },
   {
-    file: 'apps/desktop/src/renderer/components/Settings/SettingsPanel.tsx',
+    file: 'apps/desktop/src/renderer/components/Settings/sections/AboutSection.tsx',
     snippets: ["{' and '}", "{'.'}"]
   },
   {

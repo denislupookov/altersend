@@ -187,7 +187,7 @@ export function ReceiveConnectedView() {
                 size='sm'
                 variant='primary'
               >
-                Open Link
+                {t('common:actions.openLink')}
               </Button>
             ) : (
               <Button
@@ -195,7 +195,7 @@ export function ReceiveConnectedView() {
                 size='sm'
                 variant='primary'
               >
-                Copy Text
+                {t('common:actions.copyText')}
               </Button>
             )
           ) : peerCount > 0 && hasIncomingFiles && !allCompleted ? (

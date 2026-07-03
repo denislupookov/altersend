@@ -28,14 +28,16 @@ const styles = css.create({
   title: {
     margin: 0,
     fontSize: 32,
-    fontFamily: '"Aptos", "SF Pro Text", "Helvetica Neue", sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, system-ui, sans-serif',
     fontWeight: '700',
     letterSpacing: '-0.03em'
   },
   description: {
     margin: 0,
     fontSize: 16,
-    fontFamily: '"Aptos", "SF Pro Text", "Helvetica Neue", sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, system-ui, sans-serif',
     lineHeight: 1.6
   },
   section: {
@@ -62,7 +64,8 @@ const styles = css.create({
   tokenName: {
     margin: 0,
     fontSize: 14,
-    fontFamily: '"Aptos", "SF Pro Text", "Helvetica Neue", sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, system-ui, sans-serif',
     fontWeight: '600'
   },
   tokenValue: {

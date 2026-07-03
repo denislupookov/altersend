@@ -5,7 +5,7 @@
       "description": "Choose one or more files and generate a one-time code for a direct encrypted transfer."
     },
     "preparing": {
-      "title": "Preparing transfer",
+      "title": "Setting up connection",
       "description": "Preparing the selected files before the share code is revealed."
     },
     "waitingForReceiver": {
@@ -22,7 +22,7 @@
     "sendFiles_other": "Send {{count}} files",
     "addFiles": "Add files",
     "addMoreFiles": "Add more files",
-    "dragAndDrop": "Drag and drop",
+    "dragAndDrop": "Drop files to add them",
     "clear": "Clear",
     "endSession": "End session",
     "pickFilesTitle": "Add files",
@@ -32,8 +32,6 @@
   "status": {
     "waitingForPeer": "Waiting for peer",
     "peerConnected": "Peer connected",
-    "uploadComplete": "Upload complete",
-    "uploadingFiles": "Uploading files",
     "uploaded": "Uploaded",
     "uploading": "Uploading…",
     "waiting": "Waiting",
@@ -89,16 +87,13 @@
     "deviceOffline": "Device offline — try again"
   },
   "dropzone": {
-    "addMoreDescription": "or click to <link>add more</link>",
-    "browseDescription": "or click to <link>browse</link>",
-    "tapAddMoreDescription": "Tap to <link>add more</link>",
-    "tapBrowseDescription": "Tap to <link>browse</link>",
-    "orClickTo": "or click to",
+    "browseDescription": "or <link>browse</link> your computer",
     "tapTo": "Tap to",
     "addMoreLink": "add more",
     "browseLink": "browse"
   },
   "files": {
+    "addedFiles": "Added files",
     "removeLabel": "Remove {{name}}"
   }
 }

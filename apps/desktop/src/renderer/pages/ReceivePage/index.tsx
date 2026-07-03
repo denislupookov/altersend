@@ -60,6 +60,7 @@ export default function ReceivePage() {
     if (step === 'connecting') {
       return (
         <TransferStatusPanel
+          loading
           description={t('receive:page.handshake.description')}
           title={t('receive:page.handshake.title')}
         />
@@ -92,7 +93,7 @@ export default function ReceivePage() {
 
   return (
     <TransferCardFrame
-      description={description}
+      description={step === 'join' ? '' : description}
       title={title}
       badge={connectedBadge}
       footer={footer}

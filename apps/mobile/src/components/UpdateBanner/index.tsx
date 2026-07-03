@@ -1,10 +1,11 @@
-import { useTheme } from '@altersend/components'
+import { useState } from 'react'
+import { Button, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
-import { ArrowUp, X } from 'lucide-react-native'
-import { Linking, Platform, Pressable, StyleSheet, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Linking, Platform, StyleSheet, View } from 'react-native'
 import { useUpdateCheck } from '../../hooks/useUpdateCheck'
+import { BottomSheet } from '../BottomSheet'
 import { Text } from '@/src/components/ThemedText'
+import UpdateSvg from '../../../../../assets/update.svg'
 
 const STORE_URL =
   Platform.OS === 'ios'
@@ -14,89 +15,70 @@ const STORE_URL =
 export function UpdateBanner() {
   const { t } = useTranslation(['common'])
   const { theme } = useTheme()
-  const insets = useSafeAreaInsets()
+  const c = theme.colors
   const { needsUpdate, dismiss } = useUpdateCheck()
+  const [dismissed, setDismissed] = useState(false)
 
-  if (!needsUpdate) return null
+  const handleDismiss = () => {
+    setDismissed(true)
+    dismiss()
+  }
+
+  const handleUpdate = () => {
+    handleDismiss()
+    void Linking.openURL(STORE_URL).catch(() => {})
+  }
 
   return (
-    <View pointerEvents='box-none' style={[styles.container, { top: insets.top + 16 }]}>
-      <View
-        style={[
-          styles.banner,
-          {
-            backgroundColor: theme.colors.colorSurfaceSecondary,
-            borderColor: theme.colors.colorBorderPrimary,
-            shadowColor: theme.colors.colorScrim
-          }
-        ]}
-      >
-        <View style={[styles.iconWrap, { backgroundColor: theme.colors.colorInfoSubtle }]}>
-          <ArrowUp size={14} color={theme.colors.colorInfo} />
-        </View>
+    <BottomSheet open={needsUpdate && !dismissed} onClose={handleDismiss}>
+      <View style={styles.content}>
+        <UpdateSvg width={188} height={163} style={styles.image} />
 
-        <Text style={[styles.label, { color: theme.colors.colorTextPrimary }]} numberOfLines={1}>
+        <Text style={[styles.title, { color: c.colorTextPrimary }]}>
           {t('common:update.available')}
         </Text>
+        <Text style={[styles.description, { color: c.colorTextMuted }]}>
+          {t('common:update.description')}
+        </Text>
 
-        <Pressable
-          onPress={() => {
-            dismiss()
-            void Linking.openURL(STORE_URL).catch(() => {})
-          }}
-          hitSlop={8}
-        >
-          <Text style={[styles.updateBtn, { color: theme.colors.colorInfo }]}>
-            {t('common:update.update')}
-          </Text>
-        </Pressable>
-
-        <Pressable
-          accessibilityRole='button'
-          accessibilityLabel={t('common:actions.dismiss')}
-          onPress={dismiss}
-          hitSlop={8}
-        >
-          <X size={16} color={theme.colors.colorTextSecondary} />
-        </Pressable>
+        <View style={styles.actions}>
+          <Button onClick={handleUpdate} variant='primary' size='lg' width='full'>
+            {t('common:update.updateNow')}
+          </Button>
+          <Button onClick={handleDismiss} variant='ghost' size='lg' width='full'>
+            {t('common:update.notNow')}
+          </Button>
+        </View>
       </View>
-    </View>
+    </BottomSheet>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    left: 16,
-    right: 16
-  },
-  banner: {
-    flexDirection: 'row',
+  content: {
     alignItems: 'center',
-    gap: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    borderWidth: 1,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    elevation: 8
+    paddingHorizontal: 20,
+    gap: 8
   },
-  iconWrap: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    alignItems: 'center',
-    justifyContent: 'center'
+  image: {
+    marginBottom: 8
   },
-  label: {
-    flex: 1,
+  title: {
+    fontSize: 19,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginTop: 10
+  },
+  description: {
     fontSize: 14,
-    fontWeight: '600'
+    lineHeight: 20,
+    textAlign: 'center',
+    maxWidth: 320,
+    marginBottom: 8
   },
-  updateBtn: {
-    fontSize: 14,
-    fontWeight: '600'
+  actions: {
+    width: '100%',
+    gap: 8,
+    marginTop: 4
   }
 })

@@ -1,5 +1,6 @@
 export interface ThemeColors {
   colorBackground: string
+  colorBackgroundDeep: string
   colorBackgroundSubtle: string
   colorSurfacePrimary: string
   colorSurfaceSecondary: string
@@ -11,6 +12,7 @@ export interface ThemeColors {
   colorTextPrimary: string
   colorTextSecondary: string
   colorTextMuted: string
+  colorTextFaint: string
   colorAccent: string
   colorAccentHover: string
   colorAccentActive: string
@@ -27,6 +29,8 @@ export interface ThemeColors {
   colorScrim: string
   colorShadow: string
   colorHighlight: string
+  colorOverlaySelected: string
+  colorOverlayHover: string
   colorFocusRing: string
 }
 

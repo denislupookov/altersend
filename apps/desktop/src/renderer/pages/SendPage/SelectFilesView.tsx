@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { DropZoneLink, ErrorBanner, FileDropZone, LinkRow } from '@altersend/components'
+import { DropZoneLink, ErrorBanner, FileDropZone, LinkRow, useTheme } from '@altersend/components'
 import { FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import {
   addSelectedFiles,
   type BrowserFileLike,
+  formatFileSize,
   groupSelectedFiles,
   normalizeSelectedFiles,
   removeSelectedFile,
@@ -56,13 +57,36 @@ async function collectDroppedEntries(
 }
 
 export function SelectFilesView() {
-  const { t } = useTranslation(['send'])
+  const { t } = useTranslation(['send', 'common'])
+  const { theme } = useTheme()
+  const c = theme.colors
   const selectedFiles = useTransferStore((s) => s.selectedFiles)
   const [isDropZoneDragging, setIsDropZoneDragging] = useState(false)
   const [selectionError, setSelectionError] = useState<string | null>(null)
   const [textInput, setTextInput] = useState('')
 
   const hasSelectedFiles = selectedFiles.length > 0
+
+  const browseDescription = (() => {
+    const raw = t('send:dropzone.browseDescription')
+    const m = raw.match(/^([\s\S]*)<link>([\s\S]*)<\/link>([\s\S]*)$/)
+    if (!m) return raw
+    return (
+      <>
+        {m[1]}
+        <DropZoneLink>{m[2]}</DropZoneLink>
+        {m[3]}
+      </>
+    )
+  })()
+
+  const fileSubtitle = (name: string, size?: number): string => {
+    const dot = name.lastIndexOf('.')
+    const ext = dot > 0 ? name.slice(dot + 1) : ''
+    const sizeStr = typeof size === 'number' ? formatFileSize(size) : ''
+    const type = ext && ext.length <= 5 ? ext.toUpperCase() : ''
+    return [type, sizeStr].filter(Boolean).join(' · ')
+  }
 
   const browse = async () => {
     const selected = await bridgeApi.pickFiles()
@@ -120,22 +144,10 @@ export function SelectFilesView() {
   }
 
   return (
-    <div className='flex flex-col gap-4'>
-      <div>
+    <div className='flex h-full min-h-0 flex-col gap-[34px]'>
+      <div className={hasSelectedFiles ? 'shrink-0' : ''}>
         <FileDropZone
-          description={
-            hasSelectedFiles ? (
-              <>
-                {t('send:dropzone.orClickTo')}{' '}
-                <DropZoneLink>{t('send:dropzone.addMoreLink')}</DropZoneLink>
-              </>
-            ) : (
-              <>
-                {t('send:dropzone.orClickTo')}{' '}
-                <DropZoneLink>{t('send:dropzone.browseLink')}</DropZoneLink>
-              </>
-            )
-          }
+          description={browseDescription}
           hasFiles={hasSelectedFiles}
           isDragging={isDropZoneDragging}
           onClick={() => void browse()}
@@ -148,42 +160,47 @@ export function SelectFilesView() {
             setIsDropZoneDragging(true)
           }}
           onDrop={onDrop}
-          title={hasSelectedFiles ? t('send:actions.addMoreFiles') : t('send:actions.dragAndDrop')}
+          title={t('send:actions.dragAndDrop')}
         />
       </div>
 
       {hasSelectedFiles ? (
-        <div className='flex flex-col gap-1.5'>
-          {groupSelectedFiles(selectedFiles).map((row) =>
-            row.kind === 'file' ? (
-              <LinkRow
-                key={row.file.path}
-                file
-                standalone
-                compact
-                label={row.file.name}
-                onRemove={() => removeSelectedFile(row.file.path)}
-                removeLabel={t('send:files.removeLabel', { name: row.file.name })}
-                size={row.file.size}
-              />
-            ) : (
-              <LinkRow
-                key={`folder:${row.name}`}
-                icon={<FolderIcon size={16} />}
-                standalone
-                compact
-                label={row.name}
-                onRemove={() => row.files.forEach((file) => removeSelectedFile(file.path))}
-                removeLabel={t('send:files.removeLabel', { name: row.name })}
-                size={row.totalSize}
-              />
-            )
-          )}
+        <div className='min-h-0 flex-1 overflow-y-auto'>
+          <div className='flex flex-col gap-2'>
+            {groupSelectedFiles(selectedFiles).map((row) =>
+              row.kind === 'file' ? (
+                <LinkRow
+                  key={row.file.path}
+                  file
+                  standalone
+                  compact
+                  label={row.file.name}
+                  subtitle={fileSubtitle(row.file.name, row.file.size)}
+                  subtitleTone='faint'
+                  onRemove={() => removeSelectedFile(row.file.path)}
+                  removeLabel={t('send:files.removeLabel', { name: row.file.name })}
+                />
+              ) : (
+                <LinkRow
+                  key={`folder:${row.name}`}
+                  icon={<FolderIcon size={17} color={c.colorTextMuted} />}
+                  iconBackground={c.colorSurfacePrimary}
+                  standalone
+                  compact
+                  label={row.name}
+                  subtitle={t('common:files.count', { count: row.files.length })}
+                  subtitleTone='faint'
+                  onRemove={() => row.files.forEach((file) => removeSelectedFile(file.path))}
+                  removeLabel={t('send:files.removeLabel', { name: row.name })}
+                />
+              )
+            )}
+          </div>
         </div>
       ) : null}
 
       {ENABLE_TEXT_SHARING && (
-        <div className='flex flex-row gap-2 mt-2 items-center'>
+        <div className='flex shrink-0 flex-row gap-2 mt-2 items-center'>
           <div className='flex-1'>
             <Input
               placeholder='Type a message or paste a link...'

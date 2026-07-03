@@ -25,10 +25,14 @@
     "update": "更新",
     "downloadAll": "下载全部",
     "skip": "跳过",
-    "paste": "粘贴"
+    "paste": "粘贴",
+    "openLink": "打开链接",
+    "copyText": "复制文本"
   },
   "labels": {
     "settings": "设置",
+    "collapseSidebar": "收起侧边栏",
+    "expandSidebar": "展开侧边栏",
     "language": "语言",
     "systemDefault": "系统默认",
     "camera": "摄像头",
@@ -56,7 +60,10 @@
     "available": "可用更新",
     "restart": "重启",
     "update": "更新",
-    "restartFailed": "重新启动失败 - 请退出并重新启动"
+    "restartFailed": "重新启动失败 - 请退出并重新启动",
+    "description": "新版本现已推出，包含最新的修复和改进。",
+    "updateNow": "立即更新",
+    "notNow": "以后再说"
   },
   "status": {
     "connected": "已连接"

@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import { Button, Input, LinkRow, useTheme } from '@altersend/components'
-import { ClipboardIcon, QrCodeIcon } from '@altersend/components/icons'
+import { ClipboardIcon, DownloadIcon, QrCodeIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
@@ -36,18 +36,21 @@ export function ReceiveJoinView({
   return (
     <View style={styles.container}>
       <LinkRow
-        icon={<QrCodeIcon size={20} color={theme.colors.colorInfo} />}
-        iconBackground={theme.colors.colorInfoSubtle}
+        icon={<QrCodeIcon size={20} color={theme.colors.colorTextMuted} />}
+        iconBackground={theme.colors.colorSurfacePrimary}
         label={t('receive:actions.scanOrImportQr')}
         onPress={onScanQr}
         standalone
         subtitle={t('receive:actions.scanOrImportQrHintMobile')}
+        subtitleTone='faint'
       />
 
       <View style={styles.divider}>
-        <Text style={[styles.dividerText, { color: theme.colors.colorTextMuted }]}>
+        <View style={[styles.dividerLine, { backgroundColor: theme.colors.colorBorderPrimary }]} />
+        <Text style={[styles.dividerText, { color: theme.colors.colorTextFaint }]}>
           {t('receive:form.orPasteCode')}
         </Text>
+        <View style={[styles.dividerLine, { backgroundColor: theme.colors.colorBorderPrimary }]} />
       </View>
 
       <View style={styles.codeForm}>
@@ -73,7 +76,14 @@ export function ReceiveJoinView({
           value={joinCode}
         />
 
-        <Button disabled={!canConnect} onClick={onConnect} variant='primary' size='lg' width='full'>
+        <Button
+          disabled={!canConnect}
+          onClick={onConnect}
+          variant='primary'
+          size='lg'
+          width='full'
+          icon={<DownloadIcon size={18} />}
+        >
           {isLoading ? t('common:actions.connecting') : t('common:actions.connect')}
         </Button>
       </View>
@@ -89,11 +99,17 @@ const styles = StyleSheet.create({
     gap: 10
   },
   divider: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 2
+    gap: 16,
+    paddingVertical: 6
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1
   },
   dividerText: {
-    fontSize: 12
+    fontSize: 12.5
   },
   footer: {
     flexDirection: 'row',

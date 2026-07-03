@@ -5,7 +5,7 @@
       "description": "Escolha um ou mais arquivos e gere um código único para uma transferência criptografada direta."
     },
     "preparing": {
-      "title": "Preparando transferência",
+      "title": "Estabelecendo conexão",
       "description": "Preparando os arquivos selecionados antes que o código de compartilhamento seja revelado."
     },
     "waitingForReceiver": {
@@ -22,7 +22,7 @@
     "sendFiles_other": "Enviar {{count}} arquivos",
     "addFiles": "Adicionar arquivos",
     "addMoreFiles": "Adicionar mais arquivos",
-    "dragAndDrop": "Arraste e solte",
+    "dragAndDrop": "Solte arquivos para adicioná-los",
     "clear": "Limpar",
     "endSession": "Encerrar sessão",
     "pickFilesTitle": "Adicionar arquivos",
@@ -32,8 +32,6 @@
   "status": {
     "waitingForPeer": "Aguardando destinatário",
     "peerConnected": "Destinatário conectado",
-    "uploadComplete": "Envio concluído",
-    "uploadingFiles": "Enviando arquivos",
     "uploaded": "Enviado",
     "uploading": "Enviando…",
     "waiting": "Aguardando",
@@ -89,16 +87,13 @@
     "deviceOffline": "Dispositivo off-line — tente novamente"
   },
   "dropzone": {
-    "addMoreDescription": "ou clique para <link>adicionar mais</link>",
-    "browseDescription": "ou clique para <link>procurar</link>",
-    "tapAddMoreDescription": "Toque para <link>adicionar mais</link>",
-    "tapBrowseDescription": "Toque para <link>procurar</link>",
-    "orClickTo": "ou clique para",
+    "browseDescription": "ou <link>navegue</link> no seu computador",
     "tapTo": "Toque para",
     "addMoreLink": "adicionar mais",
     "browseLink": "procurar"
   },
   "files": {
+    "addedFiles": "Arquivos adicionados",
     "removeLabel": "Remover {{name}}"
   }
 }

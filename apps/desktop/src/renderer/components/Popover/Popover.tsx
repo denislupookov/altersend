@@ -49,7 +49,7 @@ export function Popover({ trigger, children, align = 'right', variant = 'menu' }
     : {}
 
   return (
-    <div ref={triggerRef} onMouseDown={(e) => e.stopPropagation()}>
+    <div ref={triggerRef}>
       <div className='cursor-pointer' onClick={handleToggle}>
         {trigger}
       </div>

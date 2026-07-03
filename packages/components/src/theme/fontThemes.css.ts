@@ -5,8 +5,10 @@ import type { FontFamilyKey } from './fonts'
 type FontThemeStyle = ReturnType<typeof css.createTheme>
 
 const latinFontThemeStyle = css.createTheme(tokens, {
-  fontFamilySans: '"SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif',
-  fontFamilyDisplay: '"SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif',
+  fontFamilySans:
+    '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, system-ui, sans-serif',
+  fontFamilyDisplay:
+    '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, system-ui, sans-serif',
   fontFamilyMono:
     'ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace'
 })

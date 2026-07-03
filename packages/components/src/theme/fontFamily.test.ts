@@ -15,9 +15,7 @@ import tokenSource from './tokens.json'
 describe('font family tokens', () => {
   it('uses the native Latin stack for default sans and display UI text', () => {
     expect(rawTokens.fontFamily.fontFamilySans).toBe(LATIN_FONT_FAMILY_CSS)
-    expect(rawTokens.fontFamily.fontFamilyDisplay).toBe(
-      '"SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif'
-    )
+    expect(rawTokens.fontFamily.fontFamilyDisplay).toBe(LATIN_FONT_FAMILY_CSS)
     expect(rawTokens.fontFamily.fontFamilySans).not.toContain('AlterSend Sans')
     expect(rawTokens.fontFamily.fontFamilyDisplay).not.toContain('AlterSend Sans')
   })

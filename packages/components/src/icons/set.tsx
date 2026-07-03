@@ -24,6 +24,7 @@ import {
   Folder,
   Globe,
   Image,
+  Info,
   Laptop,
   Lock,
   Mail,
@@ -32,6 +33,9 @@ import {
   MoreHorizontal,
   MoreVertical,
   Music,
+  PanelLeft,
+  PanelLeftClose,
+  PanelLeftOpen,
   Pencil,
   Plus,
   QrCode,
@@ -39,6 +43,7 @@ import {
   Settings,
   Share2,
   Shield,
+  SlidersHorizontal,
   Smartphone,
   Tablet,
   Trash2,
@@ -74,6 +79,7 @@ export const FileTextIcon = adaptLucide(FileText)
 export const FolderIcon = adaptLucide(Folder)
 export const GlobeIcon = adaptLucide(Globe)
 export const ImageIcon = adaptLucide(Image)
+export const InfoIcon = adaptLucide(Info)
 export const LaptopIcon = adaptLucide(Laptop)
 export const MonitorIcon = adaptLucide(Monitor)
 export const TabletIcon = adaptLucide(Tablet)
@@ -83,6 +89,9 @@ export const MenuIcon = adaptLucide(Menu)
 export const MoreHorizontalIcon = adaptLucide(MoreHorizontal)
 export const MoreVerticalIcon = adaptLucide(MoreVertical)
 export const MusicIcon = adaptLucide(Music)
+export const PanelLeftIcon = adaptLucide(PanelLeft)
+export const PanelLeftCloseIcon = adaptLucide(PanelLeftClose)
+export const PanelLeftOpenIcon = adaptLucide(PanelLeftOpen)
 export const PencilIcon = adaptLucide(Pencil)
 export const PlusIcon = adaptLucide(Plus)
 export const QrCodeIcon = adaptLucide(QrCode)
@@ -90,6 +99,7 @@ export const SendIcon = adaptLucide(Send)
 export const SettingsIcon = adaptLucide(Settings)
 export const ShareIcon = adaptLucide(Share2)
 export const ShieldIcon = adaptLucide(Shield)
+export const SlidersHorizontalIcon = adaptLucide(SlidersHorizontal)
 export const SmartphoneIcon = adaptLucide(Smartphone)
 export const TrashIcon = adaptLucide(Trash2)
 export const UploadIcon = adaptLucide(Upload)

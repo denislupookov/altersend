@@ -13,7 +13,8 @@ export interface BundledFontFamily {
 }
 
 export const DEFAULT_FONT_FAMILY_KEY: FontFamilyKey = 'latin'
-export const LATIN_FONT_FAMILY_CSS = '"SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif'
+export const LATIN_FONT_FAMILY_CSS =
+  '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, system-ui, sans-serif'
 export const MONO_FONT_FAMILY_CSS =
   'ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace'
 export const MONO_FONT_FAMILY_NATIVE = {

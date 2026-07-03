@@ -10,28 +10,28 @@ The desktop renderer is React + Vite, the mobile app is React Native / Expo. Wit
 
 ### Components
 
-| Component                                        | Use                                                                                                               |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `Button`                                         | Action button — `size`, `variant` (primary / secondary / ghost / danger / success), `loading`, `iconOnly`, `pill` |
-| `Input`                                          | Form text input with optional label, secure mode, trailing slot                                                   |
-| `Badge`                                          | Inline status pill                                                                                                |
-| `Card`                                           | Bordered surface container                                                                                        |
-| `ActionRow`                                      | List-item / menu row (icon + title + optional subtitle); `tone='danger'` for destructive actions                  |
-| `LinkRow`, `LinkCard`                            | Tappable rows grouped in a bordered card — settings & device lists                                                |
-| `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` | Tab pattern with keyboard support                                                                                 |
-| `Disclosure`                                     | Collapsible section with header + body                                                                            |
-| `ToggleSwitch`                                   | On / off switch                                                                                                   |
-| `FileDropZone`                                   | Drag-and-drop / click-to-pick area (web has drag overlay; native is tap-only)                                     |
-| `WaitingRadar`                                   | Pulsing radar indicator (e.g. "waiting for someone to join")                                                      |
-| `Spinner`                                        | Inline loading spinner                                                                                            |
-| `PaginationDots`                                 | Step / carousel dots                                                                                              |
-| `PeerListCard`                                   | Connected-peers summary card                                                                                      |
-| `KeepAppOpenHint`                                | Banner reminding the user to keep the app open during a transfer                                                  |
-| `ErrorBanner`                                    | Inline transient error                                                                                            |
-| `ErrorBoundary`                                  | React error boundary class component (renders a `fallback` on caught errors)                                      |
-| `CrashScreen`                                    | Full-screen fallback for a fatal error                                                                            |
-| `ExternalLink`                                   | Opens a URL in the OS browser                                                                                     |
-| `FeedbackTypeSelector`                           | Category picker for the feedback form                                                                             |
+| Component                                        | Use                                                                                                                                                                 |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`                                         | Action button — `size`, `variant` (primary / secondary / ghost / danger / success), `loading`, `iconOnly`, `pill`                                                   |
+| `Input`                                          | Form text input with optional label, secure mode, trailing slot                                                                                                     |
+| `Badge`                                          | Inline status pill                                                                                                                                                  |
+| `ListItem`                                       | List / nav / menu row (icon + label + optional subtitle); `active`, `collapsed`, `showDot`, `chevron`, `tone='danger'`, `variant='plain'`, `size='large'`, `square` |
+| `LinkRow`, `LinkCard`                            | Tappable rows grouped in a bordered card — settings & device lists                                                                                                  |
+| `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` | Tab pattern with keyboard support                                                                                                                                   |
+| `Disclosure`                                     | Collapsible section with header + body                                                                                                                              |
+| `ToggleSwitch`                                   | On / off switch                                                                                                                                                     |
+| `FileDropZone`                                   | Drag-and-drop / click-to-pick area (web has drag overlay; native is tap-only)                                                                                       |
+| `WaitingRadar`                                   | Pulsing radar indicator (e.g. "waiting for someone to join")                                                                                                        |
+| `WaitingState`                                   | Centered radar + title + subtitle — the shared connecting / preparing hero                                                                                          |
+| `Spinner`                                        | Inline loading spinner                                                                                                                                              |
+| `PaginationDots`                                 | Step / carousel dots                                                                                                                                                |
+| `PeerListCard`                                   | Connected-peers summary card                                                                                                                                        |
+| `KeepAppOpenHint`                                | Banner reminding the user to keep the app open during a transfer                                                                                                    |
+| `ErrorBanner`                                    | Inline transient error                                                                                                                                              |
+| `ErrorBoundary`                                  | React error boundary class component (renders a `fallback` on caught errors)                                                                                        |
+| `CrashScreen`                                    | Full-screen fallback for a fatal error                                                                                                                              |
+| `ExternalLink`                                   | Opens a URL in the OS browser                                                                                                                                       |
+| `FeedbackTypeSelector`                           | Category picker for the feedback form                                                                                                                               |
 
 ### Theme
 

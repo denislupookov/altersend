@@ -11,19 +11,19 @@ export const styles = css.create({
     justifyContent: 'center',
     paddingTop: tokens.space11,
     paddingBottom: tokens.space11,
-    paddingLeft: tokens.space7,
-    paddingRight: tokens.space7,
+    paddingLeft: tokens.space11,
+    paddingRight: tokens.space11,
     borderWidth: 1.5,
     borderStyle: 'dashed',
     borderColor: tokens.colorBorderStrong,
-    borderRadius: tokens.radiusLg,
+    borderRadius: tokens.radius2xl,
     backgroundColor: tokens.colorBackgroundSubtle,
     cursor: 'pointer',
     transitionDuration: '180ms',
     transitionProperty: 'border-color, background-color, transform, padding',
     ':hover': {
-      borderColor: tokens.colorFocusRing,
-      backgroundColor: tokens.colorSurfacePrimary
+      borderColor: tokens.colorHighlight,
+      backgroundColor: tokens.colorSurfaceSecondary
     }
   },
   cardActive: {
@@ -33,7 +33,7 @@ export const styles = css.create({
   cardHasFile: {
     paddingTop: tokens.space6,
     paddingBottom: tokens.space6,
-    backgroundColor: tokens.colorSurfacePrimary
+    backgroundColor: 'transparent'
   },
   cardReadOnly: {
     cursor: 'default',
@@ -57,11 +57,11 @@ export const styles = css.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: tokens.space14,
-    height: tokens.space14,
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorInfoSubtle,
-    color: tokens.colorInfo,
+    width: 50,
+    height: 50,
+    borderRadius: 13,
+    backgroundColor: tokens.colorSurfacePrimary,
+    color: tokens.colorTextMuted,
     transitionDuration: '180ms',
     transitionProperty: 'background-color, transform, width, height'
   },
@@ -83,9 +83,9 @@ export const styles = css.create({
   title: {
     fontFamily: tokens.fontFamilyDisplay,
     fontSize: tokens.fontSizeLg,
-    fontWeight: tokens.fontWeightSemibold,
+    fontWeight: tokens.fontWeightMedium,
     letterSpacing: '-0.005em',
-    color: tokens.colorTextPrimary,
+    color: tokens.colorTextSecondary,
     margin: 0,
     lineHeight: tokens.lineHeightSnug
   },
@@ -96,7 +96,7 @@ export const styles = css.create({
     fontFamily: tokens.fontFamilySans,
     fontSize: tokens.fontSizeMd,
     fontWeight: tokens.fontWeightRegular,
-    color: tokens.colorTextMuted,
+    color: tokens.colorTextFaint,
     margin: 0,
     lineHeight: tokens.lineHeightRelaxed
   },
@@ -105,6 +105,7 @@ export const styles = css.create({
   },
   link: {
     color: tokens.colorInfo,
-    fontWeight: tokens.fontWeightMedium
+    fontWeight: tokens.fontWeightMedium,
+    textDecorationLine: 'underline'
   }
 })

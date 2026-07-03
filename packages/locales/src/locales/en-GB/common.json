@@ -25,10 +25,14 @@
     "update": "Update",
     "downloadAll": "Download all",
     "skip": "Skip",
-    "paste": "Paste"
+    "paste": "Paste",
+    "openLink": "Open Link",
+    "copyText": "Copy Text"
   },
   "labels": {
     "settings": "Settings",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
     "language": "Language",
     "systemDefault": "System default",
     "camera": "Camera",
@@ -56,7 +60,10 @@
     "available": "Update available",
     "restart": "Restart",
     "update": "Update",
-    "restartFailed": "Restart failed — please quit and reopen"
+    "restartFailed": "Restart failed — please quit and reopen",
+    "description": "A new version is available with the latest fixes and improvements.",
+    "updateNow": "Update now",
+    "notNow": "Not now"
   },
   "status": {
     "connected": "Connected"

@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react'
 import { Pressable } from 'react-native'
 import { useTheme } from '@altersend/components'
 import { ArrowLeftIcon } from '@altersend/components/icons'
-import { getSendPageCopy, getSendStep, isShareStep, useTransferStore } from '@altersend/domain'
+import { getSendStep, isShareStep, useTransferStore } from '@altersend/domain'
 import { clearSenderFlow } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Layout } from '@/src/components'
@@ -15,7 +15,6 @@ export default function SendPreparingScreen() {
   const draftPhase = useTransferStore((s) => s.draftPhase)
   const connectionState = useTransferStore((s) => s.connectionState)
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
-  const copy = getSendPageCopy(t, step)
   const navigation = useNavigation()
   const router = useRouter()
 
@@ -49,7 +48,7 @@ export default function SendPreparingScreen() {
   }, [navigation, handleBack, t, theme.colors.colorTextPrimary])
 
   return (
-    <Layout title={copy.title} description={copy.description} hasNativeHeader>
+    <Layout title='' description='' hasNativeHeader>
       <PreparingView />
     </Layout>
   )

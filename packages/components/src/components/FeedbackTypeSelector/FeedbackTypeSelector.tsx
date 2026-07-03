@@ -17,7 +17,7 @@ const styles = css.create({
     display: 'flex',
     flexDirection: 'row',
     gap: 2,
-    backgroundColor: tokens.colorSurfaceSecondary,
+    backgroundColor: tokens.colorBackgroundSubtle,
     borderRadius: tokens.radiusMd,
     padding: 4
   },
@@ -42,7 +42,7 @@ const styles = css.create({
     backgroundColor: 'transparent'
   },
   chipSelected: {
-    backgroundColor: tokens.colorSurfaceHover
+    backgroundColor: tokens.colorSurfacePrimary
   },
   chipDisabled: {
     opacity: 0.5,
@@ -60,7 +60,7 @@ const styles = css.create({
     width: '100%'
   },
   labelDefault: {
-    color: tokens.colorTextMuted
+    color: tokens.colorTextSecondary
   },
   labelSelected: {
     color: tokens.colorTextPrimary

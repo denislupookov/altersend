@@ -25,9 +25,9 @@ const desktopIndexCssSource = readFileSync(
   new URL('../../../apps/desktop/src/renderer/index.css', import.meta.url),
   'utf8'
 )
-const settingsPanelSource = readFileSync(
+const languageSectionSource = readFileSync(
   new URL(
-    '../../../apps/desktop/src/renderer/components/Settings/SettingsPanel.tsx',
+    '../../../apps/desktop/src/renderer/components/Settings/sections/LanguageSection.tsx',
     import.meta.url
   ),
   'utf8'
@@ -57,9 +57,9 @@ describe('desktop Select implementation', () => {
     expect(selectSource).toContain(
       'style={option.fontFamily ? { fontFamily: option.fontFamily } : undefined}'
     )
-    expect(settingsPanelSource).toContain('getLocaleFontFamily')
-    expect(settingsPanelSource).toContain('getFontFamilyCssVariables')
-    expect(settingsPanelSource).toContain('fontFamily: getLocaleOptionFontFamily(option)')
+    expect(languageSectionSource).toContain('getLocaleFontFamily')
+    expect(languageSectionSource).toContain('getFontFamilyCssVariables')
+    expect(languageSectionSource).toContain('labelFontFamily={getLocaleOptionFontFamily(option)}')
   })
 
   it('keeps the desktop build script portable across Windows and Unix shells', () => {

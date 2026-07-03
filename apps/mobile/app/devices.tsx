@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native'
-import { Button, LinkCard, LinkRow, useTheme } from '@altersend/components'
+import { Button, LinkRow, useTheme } from '@altersend/components'
 import { MoreVerticalIcon, PlusIcon, deviceIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import {
@@ -50,31 +50,29 @@ export default function DevicesScreen() {
         </View>
       ) : (
         <View style={styles.content}>
-          <LinkCard>
-            {flow.peers.map((peer, index) => {
-              const Icon = deviceIcon(peer.deviceType)
-              return (
-                <LinkRow
-                  key={peer.remoteDevicePubkey}
-                  icon={<Icon size={16} color={c.colorTextSecondary} />}
-                  label={peer.displayName}
-                  trailing={
-                    <Button
-                      variant='ghost'
-                      size='sm'
-                      iconOnly
-                      aria-label={t('settings:pairing.deviceActions')}
-                      icon={<MoreVerticalIcon size={14} />}
-                      onClick={() =>
-                        flow.openDeviceActions(peer.remoteDevicePubkey, peer.displayName)
-                      }
-                    />
-                  }
-                  isLast={index === flow.peers.length - 1}
-                />
-              )
-            })}
-          </LinkCard>
+          {flow.peers.map((peer) => {
+            const Icon = deviceIcon(peer.deviceType)
+            return (
+              <LinkRow
+                key={peer.remoteDevicePubkey}
+                standalone
+                icon={<Icon size={16} color={c.colorTextSecondary} />}
+                label={peer.displayName}
+                trailing={
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    iconOnly
+                    aria-label={t('settings:pairing.deviceActions')}
+                    icon={<MoreVerticalIcon size={14} />}
+                    onClick={() =>
+                      flow.openDeviceActions(peer.remoteDevicePubkey, peer.displayName)
+                    }
+                  />
+                }
+              />
+            )
+          })}
         </View>
       )}
 
@@ -90,7 +88,7 @@ export default function DevicesScreen() {
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    gap: 16,
+    gap: 10,
     paddingBottom: 16
   },
   emptyState: {

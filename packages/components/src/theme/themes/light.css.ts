@@ -7,6 +7,7 @@ import { tokens } from '../tokens.css';
 
 export const lightThemeStyle = css.createTheme(tokens, {
   colorBackground: '#ece8e1',
+  colorBackgroundDeep: '#e2dccf',
   colorBackgroundSubtle: '#f3efe8',
   colorSurfacePrimary: '#faf7f1',
   colorSurfaceSecondary: '#ffffff',
@@ -18,6 +19,7 @@ export const lightThemeStyle = css.createTheme(tokens, {
   colorTextPrimary: '#181a1d',
   colorTextSecondary: '#4f4a42',
   colorTextMuted: '#787168',
+  colorTextFaint: '#9c958a',
   colorAccent: '#181a1d',
   colorAccentHover: '#000000',
   colorAccentActive: '#31353b',
@@ -34,5 +36,7 @@ export const lightThemeStyle = css.createTheme(tokens, {
   colorScrim: '#000000',
   colorShadow: 'rgba(0, 0, 0, 0.10)',
   colorHighlight: 'rgba(255, 255, 255, 0.50)',
+  colorOverlaySelected: 'rgba(0, 0, 0, 0.06)',
+  colorOverlayHover: 'rgba(0, 0, 0, 0.04)',
   colorFocusRing: '#272a2f',
 });

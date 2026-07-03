@@ -46,7 +46,7 @@ export function Modal({
       }}
     >
       <div
-        className='flex max-w-full flex-col overflow-hidden rounded-[14px] border border-border-primary bg-background shadow-[0_32px_64px_color-mix(in_oklab,var(--as-color-scrim)_50%,transparent)]'
+        className='flex max-w-full flex-col overflow-hidden rounded-[16px] border border-border-primary bg-background shadow-[0_32px_64px_color-mix(in_oklab,var(--as-color-scrim)_50%,transparent)]'
         onClick={(e) => e.stopPropagation()}
         style={{ width, animation: 'as-scale-in 240ms cubic-bezier(0.16, 1, 0.3, 1)' }}
       >

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Button } from '@altersend/components'
+import { SendIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { Layout, PairDeviceSheet } from '@/src/components'
 import { consumePairPromptPending } from '@/src/onboarding/pairPromptSignal'
@@ -58,7 +59,6 @@ export default function SendSelectScreen() {
       <NavigationController />
       <Layout
         title={copy.title}
-        description={copy.description}
         onMenuPress={openMenu}
         footer={
           hasSelectedFiles ? (
@@ -67,6 +67,7 @@ export default function SendSelectScreen() {
               size='lg'
               variant='primary'
               width='full'
+              icon={<SendIcon size={18} />}
             >
               {t('send:actions.sendFiles', { count: selectedFiles.length })}
             </Button>

@@ -7,6 +7,7 @@ export const styles = css.create({
     fontSize: tokens.fontSizeSm,
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorTextSecondary,
+    cursor: 'pointer',
     textDecorationLine: 'underline',
     textDecorationColor: tokens.colorTextMuted,
     textUnderlineOffset: '4px',
