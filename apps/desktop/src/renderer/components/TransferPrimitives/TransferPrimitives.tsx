@@ -9,11 +9,19 @@ interface TransferCardProps {
   badge?: ReactNode
 }
 
+type TransferTone = 'neutral' | 'success' | 'critical'
+
 interface TransferStatusPanelProps {
   title: string
   description: string
-  tone?: 'neutral' | 'success' | 'critical'
+  tone?: TransferTone
   loading?: boolean
+}
+
+function dotToneClass(tone: TransferTone): string {
+  if (tone === 'success') return 'bg-success'
+  if (tone === 'critical') return 'bg-danger'
+  return 'bg-text-muted'
 }
 
 export function TransferCardFrame({
@@ -57,9 +65,6 @@ export function TransferStatusPanel({
   tone = 'neutral',
   loading = false
 }: TransferStatusPanelProps) {
-  const dotToneClass =
-    tone === 'success' ? 'bg-success' : tone === 'critical' ? 'bg-red-500' : 'bg-text-muted'
-
   return (
     <div className='w-full rounded-[12px] border border-border-primary bg-background-subtle px-4 py-4'>
       <div className='flex items-start gap-3'>
@@ -68,7 +73,7 @@ export function TransferStatusPanel({
             <Spinner size={15} />
           </span>
         ) : (
-          <div className={`mt-1 h-2 w-2 shrink-0 rounded-full ${dotToneClass}`} />
+          <div className={`mt-1 h-2 w-2 shrink-0 rounded-full ${dotToneClass(tone)}`} />
         )}
         <div className='min-w-0'>
           <p className='m-0 text-[14px] font-medium text-text-primary'>{title}</p>

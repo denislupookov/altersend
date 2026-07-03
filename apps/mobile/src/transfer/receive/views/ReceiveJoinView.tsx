@@ -55,6 +55,7 @@ export function ReceiveJoinView({
 
       <View style={styles.codeForm}>
         <Input
+          aria-label={t('receive:form.codeLabel')}
           disabled={isLoading}
           error={joinCodeError}
           onChange={(e: { target: { value: string } }) => onJoinCodeChange(e.target.value)}

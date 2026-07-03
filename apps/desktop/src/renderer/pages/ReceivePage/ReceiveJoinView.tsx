@@ -83,6 +83,7 @@ export function ReceiveJoinView() {
       </div>
 
       <Input
+        aria-label={t('receive:form.codeLabel')}
         autoCapitalize='none'
         autoComplete='off'
         disabled={isJoining}

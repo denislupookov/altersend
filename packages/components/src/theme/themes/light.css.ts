@@ -19,7 +19,7 @@ export const lightThemeStyle = css.createTheme(tokens, {
   colorTextPrimary: '#181a1d',
   colorTextSecondary: '#4f4a42',
   colorTextMuted: '#787168',
-  colorTextFaint: '#9c958a',
+  colorTextFaint: '#807970',
   colorAccent: '#181a1d',
   colorAccentHover: '#000000',
   colorAccentActive: '#31353b',

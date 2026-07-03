@@ -26,7 +26,9 @@ export function UpdateBanner() {
 
   const handleUpdate = () => {
     handleDismiss()
-    void Linking.openURL(STORE_URL).catch(() => {})
+    void Linking.openURL(STORE_URL).catch((err) => {
+      console.warn('UpdateBanner: failed to open store URL', err)
+    })
   }
 
   return (
