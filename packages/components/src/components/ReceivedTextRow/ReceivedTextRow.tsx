@@ -69,13 +69,17 @@ export function ReceivedTextRow({
           >
             {linkifyText(content).map((seg, i) =>
               seg.url ? (
-                <span
+                <a
                   key={i}
+                  href={seg.url}
                   className='cursor-pointer text-info underline'
-                  onClick={() => onOpenLink(seg.url as string)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    onOpenLink(seg.url as string)
+                  }}
                 >
                   {seg.text}
-                </span>
+                </a>
               ) : (
                 <span key={i}>{seg.text}</span>
               )

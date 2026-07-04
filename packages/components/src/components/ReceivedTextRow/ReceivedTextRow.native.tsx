@@ -64,6 +64,7 @@ export function ReceivedTextRow({
               seg.url ? (
                 <Text
                   key={i}
+                  accessibilityRole='link'
                   style={[fontStyle, styles.link, { color: c.colorInfo }]}
                   onPress={() => onOpenLink(seg.url as string)}
                 >

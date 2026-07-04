@@ -63,8 +63,8 @@ export const styles = css.create({
   iconOnlyMd: {
     paddingTop: tokens.space25,
     paddingBottom: tokens.space25,
-    paddingLeft: tokens.space2,
-    paddingRight: tokens.space2,
+    paddingLeft: tokens.space25,
+    paddingRight: tokens.space25,
     borderRadius: tokens.radiusMd
   },
   iconOnlyLg: {
