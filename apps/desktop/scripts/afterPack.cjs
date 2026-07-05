@@ -32,7 +32,12 @@ exports.default = async function afterPack(context) {
   await prunePrebuilds(context)
 
   if (context.electronPlatformName === 'linux') {
-    await wrapLinuxNoSandbox(context)
+    await removeChromesSandbox(context)
+    if (!process.env.FLATPAK_BUILD) {
+      // Inside Flatpak, zypak-wrapper.sh handles sandboxing.
+      // Only create the --no-sandbox wrapper for AppImage/other Linux builds.
+      await wrapLinuxNoSandbox(context)
+    }
   }
 }
 
@@ -160,14 +165,16 @@ async function dirSize(dir) {
   return total
 }
 
-async function wrapLinuxNoSandbox(context) {
-  const appOutDir = context.appOutDir
-
-  const sandboxBin = path.join(appOutDir, 'chrome-sandbox')
+async function removeChromesSandbox(context) {
+  const sandboxBin = path.join(context.appOutDir, 'chrome-sandbox')
   if (fs.existsSync(sandboxBin)) {
     fs.unlinkSync(sandboxBin)
     console.log(`afterPack: removed ${sandboxBin}`)
   }
+}
+
+async function wrapLinuxNoSandbox(context) {
+  const appOutDir = context.appOutDir
 
   const execName = context.packager.executableName
   const realBin = path.join(appOutDir, execName)

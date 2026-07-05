@@ -1,6 +1,9 @@
 {
   "appId": "com.altersend.desktop",
   "electronVersion": "40.2.1",
+  "electronDownload": {
+    "cache": ".electron-dist"
+  },
   "icon": "build/icon.png",
   "asar": false,
   "directories": {
