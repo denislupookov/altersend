@@ -95,7 +95,8 @@ const isWindowsPortable =
   !windowsStore &&
   !fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'Update.exe'))
 
-const updates = windowsStore || isWindowsPortable ? false : cmd.flags.updates
+const isFlatpak = !!process.env.FLATPAK_ID
+const updates = windowsStore || isWindowsPortable || isFlatpak ? false : cmd.flags.updates
 
 function isTransferMethod(method: unknown): method is TransferMethod {
   return typeof method === 'string' && method in API.methods
