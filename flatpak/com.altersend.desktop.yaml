@@ -25,8 +25,7 @@ finish-args:
   - --share=network        # Hyperswarm P2P discovery and file transfer
   - --socket=wayland       # Wayland display
   - --socket=fallback-x11  # X11 fallback
-  - --device=dri           # GPU / hardware acceleration
-  - --device=all           # Camera access (QR code scanning)
+  - --device=all           # Camera access (QR scanning), includes DRI for GPU
   - --filesystem=home      # File open/save dialogs
 
 modules:

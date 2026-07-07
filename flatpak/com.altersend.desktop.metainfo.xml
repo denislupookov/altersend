@@ -25,12 +25,35 @@
     https://github.com/denislupookov/altersend/issues
   </url>
 
+  <url type="vcs-browser">
+    https://github.com/denislupookov/altersend
+  </url>
+
   <description>
     <p>
-      AlterSend is a peer-to-peer file transfer application that allows
-      devices to transfer files directly without relying on cloud storage.
+      AlterSend is a free, open-source app for sending files directly between your devices — no cloud, no uploads, no size limits. Files transfer peer-to-peer and are end-to-end encrypted; nothing is ever stored on a server.
     </p>
+    <p>
+      Why use cloud storage when you can send files directly — instantly, privately, with no upload costs and no limits?
+    </p>
+    <ul>
+      <li>No accounts — no signup, no login, no email address required</li>
+      <li>No servers — files transfer directly device-to-device</li>
+      <li>End-to-end encrypted — only your devices can read your files</li>
+      <li>No file size limit — send a 100 MB photo or 500 GB video archive</li>
+    </ul>
   </description>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/denislupookov/altersend/main/assets/desktop-example.png</image>
+      <caption>AlterSend desktop interface</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/denislupookov/altersend/main/assets/mobile-example.png</image>
+      <caption>AlterSend mobile interface</caption>
+    </screenshot>
+  </screenshots>
 
   <releases>
     <release version="1.5.0" date="2026-07-05"/>
