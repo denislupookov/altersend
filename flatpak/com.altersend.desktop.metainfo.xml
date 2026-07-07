@@ -17,17 +17,10 @@
     com.altersend.desktop.desktop
   </launchable>
 
-  <url type="homepage">
-    https://github.com/denislupookov/altersend
-  </url>
-
-  <url type="bugtracker">
-    https://github.com/denislupookov/altersend/issues
-  </url>
-
-  <url type="vcs-browser">
-    https://github.com/denislupookov/altersend
-  </url>
+  <url type="homepage">https://altersend.com/</url>
+  <url type="bugtracker">https://github.com/denislupookov/altersend/issues</url>
+  <url type="vcs-browser">https://github.com/denislupookov/altersend</url>
+  <url type="contribute">https://github.com/denislupookov/altersend/blob/main/CONTRIBUTING.md</url>
 
   <description>
     <p>
