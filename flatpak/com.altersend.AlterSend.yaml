@@ -43,11 +43,10 @@ modules:
 
       - |
         ARCH=$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/')
-        cd apps/desktop
-        ../../node_modules/.bin/electron-builder --linux --$ARCH --dir \
-          -c electron-builder.linux.json --publish never
+        (cd apps/desktop && ../../node_modules/.bin/electron-builder --linux --$ARCH --dir \
+          -c electron-builder.linux.json --publish never)
 
-      - mkdir -p /app/lib/AlterSend /app/bin
+      - install -d /app/lib/AlterSend /app/bin
       - cp -a apps/desktop/out/linux-unpacked/. /app/lib/AlterSend/
 
       - install -Dm755 altersend.sh /app/bin/altersend
