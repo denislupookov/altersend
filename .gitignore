@@ -69,3 +69,9 @@ storage-2
 storage-3
 
 packages/components/storybook-static
+
+# Flatpak build artifacts
+build-dir/
+.flatpak-builder/
+test-repo/
+.electron-dist/

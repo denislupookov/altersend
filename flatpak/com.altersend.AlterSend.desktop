@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=AlterSend
+Comment=Peer-to-peer file transfer
+Exec=altersend
+Icon=com.altersend.AlterSend
+Categories=Network;
+StartupNotify=true
+Terminal=false
+StartupWMClass=altersend
