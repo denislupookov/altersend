@@ -7,3 +7,4 @@ Icon=com.altersend.desktop
 Categories=Network;
 StartupNotify=true
 Terminal=false
+StartupWMClass=altersend
