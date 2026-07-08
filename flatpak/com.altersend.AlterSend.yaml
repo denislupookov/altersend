@@ -62,7 +62,7 @@ modules:
       - type: script
         dest-filename: altersend.sh
         commands:
-          - exec zypak-wrapper.sh /app/lib/AlterSend/@altersenddesktop "$@"
+          - exec zypak-wrapper.sh /app/lib/AlterSend/altersend "$@"
 
       - node-modules.json
 
