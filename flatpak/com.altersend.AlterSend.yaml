@@ -17,6 +17,8 @@ build-options:
     NPM_CONFIG_UPDATE_NOTIFIER: "false"
     NPM_CONFIG_OFFLINE: "true"
     NPM_CONFIG_CACHE: "/run/build/altersend/flatpak-node/npm-cache"
+    FLATPAK_BUILD: "1"
+    ELECTRON_BUILDER_CACHE: "/run/build/altersend/apps/desktop/.electron-dist"
 
 finish-args:
   - --share=network
@@ -41,21 +43,14 @@ modules:
 
       - |
         ARCH=$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/')
-        export FLATPAK_BUILD=1
-        export ELECTRON_BUILDER_CACHE=$(pwd)/apps/desktop/.electron-dist
         cd apps/desktop
         ../../node_modules/.bin/electron-builder --linux --$ARCH --dir \
           -c electron-builder.linux.json --publish never
 
-      - mkdir -p /app/main /app/bin
-      - cp -a apps/desktop/out/linux-unpacked/. /app/main/
+      - mkdir -p /app/lib/AlterSend /app/bin
+      - cp -a apps/desktop/out/linux-unpacked/. /app/lib/AlterSend/
 
-      - |
-        cat > /app/bin/altersend << 'EOF'
-        #!/bin/sh
-        exec zypak-wrapper.sh /app/main/@altersenddesktop "$@"
-        EOF
-      - chmod +x /app/bin/altersend
+      - install -Dm755 altersend.sh /app/bin/altersend
 
       - install -Dm644 flatpak/com.altersend.AlterSend.desktop /app/share/applications/com.altersend.AlterSend.desktop
       - install -Dm644 assets/01-logo-icon-logo-icon-512x512.png /app/share/icons/hicolor/512x512/apps/com.altersend.AlterSend.png
@@ -64,6 +59,11 @@ modules:
     sources:
       - type: dir
         path: ..
+
+      - type: script
+        dest-filename: altersend.sh
+        commands:
+          - exec zypak-wrapper.sh /app/lib/AlterSend/@altersenddesktop "$@"
 
       - node-modules.json
 
