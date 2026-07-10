@@ -128,10 +128,7 @@ declare module 'hyperswarm' {
     constructor(opts?: {
       keyPair?: NoiseKeyPair
       firewall?: (remotePublicKey: Uint8Array) => boolean
-      relayThrough?:
-        | ((force: boolean, swarm: unknown) => Uint8Array[] | null)
-        | Uint8Array[]
-        | null
+      relayThrough?: ((force: boolean, swarm: unknown) => Uint8Array[] | null) | Uint8Array[] | null
     })
     join(
       discoveryKey: Uint8Array,

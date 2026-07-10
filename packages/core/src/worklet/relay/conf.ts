@@ -27,20 +27,27 @@ interface RelayRecordEntry {
 
 function isValidEntry(entry: unknown): entry is RelayRecordEntry {
   const e = entry as Partial<RelayRecordEntry> | null
-  return !!e && typeof e === 'object' && isValidHexKey(e.key) && typeof e.host === 'string' && e.host.length > 0
+  return (
+    !!e &&
+    typeof e === 'object' &&
+    isValidHexKey(e.key) &&
+    typeof e.host === 'string' &&
+    e.host.length > 0
+  )
 }
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
 async function ensureRelayConf(): Promise<void> {
   if (!pubkey || loaded || inFlight || !relayConfigSummary().enabled) return
-  
+
   inFlight = true
   const dht = new DHT()
   activeDht = dht
 
   try {
     for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      if (activeDht !== dht) return
       if (await tryFetch(dht)) {
         loaded = true
         return
@@ -53,7 +60,10 @@ async function ensureRelayConf(): Promise<void> {
     try {
       await dht.destroy()
     } catch (err) {
-      console.warn('[relay-conf] dht.destroy failed', err instanceof Error ? err.message : String(err))
+      console.warn(
+        '[relay-conf] dht.destroy failed',
+        err instanceof Error ? err.message : String(err)
+      )
     }
   }
 }
@@ -65,7 +75,11 @@ async function tryFetch(dht: DHT): Promise<boolean> {
     const record = await dht.mutableGet(pubkey, { latest: true })
     if (!record?.value) return false
     const parsed = JSON.parse(b4a.toString(record.value, 'utf8')) as { relays?: unknown }
-    if (Array.isArray(parsed.relays) && parsed.relays.length > 0 && parsed.relays.every(isValidEntry)) {
+    if (
+      Array.isArray(parsed.relays) &&
+      parsed.relays.length > 0 &&
+      parsed.relays.every(isValidEntry)
+    ) {
       const relays = parsed.relays as RelayRecordEntry[]
       configureRelay({ relays: relays.map((r) => ({ keyHex: r.key, host: r.host })) })
       return true
@@ -85,7 +99,10 @@ export async function stopRelayConf(): Promise<void> {
     try {
       await dht.destroy()
     } catch (err) {
-      console.warn('[relay-conf] dht.destroy failed', err instanceof Error ? err.message : String(err))
+      console.warn(
+        '[relay-conf] dht.destroy failed',
+        err instanceof Error ? err.message : String(err)
+      )
     }
   }
 }

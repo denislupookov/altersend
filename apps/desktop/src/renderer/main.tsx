@@ -66,7 +66,9 @@ if (hasBridge()) {
   bindTransferApi(bridgeApi, {
     onError: (context, error) => captureException(error, context)
   })
-  void bridgeApi.worker.setRelayConfig({ enabled: isRelayEnabled() }).catch(() => {})
+  bridgeApi.worker
+    .setRelayConfig({ enabled: isRelayEnabled() })
+    .catch((err) => captureException(err, 'setRelayConfig'))
   startPeerWatchdog()
   startBackgroundReconnectEffect()
   startDeepLinkHandler()

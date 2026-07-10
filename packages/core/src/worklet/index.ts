@@ -72,6 +72,9 @@ const deviceType = isDeviceType(providedType) ? providedType : undefined
 const relayKeyArg = readArg('--relay-key=')?.trim()
 const relayHostArg = readArg('--relay-host=')?.trim() ?? ''
 const relayEnabledArg = (Bare.argv as string[]).includes('--relay-enabled')
+if (relayKeyArg && !relayHostArg) {
+  console.warn('[relay] --relay-key set without --relay-host; connections will classify as direct')
+}
 if (relayKeyArg || relayEnabledArg) {
   configureRelay({
     ...(relayKeyArg ? { relays: [{ keyHex: relayKeyArg, host: relayHostArg }] } : {}),

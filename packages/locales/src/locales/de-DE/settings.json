@@ -14,7 +14,7 @@
   "relay": {
     "label": "Relay verwenden, wenn keine direkte Verbindung möglich ist",
     "description": "Wenn sich zwei Geräte nicht direkt verbinden können (zum Beispiel beide über ein VPN), wird die Übertragung über das Relay von AlterSend geleitet. Dateien bleiben Ende-zu-Ende-verschlüsselt.",
-    "contact": "Benötigst du ein dediziertes Relay oder höhere Limits?",
+    "contact": "Benötigen Sie ein dediziertes Relay oder höhere Limits?",
     "fairUse": "Das Relay hat Grenzen für die Übertragungsgröße und dafür, wie viele Übertragungen gleichzeitig laufen können."
   },
   "rows": {

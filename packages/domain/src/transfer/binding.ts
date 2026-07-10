@@ -44,7 +44,11 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
     case 'status':
       return dispatchStatusEvent(event)
     case 'transfer-ready':
-      return dispatchToTransferStore({ type: 'transfer_ready', files: event.files, peer: event.peer })
+      return dispatchToTransferStore({
+        type: 'transfer_ready',
+        files: event.files,
+        peer: event.peer
+      })
     case 'role':
       return dispatchToTransferStore({ type: 'role_changed', role: event.role })
     case 'error':

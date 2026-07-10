@@ -45,6 +45,7 @@
     "corestore": "^7.9.1",
     "hypercore-crypto": "^3.6.1",
     "hyperdb": "^6.7.0",
+    "hyperdht": "^6.32.0",
     "hyperdrive": "^13.3.0",
     "hyperswarm": "^4.17.0",
     "localdrive": "^2.2.0",

@@ -6,7 +6,7 @@ import type { PeerControlMessage } from './control-channel'
 import { PeerIdentityStore, type NoiseKeyPair } from './peer-identity-store'
 import { relayThrough, isRelayHost } from '../relay/config'
 
-export type ConnectionType = 'direct' | 'relay'
+type ConnectionType = 'direct' | 'relay'
 
 export interface PeerSession {
   socket: PeerSocket
@@ -135,7 +135,7 @@ export class TransferSwarm {
       if (next !== 'relay' || ++ticks >= 8) clearInterval(timer)
     }, 2000)
     ;(timer as unknown as { unref?: () => void }).unref?.()
-    
+
     socket.on('close', () => clearInterval(timer))
   }
 

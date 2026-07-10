@@ -21,7 +21,7 @@ export function registerRelayLoader(load: () => void): void {
   relayLoader = load
 }
 
-export interface RelayEntryInput {
+interface RelayEntryInput {
   keyHex: string
   host: string
 }

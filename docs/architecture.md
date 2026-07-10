@@ -98,13 +98,13 @@ Shared internationalization package used by desktop and mobile. It owns supporte
 
 ## Relay fallback
 
-Most transfers connect directly (P2P hole-punching). When two peers can't reach each other — typically both behind symmetric NAT, e.g. both on a commercial VPN — the transfer falls back to a **blind relay**: a public server that pairs the two peers and forwards their already-encrypted UDX stream. The relay never has the keys to decrypt the data; it only sees connection metadata (IPs, timing, byte volume). It's on by default and can be turned off in **Settings → Relay**.
+Most transfers connect directly (P2P hole-punching). When two peers can't reach each other — typically both behind symmetric NAT, e.g. both on a commercial VPN — the transfer falls back to a **blind relay**: a public server that pairs the two peers and forwards their already-encrypted UDX stream. The relay never has the keys to decrypt the data — it relays ciphertext only.
 
-- **Engagement.** `relay/config.ts` exposes `relayThrough` to both swarms (`TransferSwarm`, `DiscoveryCoordinator`). It runs in "eager" mode: when enabled, it always offers the relay so hyperdht can race a relayed path against a direct hole-punch and upgrade to direct if the punch lands — trading some relay bandwidth on punchable connections for reliability on un-punchable ones.
+- **Engagement.** `relay/config.ts` exposes `relayThrough` to both swarms (`TransferSwarm`, `DiscoveryCoordinator`). It runs in "eager" mode: when enabled, it always offers the relay, so hyperdht can race a relayed path against a direct hole-punch and upgrade to direct if the punch lands.
 - **Relay discovery (relay-conf).** The relay's public key isn't baked into the app. `relay/conf.ts` reads the current relay list from a signed HyperDHT **mutable record** whose public key ships with the app (`--relay-conf-pubkey`, injected at build time); only the relay operator's secret can update it, so relays rotate with no app release. The list is fetched **lazily** — only once the relay is enabled — with a small bounded retry to survive a cold-start DHT miss. This uses a mutable record (not a hypercore) specifically because the worklet wipes its Corestore on every startup.
 - **Connection-type classification.** `TransferSwarm.classifyConnection` compares a peer socket's `remoteHost` against the known relay hosts (`isRelayHost`) and emits a per-peer `connection-type` (`direct` / `relay`) event. The receiver keys this per sender (`transferPeerKey`) so a mesh of receivers can't cross-contaminate the badge, and the UI shows **Connected** vs **Connected via relay**.
 
-The relay server itself lives in a separate repo; only its **public** key and address (via the relay-conf record) are visible to the app.
+The app is only ever a relay *client* — it holds the relay's **public** key and address (from the relay-conf record) and never any relay secret.
 
 ## Remembered devices & pairing
 

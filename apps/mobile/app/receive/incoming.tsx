@@ -150,6 +150,8 @@ export default function ReceiveIncomingScreen() {
   const isRelay = connectionType === 'relay'
   const badge = isRelay ? (
     <Pressable
+      accessibilityRole='button'
+      accessibilityLabel={t('common:status.connectedViaRelay')}
       onPress={() => router.push('/connection')}
       style={({ pressed }) => [
         styles.badge,

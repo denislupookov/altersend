@@ -16,7 +16,10 @@ export default function ConnectionScreen() {
   const handleRelayToggle = (value: boolean) => {
     setRelay(value)
     setRelayEnabledStorage(value)
-    void mobileApi.worker.setRelayConfig({ enabled: value }).catch(() => {})
+    mobileApi.worker.setRelayConfig({ enabled: value }).catch(() => {
+      setRelay(!value)
+      setRelayEnabledStorage(!value)
+    })
   }
 
   const cardStyle = {
@@ -38,10 +41,7 @@ export default function ConnectionScreen() {
         <Text style={[styles.infoLine, { color: theme.colors.colorTextMuted }]}>
           {t('settings:relay.fairUse')} {t('settings:relay.contact')}
         </Text>
-        <ExternalLink
-          href={websiteUrl}
-          onPress={() => void Linking.openURL(websiteUrl).catch(() => {})}
-        >
+        <ExternalLink href={websiteUrl} onPress={() => Linking.openURL(websiteUrl).catch(() => {})}>
           {t('settings:rows.contact')}
         </ExternalLink>
       </View>

@@ -46,7 +46,9 @@ initSentry()
 bindTransferApi(mobileApi, {
   onError: (context, error) => captureException(error, context)
 })
-mobileApi.worker.setRelayConfig({ enabled: isRelayEnabled() })
+mobileApi.worker
+  .setRelayConfig({ enabled: isRelayEnabled() })
+  .catch((err) => captureException(err, 'setRelayConfig'))
 startAppStateBridge()
 startPeerWatchdog()
 startBackgroundReconnectEffect()

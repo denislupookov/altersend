@@ -61,7 +61,8 @@
         "app-builder-lib"
       ],
       "ignoreUnresolved": [
-        "^\\./sentry-dsn\\.gen\\.js$"
+        "^\\./sentry-dsn\\.gen\\.js$",
+        "^\\./relay-conf-pubkey\\.gen\\.js$"
       ],
       "ignoreBinaries": [
         "electron-builder.mac.json",

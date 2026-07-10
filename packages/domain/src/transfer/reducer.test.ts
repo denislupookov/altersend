@@ -417,7 +417,11 @@ describe('transferSessionReducer — connection type (per-peer)', () => {
 
   it('shows the sender connection type, not another peer that connects later', () => {
     let state = apply(make({ role: 'receiver' }), ready(SENDER))
-    state = apply(state, { type: 'connection_type_changed', peer: SENDER, connectionType: 'direct' })
+    state = apply(state, {
+      type: 'connection_type_changed',
+      peer: SENDER,
+      connectionType: 'direct'
+    })
     expect(state.connectionType).toBe('direct')
 
     state = apply(state, { type: 'connection_type_changed', peer: OTHER, connectionType: 'relay' })
@@ -438,7 +442,11 @@ describe('transferSessionReducer — connection type (per-peer)', () => {
     state = apply(state, { type: 'connection_type_changed', peer: SENDER, connectionType: 'relay' })
     expect(state.connectionType).toBe('relay')
 
-    state = apply(state, { type: 'connection_type_changed', peer: SENDER, connectionType: 'direct' })
+    state = apply(state, {
+      type: 'connection_type_changed',
+      peer: SENDER,
+      connectionType: 'direct'
+    })
     expect(state.connectionType).toBe('direct')
   })
 

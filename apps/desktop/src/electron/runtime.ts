@@ -226,7 +226,11 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
 
     if (rememberedRelayConfig) {
       const cfg = rememberedRelayConfig
-      runtime.ready.then(() => runtime.client.setRelayConfig(cfg)).catch(() => {})
+      runtime.ready
+        .then(() => runtime.client.setRelayConfig(cfg))
+        .catch((err) =>
+          console.error('[relay] re-applying relay config on worker respawn failed', err)
+        )
     }
 
     function sendWorkerStdout(data: unknown) {
