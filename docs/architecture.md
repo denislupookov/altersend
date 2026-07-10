@@ -57,6 +57,8 @@ Key modules:
 - `worklet/transfer/storage.ts` — `TransferStorage`: the ephemeral Corestore + Hyperdrive backing a session, plus the sender/receiver bound to them (wiped on every disconnect)
 - `worklet/transfer/sender.ts` — `TransferSender`: stages local files into the writable Hyperdrive (sender path)
 - `worklet/transfer/receiver.ts` — `TransferReceiver`: writes replicated remote Hyperdrive contents to disk (receiver path)
+- `worklet/relay/config.ts` — relay enable state + relay list; `relayThrough` (the Hyperswarm fallback callback) and `isRelayHost` (connection-type classification)
+- `worklet/relay/conf.ts` — fetches the relay list from a signed HyperDHT mutable record; loads lazily once the relay is enabled (see [Relay fallback](#relay-fallback))
 - `worklet/identity/device-identity-store.ts` — `DeviceIdentityStore`: the stable device keypair, its secret is sealed in the OS keychain and injected at startup (see [Remembered devices & pairing](#remembered-devices--pairing))
 - `worklet/peers/store.ts` — `RememberedPeerStore`: persistent (HyperDB) list of paired devices
 - `worklet/peers/pairing-coordinator.ts` — `PairingCoordinator`: the dedicated pairing swarm + QR / code pairing handshake
@@ -93,6 +95,16 @@ Shared internationalization package used by desktop and mobile. It owns supporte
 3. Core worklet on both sides joins the Hyperswarm topic for that key. On each peer connection the shared Corestore replicates over the noise-encrypted socket.
 4. Sender stages the selected files into its writable Hyperdrive, then broadcasts a `transfer-ready` control message carrying file offers (each with the drive key).
 5. Receiver requests the offered files and downloads their blobs from the replicated drive. Progress and completion events flow back over the control channel → RPC → domain reducer → UI.
+
+## Relay fallback
+
+Most transfers connect directly (P2P hole-punching). When two peers can't reach each other — typically both behind symmetric NAT, e.g. both on a commercial VPN — the transfer falls back to a **blind relay**: a public server that pairs the two peers and forwards their already-encrypted UDX stream. The relay never has the keys to decrypt the data; it only sees connection metadata (IPs, timing, byte volume). It's on by default and can be turned off in **Settings → Relay**.
+
+- **Engagement.** `relay/config.ts` exposes `relayThrough` to both swarms (`TransferSwarm`, `DiscoveryCoordinator`). It runs in "eager" mode: when enabled, it always offers the relay so hyperdht can race a relayed path against a direct hole-punch and upgrade to direct if the punch lands — trading some relay bandwidth on punchable connections for reliability on un-punchable ones.
+- **Relay discovery (relay-conf).** The relay's public key isn't baked into the app. `relay/conf.ts` reads the current relay list from a signed HyperDHT **mutable record** whose public key ships with the app (`--relay-conf-pubkey`, injected at build time); only the relay operator's secret can update it, so relays rotate with no app release. The list is fetched **lazily** — only once the relay is enabled — with a small bounded retry to survive a cold-start DHT miss. This uses a mutable record (not a hypercore) specifically because the worklet wipes its Corestore on every startup.
+- **Connection-type classification.** `TransferSwarm.classifyConnection` compares a peer socket's `remoteHost` against the known relay hosts (`isRelayHost`) and emits a per-peer `connection-type` (`direct` / `relay`) event. The receiver keys this per sender (`transferPeerKey`) so a mesh of receivers can't cross-contaminate the badge, and the UI shows **Connected** vs **Connected via relay**.
+
+The relay server itself lives in a separate repo; only its **public** key and address (via the relay-conf record) are visible to the app.
 
 ## Remembered devices & pairing
 

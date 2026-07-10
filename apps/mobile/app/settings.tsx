@@ -10,7 +10,8 @@ import {
   GlobeIcon,
   InfoIcon,
   ShieldIcon,
-  SmartphoneIcon
+  SmartphoneIcon,
+  WaypointsIcon
 } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
 import { Text } from '@/src/components/ThemedText'
@@ -82,6 +83,13 @@ export default function SettingsScreen() {
               subtitle={languageLabel}
               icon={<GlobeIcon size={16} color={c.colorTextSecondary} />}
               onPress={() => router.push('/language')}
+            />
+            <LinkRow
+              standalone
+              label={t('settings:rows.connection')}
+              subtitle={t('settings:relay.label')}
+              icon={<WaypointsIcon size={16} color={c.colorTextSecondary} />}
+              onPress={() => router.push('/connection')}
             />
             <LinkRow
               standalone

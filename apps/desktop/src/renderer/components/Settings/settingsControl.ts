@@ -1,4 +1,10 @@
-export type SettingsSection = 'devices' | 'language' | 'feedback' | 'security' | 'about'
+export type SettingsSection =
+  | 'devices'
+  | 'language'
+  | 'connection'
+  | 'feedback'
+  | 'security'
+  | 'about'
 
 type Listener = (section: SettingsSection) => void
 

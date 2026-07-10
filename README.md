@@ -6,7 +6,7 @@
 
 ### File transfer without the cloud storage.
 
-Files go directly between your devices — end-to-end encrypted, no accounts, no servers, no limits.
+Files go directly between your devices — end-to-end encrypted, no accounts, nothing stored, no limits.
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20iOS%20%7C%20Android-lightgrey)](#download)
@@ -54,7 +54,7 @@ Why use WeTransfer, Dropbox, or Google Drive when you can send files directly �
 ## Features
 
 - **No accounts** — no signup, no login, no email address required
-- **No servers** — files transfer directly device-to-device, nothing stored in the cloud
+- **No cloud storage** — files go directly between devices; nothing is ever uploaded or stored on a server
 - **End-to-end encrypted** — only your devices can read your files, always
 - **No file size limit** — send a 100 MB photo or 500 GB video archive, same experience
 - **Pair your devices** — pair a device once, then send to it without scanning or typing a code each time
@@ -95,7 +95,7 @@ brew install --cask altersend
 ```
    ┌─────────┐          encrypted P2P          ┌─────────┐
    │ Device  │ ◄──────────────────────────────► │ Device  │
-   │   A     │     direct, no middleman         │   B     │
+   │   A     │      direct & encrypted          │   B     │
    └─────────┘                                  └─────────┘
         ▲                                            ▲
         │       peer discovery via Hyperswarm        │
@@ -109,8 +109,8 @@ AlterSend is built on [Hyperswarm](https://github.com/holepunchto/hyperswarm), a
 
 1. **A random 32-byte key is generated** for each transfer (`crypto.randomBytes(32)`). That 64-char hex string _is_ the join code you share.
 2. **Peers rendezvous on a hash of that key, not the key itself.** Both sides compute the same discovery key — a BLAKE2b hash derived from the join code — and join the DHT on that. The raw key never leaves your device, only its hash is published.
-3. **Public bootstrap nodes are the only entry point.** A handful of them get peers onto the DHT. After that, no central server is involved — and there's no relay fallback, so if direct hole-punching fails, the connection fails.
-4. **The connection is direct and end-to-end encrypted.** Peers connect over a Noise-encrypted socket, and the sender shares its [Hyperdrive](https://github.com/holepunchto/hyperdrive) key over that channel. Files are imported into the sender's local Hyperdrive, replicated to the receiver's, then written out to disk — so in v1 each side needs roughly **2× the transfer size** in free space while a transfer runs. _(Working to improve this.)_
+3. **Public bootstrap nodes are the only entry point.** A handful of them get peers onto the DHT. After that, no central server is involved in discovery. Most transfers are direct peer-to-peer; when a direct connection can't be established — usually because both peers are behind symmetric NAT (for example both on a VPN) — the transfer falls back to a **relay** that forwards the already-encrypted stream between them without ever seeing file contents. It's on by default and can be turned off in Settings → Relay.
+4. **The connection is end-to-end encrypted.** Peers connect over a Noise-encrypted socket, and the sender shares its [Hyperdrive](https://github.com/holepunchto/hyperdrive) key over that channel. Files are imported into the sender's local Hyperdrive, replicated to the receiver's, then written out to disk — so in v1 each side needs roughly **2× the transfer size** in free space while a transfer runs. _(Working to improve this.)_
 
 **Pair once, skip the code.** You can pair devices you own so future transfers go straight through — no code to scan or type. Pairing only stores a public device key, the secret stays in your OS keychain, and a paired device is recognized without exposing your identity to anyone else. See [docs/architecture.md](docs/architecture.md#remembered-devices--pairing) for the full design.
 
@@ -133,20 +133,19 @@ npm install
 
 cp apps/desktop/.env.example apps/desktop/.env
 cp apps/mobile/.env.example apps/mobile/.env
-# All env vars are optional in dev — the app runs without them.
 ```
 
 ### Run
 
 ```sh
-npm run dev            # desktop (Electron)
-npm run mobile:start   # mobile (Expo)
+npm run dev           
+npm run mobile:start  
 ```
 
 ### Build
 
 ```sh
-npm run desktop:build  # packages + desktop app
+npm run desktop:build  
 ```
 
 Platform installers (`.dmg`, `.exe`, `.AppImage`) are produced by the release CI workflow — trigger manually from the Actions tab.

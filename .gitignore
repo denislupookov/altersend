@@ -59,6 +59,7 @@ release
 apps/desktop/dist
 apps/desktop/out
 apps/desktop/src/electron/sentry-dsn.gen.ts
+apps/desktop/src/electron/relay-conf-pubkey.gen.ts
 
 apps/mobile/ios
 apps/mobile/android

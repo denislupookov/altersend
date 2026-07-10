@@ -107,6 +107,15 @@ export interface InitDeviceSecretReply {
   secretKey: string | null
 }
 
+export interface SetRelayConfigInput {
+  enabled: boolean
+}
+
+export interface SetRelayConfigReply {
+  enabled: boolean
+  keyCount: number
+}
+
 export interface RPCErrorPayload {
   code: 'BAD_REQUEST' | 'UNKNOWN_COMMAND' | 'INTERNAL_ERROR'
   message: string
@@ -156,6 +165,7 @@ export interface TransferRPC {
   initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply>
   hostPairing(): Promise<HostReply>
   joinPairing(topic: string): Promise<JoinReply>
+  setRelayConfig(input: SetRelayConfigInput): Promise<SetRelayConfigReply>
 }
 
 export class BadRequestError extends Error {

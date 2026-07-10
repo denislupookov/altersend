@@ -5,6 +5,7 @@ import {
   LaptopIcon,
   MailIcon,
   ShieldIcon,
+  WaypointsIcon,
   type IconProps
 } from '@altersend/components/icons'
 import { loadPeers } from '@altersend/domain'
@@ -13,6 +14,7 @@ import { Modal } from '../Modal'
 import { ListItem } from '@altersend/components'
 import { DevicesSection } from './sections/DevicesSection'
 import { LanguageSection } from './sections/LanguageSection'
+import { ConnectionSection } from './sections/ConnectionSection'
 import { FeedbackSection } from './sections/FeedbackSection'
 import { SecuritySection } from './sections/SecuritySection'
 import { AboutSection } from './sections/AboutSection'
@@ -23,8 +25,9 @@ export { openSettingsPanel } from './settingsControl'
 const NAV: { id: SettingsSection; icon: ComponentType<IconProps>; labelKey: string }[] = [
   { id: 'devices', icon: LaptopIcon, labelKey: 'settings:pairing.pairedDevices' },
   { id: 'language', icon: GlobeIcon, labelKey: 'settings:languageTitle' },
-  { id: 'feedback', icon: MailIcon, labelKey: 'settings:rows.feedback' },
+  { id: 'connection', icon: WaypointsIcon, labelKey: 'settings:rows.connection' },
   { id: 'security', icon: ShieldIcon, labelKey: 'settings:rows.security' },
+  { id: 'feedback', icon: MailIcon, labelKey: 'settings:rows.feedback' },
   { id: 'about', icon: InfoIcon, labelKey: 'settings:sections.about' }
 ]
 
@@ -66,6 +69,8 @@ export function Settings({ version }: { version: string }) {
             <DevicesSection />
           ) : section === 'language' ? (
             <LanguageSection />
+          ) : section === 'connection' ? (
+            <ConnectionSection />
           ) : section === 'feedback' ? (
             <FeedbackSection version={version} />
           ) : section === 'security' ? (

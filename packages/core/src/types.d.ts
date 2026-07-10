@@ -128,6 +128,10 @@ declare module 'hyperswarm' {
     constructor(opts?: {
       keyPair?: NoiseKeyPair
       firewall?: (remotePublicKey: Uint8Array) => boolean
+      relayThrough?:
+        | ((force: boolean, swarm: unknown) => Uint8Array[] | null)
+        | Uint8Array[]
+        | null
     })
     join(
       discoveryKey: Uint8Array,
@@ -137,6 +141,21 @@ declare module 'hyperswarm' {
     destroy(): Promise<void>
     on(event: 'connection', cb: (socket: PeerSocket, info: PeerInfo) => void): this
     on(event: 'update', cb: () => void): this
+  }
+}
+
+declare module 'hyperdht' {
+  export interface MutableRecord {
+    seq: number
+    value: Uint8Array
+    signature: Uint8Array
+  }
+  export default class HyperDHT {
+    mutableGet(
+      publicKey: Uint8Array,
+      opts?: { latest?: boolean; seq?: number }
+    ): Promise<MutableRecord | null>
+    destroy(): Promise<void>
   }
 }
 

@@ -30,7 +30,8 @@
     "copyText": "Copy Text",
     "add": "Add",
     "showMore": "Show more",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "learnMore": "Learn more"
   },
   "labels": {
     "settings": "Settings",
@@ -76,7 +77,8 @@
   },
   "status": {
     "connected": "Connected",
-    "wantsToSend": "wants to send you {{label}}{{size}}"
+    "wantsToSend": "wants to send you {{label}}{{size}}",
+    "connectedViaRelay": "Connected via relay"
   },
   "confirm": {
     "leaveShareSession": "Leaving will end your active share session. Continue?",

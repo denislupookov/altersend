@@ -11,6 +11,12 @@
     "label": "崩潰報告",
     "description": "共享匿名崩潰資料以幫助改進AlterSend"
   },
+  "relay": {
+    "label": "直連失敗時使用中繼",
+    "description": "當兩台裝置無法直接連線時（例如都在使用 VPN），傳輸會透過 AlterSend 的中繼進行。檔案仍維持端對端加密。",
+    "contact": "需要專用中繼或更高的額度？",
+    "fairUse": "中繼對傳輸大小和同時進行的傳輸數量有限制。"
+  },
   "rows": {
     "security": "安全",
     "feedback": "意見回饋",
@@ -24,7 +30,8 @@
     "termsHint": "AlterSend 使用規則",
     "website": "網站",
     "noDevices": "尚無裝置",
-    "pairedCount": "已配對 {{count}} 台"
+    "pairedCount": "已配對 {{count}} 台",
+    "connection": "中繼"
   },
   "legal": {
     "terms": "使用條款",

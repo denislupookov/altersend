@@ -30,7 +30,8 @@
     "copyText": "텍스트 복사",
     "add": "추가",
     "showMore": "더 보기",
-    "showLess": "접기"
+    "showLess": "접기",
+    "learnMore": "자세히 보기"
   },
   "labels": {
     "settings": "설정",
@@ -76,7 +77,8 @@
   },
   "status": {
     "connected": "연결됨",
-    "wantsToSend": "님이 {{label}}{{size}}을 보내려고 합니다"
+    "wantsToSend": "님이 {{label}}{{size}}을 보내려고 합니다",
+    "connectedViaRelay": "릴레이를 통해 연결됨"
   },
   "confirm": {
     "leaveShareSession": "나가면 활성 공유 세션이 종료됩니다. 계속하다?",

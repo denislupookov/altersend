@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { View, StyleSheet, Pressable } from 'react-native'
 import { Paths } from 'expo-file-system'
 import { Button, useTheme } from '@altersend/components'
-import { ArrowLeftIcon, DownloadIcon } from '@altersend/components/icons'
+import { ArrowLeftIcon, DownloadIcon, InfoIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { useNavigation, useRouter } from 'expo-router'
 import { uriToPath } from '@/src/api/mobileApi'
@@ -30,6 +30,7 @@ export default function ReceiveIncomingScreen() {
   const receiveDownloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const role = useTransferStore((s) => s.role)
   const peerCount = useTransferStore((s) => s.peerCount)
+  const connectionType = useTransferStore((s) => s.connectionType)
   const isReconnecting = useTransferStore((s) => s.isReconnecting)
   const errorCode = useTransferStore((s) => s.errorCode)
   const displayError = getDisplayError(t, errorCode)
@@ -146,7 +147,22 @@ export default function ReceiveIncomingScreen() {
     )
   }
 
-  const badge = (
+  const isRelay = connectionType === 'relay'
+  const badge = isRelay ? (
+    <Pressable
+      onPress={() => router.push('/connection')}
+      style={({ pressed }) => [
+        styles.badge,
+        { backgroundColor: theme.colors.colorSuccessSubtle, opacity: pressed ? 0.7 : 1 }
+      ]}
+    >
+      <View style={[styles.badgeDot, { backgroundColor: theme.colors.colorSuccess }]} />
+      <Text style={[styles.badgeText, { color: theme.colors.colorSuccess }]}>
+        {t('common:status.connectedViaRelay')}
+      </Text>
+      <InfoIcon size={13} color={theme.colors.colorSuccess} />
+    </Pressable>
+  ) : (
     <View style={[styles.badge, { backgroundColor: theme.colors.colorSuccessSubtle }]}>
       <View style={[styles.badgeDot, { backgroundColor: theme.colors.colorSuccess }]} />
       <Text style={[styles.badgeText, { color: theme.colors.colorSuccess }]}>

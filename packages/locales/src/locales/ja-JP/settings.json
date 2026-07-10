@@ -11,6 +11,12 @@
     "label": "クラッシュレポート",
     "description": "AlterSend 改善のため匿名のクラッシュデータを共有する"
   },
+  "relay": {
+    "label": "直接接続できないときにリレーを使用",
+    "description": "2台のデバイスが直接接続できない場合（例：両方がVPN上）、転送はAlterSendのリレーを経由します。ファイルはエンドツーエンドで暗号化されたままです。",
+    "contact": "専用リレーや上限の引き上げが必要ですか？",
+    "fairUse": "リレーには、転送サイズと同時に実行できる転送数に制限があります。"
+  },
   "rows": {
     "security": "セキュリティ",
     "feedback": "フィードバック",
@@ -24,7 +30,8 @@
     "termsHint": "AlterSend の利用ルール",
     "website": "Webサイト",
     "noDevices": "デバイスはまだありません",
-    "pairedCount": "{{count}} 台ペアリング済み"
+    "pairedCount": "{{count}} 台ペアリング済み",
+    "connection": "リレー"
   },
   "legal": {
     "terms": "利用規約",

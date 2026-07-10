@@ -29,6 +29,7 @@ export interface TransferReady {
   type: 'transfer-ready'
   transferId: string
   files: TransferOffer[]
+  peer?: string
 }
 
 export interface TransferStart {

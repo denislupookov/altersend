@@ -14,6 +14,8 @@ import { isDeviceType } from './identity/device-type'
 import { createReadyEvent } from './rpc/events'
 import { API, encodeRPCPayload } from './rpc/protocol'
 import { createTransferWorkerRPCServer } from './rpc/server'
+import { configureRelay } from './relay/config'
+import { startRelayConf, stopRelayConf } from './relay/conf'
 
 function readArg(prefix: string): string | undefined {
   const flag = (Bare.argv as string[]).find((arg) => arg.startsWith(prefix))
@@ -66,6 +68,17 @@ const providedName = readArg('--device-name=')?.trim()
 const displayName = providedName || os.hostname().replace(/\.local$/, '') || 'AlterSend Device'
 const providedType = readArg('--device-type=')
 const deviceType = isDeviceType(providedType) ? providedType : undefined
+
+const relayKeyArg = readArg('--relay-key=')?.trim()
+const relayHostArg = readArg('--relay-host=')?.trim() ?? ''
+const relayEnabledArg = (Bare.argv as string[]).includes('--relay-enabled')
+if (relayKeyArg || relayEnabledArg) {
+  configureRelay({
+    ...(relayKeyArg ? { relays: [{ keyHex: relayKeyArg, host: relayHostArg }] } : {}),
+    enabled: relayEnabledArg || !!relayKeyArg
+  })
+}
+
 const orchestrator = new TransferOrchestrator(sendTransferEvent, storageRoot, identityRoot, {
   displayName,
   deviceType
@@ -73,6 +86,8 @@ const orchestrator = new TransferOrchestrator(sendTransferEvent, storageRoot, id
 const rpc = createTransferWorkerRPCServer(ipc, orchestrator, sendTransferEvent, () =>
   orchestrator.abortInFlight()
 )
+
+startRelayConf(readArg('--relay-conf-pubkey='))
 
 const originalLog: typeof console.log = console.log
 const originalWarn: typeof console.warn = console.warn
@@ -100,6 +115,11 @@ async function gracefulShutdown(_reason: string) {
     await orchestrator.destroy()
   } catch (err) {
     console.error('Core: orchestrator.destroy failed', err)
+  }
+  try {
+    await stopRelayConf()
+  } catch (err) {
+    console.error('Core: stopRelayConf failed', err)
   }
 }
 

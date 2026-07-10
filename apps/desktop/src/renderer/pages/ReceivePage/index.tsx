@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
 import { Button } from '@altersend/components'
+import { InfoIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { TransferStatusPanel, TransferCardFrame } from '../../components'
+import { openSettingsPanel } from '../../components/Settings'
 import { ReceiveCompleteView } from './ReceiveCompleteView'
 import { ReceiveConnectedView } from './ReceiveConnectedView'
 import { ReceiveDisconnectedView } from './ReceiveDisconnectedView'
@@ -22,6 +24,7 @@ export default function ReceivePage() {
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const receiveDownloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const peerCount = useTransferStore((s) => s.peerCount)
+  const connectionType = useTransferStore((s) => s.connectionType)
 
   const hasIncomingFiles = incomingFileOffers.length > 0
   const totals = useMemo(
@@ -48,11 +51,18 @@ export default function ReceivePage() {
     totals.totalBytes
   )
 
+  const isRelay = connectionType === 'relay'
   const connectedBadge =
     isConnectedStep(step) && step !== 'completed' && step !== 'interrupted' ? (
-      <div className='inline-flex items-center gap-1.5 rounded-full bg-success/12 px-2.5 py-1 text-[12px] font-semibold text-success'>
+      <div
+        onClick={isRelay ? () => openSettingsPanel('connection') : undefined}
+        className={`inline-flex items-center gap-1.5 rounded-full bg-success/12 px-2.5 py-1 text-[12px] font-semibold text-success ${
+          isRelay ? 'cursor-pointer transition-opacity hover:opacity-80' : ''
+        }`}
+      >
         <span className='h-2 w-2 shrink-0 rounded-full bg-success' />
-        {t('common:status.connected')}
+        {isRelay ? t('common:status.connectedViaRelay') : t('common:status.connected')}
+        {isRelay ? <InfoIcon size={13} /> : null}
       </div>
     ) : undefined
 

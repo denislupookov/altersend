@@ -44,7 +44,7 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
     case 'status':
       return dispatchStatusEvent(event)
     case 'transfer-ready':
-      return dispatchToTransferStore({ type: 'transfer_ready', files: event.files })
+      return dispatchToTransferStore({ type: 'transfer_ready', files: event.files, peer: event.peer })
     case 'role':
       return dispatchToTransferStore({ type: 'role_changed', role: event.role })
     case 'error':
@@ -124,6 +124,15 @@ function dispatchStatusEvent(event: StatusEvent): void {
       return
     case 'peer-disconnected':
       if (event.peer) dispatchToTransferStore({ type: 'peer_left', peerKey: event.peer })
+      return
+    case 'connection-type':
+      if (event.connectionType && event.peer) {
+        dispatchToTransferStore({
+          type: 'connection_type_changed',
+          peer: event.peer,
+          connectionType: event.connectionType
+        })
+      }
       return
     case 'joining':
     case 'joined':

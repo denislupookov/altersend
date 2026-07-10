@@ -405,3 +405,49 @@ describe('transferSessionReducer — misc', () => {
     })
   })
 })
+
+describe('transferSessionReducer — connection type (per-peer)', () => {
+  const SENDER = 'a'.repeat(64)
+  const OTHER = 'b'.repeat(64)
+  const ready = (peer: string): TransferAction => ({
+    type: 'transfer_ready',
+    files: [offer('1', 'a.txt')],
+    peer
+  })
+
+  it('shows the sender connection type, not another peer that connects later', () => {
+    let state = apply(make({ role: 'receiver' }), ready(SENDER))
+    state = apply(state, { type: 'connection_type_changed', peer: SENDER, connectionType: 'direct' })
+    expect(state.connectionType).toBe('direct')
+
+    state = apply(state, { type: 'connection_type_changed', peer: OTHER, connectionType: 'relay' })
+    expect(state.connectionType).toBe('direct')
+  })
+
+  it('derives the sender type regardless of event order', () => {
+    let state = make({ role: 'receiver' })
+    state = apply(state, { type: 'connection_type_changed', peer: SENDER, connectionType: 'relay' })
+    expect(state.connectionType).toBeNull()
+
+    state = apply(state, ready(SENDER))
+    expect(state.connectionType).toBe('relay')
+  })
+
+  it('reflects a relay→direct upgrade on the sender', () => {
+    let state = apply(make({ role: 'receiver' }), ready(SENDER))
+    state = apply(state, { type: 'connection_type_changed', peer: SENDER, connectionType: 'relay' })
+    expect(state.connectionType).toBe('relay')
+
+    state = apply(state, { type: 'connection_type_changed', peer: SENDER, connectionType: 'direct' })
+    expect(state.connectionType).toBe('direct')
+  })
+
+  it('clears per-peer connection state on session end', () => {
+    let state = apply(make({ role: 'receiver' }), ready(SENDER))
+    state = apply(state, { type: 'connection_type_changed', peer: SENDER, connectionType: 'relay' })
+    state = apply(state, { type: 'status_changed', state: 'disconnected' })
+    expect(state.connectionType).toBeNull()
+    expect(state.transferPeerKey).toBeNull()
+    expect(state.connectionTypes).toEqual({})
+  })
+})

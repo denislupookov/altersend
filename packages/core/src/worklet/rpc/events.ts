@@ -17,6 +17,7 @@ export type TransferStatus =
   | 'joined'
   | 'disconnected'
   | 'reconnecting'
+  | 'connection-type'
 
 export type TransferRole = 'sender' | 'receiver'
 
@@ -52,6 +53,7 @@ export interface StatusEvent {
   totalBytes?: number
   bytesTransferred?: number
   message?: string
+  connectionType?: 'direct' | 'relay'
 }
 
 export interface RoleEvent {

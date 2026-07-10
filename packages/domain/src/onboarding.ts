@@ -2,7 +2,6 @@ export type OnboardingSlideKind = 'pairing' | 'keep-open' | 'privacy'
 
 export const privacyPolicyUrl = 'https://altersend.com/privacy'
 export const termsOfServiceUrl = 'https://altersend.com/terms'
-export const abuseEmail = 'abuse@altersend.com'
 export const supportEmail = 'hello@altersend.com'
 export const websiteUrl = 'https://altersend.com'
 export const githubUrl = 'https://github.com/denislupookov/altersend'

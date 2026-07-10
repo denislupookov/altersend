@@ -11,6 +11,12 @@
     "label": "Rapports d'erreur",
     "description": "Partagez des données anonymes sur les accidents pour contribuer à améliorer AlterSend"
   },
+  "relay": {
+    "label": "Utiliser un relais en cas d’échec de la connexion directe",
+    "description": "Quand deux appareils ne peuvent pas se connecter directement (par exemple tous deux sur un VPN), le transfert passe par le relais d'AlterSend. Les fichiers restent chiffrés de bout en bout.",
+    "contact": "Besoin d’un relais dédié ou de limites plus élevées ?",
+    "fairUse": "Le relais impose des limites sur la taille des transferts et sur le nombre de transferts simultanés."
+  },
   "rows": {
     "security": "Sécurité",
     "feedback": "Commentaires",
@@ -24,7 +30,8 @@
     "termsHint": "Règles d'utilisation de AlterSend",
     "website": "Site Web",
     "noDevices": "Aucun appareil pour l’instant",
-    "pairedCount": "{{count}} associé(s)"
+    "pairedCount": "{{count}} associé(s)",
+    "connection": "Relais"
   },
   "legal": {
     "terms": "Conditions d'utilisation",

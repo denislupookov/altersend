@@ -11,6 +11,12 @@
     "label": "Relatórios de falhas",
     "description": "Compartilhe dados anônimos de falhas para ajudar a melhorar o AlterSend"
   },
+  "relay": {
+    "label": "Usar retransmissor quando a conexão direta falhar",
+    "description": "Quando dois dispositivos não conseguem se conectar diretamente (por exemplo, ambos em uma VPN), a transferência é roteada pelo retransmissor da AlterSend. Os arquivos permanecem criptografados de ponta a ponta.",
+    "contact": "Precisa de um retransmissor dedicado ou limites maiores?",
+    "fairUse": "O retransmissor tem limites de tamanho de transferência e de quantas podem ocorrer ao mesmo tempo."
+  },
   "rows": {
     "security": "Segurança",
     "feedback": "Feedback",
@@ -24,7 +30,8 @@
     "termsHint": "Regras para usar o AlterSend",
     "website": "Site",
     "noDevices": "Ainda não há dispositivos",
-    "pairedCount": "{{count}} emparelhados"
+    "pairedCount": "{{count}} emparelhados",
+    "connection": "Retransmissor"
   },
   "legal": {
     "terms": "Termos de Uso",

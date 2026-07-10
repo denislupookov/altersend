@@ -30,7 +30,8 @@
     "copyText": "复制文本",
     "add": "添加",
     "showMore": "显示更多",
-    "showLess": "收起"
+    "showLess": "收起",
+    "learnMore": "了解更多"
   },
   "labels": {
     "settings": "设置",
@@ -76,7 +77,8 @@
   },
   "status": {
     "connected": "已连接",
-    "wantsToSend": "想要发送 {{label}}{{size}} 给你"
+    "wantsToSend": "想要发送 {{label}}{{size}} 给你",
+    "connectedViaRelay": "已通过中继连接"
   },
   "confirm": {
     "leaveShareSession": "离开将结束您的活跃共享会话。继续？",

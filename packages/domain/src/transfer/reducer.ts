@@ -11,6 +11,7 @@ import type {
   ConnectionState,
   IncomingPairRequest,
   TransferAction,
+  TransferConnectionType,
   TransferSessionState
 } from './types'
 
@@ -26,6 +27,9 @@ export { TRANSFER_ERROR_CODES } from './types'
 export const initialTransferSessionState: TransferSessionState = {
   topic: '',
   connectionState: 'disconnected',
+  connectionType: null,
+  connectionTypes: {},
+  transferPeerKey: null,
   role: null,
   peerCount: 0,
   isReconnecting: false,
@@ -47,6 +51,13 @@ export const initialTransferSessionState: TransferSessionState = {
     inviteResponses: {}
   },
   peers: []
+}
+
+function deriveConnectionType(
+  connectionTypes: Record<string, TransferConnectionType>,
+  transferPeerKey: string | null
+): TransferConnectionType | null {
+  return transferPeerKey ? (connectionTypes[transferPeerKey] ?? null) : null
 }
 
 function clearError(state: TransferSessionState): TransferSessionState {
@@ -77,6 +88,9 @@ function endSession(state: TransferSessionState): TransferSessionState {
     peerDownloads: {},
     connectedPeers: {},
     connectionState: 'disconnected',
+    connectionType: null,
+    connectionTypes: {},
+    transferPeerKey: null,
     peerCount: 0,
     topic: '',
     errorCode: null,
@@ -137,6 +151,15 @@ export function transferSessionReducer(
           }
         }
       }
+    case 'connection_type_changed': {
+      if (state.connectionTypes[action.peer] === action.connectionType) return state
+      const connectionTypes = { ...state.connectionTypes, [action.peer]: action.connectionType }
+      return {
+        ...state,
+        connectionTypes,
+        connectionType: deriveConnectionType(connectionTypes, state.transferPeerKey)
+      }
+    }
     case 'reconnecting':
       return { ...state, isReconnecting: true }
     case 'clear_session':
@@ -254,6 +277,9 @@ export function transferSessionReducer(
         peerDownloads: {},
         connectedPeers: {},
         connectionState: 'joining',
+        connectionType: null,
+        connectionTypes: {},
+        transferPeerKey: null,
         peerCount: 0,
         errorCode: null,
         errorMessage: null
@@ -261,6 +287,7 @@ export function transferSessionReducer(
     case 'transfer_ready': {
       if (state.role !== 'receiver') return state
       const incomingFileOffers = mergeIncomingFileOffers(state.incomingFileOffers, action.files)
+      const transferPeerKey = action.peer ?? state.transferPeerKey
       return {
         ...state,
         incomingFileOffers,
@@ -268,6 +295,8 @@ export function transferSessionReducer(
           state.receiveDownloadStates,
           incomingFileOffers
         ),
+        transferPeerKey,
+        connectionType: deriveConnectionType(state.connectionTypes, transferPeerKey),
         transferId: action.files[0]?.transferId ?? state.transferId,
         errorCode: null,
         errorMessage: null

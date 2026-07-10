@@ -4,6 +4,9 @@ import Hyperswarm, { type PeerInfo, type PeerSocket } from 'hyperswarm'
 import { PeerControlChannel } from './control-channel'
 import type { PeerControlMessage } from './control-channel'
 import { PeerIdentityStore, type NoiseKeyPair } from './peer-identity-store'
+import { relayThrough, isRelayHost } from '../relay/config'
+
+export type ConnectionType = 'direct' | 'relay'
 
 export interface PeerSession {
   socket: PeerSocket
@@ -18,6 +21,7 @@ export interface TransferSwarmCallbacks {
   onPeerConnected: (session: PeerSession) => void
   onPeerDisconnected: (peerKey: string | null, remainingCount: number) => void
   onControlMessage: (message: PeerControlMessage, session: PeerSession) => void
+  onConnectionType?: (peerKey: string, connectionType: ConnectionType) => void
 }
 
 export interface TransferSwarmOptions {
@@ -59,9 +63,9 @@ export class TransferSwarm {
   }
 
   private createSwarm(keyPair?: NoiseKeyPair): Hyperswarm {
-    const swarm = keyPair ? new Hyperswarm({ keyPair }) : new Hyperswarm()
+    const swarm = new Hyperswarm({ ...(keyPair ? { keyPair } : {}), relayThrough })
     swarm.on('connection', (socket, info) => {
-      void this.handleConnection(socket, info).catch((err) => {
+      this.handleConnection(socket, info).catch((err) => {
         console.error(
           'TransferSwarm: handleConnection failed',
           err instanceof Error ? err.message : String(err)
@@ -104,9 +108,35 @@ export class TransferSwarm {
     session = { socket, peerKey, controlChannel, handshakeHash: socket.handshakeHash ?? null }
     this.peerSessions.set(socket, session)
     this.callbacks.onPeerConnected(session)
+    this.classifyConnection(socket, peerKey)
 
     socket.on('close', () => this.cleanupPeer(socket))
     socket.on('error', () => this.cleanupPeer(socket))
+  }
+
+  private classifyConnection(socket: PeerSocket, peerKey: string): void {
+    if (!this.callbacks.onConnectionType) return
+    const remoteHost = () =>
+      (socket as unknown as { rawStream?: { remoteHost?: string } }).rawStream?.remoteHost
+    const classify = (): ConnectionType => (isRelayHost(remoteHost()) ? 'relay' : 'direct')
+
+    let current = classify()
+    this.callbacks.onConnectionType(peerKey, current)
+
+    if (current !== 'relay') return
+
+    let ticks = 0
+    const timer = setInterval(() => {
+      const next = classify()
+      if (next !== current) {
+        current = next
+        this.callbacks.onConnectionType?.(peerKey, next)
+      }
+      if (next !== 'relay' || ++ticks >= 8) clearInterval(timer)
+    }, 2000)
+    ;(timer as unknown as { unref?: () => void }).unref?.()
+    
+    socket.on('close', () => clearInterval(timer))
   }
 
   private cleanupPeer(socket: PeerSocket): void {

@@ -22,6 +22,8 @@ export type { TransferErrorCode }
 
 export type ConnectionState = 'disconnected' | 'joining' | 'joined' | 'peer-connected'
 
+export type TransferConnectionType = 'direct' | 'relay'
+
 export type PeerPairStatus = 'requested' | 'paired'
 
 export interface IncomingPairRequest {
@@ -59,6 +61,9 @@ export interface RememberState {
 export interface TransferSessionState {
   topic: string
   connectionState: ConnectionState
+  connectionType: TransferConnectionType | null
+  connectionTypes: Record<string, TransferConnectionType>
+  transferPeerKey: string | null
   role: TransferRole | null
   peerCount: number
   isReconnecting: boolean
@@ -86,6 +91,7 @@ export type TransferAction =
   | { type: 'clear_session' }
   | { type: 'set_error'; code?: TransferErrorCode; message: string }
   | { type: 'status_changed'; state: ConnectionState; peers?: number }
+  | { type: 'connection_type_changed'; peer: string; connectionType: TransferConnectionType }
   | { type: 'role_changed'; role: TransferRole | null }
   | { type: 'apply_sharing_progress'; event: SharingStatusEvent }
   | { type: 'init_upload_items'; items: SenderUploadItem[] }
@@ -106,7 +112,7 @@ export type TransferAction =
       intendedDestination: SaveDestination
       savedTo?: string
     }
-  | { type: 'transfer_ready'; files: IncomingFileOffer[] }
+  | { type: 'transfer_ready'; files: IncomingFileOffer[]; peer?: string }
   | { type: 'reconnecting' }
   | { type: 'peer_unreachable' }
   | { type: 'remember_confirmed'; peerKey: string; displayName: string }

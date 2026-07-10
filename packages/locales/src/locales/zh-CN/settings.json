@@ -11,6 +11,12 @@
     "label": "崩溃报告",
     "description": "共享匿名崩溃数据以帮助改进AlterSend"
   },
+  "relay": {
+    "label": "直连失败时使用中继",
+    "description": "当两台设备无法直接连接时（例如都在使用 VPN），传输会通过 AlterSend 的中继进行。文件仍保持端到端加密。",
+    "contact": "需要专用中继或更高的限额？",
+    "fairUse": "中继对传输大小和同时进行的传输数量有限制。"
+  },
   "rows": {
     "security": "安全",
     "feedback": "反馈",
@@ -24,7 +30,8 @@
     "termsHint": "AlterSend 使用规则",
     "website": "网站",
     "noDevices": "暂无设备",
-    "pairedCount": "已配对 {{count}} 台"
+    "pairedCount": "已配对 {{count}} 台",
+    "connection": "中继"
   },
   "legal": {
     "terms": "使用条款",

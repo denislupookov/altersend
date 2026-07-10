@@ -15,6 +15,7 @@ import {
   type TransferIPCMessage
 } from '../rpc/events'
 import { BadRequestError, type InviteDeviceReply, type InviteResponseReply } from '../rpc/protocol'
+import { relayThrough } from '../relay/config'
 
 export const INVITE_WAIT_MS = 30_000
 
@@ -27,6 +28,7 @@ export interface DiscoverySwarm {
 type CreateDiscoverySwarm = (opts: {
   keyPair: NoiseKeyPair
   firewall: (remotePublicKey: Uint8Array) => boolean
+  relayThrough: (force: boolean, swarm: unknown) => Uint8Array[] | null
 }) => DiscoverySwarm
 
 export interface DiscoveryDeps {
@@ -84,7 +86,8 @@ export class DiscoveryCoordinator {
     this.swarm = createSwarm({
       keyPair: { publicKey: identity.publicKey, secretKey: identity.secretKey },
       firewall: (remotePublicKey) =>
-        !this.knownPubkeys.has(normalizeKey(b4a.toString(remotePublicKey, 'hex')))
+        !this.knownPubkeys.has(normalizeKey(b4a.toString(remotePublicKey, 'hex'))),
+      relayThrough
     })
     this.swarm.on('connection', (socket, info) => {
       this.handleConnection(socket, info)

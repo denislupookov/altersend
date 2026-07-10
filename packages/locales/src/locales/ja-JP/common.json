@@ -30,7 +30,8 @@
     "copyText": "テキストをコピー",
     "add": "追加",
     "showMore": "もっと見る",
-    "showLess": "折りたたむ"
+    "showLess": "折りたたむ",
+    "learnMore": "詳細を見る"
   },
   "labels": {
     "settings": "設定",
@@ -76,7 +77,8 @@
   },
   "status": {
     "connected": "接続済み",
-    "wantsToSend": "が{{label}}{{size}}を送信しようとしています"
+    "wantsToSend": "が{{label}}{{size}}を送信しようとしています",
+    "connectedViaRelay": "リレー経由で接続"
   },
   "confirm": {
     "leaveShareSession": "退出すると、アクティブな共有セッションが終了します。続く？",

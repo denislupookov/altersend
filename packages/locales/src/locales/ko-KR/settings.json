@@ -11,6 +11,12 @@
     "label": "충돌 보고서",
     "description": "AlterSend 개선을 위해 익명 충돌 데이터 공유"
   },
+  "relay": {
+    "label": "직접 연결이 실패하면 릴레이 사용",
+    "description": "두 기기가 직접 연결할 수 없을 때(예: 둘 다 VPN 사용) 전송이 AlterSend 릴레이를 통해 이루어집니다. 파일은 종단 간 암호화가 유지됩니다.",
+    "contact": "전용 릴레이나 더 높은 한도가 필요하신가요?",
+    "fairUse": "릴레이에는 전송 크기와 동시에 실행할 수 있는 전송 수에 제한이 있습니다."
+  },
   "rows": {
     "security": "보안",
     "feedback": "피드백",
@@ -24,7 +30,8 @@
     "termsHint": "AlterSend 사용 규칙",
     "website": "웹사이트",
     "noDevices": "아직 기기가 없습니다",
-    "pairedCount": "{{count}}개 페어링됨"
+    "pairedCount": "{{count}}개 페어링됨",
+    "connection": "릴레이"
   },
   "legal": {
     "terms": "이용약관",

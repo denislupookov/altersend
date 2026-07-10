@@ -12,6 +12,7 @@ import { Directory, Paths } from 'expo-file-system'
 import * as SecureStore from 'expo-secure-store'
 import { Platform } from 'react-native'
 import { Worklet } from 'react-native-bare-kit'
+import { isRelayEnabled } from '../lifecycle/relayStorage'
 
 const STORAGE_ROOT_DIRNAME = 'altersend'
 const IDENTITY_ROOT_DIRNAME = 'altersend-identity'
@@ -66,6 +67,10 @@ async function getWorkletArgs() {
   if (deviceName) args.push(`--device-name=${deviceName}`)
   const isPad = Platform.OS === 'ios' && (Platform as { isPad?: boolean }).isPad === true
   args.push(`--device-type=${isPad ? 'tablet' : 'phone'}`)
+  const relayConfPubkey = process.env.EXPO_PUBLIC_RELAY_CONF_PUBKEY?.trim()
+  if (relayConfPubkey) args.push(`--relay-conf-pubkey=${relayConfPubkey}`)
+  if (isRelayEnabled()) args.push('--relay-enabled')
+
   return args
 }
 

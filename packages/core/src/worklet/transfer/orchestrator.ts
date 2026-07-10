@@ -24,6 +24,8 @@ import type {
   JoinReply,
   RememberVoteInput,
   RememberVoteReply,
+  SetRelayConfigInput,
+  SetRelayConfigReply,
   ShareFileRequest,
   ShareFilesReply,
   TransferRPC
@@ -66,6 +68,7 @@ import { RememberCoordinator } from '../peers/remember-coordinator'
 import { RecognitionCoordinator } from '../peers/recognition-coordinator'
 import { DiscoveryCoordinator } from '../peers/discovery'
 import { PairingCoordinator } from '../peers/pairing-coordinator'
+import { configureRelay, relayConfigSummary } from '../relay/config'
 
 function createTransferId(): string {
   return crypto.randomBytes(16).toString('hex')
@@ -143,6 +146,10 @@ export class TransferOrchestrator implements TransferRPC {
         onControlMessage: (message, session) => {
           if (this.suspended) return
           this.onControlMessage(message, session)
+        },
+        onConnectionType: (peerKey, connectionType) => {
+          if (this.suspended) return
+          this.sendStatus('connection-type', { peer: peerKey, connectionType })
         }
       },
       { identityStore }
@@ -258,7 +265,9 @@ export class TransferOrchestrator implements TransferRPC {
         console.warn(`TransferOrchestrator: dropping inbound ${message.type} in role=${this.role}`)
         return
       }
-      this.emitIPC(message)
+      this.emitIPC(
+        message.type === 'transfer-ready' ? { ...message, peer: session.peerKey } : message
+      )
       return
     }
 
@@ -522,6 +531,12 @@ export class TransferOrchestrator implements TransferRPC {
     this.remember.reset()
     this.currentTopic = null
     await this.swarm.endSession()
+  }
+
+  async setRelayConfig(input: SetRelayConfigInput): Promise<SetRelayConfigReply> {
+    configureRelay({ enabled: input.enabled })
+    const { enabled, keyCount } = relayConfigSummary()
+    return { enabled, keyCount }
   }
 
   async suspend(): Promise<void> {

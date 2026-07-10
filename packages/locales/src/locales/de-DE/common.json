@@ -30,7 +30,8 @@
     "copyText": "Text kopieren",
     "add": "Hinzufügen",
     "showMore": "Mehr anzeigen",
-    "showLess": "Weniger anzeigen"
+    "showLess": "Weniger anzeigen",
+    "learnMore": "Mehr erfahren"
   },
   "labels": {
     "settings": "Einstellungen",
@@ -76,7 +77,8 @@
   },
   "status": {
     "connected": "Verbunden",
-    "wantsToSend": "möchte dir {{label}}{{size}} senden"
+    "wantsToSend": "möchte dir {{label}}{{size}} senden",
+    "connectedViaRelay": "Verbunden über Relay"
   },
   "confirm": {
     "leaveShareSession": "Durch das Verlassen wird Ihre aktive Freigabesitzung beendet. Weitermachen?",

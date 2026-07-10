@@ -11,6 +11,12 @@
     "label": "Rapporti sugli incidenti",
     "description": "Condividi dati anonimi sugli arresti anomali per contribuire a migliorare AlterSend"
   },
+  "relay": {
+    "label": "Usa il relay quando la connessione diretta non riesce",
+    "description": "Quando due dispositivi non riescono a connettersi direttamente (ad esempio entrambi su una VPN), il trasferimento passa attraverso il relay di AlterSend. I file restano cifrati end-to-end.",
+    "contact": "Ti serve un relay dedicato o limiti più alti?",
+    "fairUse": "Il relay ha limiti sulla dimensione dei trasferimenti e su quanti possono essere eseguiti contemporaneamente."
+  },
   "rows": {
     "security": "Sicurezza",
     "feedback": "Segnalazioni",
@@ -24,7 +30,8 @@
     "termsHint": "Regole per l'utilizzo di AlterSend",
     "website": "Sito web",
     "noDevices": "Ancora nessun dispositivo",
-    "pairedCount": "{{count}} accoppiati"
+    "pairedCount": "{{count}} accoppiati",
+    "connection": "Relay"
   },
   "legal": {
     "terms": "Condizioni d'uso",

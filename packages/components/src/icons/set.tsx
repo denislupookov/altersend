@@ -50,6 +50,7 @@ import {
   Trash2,
   Upload,
   Video,
+  Waypoints,
   X
 } from './lucide'
 import { adaptLucide } from './adaptLucide'
@@ -106,4 +107,5 @@ export const SmartphoneIcon = adaptLucide(Smartphone)
 export const TrashIcon = adaptLucide(Trash2)
 export const UploadIcon = adaptLucide(Upload)
 export const VideoIcon = adaptLucide(Video)
+export const WaypointsIcon = adaptLucide(Waypoints)
 export const CloseIcon = adaptLucide(X)
