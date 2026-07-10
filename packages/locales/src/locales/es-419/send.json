@@ -92,6 +92,9 @@
     "deviceOffline": "Dispositivo sin conexión: inténtalo de nuevo"
   },
   "dropzone": {
+    "addTitle": "¿Qué quieres añadir?",
+    "filesHint": "Elige uno o más archivos",
+    "folderHint": "Envía una carpeta completa",
     "browseDescription": "o <link>explora</link> tu computadora",
     "tapTo": "Toca para",
     "addMoreLink": "agregar más",

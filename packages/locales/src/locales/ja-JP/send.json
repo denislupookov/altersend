@@ -92,6 +92,9 @@
     "deviceOffline": "デバイスはオフラインです — もう一度お試しください"
   },
   "dropzone": {
+    "addTitle": "何を追加しますか？",
+    "filesHint": "1つ以上のファイルを選択",
+    "folderHint": "フォルダ全体を送信",
     "browseDescription": "または<link>コンピュータを参照</link>",
     "tapTo": "タップして",
     "addMoreLink": "さらに追加",

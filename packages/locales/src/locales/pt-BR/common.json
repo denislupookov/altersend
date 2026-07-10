@@ -51,6 +51,7 @@
     "connectionCode": "Código de conexão"
   },
   "files": {
+    "folder": "Pasta",
     "count_one": "{{count}} arquivo",
     "count_other": "{{count}} arquivos",
     "photos": "Fotos",

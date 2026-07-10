@@ -51,6 +51,7 @@
     "connectionCode": "Code de connexion"
   },
   "files": {
+    "folder": "Dossier",
     "count_one": "{{count}} fichier",
     "count_other": "{{count}} fichiers",
     "photos": "Photothèque",

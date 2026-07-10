@@ -51,6 +51,7 @@
     "connectionCode": "연결 코드"
   },
   "files": {
+    "folder": "폴더",
     "count_one": "{{count}}개 파일",
     "count_other": "{{count}}개 파일",
     "photos": "사진",

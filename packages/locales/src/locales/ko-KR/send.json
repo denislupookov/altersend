@@ -92,6 +92,9 @@
     "deviceOffline": "기기 오프라인 — 다시 시도하세요"
   },
   "dropzone": {
+    "addTitle": "무엇을 추가할까요?",
+    "filesHint": "파일 하나 이상 선택",
+    "folderHint": "폴더 전체 보내기",
     "browseDescription": "또는 <link>컴퓨터에서 찾아보기</link>",
     "tapTo": "탭하여",
     "addMoreLink": "더 추가",

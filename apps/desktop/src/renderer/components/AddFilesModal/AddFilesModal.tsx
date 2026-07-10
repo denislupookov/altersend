@@ -1,5 +1,6 @@
 import { LinkRow, useTheme } from '@altersend/components'
 import { FileIcon, FolderIcon } from '@altersend/components/icons'
+import { useTranslation } from '@altersend/locales'
 import { Modal } from '../Modal'
 
 interface AddFilesModalProps {
@@ -9,18 +10,19 @@ interface AddFilesModalProps {
 }
 
 export function AddFilesModal({ open, onClose, onSelect }: AddFilesModalProps) {
+  const { t } = useTranslation(['send', 'common'])
   const { theme } = useTheme()
   const c = theme.colors
 
   return (
-    <Modal open={open} title='What do you want to add?' width={460} onClose={onClose}>
+    <Modal open={open} title={t('send:dropzone.addTitle')} width={460} onClose={onClose}>
       <div className='flex flex-col gap-2 px-4 pb-4'>
         <LinkRow
           standalone
           icon={<FileIcon size={20} color={c.colorTextSecondary} />}
           iconBackground={c.colorSurfacePrimary}
-          label='Files'
-          subtitle='Pick one or more files'
+          label={t('common:files.files')}
+          subtitle={t('send:dropzone.filesHint')}
           trailing={null}
           onPress={() => onSelect('files')}
         />
@@ -28,8 +30,8 @@ export function AddFilesModal({ open, onClose, onSelect }: AddFilesModalProps) {
           standalone
           icon={<FolderIcon size={20} color={c.colorTextSecondary} />}
           iconBackground={c.colorSurfacePrimary}
-          label='Folder'
-          subtitle='Send an entire folder'
+          label={t('common:files.folder')}
+          subtitle={t('send:dropzone.folderHint')}
           trailing={null}
           onPress={() => onSelect('folders')}
         />

@@ -92,6 +92,9 @@
     "deviceOffline": "设备离线 — 请重试"
   },
   "dropzone": {
+    "addTitle": "要添加什么？",
+    "filesHint": "选择一个或多个文件",
+    "folderHint": "发送整个文件夹",
     "browseDescription": "或<link>浏览</link>你的电脑",
     "tapTo": "点按",
     "addMoreLink": "继续添加",

@@ -51,6 +51,7 @@
     "connectionCode": "接続コード"
   },
   "files": {
+    "folder": "フォルダ",
     "count_one": "{{count}} 個のファイル",
     "count_other": "{{count}} 個のファイル",
     "photos": "写真",

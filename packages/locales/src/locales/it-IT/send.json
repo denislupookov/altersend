@@ -92,6 +92,9 @@
     "deviceOffline": "Dispositivo offline — riprova"
   },
   "dropzone": {
+    "addTitle": "Cosa vuoi aggiungere?",
+    "filesHint": "Scegli uno o più file",
+    "folderHint": "Invia un'intera cartella",
     "browseDescription": "o <link>sfoglia</link> il tuo computer",
     "tapTo": "Tocca per",
     "addMoreLink": "aggiungerne altri",

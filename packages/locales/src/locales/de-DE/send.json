@@ -92,6 +92,9 @@
     "deviceOffline": "Gerät offline – erneut versuchen"
   },
   "dropzone": {
+    "addTitle": "Was möchten Sie hinzufügen?",
+    "filesHint": "Eine oder mehrere Dateien auswählen",
+    "folderHint": "Einen ganzen Ordner senden",
     "browseDescription": "oder <link>durchsuchen</link> Sie Ihren Computer",
     "tapTo": "Tippen zum",
     "addMoreLink": "Hinzufügen",

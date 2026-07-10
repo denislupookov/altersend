@@ -51,6 +51,7 @@
     "connectionCode": "Connection code"
   },
   "files": {
+    "folder": "Folder",
     "count_one": "{{count}} file",
     "count_other": "{{count}} files",
     "photos": "Photos",

@@ -92,6 +92,9 @@
     "deviceOffline": "Dispositivo off-line — tente novamente"
   },
   "dropzone": {
+    "addTitle": "O que você quer adicionar?",
+    "filesHint": "Escolha um ou mais arquivos",
+    "folderHint": "Envie uma pasta inteira",
     "browseDescription": "ou <link>navegue</link> no seu computador",
     "tapTo": "Toque para",
     "addMoreLink": "adicionar mais",

@@ -51,6 +51,7 @@
     "connectionCode": "Codice di connessione"
   },
   "files": {
+    "folder": "Cartella",
     "count_one": "{{count}} file",
     "count_other": "{{count}} file",
     "photos": "Foto",

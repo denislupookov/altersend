@@ -92,6 +92,9 @@
     "deviceOffline": "裝置離線 — 請重試"
   },
   "dropzone": {
+    "addTitle": "要新增什麼？",
+    "filesHint": "選擇一個或多個檔案",
+    "folderHint": "傳送整個資料夾",
     "browseDescription": "或<link>瀏覽</link>你的電腦",
     "tapTo": "點一下",
     "addMoreLink": "繼續新增",

@@ -51,6 +51,7 @@
     "connectionCode": "连接代码"
   },
   "files": {
+    "folder": "文件夹",
     "count_one": "{{count}} 个文件",
     "count_other": "{{count}} 个文件",
     "photos": "照片",
