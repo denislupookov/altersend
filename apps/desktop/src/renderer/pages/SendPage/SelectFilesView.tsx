@@ -22,6 +22,7 @@ import {
   useTransferStore,
   type SendComposeMode
 } from '@altersend/domain'
+import { AddFilesModal } from '../../components'
 import { bridgeApi } from '../../api/bridgeApi'
 
 function readAllEntries(reader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
@@ -73,6 +74,9 @@ export function SelectFilesView({ mode = 'files' }: { mode?: SendComposeMode }) 
   const [isDropZoneDragging, setIsDropZoneDragging] = useState(false)
   const [selectionError, setSelectionError] = useState<string | null>(null)
   const [textInput, setTextInput] = useState('')
+  const [pickerModalOpen, setPickerModalOpen] = useState(false)
+
+  const splitPicker = bridgeApi.platform() !== 'darwin'
 
   const hasSelectedFiles = selectedFiles.length > 0
   const trimmedText = textInput.trim()
@@ -101,8 +105,8 @@ export function SelectFilesView({ mode = 'files' }: { mode?: SendComposeMode }) 
     return [type, sizeStr].filter(Boolean).join(' · ')
   }
 
-  const browse = async () => {
-    const selected = await bridgeApi.pickFiles()
+  const runPicker = async (mode: PickMode) => {
+    const selected = await bridgeApi.pickFiles(mode)
     if (!selected) return
 
     const normalizedFiles = normalizeSelectedFiles(selected, bridgeApi.getPathForFile)
@@ -111,6 +115,9 @@ export function SelectFilesView({ mode = 'files' }: { mode?: SendComposeMode }) 
       addSelectedFiles(normalizedFiles)
     }
   }
+
+  const pick = (mode: PickMode) =>
+    runPicker(mode).catch((err) => console.error('pickFiles failed', err))
 
   const onDrop = (event: React.DragEvent) => {
     event.preventDefault()
@@ -185,22 +192,32 @@ export function SelectFilesView({ mode = 'files' }: { mode?: SendComposeMode }) 
             }
           />
         ) : (
-          <FileDropZone
-            description={browseDescription}
-            hasFiles={hasSelectedFiles}
-            isDragging={isDropZoneDragging}
-            onClick={() => void browse()}
-            onDragLeave={(event) => {
-              event.preventDefault()
-              setIsDropZoneDragging(false)
-            }}
-            onDragOver={(event) => {
-              event.preventDefault()
-              setIsDropZoneDragging(true)
-            }}
-            onDrop={onDrop}
-            title={t('send:actions.dragAndDrop')}
-          />
+          <>
+            <FileDropZone
+              description={browseDescription}
+              hasFiles={hasSelectedFiles}
+              isDragging={isDropZoneDragging}
+              onClick={() => (splitPicker ? setPickerModalOpen(true) : pick('combined'))}
+              onDragLeave={(event) => {
+                event.preventDefault()
+                setIsDropZoneDragging(false)
+              }}
+              onDragOver={(event) => {
+                event.preventDefault()
+                setIsDropZoneDragging(true)
+              }}
+              onDrop={onDrop}
+              title={t('send:actions.dragAndDrop')}
+            />
+            <AddFilesModal
+              open={pickerModalOpen}
+              onClose={() => setPickerModalOpen(false)}
+              onSelect={(pickMode) => {
+                setPickerModalOpen(false)
+                pick(pickMode)
+              }}
+            />
+          </>
         )}
       </div>
 

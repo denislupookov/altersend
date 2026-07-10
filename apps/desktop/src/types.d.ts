@@ -53,8 +53,11 @@ declare global {
     ? Result
     : never
 
+  type PickMode = 'files' | 'folders' | 'combined'
+
   interface Bridge {
     pkg: () => { version: string }
+    platform: NodeJS.Platform
     startP2P: () => Promise<boolean>
     disconnectP2P: () => Promise<boolean>
     invokeTransfer: <T extends TransferMethod>(
@@ -62,7 +65,7 @@ declare global {
       ...args: TransferMethodArgs<T>
     ) => TransferMethodReturn<T>
     onTransferEvent: (cb: (message: RendererTransferEvent) => void) => () => void
-    pickFiles: () => Promise<PickedFile[] | null>
+    pickFiles: (mode?: PickMode) => Promise<PickedFile[] | null>
     pickDirectory: () => Promise<PickedFile | null>
     pickSaveFile: (defaultName: string) => Promise<PickedFile | null>
     getPathForFile: (file: File) => string

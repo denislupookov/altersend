@@ -87,6 +87,12 @@ async function collectFolderFiles(rootDir: string): Promise<PickedFile[]> {
   return files
 }
 
+const PICK_PROPERTIES: Record<PickMode, OpenDialogOptions['properties']> = {
+  files: ['openFile', 'multiSelections'],
+  folders: ['openDirectory', 'multiSelections'],
+  combined: ['openFile', 'openDirectory', 'multiSelections']
+}
+
 export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.on('pkg', (evt) => {
     evt.returnValue = runtime.metadata.pkg
@@ -109,12 +115,9 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     return runtime.disconnectWorker(filename)
   })
 
-  ipcMain.handle('app:pickFiles', async (evt) => {
+  ipcMain.handle('app:pickFiles', async (evt, mode?: PickMode) => {
     const parentWindow = BrowserWindow.fromWebContents(evt.sender) ?? undefined
-    const dialogOptions: OpenDialogOptions = {
-      title: 'Select files or folders to share',
-      properties: ['openFile', 'openDirectory', 'multiSelections']
-    }
+    const dialogOptions: OpenDialogOptions = { properties: PICK_PROPERTIES[mode ?? 'combined'] }
     const result = parentWindow
       ? await dialog.showOpenDialog(parentWindow, dialogOptions)
       : await dialog.showOpenDialog(dialogOptions)

@@ -43,8 +43,11 @@ export const bridgeApi = {
   onTransferEvent(cb: (message: RendererTransferEvent) => void) {
     return requireBridge().onTransferEvent(cb)
   },
-  pickFiles() {
-    return requireBridge().pickFiles()
+  platform(): NodeJS.Platform {
+    return hasBridge() ? requireBridge().platform : 'darwin'
+  },
+  pickFiles(mode?: PickMode) {
+    return requireBridge().pickFiles(mode)
   },
   pickDirectory() {
     return requireBridge().pickDirectory()

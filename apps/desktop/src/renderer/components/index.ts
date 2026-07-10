@@ -1,3 +1,4 @@
+export * from './AddFilesModal'
 export * from './InviteBanner'
 export * from './Modal'
 export * from './PairDeviceModal'

@@ -4,6 +4,7 @@ const P2P_WORKER = 'workers/main.js'
 
 contextBridge.exposeInMainWorld('bridge', {
   pkg: () => ipcRenderer.sendSync('pkg'),
+  platform: process.platform,
 
   startP2P: () => ipcRenderer.invoke('pear:startWorker', P2P_WORKER),
   disconnectP2P: () => ipcRenderer.invoke('pear:disconnectWorker', P2P_WORKER),
@@ -16,7 +17,7 @@ contextBridge.exposeInMainWorld('bridge', {
     return () => ipcRenderer.removeListener('pear:worker:event:' + P2P_WORKER, listener)
   },
 
-  pickFiles: () => ipcRenderer.invoke('app:pickFiles'),
+  pickFiles: (mode) => ipcRenderer.invoke('app:pickFiles', mode),
   pickDirectory: () => ipcRenderer.invoke('app:pickDirectory'),
   pickSaveFile: (defaultName) => {
     if (typeof defaultName !== 'string' || defaultName.length === 0 || defaultName.length > 255) {
