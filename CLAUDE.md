@@ -28,6 +28,11 @@ npm run components:storybook   # Storybook on port 6100
 # Multi-peer local testing (separate Electron instances sharing same machine)
 npm run desktop:dev:peer2
 npm run desktop:dev:peer3
+
+# CLI
+npm run cli:build               # build CLI (requires packages/core built first)
+npm run cli:dev                 # build and run CLI
+npm run cli:test                # run CLI tests
 ```
 
 Packages **must build in order**: `core` → `domain` → `components` → app. The top-level `npm run dev` / `desktop:build` scripts handle this automatically.

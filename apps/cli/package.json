@@ -1,0 +1,28 @@
+{
+  "name": "@altersend/cli",
+  "version": "1.2.0",
+  "description": "CLI for AlterSend P2P file transfer",
+  "upgrade": "pear://56qdfnt8tjywe14k7t6yhts6e9dppo7cupn4ot1ez95su3j3er6o",
+  "bin": {
+    "altersend": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "npm run build && node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@altersend/core": "1.2.0",
+    "b4a": "^1.8.0",
+    "paparam": "^1.10.0",
+    "pear-runtime": "^1.1.1",
+    "qrcode": "^1.5.4",
+    "which-runtime": "^1.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.4.0",
+    "@types/qrcode": "^1.5.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.8"
+  }
+}
