@@ -23,7 +23,10 @@ function recordPickedPath(senderId: number, p: string) {
 }
 
 function isUnder(filePath: string, dir: string): boolean {
-  return filePath === dir || filePath.startsWith(dir + path.sep) || filePath.startsWith(dir + '/')
+  const rel = path.relative(dir, filePath)
+  if (rel === '') return true
+  if (path.isAbsolute(rel)) return false
+  return rel !== '..' && !rel.startsWith(`..${path.sep}`)
 }
 
 async function isAllowedPath(senderId: number, filePath: string): Promise<boolean> {

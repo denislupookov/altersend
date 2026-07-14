@@ -28,12 +28,20 @@ async function readStored(): Promise<string | null> {
   }
 }
 
+function osDownloadsDir(): string | null {
+  try {
+    return app.getPath('downloads')
+  } catch {
+    return null
+  }
+}
+
 export async function getDownloadFolder(): Promise<string | null> {
   const saved = await readStored()
   if (saved && (await isDirectory(saved))) return saved
 
-  const fallback = app.getPath('downloads')
-  return (await isDirectory(fallback)) ? fallback : null
+  const fallback = osDownloadsDir()
+  return fallback && (await isDirectory(fallback)) ? fallback : null
 }
 
 export async function setDownloadFolder(folder: string): Promise<void> {
