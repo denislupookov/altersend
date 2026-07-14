@@ -5,7 +5,8 @@
   "sections": {
     "general": "General",
     "support": "Support",
-    "about": "About"
+    "about": "About",
+    "security": "Security"
   },
   "crashReports": {
     "label": "Crash reports",
@@ -18,7 +19,6 @@
     "fairUse": "The relay has limits on transfer size and how many transfers can run at once."
   },
   "rows": {
-    "security": "Security",
     "feedback": "Feedback",
     "feedbackHint": "Report a problem or suggest a feature",
     "discord": "Discord",
@@ -85,5 +85,13 @@
     "body": "Pair a device you use often and send to it instantly — no code to scan or type each time.",
     "pairButton": "Pair a Device",
     "skip": "Skip for now"
+  },
+  "downloads": {
+    "title": "Downloads",
+    "autoSaveLabel": "Save files to a folder",
+    "autoSaveDescription": "When off, you'll be asked where to save each transfer.",
+    "change": "Change…",
+    "chooseFolder": "Choose a folder…",
+    "changeFailed": "Couldn't save the download folder"
   }
 }

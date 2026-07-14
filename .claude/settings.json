@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(echo \"check:tokens exit=$?\")",
+      "Bash(echo \"lint       exit=$?\")",
+      "Bash(echo \"format     exit=$?\")",
+      "Bash(echo \"knip       exit=$?\")",
+      "Bash(echo \"typecheck  exit=$?\")"
+    ]
+  }
+}

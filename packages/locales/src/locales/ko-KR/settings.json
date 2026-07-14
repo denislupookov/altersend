@@ -5,7 +5,8 @@
   "sections": {
     "general": "일반",
     "support": "지원",
-    "about": "정보"
+    "about": "정보",
+    "security": "보안"
   },
   "crashReports": {
     "label": "충돌 보고서",
@@ -18,7 +19,6 @@
     "fairUse": "릴레이에는 전송 크기와 동시에 실행할 수 있는 전송 수에 제한이 있습니다."
   },
   "rows": {
-    "security": "보안",
     "feedback": "피드백",
     "feedbackHint": "문제 신고 또는 기능 제안",
     "discord": "Discord",
@@ -85,5 +85,13 @@
     "body": "자주 쓰는 기기를 페어링하면 매번 코드를 스캔하거나 입력하지 않고 바로 보낼 수 있습니다.",
     "pairButton": "기기 페어링",
     "skip": "나중에"
+  },
+  "downloads": {
+    "title": "다운로드",
+    "autoSaveLabel": "폴더에 저장",
+    "autoSaveDescription": "끄면 전송할 때마다 저장 위치를 묻습니다.",
+    "change": "변경…",
+    "chooseFolder": "폴더 선택…",
+    "changeFailed": "다운로드 폴더를 저장하지 못했습니다"
   }
 }

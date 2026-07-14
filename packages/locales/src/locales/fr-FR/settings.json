@@ -5,7 +5,8 @@
   "sections": {
     "general": "Général",
     "support": "Assistance",
-    "about": "À propos"
+    "about": "À propos",
+    "security": "Sécurité"
   },
   "crashReports": {
     "label": "Rapports d'erreur",
@@ -18,7 +19,6 @@
     "fairUse": "Le relais impose des limites sur la taille des transferts et sur le nombre de transferts simultanés."
   },
   "rows": {
-    "security": "Sécurité",
     "feedback": "Commentaires",
     "feedbackHint": "Signaler un problème ou suggérer une fonctionnalité",
     "discord": "Discord",
@@ -85,5 +85,13 @@
     "body": "Associez un appareil que vous utilisez souvent et envoyez-lui instantanément, sans scanner ni saisir de code à chaque fois.",
     "pairButton": "Associer un appareil",
     "skip": "Ignorer pour l’instant"
+  },
+  "downloads": {
+    "title": "Téléchargements",
+    "autoSaveLabel": "Enregistrer les fichiers dans un dossier",
+    "autoSaveDescription": "Si désactivé, un emplacement vous sera demandé à chaque transfert.",
+    "change": "Modifier…",
+    "chooseFolder": "Choisir un dossier…",
+    "changeFailed": "Impossible d'enregistrer le dossier de téléchargement"
   }
 }

@@ -5,7 +5,8 @@
   "sections": {
     "general": "通用",
     "support": "支持",
-    "about": "关于"
+    "about": "关于",
+    "security": "安全"
   },
   "crashReports": {
     "label": "崩溃报告",
@@ -18,7 +19,6 @@
     "fairUse": "中继对传输大小和同时进行的传输数量有限制。"
   },
   "rows": {
-    "security": "安全",
     "feedback": "反馈",
     "feedbackHint": "报告问题或建议功能",
     "discord": "Discord",
@@ -85,5 +85,13 @@
     "body": "配对常用设备，即可即时发送 — 无需每次扫描或输入代码。",
     "pairButton": "配对设备",
     "skip": "暂时跳过"
+  },
+  "downloads": {
+    "title": "下载",
+    "autoSaveLabel": "保存到文件夹",
+    "autoSaveDescription": "关闭后，每次传输都会询问保存位置。",
+    "change": "更改…",
+    "chooseFolder": "选择文件夹…",
+    "changeFailed": "无法保存下载文件夹"
   }
 }

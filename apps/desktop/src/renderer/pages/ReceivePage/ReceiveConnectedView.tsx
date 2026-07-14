@@ -3,6 +3,8 @@ import { Button, LinkRow, ReceivedTextRow, useTheme } from '@altersend/component
 import { ChevronRightIcon, DownloadIcon, FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
+import { useToast } from '../../components/Toast'
+import { isAskEveryTime } from '../../lifecycle/downloadLocationStorage'
 import {
   clearSession,
   createDirectoryDownloadRequests,
@@ -22,6 +24,11 @@ type FileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
 type TextOffer = Extract<IncomingFileOffer, { kind: 'text' }>
 type DownloadRow = ReturnType<typeof getDownloadRowDisplay>
 
+function toSafeFileName(name: string): string {
+  const base = name.split(/[/\\]/).pop() ?? ''
+  return base.replace(/\0/g, '').trim() || 'file'
+}
+
 function getDownloadStatusLabel(t: ReturnType<typeof useTranslation>['t'], row: DownloadRow) {
   switch (row.status.kind) {
     case 'saved':
@@ -38,6 +45,7 @@ function getDownloadStatusLabel(t: ReturnType<typeof useTranslation>['t'], row: 
 export function ReceiveConnectedView() {
   const { t } = useTranslation(['receive', 'common', 'errors'])
   const { theme } = useTheme()
+  const toast = useToast()
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const downloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const peerCount = useTransferStore((s) => s.peerCount)
@@ -95,30 +103,42 @@ export function ReceiveConnectedView() {
   const isDownloading = totals.activeCount > 0
   const allFilesDownloaded = hasDownloadableFiles && totals.completedCount === fileOffers.length
 
-  const downloadAll = async () => {
-    if (fileOffers.length === 0 || isDownloading) return
-
+  const downloadWithDialog = async () => {
     const isSingleLooseFile = rows.length === 1 && rows[0].kind === 'file'
 
     if (isSingleLooseFile) {
-      const selected = await bridgeApi.pickSaveFile(fileOffers[0].name)
+      const selected = await bridgeApi.pickSaveFile(toSafeFileName(fileOffers[0].name))
       if (!selected?.path) return
 
-      try {
-        await downloadFiles([createSingleDownloadRequest(fileOffers[0], selected.path)])
-      } catch (error) {
-        console.error('ReceiveConnectedView: single-file download failed', error)
-      }
+      await downloadFiles([createSingleDownloadRequest(fileOffers[0], selected.path)])
       return
     }
 
     const selectedDirectory = await bridgeApi.pickDirectory()
-    if (!selectedDirectory?.path) return
+    if (!selectedDirectory) return
+
+    await downloadFiles(createDirectoryDownloadRequests(fileOffers, selectedDirectory))
+  }
+
+  const downloadAll = async () => {
+    if (fileOffers.length === 0 || isDownloading) return
 
     try {
-      await downloadFiles(createDirectoryDownloadRequests(fileOffers, selectedDirectory.path))
+      if (isAskEveryTime()) {
+        await downloadWithDialog()
+        return
+      }
+
+      const folder = await bridgeApi.getDownloadFolder()
+      if (!folder) {
+        await downloadWithDialog()
+        return
+      }
+
+      await downloadFiles(createDirectoryDownloadRequests(fileOffers, folder))
     } catch (error) {
-      console.error('ReceiveConnectedView: directory download failed', error)
+      console.error('ReceiveConnectedView: download failed', error)
+      toast.show({ title: t('errors:transfer.downloadFailed'), variant: 'error' })
     }
   }
 
@@ -202,7 +222,7 @@ export function ReceiveConnectedView() {
             <Button
               disabled={isDownloading}
               icon={<DownloadIcon size={14} />}
-              onClick={() => void downloadAll()}
+              onClick={() => downloadAll().catch(console.error)}
               size='sm'
               variant='primary'
             >

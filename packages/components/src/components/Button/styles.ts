@@ -94,12 +94,12 @@ export const styles = css.create({
   },
   secondary: {
     backgroundColor: tokens.colorBackgroundSubtle,
-    borderColor: tokens.colorBorderPrimary,
+    borderColor: tokens.colorBorderStrong,
     color: tokens.colorTextPrimary,
     boxShadow: 'none',
     ':hover': {
       backgroundColor: tokens.colorSurfacePrimary,
-      borderColor: tokens.colorBorderStrong
+      borderColor: tokens.colorTextMuted
     },
     ':focus-visible': {
       outline: 'none',

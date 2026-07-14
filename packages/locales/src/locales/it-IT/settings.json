@@ -5,7 +5,8 @@
   "sections": {
     "general": "Generale",
     "support": "Supporto",
-    "about": "Informazioni"
+    "about": "Informazioni",
+    "security": "Sicurezza"
   },
   "crashReports": {
     "label": "Rapporti sugli incidenti",
@@ -18,7 +19,6 @@
     "fairUse": "Il relay ha limiti sulla dimensione dei trasferimenti e su quanti possono essere eseguiti contemporaneamente."
   },
   "rows": {
-    "security": "Sicurezza",
     "feedback": "Segnalazioni",
     "feedbackHint": "Segnala un problema o suggerisci una funzionalità",
     "discord": "Discord",
@@ -85,5 +85,13 @@
     "body": "Accoppia un dispositivo che usi spesso e invia all’istante, senza scansionare o digitare un codice ogni volta.",
     "pairButton": "Accoppia un dispositivo",
     "skip": "Salta per ora"
+  },
+  "downloads": {
+    "title": "Download",
+    "autoSaveLabel": "Salva i file in una cartella",
+    "autoSaveDescription": "Se disattivato, ti verrà chiesto dove salvare ogni trasferimento.",
+    "change": "Cambia…",
+    "chooseFolder": "Scegli una cartella…",
+    "changeFailed": "Impossibile salvare la cartella dei download"
   }
 }

@@ -5,7 +5,8 @@
   "sections": {
     "general": "一般",
     "support": "サポート",
-    "about": "情報"
+    "about": "情報",
+    "security": "セキュリティ"
   },
   "crashReports": {
     "label": "クラッシュレポート",
@@ -18,7 +19,6 @@
     "fairUse": "リレーには、転送サイズと同時に実行できる転送数に制限があります。"
   },
   "rows": {
-    "security": "セキュリティ",
     "feedback": "フィードバック",
     "feedbackHint": "問題を報告または機能を提案",
     "discord": "Discord",
@@ -85,5 +85,13 @@
     "body": "よく使うデバイスをペアリングすれば、毎回コードをスキャンしたり入力したりせずにすぐ送れます。",
     "pairButton": "デバイスをペアリング",
     "skip": "今はスキップ"
+  },
+  "downloads": {
+    "title": "ダウンロード",
+    "autoSaveLabel": "フォルダに保存する",
+    "autoSaveDescription": "オフの場合、転送ごとに保存先を確認します。",
+    "change": "変更…",
+    "chooseFolder": "フォルダを選択…",
+    "changeFailed": "ダウンロードフォルダを保存できませんでした"
   }
 }

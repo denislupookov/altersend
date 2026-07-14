@@ -5,7 +5,8 @@
   "sections": {
     "general": "Allgemein",
     "support": "Unterstützung",
-    "about": "Info"
+    "about": "Info",
+    "security": "Sicherheit"
   },
   "crashReports": {
     "label": "Absturzberichte",
@@ -18,7 +19,6 @@
     "fairUse": "Das Relay hat Grenzen für die Übertragungsgröße und dafür, wie viele Übertragungen gleichzeitig laufen können."
   },
   "rows": {
-    "security": "Sicherheit",
     "feedback": "Rückmeldung",
     "feedbackHint": "Melden Sie ein Problem oder schlagen Sie eine Funktion vor",
     "discord": "Discord",
@@ -85,5 +85,13 @@
     "body": "Koppeln Sie ein häufig genutztes Gerät und senden Sie sofort – ohne jedes Mal einen Code zu scannen oder einzugeben.",
     "pairButton": "Gerät koppeln",
     "skip": "Vorerst überspringen"
+  },
+  "downloads": {
+    "title": "Downloads",
+    "autoSaveLabel": "Dateien in einem Ordner speichern",
+    "autoSaveDescription": "Wenn deaktiviert, wirst du bei jeder Übertragung nach dem Speicherort gefragt.",
+    "change": "Ändern…",
+    "chooseFolder": "Ordner auswählen…",
+    "changeFailed": "Download-Ordner konnte nicht gespeichert werden"
   }
 }

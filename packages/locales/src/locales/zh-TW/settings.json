@@ -5,7 +5,8 @@
   "sections": {
     "general": "一般",
     "support": "支援",
-    "about": "關於"
+    "about": "關於",
+    "security": "安全"
   },
   "crashReports": {
     "label": "崩潰報告",
@@ -18,7 +19,6 @@
     "fairUse": "中繼對傳輸大小和同時進行的傳輸數量有限制。"
   },
   "rows": {
-    "security": "安全",
     "feedback": "意見回饋",
     "feedbackHint": "報告問題或建議功能",
     "discord": "Discord",
@@ -85,5 +85,13 @@
     "body": "配對常用裝置即可即時傳送 — 無需每次掃描或輸入代碼。",
     "pairButton": "配對裝置",
     "skip": "暫時跳過"
+  },
+  "downloads": {
+    "title": "下載",
+    "autoSaveLabel": "儲存至資料夾",
+    "autoSaveDescription": "關閉後，每次傳輸都會詢問儲存位置。",
+    "change": "變更…",
+    "chooseFolder": "選擇資料夾…",
+    "changeFailed": "無法儲存下載資料夾"
   }
 }

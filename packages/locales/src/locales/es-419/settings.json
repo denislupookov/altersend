@@ -5,7 +5,8 @@
   "sections": {
     "general": "General",
     "support": "Soporte",
-    "about": "Acerca de"
+    "about": "Acerca de",
+    "security": "Seguridad"
   },
   "crashReports": {
     "label": "Informes de fallos",
@@ -18,7 +19,6 @@
     "fairUse": "El relé tiene límites en el tamaño de las transferencias y en cuántas pueden ejecutarse a la vez."
   },
   "rows": {
-    "security": "Seguridad",
     "feedback": "Comentarios",
     "feedbackHint": "Informar un problema o sugerir una característica",
     "discord": "Discord",
@@ -85,5 +85,13 @@
     "body": "Empareja un dispositivo que uses a menudo y envíale al instante, sin escanear ni escribir un código cada vez.",
     "pairButton": "Emparejar un dispositivo",
     "skip": "Omitir por ahora"
+  },
+  "downloads": {
+    "title": "Descargas",
+    "autoSaveLabel": "Guardar archivos en una carpeta",
+    "autoSaveDescription": "Si está desactivado, se te preguntará dónde guardar cada transferencia.",
+    "change": "Cambiar…",
+    "chooseFolder": "Elegir una carpeta…",
+    "changeFailed": "No se pudo guardar la carpeta de descargas"
   }
 }
