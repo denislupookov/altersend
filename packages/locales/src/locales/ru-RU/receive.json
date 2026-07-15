@@ -14,14 +14,10 @@
       "title": "Файлы доступны",
       "description": "{{count}} {{fileLabel}} · {{size}}",
       "description_one": "{{count}} файл · {{size}}",
-      "description_few": "{{count}} файла · {{size}}",
-      "description_many": "{{count}} файлов · {{size}}",
       "description_other": "{{count}} файла · {{size}}"
     },
     "completed": {
       "title_one": "Файл получен",
-      "title_few": "Файла получено",
-      "title_many": "Файлов получено",
       "title_other": "Файла получено",
       "downloadsComplete": "Загрузки завершены"
     },
@@ -124,16 +120,10 @@
   },
   "summary": {
     "receivedCount_one": "Получено {{completed}} из {{count}} файла",
-    "receivedCount_few": "Получено {{completed}} из {{count}} файлов",
-    "receivedCount_many": "Получено {{completed}} из {{count}} файлов",
     "receivedCount_other": "Получено {{completed}} из {{count}} файла",
     "savedToPhotos_one": "Сохранено в фото",
-    "savedToPhotos_few": "{{count}} сохранено в фото",
-    "savedToPhotos_many": "{{count}} сохранено в фото",
     "savedToPhotos_other": "{{count}} сохранено в фото",
     "savedInFiles_one": "Сохранено в файлах",
-    "savedInFiles_few": "{{count}} сохранено в файлах",
-    "savedInFiles_many": "{{count}} сохранено в файлах",
     "savedInFiles_other": "{{count}} сохранено в файлах",
     "tapToView": "Нажмите для просмотра",
     "saved": "сохранено",
@@ -141,8 +131,6 @@
     "receivedProgress": "{{completed}} из {{count}} получено",
     "senderLeftBeforeFinishing": "Отправитель вышел до завершения.",
     "filesSaved_one": "{{count}} файл сохранён",
-    "filesSaved_few": "{{count}} файла сохранено",
-    "filesSaved_many": "{{count}} файлов сохранено",
     "filesSaved_other": "{{count}} файла сохранено"
   }
 }

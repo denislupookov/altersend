@@ -53,8 +53,6 @@
   "files": {
     "folder": "Папка",
     "count_one": "{{count}} файл",
-    "count_few": "{{count}} файла",
-    "count_many": "{{count}} файлов",
     "count_other": "{{count}} файла",
     "photos": "Фото",
     "files": "Файлы",
@@ -63,12 +61,8 @@
     "alterSendFolder": "Папка AlterSend",
     "text": "Текст",
     "items_one": "{{count}} элемент",
-    "items_few": "{{count}} элемента",
-    "items_many": "{{count}} элементов",
     "items_other": "{{count}} элемента",
     "texts_one": "{{count}} текст",
-    "texts_few": "{{count}} текста",
-    "texts_many": "{{count}} текстов",
     "texts_other": "{{count}} текста",
     "filesGeneric": "файлы"
   },
@@ -93,8 +87,6 @@
   },
   "units": {
     "chars_one": "{{count}} символ",
-    "chars_few": "{{count}} символа",
-    "chars_many": "{{count}} символов",
     "chars_other": "{{count}} символа"
   }
 }

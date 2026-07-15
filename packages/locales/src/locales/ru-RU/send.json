@@ -19,8 +19,6 @@
   },
   "actions": {
     "sendFiles_one": "Отправить {{count}} файл",
-    "sendFiles_few": "Отправить {{count}} файла",
-    "sendFiles_many": "Отправить {{count}} файлов",
     "sendFiles_other": "Отправить {{count}} файла",
     "addFiles": "Добавить файлы",
     "addMoreFiles": "Добавить ещё файлы",
@@ -32,12 +30,8 @@
     "pickFiles": "Файлы",
     "typeSnippet": "Введите или вставьте текст…",
     "sendTexts_one": "Отправить {{count}} текст",
-    "sendTexts_few": "Отправить {{count}} текста",
-    "sendTexts_many": "Отправить {{count}} текстов",
     "sendTexts_other": "Отправить {{count}} текста",
     "sendItems_one": "Отправить {{count}} элемент",
-    "sendItems_few": "Отправить {{count}} элемента",
-    "sendItems_many": "Отправить {{count}} элементов",
     "sendItems_other": "Отправить {{count}} элемента"
   },
   "status": {
@@ -82,19 +76,13 @@
   },
   "preparing": {
     "uploadedCount_one": "Загружено {{completed}} из {{count}} файла",
-    "uploadedCount_few": "Загружено {{completed}} из {{count}} файлов",
-    "uploadedCount_many": "Загружено {{completed}} из {{count}} файлов",
     "uploadedCount_other": "Загружено {{completed}} из {{count}} файла"
   },
   "peer": {
     "completedDone_one": "{{count}} готово",
-    "completedDone_few": "{{count}} готово",
-    "completedDone_many": "{{count}} готово",
     "completedDone_other": "{{count}} готово",
     "devices": "Устройства",
     "connectedCount_one": "{{count}} подключено",
-    "connectedCount_few": "{{count}} подключено",
-    "connectedCount_many": "{{count}} подключено",
     "connectedCount_other": "{{count}} подключено",
     "pair": "Сопряжение",
     "requested": "Запрошено…",
