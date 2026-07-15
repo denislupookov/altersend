@@ -1,0 +1,12 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "AlterSend",
+    "NSCameraUsageDescription": "AlterSend использует вашу камеру для сканирования QR-кодов подключения.",
+    "NSLocalNetworkUsageDescription": "AlterSend использует вашу локальную сеть для обнаружения ближайших устройств для одноранговой передачи файлов.",
+    "NSPhotoLibraryUsageDescription": "AlterSend читает вашу библиотеку фотографий, чтобы вы могли выбирать фото и видео для отправки на другое устройство.",
+    "NSPhotoLibraryAddUsageDescription": "AlterSend сохраняет полученные изображения и видео в вашу библиотеку фотографий."
+  },
+  "android": {
+    "app_name": "AlterSend"
+  }
+}

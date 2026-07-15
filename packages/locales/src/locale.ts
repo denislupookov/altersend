@@ -22,6 +22,7 @@ export type SupportedLocaleCode =
   | 'pt-BR'
   | 'es-419'
   | 'es-ES'
+  | 'ru-RU'
 
 export type LocalePreference = typeof SYSTEM_LOCALE_PREFERENCE | SupportedLocaleCode
 
@@ -124,6 +125,13 @@ export const SUPPORTED_LOCALES: SupportedLocale[] = [
     nativeName: '繁體中文',
     dir: 'ltr',
     fontFamily: 'traditionalChinese'
+  },
+  {
+    code: 'ru-RU',
+    englishName: 'Russian',
+    nativeName: 'Русский',
+    dir: 'ltr',
+    fontFamily: 'latin'
   }
 ]
 
@@ -178,6 +186,7 @@ function resolveSystemLocaleTag(tag: string): SupportedLocaleCode | null {
   if (lower === 'fr' || lower.startsWith('fr-')) return 'fr-FR'
   if (lower === 'de' || lower.startsWith('de-')) return 'de-DE'
   if (lower === 'it' || lower.startsWith('it-')) return 'it-IT'
+  if (lower === 'ru' || lower.startsWith('ru-')) return 'ru-RU'
   if (lower === 'pt' || lower.startsWith('pt-')) return 'pt-BR'
   if (lower === 'es' || lower.startsWith('es-')) {
     return lower === 'es-es' ? 'es-ES' : 'es-419'

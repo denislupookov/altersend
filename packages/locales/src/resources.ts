@@ -12,6 +12,7 @@ import es_419 from './locales/es-419'
 import es_ES from './locales/es-ES'
 import en_GB from './locales/en-GB'
 import ja_JP from './locales/ja-JP'
+import ru_RU from './locales/ru-RU'
 
 export const RESOURCES: Record<SupportedLocaleCode, Resources> = {
   'en-US': en_US,
@@ -25,5 +26,6 @@ export const RESOURCES: Record<SupportedLocaleCode, Resources> = {
   'es-419': es_419,
   'es-ES': es_ES,
   'en-GB': en_GB,
-  'ja-JP': ja_JP
+  'ja-JP': ja_JP,
+  'ru-RU': ru_RU
 }

@@ -20,7 +20,8 @@ const desktopLocaleDirs = {
   'it-IT': 'it.lproj',
   'pt-BR': 'pt-BR.lproj',
   'es-419': 'es-419.lproj',
-  'es-ES': 'es.lproj'
+  'es-ES': 'es.lproj',
+  'ru-RU': 'ru.lproj'
 } as const
 
 function readJson(path: URL) {
