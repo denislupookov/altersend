@@ -193,11 +193,76 @@ describe('receiver robustness', () => {
       chunkSize: CHUNK_64K
     })
     for (const { header, data } of [...list].reverse()) deliverChunk(header, data)
-    deliverMessage({ type: 'complete', transferId: 't', fileHash: null })
+    deliverMessage({ type: 'complete', transferId: 't', fileHash: fileRoot(input) })
 
     await done
     expect(sameBytes(await readOut(dst), input)).toBe(true)
     expect(sent.some((m) => m.type === 'ack')).toBe(true)
+  })
+
+  it('rejects a non-integer chunk index', async () => {
+    const input = pseudoRandom(200 * 1024)
+    const dst = join(dir, 'dst.bin')
+    const { list } = frames(input, 't')
+    const { channel, deliverMessage, deliverChunk } = controlledChannel()
+
+    const receiver = new ReceiverSession(new DiskWriter(dst), channel, { transferId: 't' })
+    const done = receiver.receive()
+
+    deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
+    deliverChunk({ ...list[0].header, index: 1.5 }, list[0].data)
+
+    await expect(done).rejects.toThrow(/out of range/)
+  })
+
+  it('tells the peer to cancel when it fails locally', async () => {
+    const input = pseudoRandom(200 * 1024)
+    const dst = join(dir, 'dst.bin')
+    const { list } = frames(input, 't')
+    const { channel, sent, deliverMessage, deliverChunk } = controlledChannel()
+
+    const receiver = new ReceiverSession(new DiskWriter(dst), channel, { transferId: 't' })
+    const done = receiver.receive()
+
+    deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
+    const corrupted = list[0].data.slice()
+    corrupted[0] ^= 0xff
+    deliverChunk(list[0].header, corrupted)
+
+    await expect(done).rejects.toThrow(/hash verification/)
+    expect(sent.some((m) => m.type === 'cancel')).toBe(true)
+  })
+
+  it('does not echo a cancel back to the peer that sent it', async () => {
+    const dst = join(dir, 'dst.bin')
+    const { channel, sent, deliverMessage } = controlledChannel()
+
+    const receiver = new ReceiverSession(new DiskWriter(dst), channel, { transferId: 't' })
+    const done = receiver.receive()
+
+    deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: 200 * 1024,
+      chunkSize: CHUNK_64K
+    })
+    deliverMessage({ type: 'cancel', transferId: 't', reason: 'peer went away' })
+
+    await expect(done).rejects.toThrow(/peer went away/)
+    expect(sent.some((m) => m.type === 'cancel')).toBe(false)
   })
 
   it('rejects a chunk that fails hash verification', async () => {
@@ -291,6 +356,49 @@ describe('resume', () => {
 
     await done
     expect(sameBytes(await readOut(dst), input)).toBe(true)
+  })
+
+  it('rejects a resume whose complete omits the file hash', async () => {
+    const input = pseudoRandom(200 * 1024)
+    const dst = join(dir, 'dst.bin')
+    const { list, total } = frames(input, 't')
+
+    const first = controlledChannel()
+    const receiver1 = new ReceiverSession(new DiskWriter(dst), first.channel, { transferId: 't' })
+    receiver1.receive().catch(() => {})
+    first.deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
+    first.deliverChunk(list[0].header, list[0].data)
+    await waitUntil(() => (receiver1.received?.count() ?? 0) === 1)
+    const resumeBits = receiver1.received!.serialize().slice()
+
+    const second = controlledChannel()
+    const receiver2 = new ReceiverSession(new DiskWriter(dst), second.channel, {
+      transferId: 't',
+      resumeBits
+    })
+    const done = receiver2.receive()
+    second.deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
+    await waitUntil(() => second.sent.some((m) => m.type === 'need'))
+    for (let i = 1; i < total; i++) second.deliverChunk(list[i].header, list[i].data)
+    second.deliverMessage({
+      type: 'complete',
+      transferId: 't',
+      fileHash: null as unknown as string
+    })
+
+    await expect(done).rejects.toThrow(/Missing file hash/)
   })
 
   it('fails a resume whose partial file was corrupted, leaving no output', async () => {

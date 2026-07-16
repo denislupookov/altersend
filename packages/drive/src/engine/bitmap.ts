@@ -19,12 +19,12 @@ export class Bitmap {
 
   get(index: number): boolean {
     if (index < 0 || index >= this.size) return false
-    return (this.bits[index >> 3] & (1 << (index & 7))) !== 0
+    return (this.bits[Math.floor(index / 8)] & (1 << (index & 7))) !== 0
   }
 
   set(index: number): void {
     if (index < 0 || index >= this.size) throw new Error('Bitmap index out of range')
-    const byte = index >> 3
+    const byte = Math.floor(index / 8)
     const mask = 1 << (index & 7)
     if ((this.bits[byte] & mask) === 0) {
       this.bits[byte] |= mask

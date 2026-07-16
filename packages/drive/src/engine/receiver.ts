@@ -64,7 +64,9 @@ export class ReceiverSession {
         this.enqueue(() => this.onComplete(message.fileHash))
         break
       case 'cancel':
-        this.enqueue(() => this.fail(new Error(message.reason ?? 'Transfer cancelled by sender')))
+        this.enqueue(() =>
+          this.fail(new Error(message.reason ?? 'Transfer cancelled by sender'), false)
+        )
         break
     }
   }
@@ -76,11 +78,6 @@ export class ReceiverSession {
   private async onStart(size: number, chunkSize: number): Promise<void> {
     if (this.settled) return
     if (!this.validGeometry(size, chunkSize)) {
-      this.channel.send({
-        type: 'cancel',
-        transferId: this.transferId!,
-        reason: 'Rejected transfer geometry'
-      })
       throw new Error(`Rejected transfer geometry: size=${size} chunkSize=${chunkSize}`)
     }
     this.size = size
@@ -108,7 +105,7 @@ export class ReceiverSession {
     if (header.transferId !== this.transferId) return
     const bitmap = this.bitmap
     if (!bitmap) throw new Error('Received chunk before start')
-    if (header.index < 0 || header.index >= bitmap.size) {
+    if (!Number.isInteger(header.index) || header.index < 0 || header.index >= bitmap.size) {
       throw new Error(`Chunk index ${header.index} out of range`)
     }
     if (bitmap.get(header.index)) return
@@ -136,7 +133,8 @@ export class ReceiverSession {
       throw new Error(`Transfer incomplete: ${bitmap.count()}/${bitmap.size} chunks`)
     }
 
-    if (fileHash && (this.opts.verifyFullFile || this.resumed)) {
+    if (this.opts.verifyFullFile || this.resumed) {
+      if (!fileHash) throw new Error('Missing file hash: cannot verify the assembled file')
       await this.verifyFullFile(fileHash)
     }
 
@@ -160,9 +158,14 @@ export class ReceiverSession {
     if (root.digest() !== expected) throw new Error('Full-file hash mismatch')
   }
 
-  private async fail(err: Error): Promise<void> {
+  private async fail(err: Error, notifyPeer = true): Promise<void> {
     if (this.settled) return
     this.settled = true
+    if (notifyPeer && this.transferId !== null) {
+      try {
+        this.channel.send({ type: 'cancel', transferId: this.transferId })
+      } catch {}
+    }
     try {
       await this.writer.abort()
     } catch {}

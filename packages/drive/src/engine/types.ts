@@ -51,7 +51,7 @@ export interface NeedMessage {
 export interface CompleteMessage {
   type: 'complete'
   transferId: string
-  fileHash: string | null
+  fileHash: string
 }
 
 export interface AckMessage {

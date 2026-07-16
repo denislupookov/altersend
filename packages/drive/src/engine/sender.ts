@@ -23,6 +23,7 @@ export class SenderSession {
   private totalChunks = 0
   private started = false
   private sending = false
+  private settled = false
   private settle!: { resolve: (savedTo: string) => void; reject: (err: Error) => void }
 
   constructor(reader: ChunkReader, channel: DriveChannel, opts: SenderOptions) {
@@ -30,6 +31,9 @@ export class SenderSession {
     this.channel = channel
     this.opts = opts
     this.highWater = opts.highWaterMark ?? DEFAULT_HIGH_WATER
+    if (!Number.isFinite(this.highWater) || this.highWater < 0) {
+      throw new RangeError('highWaterMark must be a finite non-negative number')
+    }
     this.done = new Promise<string>((resolve, reject) => {
       this.settle = { resolve, reject }
     })
@@ -62,10 +66,12 @@ export class SenderSession {
         this.sendChunks(message.indices).catch((err) => this.fail(err))
         break
       case 'ack':
+        if (this.settled) break
+        this.settled = true
         this.settle.resolve(message.savedTo)
         break
       case 'cancel':
-        this.fail(new Error(message.reason ?? 'Transfer cancelled by receiver'))
+        this.fail(new Error(message.reason ?? 'Transfer cancelled by receiver'), false)
         break
     }
   }
@@ -85,11 +91,6 @@ export class SenderSession {
     this.sending = true
 
     if (!this.validIndices(indices)) {
-      this.channel.send({
-        type: 'cancel',
-        transferId: this.opts.transferId,
-        reason: 'Rejected chunk request'
-      })
       this.fail(new Error('Rejected invalid chunk request'))
       return
     }
@@ -134,7 +135,14 @@ export class SenderSession {
     }
   }
 
-  private fail(err: Error): void {
+  private fail(err: Error, notifyPeer = true): void {
+    if (this.settled) return
+    this.settled = true
+    if (notifyPeer) {
+      try {
+        this.channel.send({ type: 'cancel', transferId: this.opts.transferId })
+      } catch {}
+    }
     this.settle.reject(err)
   }
 
