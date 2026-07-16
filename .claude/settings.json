@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(node -e \"const p=require\\('/Users/denislupookov/altersend-desktop/node_modules/hyperswarm/package.json'\\); console.log\\(JSON.stringify\\(p.dependencies,null,1\\)\\)\")",
+      "Bash(node -e \"const p=require\\('/Users/denislupookov/altersend-desktop/node_modules/hyperdht/package.json'\\); console.log\\(JSON.stringify\\(p.dependencies,null,1\\)\\)\")",
+      "Bash(node -e \"const p=require\\('/Users/denislupookov/altersend-desktop/node_modules/pear-runtime/package.json'\\); console.log\\('name',p.name,'ver',p.version\\); console.log\\('deps',JSON.stringify\\(p.dependencies||{}\\)\\)\")",
+      "Bash(curl -s https://api.github.com/repos/holepunchto/hyperswarm-dht-relay/contents)",
+      "Bash(python3 -c \"import json,sys; [print\\(f['path']\\) for f in json.load\\(sys.stdin\\)]\")",
+      "Bash(curl -s https://api.github.com/repos/holepunchto/hyperswarm-dht-relay/contents/lib)",
+      "Bash(curl -s https://raw.githubusercontent.com/holepunchto/hyperswarm-dht-relay/main/lib/node.js)",
+      "Bash(curl -s https://raw.githubusercontent.com/holepunchto/hyperswarm-secret-stream/main/index.js)",
+      "Bash(curl -s https://raw.githubusercontent.com/holepunchto/hyperswarm-secret-stream/main/lib/handshake.js)",
+      "Bash(tmutil listlocalsnapshots *)",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(node --input-type=module -e \"import\\('@altersend/drive'\\).then\\(m => console.log\\('root →', Object.keys\\(m\\).sort\\(\\).join\\(', '\\)\\)\\)\")",
+      "Bash(node --conditions=browser --input-type=module -e \"import\\('@altersend/drive'\\).then\\(m => console.log\\('browser root →', Object.keys\\(m\\).sort\\(\\).join\\(', '\\)\\)\\)\")",
+      "Bash(node --input-type=module -e \"import\\('@altersend/drive'\\).then\\(m => console.log\\('node root:', Object.keys\\(m\\).length, 'exports incl Drive:', 'Drive' in m\\)\\)\")",
+      "Bash(node --conditions=browser --input-type=module -e \"import\\('@altersend/drive'\\).then\\(m => console.log\\('browser root:', Object.keys\\(m\\).length, 'exports, Drive present:', 'Drive' in m\\)\\)\")",
+      "Bash(rm adapters/fs.ts adapters/memory.ts)",
+      "Bash(sed -i '' -e 's#import { FsReader, FsWriter } from '\\\\''../adapters/fs'\\\\''#import { DiskReader, DiskWriter } from '\\\\''../adapters/disk'\\\\''#' -e 's/new FsReader/new DiskReader/g' -e 's/new FsWriter/new DiskWriter/g' -e 's/an FsReader/a DiskReader/g' -e 's/an FsWriter/a DiskWriter/g' api/drive.ts)",
+      "Bash(sed -i '' \"s#export \\\\* from './adapters/fs'#export * from './adapters/disk'#\" native.ts)",
+      "Bash(sed -i '' \"s#memory://sink#memory://writer#g\" engine/loopback.test.ts)",
+      "Bash(node --input-type=module -e \"import\\('@altersend/drive'\\).then\\(m => console.log\\('node root: Drive', 'Drive' in m, '| DiskReader', 'DiskReader' in m\\)\\)\")",
+      "Bash(node --conditions=browser --input-type=module -e \"import\\('@altersend/drive'\\).then\\(m => console.log\\('browser root: Drive', 'Drive' in m, '\\(should be false\\)'\\)\\)\")",
+      "Bash(node --input-type=module -e \"import\\('@altersend/drive/testing'\\).then\\(m => console.log\\('testing export:', Object.keys\\(m\\).join\\(', '\\)\\)\\)\")",
+      "Bash(mv adapters/disk/reader.ts adapters/disk-reader.ts)",
+      "Bash(mv adapters/disk/writer.ts adapters/disk-writer.ts)",
+      "Bash(rm adapters/disk/index.ts)",
+      "Bash(rmdir adapters/disk)",
+      "Bash(mkdir -p testing)",
+      "Bash(node --input-type=module -e \"import\\('@altersend/drive'\\).then\\(m => console.log\\('node root:', 'Drive' in m, 'DiskReader' in m, '| memory present:', 'MemoryReader' in m\\)\\)\")",
+      "Bash(node --conditions=browser --input-type=module -e \"import\\('@altersend/drive'\\).then\\(m => console.log\\('browser root: Drive', 'Drive' in m\\)\\)\")",
+      "Bash(mv test/chunker.test.ts  src/engine/chunker.test.ts)",
+      "Bash(mv test/hash.test.ts     src/engine/hash.test.ts)",
+      "Bash(mv test/bitmap.test.ts   src/engine/bitmap.test.ts)",
+      "Bash(mv test/loopback.test.ts src/engine/loopback.test.ts)",
+      "Bash(mv test/drive.test.ts    src/api/drive.test.ts)"
+    ]
+  }
+}
