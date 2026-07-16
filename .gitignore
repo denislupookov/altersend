@@ -54,6 +54,9 @@ yarn-error.log*
 # Internal — not for the public repo
 app-marketing-context.md
 
+# Local tooling config
+.claude/
+
 # Electron
 release
 apps/desktop/dist

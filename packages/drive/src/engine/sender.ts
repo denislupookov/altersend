@@ -94,8 +94,7 @@ export class SenderSession {
       return
     }
 
-    const inOrderFull =
-      indices.length === this.totalChunks && indices.every((idx, i) => idx === i)
+    const inOrderFull = indices.length === this.totalChunks && indices.every((idx, i) => idx === i)
     const root = inOrderFull ? createFileHasher() : null
 
     let sentBytes = 0

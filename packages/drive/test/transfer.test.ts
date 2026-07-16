@@ -25,7 +25,9 @@ describe('end-to-end transfer', () => {
     await writeFile(src, input)
 
     const [senderChannel, receiverChannel] = createChannelPair()
-    const receiver = new ReceiverSession(new DiskWriter(dst), receiverChannel, { transferId: 'e2e' })
+    const receiver = new ReceiverSession(new DiskWriter(dst), receiverChannel, {
+      transferId: 'e2e'
+    })
     const sender = new SenderSession(new DiskReader(src), senderChannel, {
       transferId: 'e2e',
       name: 'output.bin'

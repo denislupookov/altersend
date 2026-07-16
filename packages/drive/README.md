@@ -58,11 +58,11 @@ arrival. `fileHash` is a hash over the chunk hashes.
 
 The engine imports no filesystem or socket. It drives three interfaces:
 
-| Interface      | Native            | Browser (not built)           |
-| -------------- | ----------------- | ----------------------------- |
-| `ChunkReader`  | `bare-fs` pread   | `File.slice().arrayBuffer()`  |
-| `ChunkWriter`  | `bare-fs` pwrite  | File System Access API / OPFS |
-| `DriveChannel` | Protomux on UDX   | WebSocket                     |
+| Interface      | Native           | Browser (not built)           |
+| -------------- | ---------------- | ----------------------------- |
+| `ChunkReader`  | `bare-fs` pread  | `File.slice().arrayBuffer()`  |
+| `ChunkWriter`  | `bare-fs` pwrite | File System Access API / OPFS |
+| `DriveChannel` | Protomux on UDX  | WebSocket                     |
 
 This build ships `DiskReader` / `DiskWriter` on `node:fs`; `bare-fs` has the same
 `FileHandle` API, so the worklet swaps the import. The root export resolves to an

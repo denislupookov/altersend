@@ -115,7 +115,9 @@ describe('full sender ↔ receiver loopback', () => {
       await writeFile(src, input)
 
       const [senderChannel, receiverChannel] = createChannelPair()
-      const receiver = new ReceiverSession(new DiskWriter(dst), receiverChannel, { transferId: 't' })
+      const receiver = new ReceiverSession(new DiskWriter(dst), receiverChannel, {
+        transferId: 't'
+      })
       const sender = new SenderSession(new DiskReader(src), senderChannel, {
         transferId: 't',
         name: 'file.bin'
@@ -183,7 +185,13 @@ describe('receiver robustness', () => {
     const receiver = new ReceiverSession(new DiskWriter(dst), channel, { transferId: 't' })
     const done = receiver.receive()
 
-    deliverMessage({ type: 'start', transferId: 't', name: 'f', size: input.length, chunkSize: CHUNK_64K })
+    deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
     for (const { header, data } of [...list].reverse()) deliverChunk(header, data)
     deliverMessage({ type: 'complete', transferId: 't', fileHash: null })
 
@@ -201,7 +209,13 @@ describe('receiver robustness', () => {
     const receiver = new ReceiverSession(new DiskWriter(dst), channel, { transferId: 't' })
     const done = receiver.receive()
 
-    deliverMessage({ type: 'start', transferId: 't', name: 'f', size: input.length, chunkSize: CHUNK_64K })
+    deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
     const corrupted = list[0].data.slice()
     corrupted[0] ^= 0xff
     deliverChunk(list[0].header, corrupted)
@@ -219,7 +233,13 @@ describe('receiver robustness', () => {
     const receiver = new ReceiverSession(new DiskWriter(dst), channel, { transferId: 't' })
     const done = receiver.receive()
 
-    deliverMessage({ type: 'start', transferId: 't', name: 'f', size: input.length, chunkSize: CHUNK_64K })
+    deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
     deliverChunk(list[0].header, list[0].data.subarray(0, 10))
 
     await expect(done).rejects.toThrow(/length/)
@@ -235,7 +255,13 @@ describe('resume', () => {
     const first = controlledChannel()
     const receiver1 = new ReceiverSession(new DiskWriter(dst), first.channel, { transferId: 't' })
     receiver1.receive().catch(() => {})
-    first.deliverMessage({ type: 'start', transferId: 't', name: 'f', size: input.length, chunkSize: CHUNK_64K })
+    first.deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
     first.deliverChunk(list[0].header, list[0].data)
     first.deliverChunk(list[1].header, list[1].data)
     await waitUntil(() => (receiver1.received?.count() ?? 0) === 2)
@@ -248,7 +274,13 @@ describe('resume', () => {
       resumeBits
     })
     const done = receiver2.receive()
-    second.deliverMessage({ type: 'start', transferId: 't', name: 'f', size: input.length, chunkSize: CHUNK_64K })
+    second.deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
     await waitUntil(() => second.sent.some((m) => m.type === 'need'))
 
     const need = second.sent.find((m): m is NeedMessage => m.type === 'need')!
@@ -269,7 +301,13 @@ describe('resume', () => {
     const first = controlledChannel()
     const receiver1 = new ReceiverSession(new DiskWriter(dst), first.channel, { transferId: 't' })
     receiver1.receive().catch(() => {})
-    first.deliverMessage({ type: 'start', transferId: 't', name: 'f', size: input.length, chunkSize: CHUNK_64K })
+    first.deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
     first.deliverChunk(list[0].header, list[0].data)
     first.deliverChunk(list[1].header, list[1].data)
     await waitUntil(() => (receiver1.received?.count() ?? 0) === 2)
@@ -280,9 +318,18 @@ describe('resume', () => {
     await fh.close()
 
     const second = controlledChannel()
-    const receiver2 = new ReceiverSession(new DiskWriter(dst), second.channel, { transferId: 't', resumeBits })
+    const receiver2 = new ReceiverSession(new DiskWriter(dst), second.channel, {
+      transferId: 't',
+      resumeBits
+    })
     const done = receiver2.receive()
-    second.deliverMessage({ type: 'start', transferId: 't', name: 'f', size: input.length, chunkSize: CHUNK_64K })
+    second.deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
     await waitUntil(() => second.sent.some((m) => m.type === 'need'))
     for (let i = 2; i < total; i++) second.deliverChunk(list[i].header, list[i].data)
     second.deliverMessage({ type: 'complete', transferId: 't', fileHash: fileRoot(input) })
