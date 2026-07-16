@@ -9,12 +9,16 @@ offsets in the destination (`pwrite`). Neither side makes an intermediate copy.
 ```ts
 import { Drive } from '@altersend/drive'
 
-const drive = new Drive(downloadRoot)
+const drive = new Drive(receiveDir)
 const savedTo = await drive.receive('photo.jpg', channelB)
 await drive.send(filePath, channelA)
 ```
 
-Or with full paths:
+`receive` takes a name and saves it under the configured directory. `send` takes
+a full path to any file on disk — the directory says where files arrive, not
+where they may be sent from.
+
+If the destination varies per transfer, skip `Drive` and pass full paths:
 
 ```ts
 import { sendFile, receiveFile } from '@altersend/drive'

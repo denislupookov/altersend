@@ -2,8 +2,9 @@
   "name": "@altersend/drive",
   "version": "1.6.0",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/native.js",
+  "types": "./dist/native.d.ts",
+  "browser": "./dist/index.js",
   "exports": {
     ".": {
       "browser": {

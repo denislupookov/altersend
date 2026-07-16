@@ -57,10 +57,10 @@ export function receiveFile(
 }
 
 export class Drive {
-  private readonly root: string
+  private readonly receiveDir: string
 
-  constructor(root: string) {
-    this.root = root
+  constructor(receiveDir: string) {
+    this.receiveDir = receiveDir
   }
 
   send(filePath: string, channel: DriveChannel, opts: SendFileOptions = {}): Promise<string> {
@@ -68,6 +68,6 @@ export class Drive {
   }
 
   receive(name: string, channel: DriveChannel, opts: ReceiveFileOptions = {}): Promise<string> {
-    return receiveFile(join(this.root, name), channel, opts)
+    return receiveFile(join(this.receiveDir, name), channel, opts)
   }
 }
