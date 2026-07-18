@@ -141,7 +141,7 @@ export class TransferSender {
 
     return files.map((file) => {
       const id = createFileId()
-      this.sourcePaths.set(id, file.inputPath)
+      if (!file.alreadyStaged) this.sourcePaths.set(id, file.inputPath)
       if (file.isTemporary) this.temporaryPaths.add(file.inputPath)
       return {
         id,
@@ -171,14 +171,20 @@ export class TransferSender {
     signal?: AbortSignal
   ): Promise<void> {
     const files = this.pendingStage
+    const superseded = () => this.pendingStage !== files
 
-    for (const file of files) {
-      if (signal?.aborted) throw new AbortError()
-      onStaging(file)
-      if (!file.alreadyStaged) await this.importToDrive(file.sourceDrive, file.sourcePath)
+    try {
+      for (const file of files) {
+        if (signal?.aborted) throw new AbortError()
+        onStaging(file)
+        if (!file.alreadyStaged) await this.importToDrive(file.sourceDrive, file.sourcePath)
+      }
+    } catch (err) {
+      if (superseded()) return
+      throw err
     }
 
-    if (this.pendingStage !== files) return
+    if (superseded()) return
     this.pendingStage = []
     await this.closeSourceDrives()
   }

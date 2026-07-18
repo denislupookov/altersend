@@ -125,3 +125,23 @@ describe('cancel', () => {
     await expect(stat(join(dir, 'out.bin'))).rejects.toThrow()
   })
 })
+
+describe('unreadable source', () => {
+  it('cancels the receiver instead of leaving it waiting', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'drive-missing-'))
+    const dst = join(dir, 'out.bin')
+
+    const [senderChannel, receiverChannel] = createChannelPair()
+    const receiver = new ReceiverSession(new DiskWriter(dst), receiverChannel, { transferId: 'm1' })
+    const sender = new SenderSession(new DiskReader(join(dir, 'gone.bin')), senderChannel, {
+      transferId: 'm1',
+      name: 'out.bin'
+    })
+
+    const results = await Promise.allSettled([receiver.receive(), sender.start()])
+
+    expect(results[1].status).toBe('rejected')
+    expect(results[0].status).toBe('rejected')
+    await expect(stat(dst)).rejects.toThrow()
+  })
+})

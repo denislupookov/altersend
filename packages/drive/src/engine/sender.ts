@@ -45,17 +45,21 @@ export class SenderSession {
     if (this.started) throw new Error('SenderSession already started')
     this.started = true
 
-    this.size = await this.reader.size()
-    this.chunkSize = selectChunkSize(this.size)
-    this.totalChunks = chunkCount(this.size, this.chunkSize)
+    try {
+      this.size = await this.reader.size()
+      this.chunkSize = selectChunkSize(this.size)
+      this.totalChunks = chunkCount(this.size, this.chunkSize)
 
-    this.channel.send({
-      type: 'start',
-      transferId: this.opts.transferId,
-      name: this.opts.name,
-      size: this.size,
-      chunkSize: this.chunkSize
-    })
+      this.channel.send({
+        type: 'start',
+        transferId: this.opts.transferId,
+        name: this.opts.name,
+        size: this.size,
+        chunkSize: this.chunkSize
+      })
+    } catch (err) {
+      this.fail(err instanceof Error ? err : new Error(String(err)))
+    }
 
     return this.done
   }

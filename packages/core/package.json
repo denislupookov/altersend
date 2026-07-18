@@ -51,7 +51,7 @@
     "hyperswarm": "^4.17.0",
     "localdrive": "^2.2.0",
     "mirror-drive": "^1.14.1",
-    "protomux": "^3.5.1"
+    "protomux": "^3.7.0"
   },
   "devDependencies": {
     "@hyperswarm/secret-stream": "^6.9.1",

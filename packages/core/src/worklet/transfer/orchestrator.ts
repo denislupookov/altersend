@@ -289,10 +289,9 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   private serve(message: DownloadRequest, session: PeerSession): void {
-    const localPath = this.storage.sender.localPath(message.fileId)
-    if (!localPath || !session.drive) return
+    if (!session.drive) return
     session.drive
-      .serve(message.fileId, message.fileName, localPath)
+      .serve(message.fileId, message.fileName, this.storage.sender.localPath(message.fileId))
       .catch((err) => console.warn('TransferOrchestrator: drive send failed', err))
   }
 

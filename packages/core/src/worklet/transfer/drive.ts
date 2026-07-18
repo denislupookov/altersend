@@ -98,7 +98,7 @@ export class PeerDrive {
     }
   }
 
-  async serve(fileId: string, name: string, localPath: string): Promise<void> {
+  async serve(fileId: string, name: string, localPath: string | null): Promise<void> {
     if (this.sends.has(fileId)) return
     const abort = new AbortController()
 
@@ -107,6 +107,14 @@ export class PeerDrive {
 
     try {
       if (!(await this.supported)) return
+      if (!localPath) {
+        this.control.send({
+          type: 'cancel',
+          transferId: fileId,
+          reason: 'File is no longer readable on the sender'
+        })
+        return
+      }
       channel = this.session(fileId)
 
       await sendFile(localPath, channel, {
@@ -126,6 +134,9 @@ export class PeerDrive {
 
   destroy(): void {
     this.cancel()
+    for (const [transferId, session] of this.sessions) {
+      session.onMessage?.({ type: 'cancel', transferId, reason: 'Peer disconnected' })
+    }
     this.sessions.clear()
 
     try {
