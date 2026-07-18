@@ -14,8 +14,7 @@ function toFileUri(savedTo: string): string {
   let decoded = path
   try {
     decoded = decodeURI(path)
-  } catch {
-  }
+  } catch {}
   return `file://${encodeURI(decoded)}`
 }
 
