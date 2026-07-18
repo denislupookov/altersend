@@ -1,12 +1,11 @@
-import { describe, it, expect } from 'vitest'
-import { mkdtemp, writeFile, rm } from 'node:fs/promises'
+import { describe, it, expect, afterEach } from 'vitest'
+import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import SecretStream from '@hyperswarm/secret-stream'
 import Protomux from 'protomux'
 import { Duplex } from 'streamx'
-import { SenderSession, ReceiverSession } from '@altersend/drive'
-import type { ChunkReader, ChunkWriter } from '@altersend/drive'
+import { SenderSession, ReceiverSession, DiskReader, DiskWriter } from '@altersend/drive'
 import type { PeerSocket } from 'hyperswarm'
 import { PeerDrive } from './drive'
 
@@ -29,40 +28,26 @@ function socketPair(): [PeerSocket, PeerSocket] {
   ]
 }
 
-class MemoryReader implements ChunkReader {
-  constructor(private readonly bytes: Uint8Array) {}
-  async size() {
-    return this.bytes.length
-  }
-  async read(offset: number, length: number) {
-    return this.bytes.subarray(offset, offset + length)
-  }
-  async close() {}
-}
-
-class MemoryWriter implements ChunkWriter {
-  bytes = new Uint8Array(0)
-  constructor(private readonly savedTo: string) {}
-  async allocate(size: number) {
-    if (this.bytes.length !== size) this.bytes = new Uint8Array(size)
-  }
-  async write(offset: number, data: Uint8Array) {
-    this.bytes.set(data, offset)
-  }
-  async readBack(offset: number, length: number) {
-    return this.bytes.subarray(offset, offset + length)
-  }
-  async finalize() {
-    return this.savedTo
-  }
-  async abort() {}
-}
-
 function payload(size: number): Uint8Array {
   const bytes = new Uint8Array(size)
   for (let i = 0; i < size; i++) bytes[i] = (i * 31 + 11) & 0xff
   return bytes
 }
+
+let dir = ''
+
+async function sourceFile(name: string, size: number): Promise<[string, Uint8Array]> {
+  if (!dir) dir = await mkdtemp(join(tmpdir(), 'peerdrive-'))
+  const path = join(dir, name)
+  const bytes = payload(size)
+  await writeFile(path, bytes)
+  return [path, bytes]
+}
+
+afterEach(async () => {
+  if (dir) await rm(dir, { recursive: true, force: true })
+  dir = ''
+})
 
 describe('PeerDrive', () => {
   it('negotiates support when both peers speak drive', async () => {
@@ -87,21 +72,21 @@ describe('PeerDrive', () => {
     const senderSide = PeerDrive.create(socketA)!
     const receiverSide = PeerDrive.create(socketB)!
 
-    const input = payload(700 * 1024)
-    const writer = new MemoryWriter('/saved/one.bin')
+    const [src, input] = await sourceFile('in.bin', 700 * 1024)
+    const dst = join(dir, 'out.bin')
 
-    const receiver = new ReceiverSession(writer, receiverSide.session('file-1'), {
+    const receiver = new ReceiverSession(new DiskWriter(dst), receiverSide.session('file-1'), {
       transferId: 'file-1'
     })
-    const sender = new SenderSession(new MemoryReader(input), senderSide.session('file-1'), {
+    const sender = new SenderSession(new DiskReader(src), senderSide.session('file-1'), {
       transferId: 'file-1',
-      name: 'one.bin'
+      name: 'out.bin'
     })
 
     const [savedTo] = await Promise.all([receiver.receive(), sender.start()])
 
-    expect(savedTo).toBe('/saved/one.bin')
-    expect(Buffer.from(writer.bytes).equals(Buffer.from(input))).toBe(true)
+    expect(savedTo).toBe(dst)
+    expect(Buffer.from(await readFile(dst)).equals(Buffer.from(input))).toBe(true)
   })
 
   it('keeps concurrent files on one channel separate', async () => {
@@ -109,23 +94,27 @@ describe('PeerDrive', () => {
     const senderSide = PeerDrive.create(socketA)!
     const receiverSide = PeerDrive.create(socketB)!
 
-    const inputs = [payload(300 * 1024), payload(120 * 1024)]
-    const writers = [new MemoryWriter('/saved/a.bin'), new MemoryWriter('/saved/b.bin')]
+    const sources = [await sourceFile('a.bin', 300 * 1024), await sourceFile('b.bin', 120 * 1024)]
 
-    const transfers = inputs.map((input, i) => {
+    const transfers = sources.map(([src], i) => {
       const id = `file-${i}`
-      const receiver = new ReceiverSession(writers[i], receiverSide.session(id), { transferId: id })
-      const sender = new SenderSession(new MemoryReader(input), senderSide.session(id), {
+      const dst = join(dir, `out-${i}.bin`)
+      const receiver = new ReceiverSession(new DiskWriter(dst), receiverSide.session(id), {
+        transferId: id
+      })
+      const sender = new SenderSession(new DiskReader(src), senderSide.session(id), {
         transferId: id,
-        name: `${id}.bin`
+        name: `out-${i}.bin`
       })
       return Promise.all([receiver.receive(), sender.start()])
     })
 
     await Promise.all(transfers)
 
-    expect(Buffer.from(writers[0].bytes).equals(Buffer.from(inputs[0]))).toBe(true)
-    expect(Buffer.from(writers[1].bytes).equals(Buffer.from(inputs[1]))).toBe(true)
+    for (const [i, [, input]] of sources.entries()) {
+      const written = await readFile(join(dir, `out-${i}.bin`))
+      expect(Buffer.from(written).equals(Buffer.from(input))).toBe(true)
+    }
   })
 
   it('cancels an in-flight serve() when the drive is destroyed', async () => {
@@ -133,9 +122,7 @@ describe('PeerDrive', () => {
     const senderSide = PeerDrive.create(socketA)!
     PeerDrive.create(socketB)!
 
-    const dir = await mkdtemp(join(tmpdir(), 'peerdrive-'))
-    const src = join(dir, 'in.bin')
-    await writeFile(src, payload(64 * 1024))
+    const [src] = await sourceFile('in.bin', 64 * 1024)
 
     const serving = senderSide.serve('file-x', 'in.bin', src)
     await senderSide.supported
@@ -143,6 +130,5 @@ describe('PeerDrive', () => {
     senderSide.destroy()
 
     await expect(serving).rejects.toThrow('cancelled')
-    await rm(dir, { recursive: true, force: true })
   })
 })
