@@ -10,7 +10,13 @@ function openPhotos(): void {
 }
 
 function toFileUri(savedTo: string): string {
-  return savedTo.startsWith('file://') ? savedTo : `file://${encodeURI(savedTo)}`
+  const path = savedTo.replace(/^file:\/\//, '')
+  let decoded = path
+  try {
+    decoded = decodeURI(path)
+  } catch {
+  }
+  return `file://${encodeURI(decoded)}`
 }
 
 function shareFile(savedTo: string): void {

@@ -119,7 +119,7 @@ export async function handleDownloadedFile(
   }
 
   try {
-    const original = new File(toFilePath(localPath))
+    const original = new File(localPath)
     if (original.exists) original.delete()
   } catch (err) {
     console.warn('handleDownloadedFile: could not remove the private copy', err)
