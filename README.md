@@ -120,7 +120,7 @@ AlterSend is built on [Hyperswarm](https://github.com/holepunchto/hyperswarm), a
 1. **A random 32-byte key is generated** for each transfer (`crypto.randomBytes(32)`). That 64-char hex string _is_ the join code you share.
 2. **Peers rendezvous on a hash of that key, not the key itself.** Both sides compute the same discovery key — a BLAKE2b hash derived from the join code — and join the DHT on that. The raw key never leaves your device, only its hash is published.
 3. **Public bootstrap nodes are the only entry point.** A handful of them get peers onto the DHT. After that, no central server is involved in discovery. Most transfers are direct peer-to-peer; when a direct connection can't be established — usually because both peers are behind symmetric NAT (for example both on a VPN) — the transfer falls back to a **relay** that forwards the already-encrypted stream between them without ever seeing file contents. It's on by default and can be turned off in Settings → Relay.
-4. **The connection is end-to-end encrypted.** Peers connect over a Noise-encrypted socket, and the sender shares its [Hyperdrive](https://github.com/holepunchto/hyperdrive) key over that channel. Files are imported into the sender's local Hyperdrive, replicated to the receiver's, then written out to disk — so in v1 each side needs roughly **2× the transfer size** in free space while a transfer runs. _(Working to improve this.)_
+4. **The connection is end-to-end encrypted.** Peers connect over a Noise-encrypted socket. The sender reads each file straight off disk in chunks and hashes every one with BLAKE2b; the receiver checks the hash and writes the chunk at its offset in the destination file.
 
 **Pair once, skip the code.** You can pair devices you own so future transfers go straight through — no code to scan or type. Pairing only stores a public device key, the secret stays in your OS keychain, and a paired device is recognized without exposing your identity to anyone else. See [docs/architecture.md](docs/architecture.md#remembered-devices--pairing) for the full design.
 
@@ -148,14 +148,14 @@ cp apps/mobile/.env.example apps/mobile/.env
 ### Run
 
 ```sh
-npm run dev           
-npm run mobile:start  
+npm run dev
+npm run mobile:start
 ```
 
 ### Build
 
 ```sh
-npm run desktop:build  
+npm run desktop:build
 ```
 
 Platform installers (`.dmg`, `.exe`, `.AppImage`) are produced by the release CI workflow — trigger manually from the Actions tab.
@@ -167,7 +167,8 @@ apps/
   desktop/    Electron app — main + renderer + Bare worklet
   mobile/     React Native / Expo app
 packages/
-  core/       P2P protocol — Hyperswarm, Hyperdrive, RPC
+  core/       P2P protocol — Hyperswarm, transfer orchestration, RPC
+  drive/      Chunked file transfer — reads and writes files in place
   domain/     State management — Zustand store, business logic
   components/ Cross-platform UI — React Strict DOM + Tailwind
   locales/   Shared locale metadata, i18next setup, and catalogs

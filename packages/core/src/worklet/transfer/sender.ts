@@ -46,23 +46,20 @@ function resolveSource(
   return { root: getDirname(path), relativePath: fileName }
 }
 
-/**
- * TransferSender handles the **sender** side of a file transfer.
- *
- * Responsibilities:
- *   - Scanning local file paths to gather metadata (size, name) without
- *     modifying any shared state — so transfer-start can be announced first
- *   - Importing scanned files into the shared Hyperdrive one by one
- *   - Building TransferStart / TransferReady control messages
- *
- * It has no knowledge of Hyperswarm, peer sessions, or disk download logic.
- */
 export class TransferSender {
   private readonly drive: Hyperdrive
   private readonly scanDrives: Set<Localdrive> = new Set()
+  private readonly sourcePaths = new Map<string, string>()
+  private readonly temporaryPaths = new Set<string>()
+  private pendingStage: ScannedFile[] = []
+  private staging: Promise<void> | null = null
 
   constructor(drive: Hyperdrive) {
     this.drive = drive
+  }
+
+  localPath(fileId: string): string | null {
+    return this.sourcePaths.get(fileId) ?? null
   }
 
   get driveKey(): string {
@@ -139,35 +136,64 @@ export class TransferSender {
     }
   }
 
-  async stageFiles(
-    files: ScannedFile[],
-    transferId: string,
-    onStaging: (file: ScannedFile) => void,
-    signal?: AbortSignal
-  ): Promise<FileOffer[]> {
-    const offers: FileOffer[] = []
+  buildOffers(files: ScannedFile[], transferId: string): FileOffer[] {
+    this.pendingStage = files
 
-    for (const file of files) {
-      if (signal?.aborted) throw new AbortError()
-      onStaging(file)
-      if (!file.alreadyStaged) {
-        await this.importToDrive(file.sourceDrive, file.sourcePath)
-        if (file.isTemporary) {
-          await this.tryDeleteFile(file.inputPath)
-        }
-      }
-      offers.push({
-        id: createFileId(),
+    return files.map((file) => {
+      const id = createFileId()
+      this.sourcePaths.set(id, file.inputPath)
+      if (file.isTemporary) this.temporaryPaths.add(file.inputPath)
+      return {
+        id,
         transferId,
         name: file.fileName,
         path: file.sourcePath,
         size: file.size,
         driveKey: this.driveKey,
         kind: 'file'
+      }
+    })
+  }
+
+  stageForLegacyPeers(onStaging: (file: ScannedFile) => void, signal?: AbortSignal): Promise<void> {
+    if (!this.staging) {
+      const run: Promise<void> = this.runStaging(onStaging, signal).catch((err) => {
+        if (this.staging === run) this.staging = null
+        throw err
       })
+      this.staging = run
+    }
+    return this.staging
+  }
+
+  private async runStaging(
+    onStaging: (file: ScannedFile) => void,
+    signal?: AbortSignal
+  ): Promise<void> {
+    const files = this.pendingStage
+
+    for (const file of files) {
+      if (signal?.aborted) throw new AbortError()
+      onStaging(file)
+      if (!file.alreadyStaged) await this.importToDrive(file.sourceDrive, file.sourcePath)
     }
 
-    return offers
+    if (this.pendingStage !== files) return
+    this.pendingStage = []
+    await this.closeSourceDrives()
+  }
+
+  async reset(): Promise<void> {
+    this.sourcePaths.clear()
+    this.pendingStage = []
+    this.staging = null
+    await this.closeSourceDrives()
+
+    const temporaries = Array.from(this.temporaryPaths)
+    this.temporaryPaths.clear()
+    for (const path of temporaries) {
+      await this.tryDeleteFile(path)
+    }
   }
 
   private async importToDrive(sourceDrive: Localdrive, sourcePath: string): Promise<void> {

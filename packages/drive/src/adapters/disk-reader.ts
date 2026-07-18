@@ -1,4 +1,5 @@
-import { open, stat, type FileHandle } from 'node:fs/promises'
+import fs from '#fs'
+import type { FileHandle } from 'node:fs/promises'
 import type { ChunkReader } from '../engine/types'
 import { readRange } from './read-range'
 
@@ -11,12 +12,12 @@ export class DiskReader implements ChunkReader {
   }
 
   private handle(): Promise<FileHandle> {
-    if (!this.opening) this.opening = open(this.path, 'r')
+    if (!this.opening) this.opening = fs.open(this.path, 'r')
     return this.opening
   }
 
   async size(): Promise<number> {
-    return (await stat(this.path)).size
+    return (await fs.stat(this.path)).size
   }
 
   async read(offset: number, length: number): Promise<Uint8Array> {

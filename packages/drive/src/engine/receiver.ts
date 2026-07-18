@@ -5,6 +5,7 @@ import { Bitmap } from './bitmap'
 
 export interface ReceiverOptions {
   transferId?: string
+  expectedSize?: number
   resumeBits?: Uint8Array
   verifyFullFile?: boolean
   onProgress?: (receivedBytes: number, totalBytes: number) => void
@@ -35,6 +36,7 @@ export class ReceiverSession {
     this.done = new Promise<string>((resolve, reject) => {
       this.settle = { resolve, reject }
     })
+    this.done.catch(() => {})
     this.channel.onMessage((message) => this.onMessage(message))
     this.channel.onChunk((header, data) => this.enqueue(() => this.onChunk(header, data)))
   }
@@ -79,6 +81,10 @@ export class ReceiverSession {
     if (this.settled) return
     if (!this.validGeometry(size, chunkSize)) {
       throw new Error(`Rejected transfer geometry: size=${size} chunkSize=${chunkSize}`)
+    }
+    const expected = this.opts.expectedSize
+    if (expected !== undefined && size !== expected) {
+      throw new Error(`Sender announced ${size} bytes, expected ${expected}`)
     }
     this.size = size
     this.chunkSize = chunkSize
@@ -156,6 +162,10 @@ export class ReceiverSession {
       root.add(hashChunk(bytes))
     }
     if (root.digest() !== expected) throw new Error('Full-file hash mismatch')
+  }
+
+  cancel(reason = 'Transfer cancelled'): void {
+    this.enqueue(() => this.fail(new Error(reason)))
   }
 
   private async fail(err: Error, notifyPeer = true): Promise<void> {

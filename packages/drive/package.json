@@ -5,6 +5,16 @@
   "main": "./dist/native.js",
   "types": "./dist/native.d.ts",
   "browser": "./dist/index.js",
+  "imports": {
+    "#fs": {
+      "bare": "bare-fs/promises",
+      "default": "fs/promises"
+    },
+    "#path": {
+      "bare": "bare-path",
+      "default": "path"
+    }
+  },
   "exports": {
     ".": {
       "browser": {
@@ -32,6 +42,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "bare-fs": "^4.7.0",
+    "bare-path": "^3.0.0",
     "blake2b": "^2.1.4"
   },
   "devDependencies": {

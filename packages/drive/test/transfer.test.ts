@@ -42,3 +42,86 @@ describe('end-to-end transfer', () => {
     await expect(stat(`${dst}.part`)).rejects.toThrow()
   })
 })
+
+describe('expectedSize', () => {
+  it('rejects a sender that announces a different size than offered', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'drive-size-'))
+    const src = join(dir, 'input.bin')
+    const dst = join(dir, 'output.bin')
+    await writeFile(src, new Uint8Array(4096))
+
+    const [senderChannel, receiverChannel] = createChannelPair()
+    const receiver = new ReceiverSession(new DiskWriter(dst), receiverChannel, {
+      transferId: 's1',
+      expectedSize: 9999
+    })
+    const sender = new SenderSession(new DiskReader(src), senderChannel, {
+      transferId: 's1',
+      name: 'output.bin'
+    })
+
+    const results = await Promise.allSettled([receiver.receive(), sender.start()])
+    await sender.close()
+
+    expect(results[0].status).toBe('rejected')
+    expect((results[0] as PromiseRejectedResult).reason.message).toContain('expected 9999')
+    await expect(stat(dst)).rejects.toThrow()
+  })
+})
+
+describe('cancel', () => {
+  it('stops the sender mid-flight and leaves no partial file behind', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'drive-cancel-'))
+    const src = join(dir, 'input.bin')
+    const dst = join(dir, 'output.bin')
+    await writeFile(src, new Uint8Array(4 * 1024 * 1024))
+
+    const [senderChannel, receiverChannel] = createChannelPair()
+    const receiver = new ReceiverSession(new DiskWriter(dst), receiverChannel, { transferId: 'c1' })
+    const sender = new SenderSession(new DiskReader(src), senderChannel, {
+      transferId: 'c1',
+      name: 'output.bin'
+    })
+
+    const sent: number[] = []
+    const originalSendChunk = senderChannel.sendChunk.bind(senderChannel)
+    senderChannel.sendChunk = (header, data) => {
+      sent.push(header.index)
+      if (sent.length === 2) receiver.cancel('user cancelled')
+      originalSendChunk(header, data)
+    }
+
+    const results = await Promise.allSettled([receiver.receive(), sender.start()])
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    await sender.close()
+
+    expect(results[0].status).toBe('rejected')
+    expect(results[1].status).toBe('rejected')
+    expect(sent.length).toBeLessThan(16)
+    await expect(stat(dst)).rejects.toThrow()
+    await expect(stat(`${dst}.part`)).rejects.toThrow()
+  })
+
+  it('rejects the sender when the receiver cancels', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'drive-cancel2-'))
+    const src = join(dir, 'input.bin')
+    await writeFile(src, new Uint8Array(64))
+
+    const [senderChannel, receiverChannel] = createChannelPair()
+    const receiver = new ReceiverSession(new DiskWriter(join(dir, 'out.bin')), receiverChannel, {
+      transferId: 'c2'
+    })
+    const sender = new SenderSession(new DiskReader(src), senderChannel, {
+      transferId: 'c2',
+      name: 'out.bin'
+    })
+
+    receiver.cancel('nope')
+    const results = await Promise.allSettled([receiver.receive(), sender.start()])
+    await sender.close()
+
+    expect(results[0].status).toBe('rejected')
+    expect(results[1].status).toBe('rejected')
+    await expect(stat(join(dir, 'out.bin'))).rejects.toThrow()
+  })
+})

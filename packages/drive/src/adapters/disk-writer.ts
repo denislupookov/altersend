@@ -1,4 +1,5 @@
-import { open, rename, unlink, type FileHandle } from 'node:fs/promises'
+import fs from '#fs'
+import type { FileHandle } from 'node:fs/promises'
 import type { ChunkWriter } from '../engine/types'
 import { readRange } from './read-range'
 
@@ -14,10 +15,10 @@ export class DiskWriter implements ChunkWriter {
 
   async allocate(size: number): Promise<void> {
     try {
-      this.handle = await open(this.partPath, 'r+')
+      this.handle = await fs.open(this.partPath, 'r+')
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err
-      this.handle = await open(this.partPath, 'w+')
+      this.handle = await fs.open(this.partPath, 'w+')
     }
     await this.handle.truncate(size)
   }
@@ -37,7 +38,7 @@ export class DiskWriter implements ChunkWriter {
       await this.handle.close()
       this.handle = null
     }
-    await rename(this.partPath, this.targetPath)
+    await fs.rename(this.partPath, this.targetPath)
     return this.targetPath
   }
 
@@ -47,7 +48,7 @@ export class DiskWriter implements ChunkWriter {
       this.handle = null
     }
     try {
-      await unlink(this.partPath)
+      await fs.unlink(this.partPath)
     } catch {}
   }
 }

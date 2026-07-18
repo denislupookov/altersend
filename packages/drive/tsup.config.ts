@@ -13,6 +13,7 @@ export default defineConfig({
   bundle: true,
   splitting: true,
   sourcemap: false,
+  external: ['#fs', '#path'],
   esbuildOptions(options) {
     options.packages = 'external'
   }

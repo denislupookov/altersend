@@ -2,6 +2,7 @@ import Hyperdrive from 'hyperdrive'
 import type Corestore from 'corestore'
 import b4a from 'b4a'
 import fs from 'bare-fs'
+import { receiveFile, type DriveChannel } from '@altersend/drive'
 import {
   AbortError,
   getDirname,
@@ -10,12 +11,39 @@ import {
   isSafeRelativePath,
   isValidHexKey,
   joinFilePath,
+  onAbort,
   toRelativePath
 } from './utils'
 import type { DownloadFileRequest, DownloadFileResult } from '../rpc/protocol'
 import type { DownloaderCallbacks } from './download-events'
 
-type DownloadFileOutcome = { ok: true } | { ok: false; message: string }
+type DownloadFileOutcome = { ok: true; savedTo: string } | { ok: false; message: string }
+
+function fileEvents(
+  file: DownloadFileRequest,
+  callbacks: DownloaderCallbacks,
+  targetPath: string,
+  totalBytes: number
+) {
+  const base = {
+    transferId: file.transferId,
+    fileId: file.fileId,
+    fileName: file.name ?? getFileName(file.path),
+    sourcePath: file.path,
+    targetPath,
+    totalBytes
+  }
+  return {
+    started: () => callbacks.onFileStart({ ...base, bytesTransferred: 0 }),
+    progressed: (bytesTransferred: number) =>
+      callbacks.onFileProgress({ ...base, bytesTransferred }),
+    completed: () => callbacks.onFileComplete({ ...base, bytesTransferred: totalBytes }),
+    failed: (message: string): DownloadFileOutcome => {
+      callbacks.onFileError({ ...base, message })
+      return { ok: false, message }
+    }
+  }
+}
 
 function getChunkSize(chunk: unknown): number {
   if (typeof chunk === 'string') return Buffer.byteLength(chunk)
@@ -30,16 +58,6 @@ function getChunkSize(chunk: unknown): number {
   return 0
 }
 
-/**
- * TransferReceiver handles the **receiver** side of a file transfer.
- *
- * Responsibilities:
- *   - Opening a remote Hyperdrive by its public key
- *   - Downloading file blobs from the remote drive via the shared Corestore
- *   - Writing the downloaded data to a target path on the local disk
- *
- * It has no knowledge of Hyperswarm, peer sessions, or file staging.
- */
 export class TransferReceiver {
   private readonly driveStore: Corestore
   private readonly remoteDrives: Map<string, Hyperdrive>
@@ -52,24 +70,17 @@ export class TransferReceiver {
   async downloadFiles(
     files: DownloadFileRequest[],
     callbacks: DownloaderCallbacks,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    driveFor?: (file: DownloadFileRequest) => Promise<DriveChannel | null>
   ): Promise<DownloadFileResult[]> {
     const results: DownloadFileResult[] = []
 
     for (const file of files) {
       const resolvedName = file.name ?? getFileName(file.path)
-      const fail = (fileName: string, targetPath: string, message: string) => {
-        callbacks.onFileError({
-          transferId: file.transferId,
-          fileId: file.fileId,
-          fileName,
-          sourcePath: file.path,
-          targetPath,
-          totalBytes: file.size ?? 0,
-          message
-        })
-        results.push({ fileId: file.fileId, fileName, ok: false, message })
-      }
+      const record = (outcome: DownloadFileOutcome) =>
+        results.push({ fileId: file.fileId, fileName: resolvedName, ...outcome })
+      const fail = (targetPath: string, message: string) =>
+        record(fileEvents(file, callbacks, targetPath, file.size ?? 0).failed(message))
 
       if (signal?.aborted) {
         results.push({
@@ -83,43 +94,29 @@ export class TransferReceiver {
 
       const relativeTarget = toRelativePath(file.path)
       if (!isSafeRelativePath(relativeTarget)) {
-        fail(
-          resolvedName,
-          file.targetPath ?? file.targetDir ?? '',
-          'Rejected unsafe file path from sender'
-        )
+        fail(file.targetPath ?? file.targetDir ?? '', 'Rejected unsafe file path from sender')
         continue
       }
 
       const candidatePath = file.targetPath ?? file.targetDir
       if (!isPathSafe(candidatePath)) {
-        fail(resolvedName, candidatePath ?? '', 'Rejected unsafe target path from renderer')
+        fail(candidatePath ?? '', 'Rejected unsafe target path from renderer')
         continue
       }
 
       const targetPath = file.targetPath ?? joinFilePath(file.targetDir!, relativeTarget)
 
       try {
-        const outcome = await this.downloadFile(file, targetPath, callbacks, signal)
-        if (outcome.ok) {
-          results.push({
-            fileId: file.fileId,
-            fileName: resolvedName,
-            ok: true,
-            savedTo: targetPath
-          })
-        } else {
-          results.push({
-            fileId: file.fileId,
-            fileName: resolvedName,
-            ok: false,
-            message: outcome.message
-          })
-        }
+        const channel = (await driveFor?.(file)) ?? null
+        record(
+          channel
+            ? await this.downloadViaDrive(file, targetPath, callbacks, channel, signal)
+            : await this.downloadFile(file, targetPath, callbacks, signal)
+        )
       } catch (error) {
         await this.evictRemoteDrive(file.driveKey)
 
-        fail(resolvedName, targetPath, error instanceof Error ? error.message : String(error))
+        fail(targetPath, error instanceof Error ? error.message : String(error))
       }
     }
 
@@ -134,69 +131,63 @@ export class TransferReceiver {
   ): Promise<DownloadFileOutcome> {
     const remoteDrive = await this.getRemoteDrive(file.driveKey)
     const resolvedName = file.name ?? getFileName(file.path)
-    const fail = (message: string, totalBytes: number = file.size ?? 0): DownloadFileOutcome => {
-      callbacks.onFileError({
-        transferId: file.transferId,
-        fileId: file.fileId,
-        fileName: resolvedName,
-        sourcePath: file.path,
-        targetPath,
-        totalBytes,
-        message
-      })
-      return { ok: false, message }
-    }
+    const announced = fileEvents(file, callbacks, targetPath, file.size ?? 0)
 
     const entry = await remoteDrive.entry(file.path)
     if (!entry?.value?.blob) {
-      return fail(`Could not find remote file: ${resolvedName}`)
+      return announced.failed(`Could not find remote file: ${resolvedName}`)
     }
 
     const actualBytes = entry.value.blob.byteLength
     if (typeof file.size === 'number' && file.size !== actualBytes) {
-      return fail(`Sender claimed ${file.size} bytes but file is ${actualBytes} bytes`, file.size)
+      return announced.failed(`Sender claimed ${file.size} bytes but file is ${actualBytes} bytes`)
     }
 
-    const totalBytes = actualBytes
-    callbacks.onFileStart({
-      transferId: file.transferId,
-      fileId: file.fileId,
-      fileName: resolvedName,
-      sourcePath: file.path,
-      targetPath,
-      totalBytes,
-      bytesTransferred: 0
-    })
+    const events = fileEvents(file, callbacks, targetPath, actualBytes)
+    events.started()
 
-    await this.writeToDisk(
+    const savedTo = await this.writeToDisk(
       remoteDrive,
       file.path,
       targetPath,
-      totalBytes,
-      (bytesTransferred) => {
-        callbacks.onFileProgress({
-          transferId: file.transferId,
-          fileId: file.fileId,
-          fileName: resolvedName,
-          sourcePath: file.path,
-          targetPath,
-          totalBytes,
-          bytesTransferred
-        })
-      },
+      actualBytes,
+      (bytesTransferred) => events.progressed(bytesTransferred),
       signal
     )
 
-    callbacks.onFileComplete({
-      transferId: file.transferId,
-      fileId: file.fileId,
-      fileName: resolvedName,
-      sourcePath: file.path,
-      targetPath,
-      totalBytes,
-      bytesTransferred: totalBytes
-    })
-    return { ok: true }
+    events.completed()
+    return { ok: true, savedTo }
+  }
+
+  private async downloadViaDrive(
+    file: DownloadFileRequest,
+    targetPath: string,
+    callbacks: DownloaderCallbacks,
+    channel: DriveChannel,
+    signal?: AbortSignal
+  ): Promise<DownloadFileOutcome> {
+    try {
+      const finalPath = await this.findUniqueTargetPath(targetPath)
+      const events = fileEvents(file, callbacks, finalPath, file.size ?? 0)
+
+      const pending = receiveFile(finalPath, channel, {
+        transferId: file.fileId,
+        expectedSize: file.size,
+        signal,
+        onProgress: (bytesTransferred) => events.progressed(bytesTransferred)
+      })
+
+      events.started()
+      try {
+        await pending
+        events.completed()
+        return { ok: true, savedTo: finalPath }
+      } catch (err) {
+        return events.failed(err instanceof Error ? err.message : String(err))
+      }
+    } finally {
+      channel.close()
+    }
   }
 
   private async evictRemoteDrive(driveKey: string): Promise<void> {
@@ -287,7 +278,7 @@ export class TransferReceiver {
     totalBytes: number,
     onProgress: (bytesTransferred: number) => void,
     signal?: AbortSignal
-  ): Promise<void> {
+  ): Promise<string> {
     const { default: Localdrive } = await import('localdrive')
     const destination = new Localdrive(getDirname(targetPath))
     const partName = `${getFileName(targetPath)}.part`
@@ -296,7 +287,7 @@ export class TransferReceiver {
     const readStream = remoteDrive.createReadStream(sourcePath)
     const writeStream = destination.createWriteStream(`/${partName}`)
 
-    let onAbort: (() => void) | undefined
+    let release = () => {}
 
     try {
       await new Promise<void>((resolve, reject) => {
@@ -312,19 +303,15 @@ export class TransferReceiver {
         }
 
         // Settle before destroying streams so the outer catch sees AbortError, not stream-destroyed.
-        if (signal) {
-          onAbort = () => {
-            finish(new AbortError())
-            try {
-              readStream.destroy()
-            } catch {}
-            try {
-              writeStream.destroy()
-            } catch {}
-          }
-          if (signal.aborted) onAbort()
-          else signal.addEventListener('abort', onAbort)
-        }
+        release = onAbort(signal, () => {
+          finish(new AbortError())
+          try {
+            readStream.destroy()
+          } catch {}
+          try {
+            writeStream.destroy()
+          } catch {}
+        })
 
         readStream.on('data', (chunk: unknown) => {
           bytesTransferred += getChunkSize(chunk)
@@ -355,10 +342,11 @@ export class TransferReceiver {
       }
       throw err
     } finally {
-      if (signal && onAbort) signal.removeEventListener('abort', onAbort)
+      release()
     }
 
     const finalPath = await this.findUniqueTargetPath(targetPath)
     await fs.promises.rename(partPath, finalPath)
+    return finalPath
   }
 }

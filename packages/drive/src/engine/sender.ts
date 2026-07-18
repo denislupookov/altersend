@@ -37,6 +37,7 @@ export class SenderSession {
     this.done = new Promise<string>((resolve, reject) => {
       this.settle = { resolve, reject }
     })
+    this.done.catch(() => {})
     this.channel.onMessage((message) => this.onMessage(message))
   }
 
@@ -100,6 +101,7 @@ export class SenderSession {
 
     let sentBytes = 0
     for (const index of indices) {
+      if (this.settled) return
       const { offset, length } = chunkRange(index, this.size, this.chunkSize)
       const data = await this.reader.read(offset, length)
       const hash = hashChunk(data)
@@ -112,7 +114,9 @@ export class SenderSession {
       this.opts.onProgress?.(sentBytes, this.size)
     }
 
+    if (this.settled) return
     const fileHash = root ? root.digest() : await this.fileRoot()
+    if (this.settled) return
     this.channel.send({
       type: 'complete',
       transferId: this.opts.transferId,
@@ -130,9 +134,13 @@ export class SenderSession {
   }
 
   private async drain(): Promise<void> {
-    while (this.channel.bufferedAmount() > this.highWater) {
+    while (!this.settled && this.channel.bufferedAmount() > this.highWater) {
       await new Promise((resolve) => setTimeout(resolve, 1))
     }
+  }
+
+  cancel(reason = 'Transfer cancelled'): void {
+    this.fail(new Error(reason))
   }
 
   private fail(err: Error, notifyPeer = true): void {

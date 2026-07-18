@@ -14,7 +14,12 @@
       "ignore": ["schema/**"]
     },
     "packages/drive": {
-      "entry": ["src/**/*.test.ts", "test/**/*.test.ts"]
+      "entry": ["src/**/*.test.ts", "test/**/*.test.ts"],
+      "ignoreDependencies": ["bare-fs"],
+      "ignoreUnresolved": [
+        "^#fs$",
+        "^#path$"
+      ]
     },
     "packages/domain": {
       "entry": ["src/**/*.test.ts"]

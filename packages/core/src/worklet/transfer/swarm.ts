@@ -4,6 +4,7 @@ import Hyperswarm, { type PeerInfo, type PeerSocket } from 'hyperswarm'
 import { PeerControlChannel } from './control-channel'
 import type { PeerControlMessage } from './control-channel'
 import { PeerIdentityStore, type NoiseKeyPair } from './peer-identity-store'
+import { PeerDrive } from './drive'
 import { relayThrough, isRelayHost } from '../relay/config'
 
 type ConnectionType = 'direct' | 'relay'
@@ -13,6 +14,7 @@ export interface PeerSession {
   peerKey: string
   controlChannel: PeerControlChannel
   handshakeHash: Uint8Array | null
+  drive: PeerDrive | null
 }
 
 export interface TransferSwarmCallbacks {
@@ -26,28 +28,21 @@ export interface TransferSwarmCallbacks {
 
 export interface TransferSwarmOptions {
   identityStore?: PeerIdentityStore
+  drive?: boolean
 }
 
-/**
- * TransferSwarm manages Hyperswarm connectivity.
- *
- * Responsibilities:
- *   - Joining / leaving discovery topics
- *   - Tracking active peer sessions
- *   - Creating per-socket Protomux control channels
- *   - Broadcasting control messages to all connected peers
- *
- */
 export class TransferSwarm {
   private swarm: Hyperswarm | null
   private readonly peerSessions: Map<PeerSocket, PeerSession>
   private readonly callbacks: TransferSwarmCallbacks
   private readonly identityStore: PeerIdentityStore | null
+  private readonly driveEnabled: boolean
   private hostedTopicHex: string | null
   private joinedAny: boolean
 
   constructor(callbacks: TransferSwarmCallbacks, options: TransferSwarmOptions = {}) {
     this.identityStore = options.identityStore ?? null
+    this.driveEnabled = options.drive ?? false
     this.callbacks = callbacks
     this.peerSessions = new Map()
     this.hostedTopicHex = null
@@ -105,7 +100,13 @@ export class TransferSwarm {
       return
     }
 
-    session = { socket, peerKey, controlChannel, handshakeHash: socket.handshakeHash ?? null }
+    session = {
+      socket,
+      peerKey,
+      controlChannel,
+      handshakeHash: socket.handshakeHash ?? null,
+      drive: this.driveEnabled ? PeerDrive.create(socket) : null
+    }
     this.peerSessions.set(socket, session)
     this.callbacks.onPeerConnected(session)
     this.classifyConnection(socket, peerKey)
@@ -143,6 +144,7 @@ export class TransferSwarm {
     const session = this.peerSessions.get(socket)
     if (!session) return
     this.peerSessions.delete(socket)
+    session.drive?.destroy()
     this.callbacks.onPeerDisconnected(session.peerKey, this.peerSessions.size)
   }
 
@@ -156,7 +158,8 @@ export class TransferSwarm {
     this.hostedTopicHex = null
     this.joinedAny = false
 
-    for (const conn of this.peerSessions.keys()) {
+    for (const [conn, session] of this.peerSessions) {
+      session.drive?.destroy()
       try {
         conn.destroy()
       } catch {}
@@ -212,20 +215,23 @@ export class TransferSwarm {
     }
   }
 
-  sendTo(peerKey: string, message: PeerControlMessage): void {
+  get sessions(): PeerSession[] {
+    return Array.from(this.peerSessions.values())
+  }
+
+  getSession(peerKey: string): PeerSession | null {
     for (const session of this.peerSessions.values()) {
-      if (session.peerKey === peerKey) {
-        session.controlChannel.send(message)
-        return
-      }
+      if (session.peerKey === peerKey) return session
     }
+    return null
+  }
+
+  sendTo(peerKey: string, message: PeerControlMessage): void {
+    this.getSession(peerKey)?.controlChannel.send(message)
   }
 
   getHandshakeHash(peerKey: string): Uint8Array | null {
-    for (const session of this.peerSessions.values()) {
-      if (session.peerKey === peerKey) return session.handshakeHash
-    }
-    return null
+    return this.getSession(peerKey)?.handshakeHash ?? null
   }
 
   get peerCount(): number {

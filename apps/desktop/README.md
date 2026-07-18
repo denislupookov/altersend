@@ -26,11 +26,11 @@ The desktop app has two processes:
 
 **Renderer process** (`src/renderer/`) — React + Vite. The UI. Communicates with main via a typed IPC bridge (`preload.cjs`).
 
-**Bare worklet** (`packages/core/src/worklet/`) — a separate Bare (lightweight JS runtime) process that owns all P2P networking: Hyperswarm discovery, Hyperdrive transfers, RPC protocol. Main talks to it over IPC; the worklet pushes events back.
+**Bare worklet** (`packages/core/src/worklet/`) — a separate Bare (lightweight JS runtime) process that owns all P2P networking: Hyperswarm discovery, chunked file transfer, RPC protocol. Main talks to it over IPC; the worklet pushes events back.
 
 ```
 Renderer ─── IPC (preload) ─── Main ─── IPC ─── Bare worklet
-                                              (Hyperswarm / Hyperdrive)
+                                               (Hyperswarm / drive)
 ```
 
 ## Building installers
