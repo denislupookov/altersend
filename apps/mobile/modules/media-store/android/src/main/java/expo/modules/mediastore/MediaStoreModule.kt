@@ -70,11 +70,9 @@ class MediaStoreModule : Module() {
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       }
-      // No createChooser: let the user's default handler open it directly.
       try {
         context.startActivity(intent)
       } catch (err: ActivityNotFoundException) {
-        // Nothing handles the type; fall back to the Downloads UI, which may also be absent.
         try {
           context.startActivity(
             Intent(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS).apply {

@@ -111,7 +111,12 @@ export async function handleDownloadedFile(
   if (!permission.granted) {
     return { intended: 'photos', destination: 'filesystem', localPath }
   }
-  await MediaLibrary.saveToLibraryAsync(toFilePath(localPath))
+  try {
+    await MediaLibrary.saveToLibraryAsync(toFilePath(localPath))
+  } catch {
+    const fallback = await saveToFiles(localPath, fileName)
+    return { ...fallback, intended: 'photos' }
+  }
 
   try {
     const original = new File(toFilePath(localPath))
