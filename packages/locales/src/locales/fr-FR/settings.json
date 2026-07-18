@@ -5,8 +5,7 @@
   "sections": {
     "general": "Général",
     "support": "Assistance",
-    "about": "À propos",
-    "security": "Sécurité"
+    "about": "À propos"
   },
   "crashReports": {
     "label": "Rapports d'erreur",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "Si désactivé, un emplacement vous sera demandé à chaque transfert.",
     "change": "Modifier…",
     "chooseFolder": "Choisir un dossier…",
-    "changeFailed": "Impossible d'enregistrer le dossier de téléchargement"
+    "changeFailed": "Impossible d'enregistrer le dossier de téléchargement",
+    "mediaToPhotosLabel": "Enregistrer photos et vidéos dans Photos",
+    "mediaToGalleryLabel": "Enregistrer photos et vidéos dans la Galerie",
+    "destinationPhotos": "Photos et vidéos vers Photos",
+    "destinationFiles": "Photos et vidéos vers Fichiers",
+    "mediaToPhotosDescription": "Si désactivé, elles sont enregistrées dans le dossier AlterSend de Fichiers.",
+    "mediaToGalleryDescription": "Si désactivé, elles sont enregistrées dans votre dossier Téléchargements.",
+    "destinationGallery": "Photos et vidéos vers la Galerie",
+    "destinationDownloads": "Photos et vidéos vers Téléchargements"
   }
 }

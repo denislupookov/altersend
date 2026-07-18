@@ -96,8 +96,8 @@ function ThemedStack() {
       <Stack.Screen name='onboarding' options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name='settings' options={flowScreenOptions} />
       <Stack.Screen name='language' options={flowScreenOptions} />
+      <Stack.Screen name='general' options={flowScreenOptions} />
       <Stack.Screen name='connection' options={flowScreenOptions} />
-      <Stack.Screen name='security' options={flowScreenOptions} />
       <Stack.Screen name='devices' options={flowScreenOptions} />
       <Stack.Screen name='about' options={flowScreenOptions} />
       <Stack.Screen name='report' options={flowScreenOptions} />

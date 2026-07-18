@@ -94,6 +94,23 @@ export const styles = css.create({
   },
   secondary: {
     backgroundColor: tokens.colorBackgroundSubtle,
+    borderColor: tokens.colorBorderPrimary,
+    color: tokens.colorTextPrimary,
+    boxShadow: 'none',
+    ':hover': {
+      backgroundColor: tokens.colorSurfacePrimary,
+      borderColor: tokens.colorBorderStrong
+    },
+    ':focus-visible': {
+      outline: 'none',
+      boxShadow: `0 0 0 2px ${tokens.colorFocusRing}`
+    }
+  },
+  secondaryPressed: {
+    backgroundColor: tokens.colorSurfaceSecondary
+  },
+  outline: {
+    backgroundColor: tokens.colorBackgroundSubtle,
     borderColor: tokens.colorBorderStrong,
     color: tokens.colorTextPrimary,
     boxShadow: 'none',
@@ -106,7 +123,7 @@ export const styles = css.create({
       boxShadow: `0 0 0 2px ${tokens.colorFocusRing}`
     }
   },
-  secondaryPressed: {
+  outlinePressed: {
     backgroundColor: tokens.colorSurfaceSecondary
   },
   ghost: {
@@ -214,6 +231,7 @@ export const styles = css.create({
   textLg: { fontSize: tokens.fontSizeLg },
   textPrimary: { color: tokens.colorBackground },
   textSecondary: { color: tokens.colorTextPrimary },
+  textOutline: { color: tokens.colorTextPrimary },
   textGhost: { color: tokens.colorTextSecondary },
   textLight: { color: tokens.colorOnAccent },
   textDanger: { color: tokens.colorDanger },

@@ -1,7 +1,9 @@
 import { Platform } from 'react-native'
+import { File } from 'expo-file-system'
 import * as MediaLibrary from 'expo-media-library'
 import type { SaveDestination } from '@altersend/domain'
 import { isMediaStoreAvailable, saveToDownloads } from '@/modules/media-store'
+import { isSaveMediaToPhotos } from '@/src/lifecycle/downloadPreferenceStorage'
 
 const IMAGE_EXTENSIONS = new Set([
   'jpg',
@@ -29,6 +31,23 @@ function isMediaFile(fileName: string): boolean {
 }
 
 const MIME_BY_EXT: Record<string, string> = {
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  gif: 'image/gif',
+  heic: 'image/heic',
+  heif: 'image/heif',
+  webp: 'image/webp',
+  bmp: 'image/bmp',
+  tiff: 'image/tiff',
+  tif: 'image/tiff',
+  mov: 'video/quicktime',
+  mp4: 'video/mp4',
+  m4v: 'video/x-m4v',
+  '3gp': 'video/3gpp',
+  avi: 'video/x-msvideo',
+  mkv: 'video/x-matroska',
+  webm: 'video/webm',
   pdf: 'application/pdf',
   zip: 'application/zip',
   rar: 'application/vnd.rar',
@@ -64,23 +83,28 @@ export interface HandleDownloadedFileResult {
   localPath: string
 }
 
+async function saveToFiles(
+  localPath: string,
+  fileName: string
+): Promise<HandleDownloadedFileResult> {
+  if (Platform.OS === 'android' && isMediaStoreAvailable()) {
+    try {
+      const contentUri = await saveToDownloads(localPath, fileName, guessMimeType(fileName))
+      return { intended: 'downloads', destination: 'downloads', localPath: contentUri }
+    } catch (err) {
+      console.warn('saveToFiles: saveToDownloads failed, keeping private copy', err)
+      return { intended: 'downloads', destination: 'filesystem', localPath }
+    }
+  }
+  return { intended: 'filesystem', destination: 'filesystem', localPath }
+}
+
 export async function handleDownloadedFile(
   localPath: string,
   fileName: string
 ): Promise<HandleDownloadedFileResult> {
-  if (!isMediaFile(fileName)) {
-    // Android: stream into the public Downloads collection so it's browsable in Files.
-    // iOS exposes the app's Documents dir via the Files app already, so no export is needed.
-    if (Platform.OS === 'android' && isMediaStoreAvailable()) {
-      try {
-        const contentUri = await saveToDownloads(localPath, fileName, guessMimeType(fileName))
-        return { intended: 'downloads', destination: 'downloads', localPath: contentUri }
-      } catch (err) {
-        console.warn('handleDownloadedFile: saveToDownloads failed, keeping private copy', err)
-        return { intended: 'downloads', destination: 'filesystem', localPath }
-      }
-    }
-    return { intended: 'filesystem', destination: 'filesystem', localPath }
+  if (!isMediaFile(fileName) || !isSaveMediaToPhotos()) {
+    return saveToFiles(localPath, fileName)
   }
 
   const permission = await MediaLibrary.requestPermissionsAsync(true)
@@ -88,5 +112,13 @@ export async function handleDownloadedFile(
     return { intended: 'photos', destination: 'filesystem', localPath }
   }
   await MediaLibrary.saveToLibraryAsync(toFilePath(localPath))
+
+  try {
+    const original = new File(toFilePath(localPath))
+    if (original.exists) original.delete()
+  } catch (err) {
+    console.warn('handleDownloadedFile: could not remove the private copy', err)
+  }
+
   return { intended: 'photos', destination: 'photos', localPath }
 }

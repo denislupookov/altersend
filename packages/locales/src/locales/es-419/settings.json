@@ -5,8 +5,7 @@
   "sections": {
     "general": "General",
     "support": "Soporte",
-    "about": "Acerca de",
-    "security": "Seguridad"
+    "about": "Acerca de"
   },
   "crashReports": {
     "label": "Informes de fallos",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "Si está desactivado, se te preguntará dónde guardar cada transferencia.",
     "change": "Cambiar…",
     "chooseFolder": "Elegir una carpeta…",
-    "changeFailed": "No se pudo guardar la carpeta de descargas"
+    "changeFailed": "No se pudo guardar la carpeta de descargas",
+    "mediaToPhotosLabel": "Guardar fotos y videos en Fotos",
+    "mediaToGalleryLabel": "Guardar fotos y videos en la Galería",
+    "destinationPhotos": "Fotos y videos en Fotos",
+    "destinationFiles": "Fotos y videos en Archivos",
+    "mediaToPhotosDescription": "Si está desactivado, se guardan en la carpeta AlterSend de Archivos.",
+    "mediaToGalleryDescription": "Si está desactivado, se guardan en tu carpeta de Descargas.",
+    "destinationGallery": "Fotos y videos en la Galería",
+    "destinationDownloads": "Fotos y videos en Descargas"
   }
 }

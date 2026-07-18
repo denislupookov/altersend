@@ -5,8 +5,7 @@
   "sections": {
     "general": "일반",
     "support": "지원",
-    "about": "정보",
-    "security": "보안"
+    "about": "정보"
   },
   "crashReports": {
     "label": "충돌 보고서",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "끄면 전송할 때마다 저장 위치를 묻습니다.",
     "change": "변경…",
     "chooseFolder": "폴더 선택…",
-    "changeFailed": "다운로드 폴더를 저장하지 못했습니다"
+    "changeFailed": "다운로드 폴더를 저장하지 못했습니다",
+    "mediaToPhotosLabel": "사진 및 동영상을 사진 앱에 저장",
+    "mediaToGalleryLabel": "사진 및 동영상을 갤러리에 저장",
+    "destinationPhotos": "사진 및 동영상을 사진 앱으로",
+    "destinationFiles": "사진 및 동영상을 파일 앱으로",
+    "mediaToPhotosDescription": "끄면 파일 앱의 AlterSend 폴더에 저장됩니다.",
+    "mediaToGalleryDescription": "끄면 다운로드 폴더에 저장됩니다.",
+    "destinationGallery": "사진 및 동영상을 갤러리로",
+    "destinationDownloads": "사진 및 동영상을 다운로드로"
   }
 }

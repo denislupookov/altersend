@@ -5,8 +5,7 @@
   "sections": {
     "general": "General",
     "support": "Support",
-    "about": "About",
-    "security": "Security"
+    "about": "About"
   },
   "crashReports": {
     "label": "Crash reports",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "When off, you'll be asked where to save each transfer.",
     "change": "Change…",
     "chooseFolder": "Choose a folder…",
-    "changeFailed": "Couldn't save the download folder"
+    "changeFailed": "Couldn't save the download folder",
+    "mediaToPhotosLabel": "Save photos & videos to Photos",
+    "mediaToGalleryLabel": "Save photos & videos to Gallery",
+    "destinationPhotos": "Photos & videos to Photos",
+    "destinationFiles": "Photos & videos to Files",
+    "mediaToPhotosDescription": "When off, they're saved to the AlterSend folder in Files.",
+    "mediaToGalleryDescription": "When off, they're saved to your Downloads folder.",
+    "destinationGallery": "Photos & videos to Gallery",
+    "destinationDownloads": "Photos & videos to Downloads"
   }
 }

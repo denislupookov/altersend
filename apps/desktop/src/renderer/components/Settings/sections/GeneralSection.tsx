@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, LinkRow, ToggleSwitch, useTheme } from '@altersend/components'
 import { FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
@@ -19,15 +19,6 @@ function truncatePath(folder: string): string {
   const tail = folder.slice(-(MAX_PATH_CHARS - 1))
   const cut = tail.indexOf('/')
   return `…${cut > 0 ? tail.slice(cut) : tail}`
-}
-
-function Group({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div>
-      <p className='m-0 mb-2 text-[13px] font-medium text-text-muted'>{title}</p>
-      <div className='flex flex-col gap-2.5'>{children}</div>
-    </div>
-  )
 }
 
 export function GeneralSection() {
@@ -79,12 +70,12 @@ export function GeneralSection() {
 
   return (
     <SectionShell title={t('settings:sections.general')}>
-      <div className='flex flex-col gap-6'>
-        <Group title={t('settings:downloads.title')}>
+      <div className='flex flex-col gap-2.5'>
+        <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
           <LinkRow
-            standalone
             compact
             subtitleWrap
+            isLast={askEveryTime}
             label={t('settings:downloads.autoSaveLabel')}
             subtitle={t('settings:downloads.autoSaveDescription')}
             trailing={
@@ -97,14 +88,14 @@ export function GeneralSection() {
           />
           {askEveryTime ? null : (
             <LinkRow
-              standalone
               compact
+              isLast
               icon={<FolderIcon size={16} color={c.colorTextMuted} />}
               label={folder ? truncatePath(folder) : t('settings:downloads.chooseFolder')}
               trailing={
                 <Button
                   size='sm'
-                  variant='secondary'
+                  variant='outline'
                   onClick={() => handleChangeFolder().catch(console.error)}
                 >
                   {t('settings:downloads.change')}
@@ -112,24 +103,22 @@ export function GeneralSection() {
               }
             />
           )}
-        </Group>
+        </div>
 
-        <Group title={t('settings:sections.security')}>
-          <LinkRow
-            standalone
-            compact
-            subtitleWrap
-            label={t('settings:crashReports.label')}
-            subtitle={t('settings:crashReports.description')}
-            trailing={
-              <ToggleSwitch
-                checked={crashReporting}
-                onChange={handleCrashToggle}
-                aria-label={t('settings:crashReports.label')}
-              />
-            }
-          />
-        </Group>
+        <LinkRow
+          standalone
+          compact
+          subtitleWrap
+          label={t('settings:crashReports.label')}
+          subtitle={t('settings:crashReports.description')}
+          trailing={
+            <ToggleSwitch
+              checked={crashReporting}
+              onChange={handleCrashToggle}
+              aria-label={t('settings:crashReports.label')}
+            />
+          }
+        />
       </div>
     </SectionShell>
   )

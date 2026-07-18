@@ -9,7 +9,7 @@ import {
   AlertCircleIcon,
   GlobeIcon,
   InfoIcon,
-  ShieldIcon,
+  SlidersHorizontalIcon,
   SmartphoneIcon,
   WaypointsIcon
 } from '@altersend/components/icons'
@@ -20,6 +20,10 @@ import {
   getSavedLocalePreference,
   subscribeLocalePreference
 } from '@/src/lifecycle/localePreferenceStorage'
+import {
+  MEDIA_DESTINATION_KEYS,
+  isSaveMediaToPhotos
+} from '@/src/lifecycle/downloadPreferenceStorage'
 
 export default function SettingsScreen() {
   const { t } = useTranslation(['settings', 'common'])
@@ -31,10 +35,17 @@ export default function SettingsScreen() {
     getLocalePreferenceSnapshot
   )
   const peers = useTransferStore((s) => s.peers)
+  const [mediaToPhotos, setMediaToPhotos] = useState(isSaveMediaToPhotos)
 
   useEffect(() => {
     void loadPeers()
   }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      setMediaToPhotos(isSaveMediaToPhotos())
+    }, [])
+  )
 
   useEffect(() => subscribeLocalePreference(setLocalePreference), [])
 
@@ -79,6 +90,15 @@ export default function SettingsScreen() {
             />
             <LinkRow
               standalone
+              label={t('settings:sections.general')}
+              subtitle={t(
+                mediaToPhotos ? MEDIA_DESTINATION_KEYS.whenOn : MEDIA_DESTINATION_KEYS.whenOff
+              )}
+              icon={<SlidersHorizontalIcon size={16} color={c.colorTextSecondary} />}
+              onPress={() => router.push('/general')}
+            />
+            <LinkRow
+              standalone
               label={t('common:labels.language')}
               subtitle={languageLabel}
               icon={<GlobeIcon size={16} color={c.colorTextSecondary} />}
@@ -90,13 +110,6 @@ export default function SettingsScreen() {
               subtitle={t('settings:relay.label')}
               icon={<WaypointsIcon size={16} color={c.colorTextSecondary} />}
               onPress={() => router.push('/connection')}
-            />
-            <LinkRow
-              standalone
-              label={t('settings:rows.security')}
-              subtitle={t('settings:crashReports.label')}
-              icon={<ShieldIcon size={16} color={c.colorTextSecondary} />}
-              onPress={() => router.push('/security')}
             />
           </View>
         </View>

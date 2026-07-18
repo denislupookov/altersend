@@ -5,8 +5,7 @@
   "sections": {
     "general": "Geral",
     "support": "Suporte",
-    "about": "Sobre",
-    "security": "Segurança"
+    "about": "Sobre"
   },
   "crashReports": {
     "label": "Relatórios de falhas",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "Se desativado, você será perguntado onde salvar cada transferência.",
     "change": "Alterar…",
     "chooseFolder": "Escolher uma pasta…",
-    "changeFailed": "Não foi possível salvar a pasta de downloads"
+    "changeFailed": "Não foi possível salvar a pasta de downloads",
+    "mediaToPhotosLabel": "Salvar fotos e vídeos em Fotos",
+    "mediaToGalleryLabel": "Salvar fotos e vídeos na Galeria",
+    "destinationPhotos": "Fotos e vídeos em Fotos",
+    "destinationFiles": "Fotos e vídeos em Arquivos",
+    "mediaToPhotosDescription": "Se desativado, são salvos na pasta AlterSend em Arquivos.",
+    "mediaToGalleryDescription": "Se desativado, são salvos na sua pasta Downloads.",
+    "destinationGallery": "Fotos e vídeos na Galeria",
+    "destinationDownloads": "Fotos e vídeos em Downloads"
   }
 }

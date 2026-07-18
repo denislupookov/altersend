@@ -5,8 +5,7 @@
   "sections": {
     "general": "Основные",
     "support": "Поддержка",
-    "about": "О приложении",
-    "security": "Безопасность"
+    "about": "О приложении"
   },
   "crashReports": {
     "label": "Отчёты об ошибках",
@@ -24,7 +23,15 @@
     "autoSaveDescription": "Если выключено, при каждом получении будет запрашиваться место сохранения.",
     "change": "Изменить…",
     "chooseFolder": "Выберите папку…",
-    "changeFailed": "Не удалось сохранить папку загрузок"
+    "changeFailed": "Не удалось сохранить папку загрузок",
+    "mediaToPhotosLabel": "Сохранять фото и видео в «Фото»",
+    "mediaToGalleryLabel": "Сохранять фото и видео в Галерею",
+    "destinationPhotos": "Фото и видео в «Фото»",
+    "destinationFiles": "Фото и видео в «Файлы»",
+    "mediaToPhotosDescription": "Если выключено, они сохраняются в папку AlterSend в «Файлах».",
+    "mediaToGalleryDescription": "Если выключено, они сохраняются в папку «Загрузки».",
+    "destinationGallery": "Фото и видео в Галерею",
+    "destinationDownloads": "Фото и видео в «Загрузки»"
   },
   "rows": {
     "feedback": "Обратная связь",

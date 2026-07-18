@@ -5,8 +5,7 @@
   "sections": {
     "general": "通用",
     "support": "支持",
-    "about": "关于",
-    "security": "安全"
+    "about": "关于"
   },
   "crashReports": {
     "label": "崩溃报告",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "关闭后，每次传输都会询问保存位置。",
     "change": "更改…",
     "chooseFolder": "选择文件夹…",
-    "changeFailed": "无法保存下载文件夹"
+    "changeFailed": "无法保存下载文件夹",
+    "mediaToPhotosLabel": "将照片和视频保存到“照片”",
+    "mediaToGalleryLabel": "将照片和视频保存到相册",
+    "destinationPhotos": "照片和视频保存到“照片”",
+    "destinationFiles": "照片和视频保存到“文件”",
+    "mediaToPhotosDescription": "关闭后，将保存到“文件”中的 AlterSend 文件夹。",
+    "mediaToGalleryDescription": "关闭后，将保存到下载文件夹。",
+    "destinationGallery": "照片和视频保存到相册",
+    "destinationDownloads": "照片和视频保存到下载"
   }
 }

@@ -5,8 +5,7 @@
   "sections": {
     "general": "一般",
     "support": "サポート",
-    "about": "情報",
-    "security": "セキュリティ"
+    "about": "情報"
   },
   "crashReports": {
     "label": "クラッシュレポート",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "オフの場合、転送ごとに保存先を確認します。",
     "change": "変更…",
     "chooseFolder": "フォルダを選択…",
-    "changeFailed": "ダウンロードフォルダを保存できませんでした"
+    "changeFailed": "ダウンロードフォルダを保存できませんでした",
+    "mediaToPhotosLabel": "写真とビデオを「写真」に保存",
+    "mediaToGalleryLabel": "写真と動画をギャラリーに保存",
+    "destinationPhotos": "写真とビデオを「写真」へ",
+    "destinationFiles": "写真とビデオを「ファイル」へ",
+    "mediaToPhotosDescription": "オフの場合、「ファイル」の AlterSend フォルダに保存されます。",
+    "mediaToGalleryDescription": "オフの場合、ダウンロードフォルダに保存されます。",
+    "destinationGallery": "写真と動画をギャラリーへ",
+    "destinationDownloads": "写真と動画をダウンロードへ"
   }
 }

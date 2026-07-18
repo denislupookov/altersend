@@ -5,8 +5,7 @@
   "sections": {
     "general": "Allgemein",
     "support": "Unterstützung",
-    "about": "Info",
-    "security": "Sicherheit"
+    "about": "Info"
   },
   "crashReports": {
     "label": "Absturzberichte",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "Wenn deaktiviert, wirst du bei jeder Übertragung nach dem Speicherort gefragt.",
     "change": "Ändern…",
     "chooseFolder": "Ordner auswählen…",
-    "changeFailed": "Download-Ordner konnte nicht gespeichert werden"
+    "changeFailed": "Download-Ordner konnte nicht gespeichert werden",
+    "mediaToPhotosLabel": "Fotos & Videos in Fotos speichern",
+    "mediaToGalleryLabel": "Fotos & Videos in der Galerie speichern",
+    "destinationPhotos": "Fotos & Videos in Fotos",
+    "destinationFiles": "Fotos & Videos in Dateien",
+    "mediaToPhotosDescription": "Wenn deaktiviert, werden sie im AlterSend-Ordner in Dateien gespeichert.",
+    "mediaToGalleryDescription": "Wenn deaktiviert, werden sie im Download-Ordner gespeichert.",
+    "destinationGallery": "Fotos & Videos in die Galerie",
+    "destinationDownloads": "Fotos & Videos in Downloads"
   }
 }

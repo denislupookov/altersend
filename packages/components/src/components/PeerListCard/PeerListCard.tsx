@@ -72,7 +72,7 @@ function PairControl({ entry, onPair }: PeerRowProps) {
   switch (entry.pairState) {
     case 'pairable':
       return (
-        <Button size='sm' variant='secondary' onClick={() => onPair?.(entry.peerKey)}>
+        <Button size='sm' variant='outline' onClick={() => onPair?.(entry.peerKey)}>
           Pair
         </Button>
       )

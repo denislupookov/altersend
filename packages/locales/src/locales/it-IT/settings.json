@@ -5,8 +5,7 @@
   "sections": {
     "general": "Generale",
     "support": "Supporto",
-    "about": "Informazioni",
-    "security": "Sicurezza"
+    "about": "Informazioni"
   },
   "crashReports": {
     "label": "Rapporti sugli incidenti",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "Se disattivato, ti verrà chiesto dove salvare ogni trasferimento.",
     "change": "Cambia…",
     "chooseFolder": "Scegli una cartella…",
-    "changeFailed": "Impossibile salvare la cartella dei download"
+    "changeFailed": "Impossibile salvare la cartella dei download",
+    "mediaToPhotosLabel": "Salva foto e video in Foto",
+    "mediaToGalleryLabel": "Salva foto e video nella Galleria",
+    "destinationPhotos": "Foto e video in Foto",
+    "destinationFiles": "Foto e video in File",
+    "mediaToPhotosDescription": "Se disattivato, vengono salvati nella cartella AlterSend in File.",
+    "mediaToGalleryDescription": "Se disattivato, vengono salvati nella cartella Download.",
+    "destinationGallery": "Foto e video nella Galleria",
+    "destinationDownloads": "Foto e video in Download"
   }
 }

@@ -5,8 +5,7 @@
   "sections": {
     "general": "一般",
     "support": "支援",
-    "about": "關於",
-    "security": "安全"
+    "about": "關於"
   },
   "crashReports": {
     "label": "崩潰報告",
@@ -89,6 +88,14 @@
     "autoSaveDescription": "關閉後，每次傳輸都會詢問儲存位置。",
     "change": "變更…",
     "chooseFolder": "選擇資料夾…",
-    "changeFailed": "無法儲存下載資料夾"
+    "changeFailed": "無法儲存下載資料夾",
+    "mediaToPhotosLabel": "將照片和影片儲存到「照片」",
+    "mediaToGalleryLabel": "將照片和影片儲存到相簿",
+    "destinationPhotos": "照片和影片儲存到「照片」",
+    "destinationFiles": "照片和影片儲存到「檔案」",
+    "mediaToPhotosDescription": "關閉後，將儲存到「檔案」中的 AlterSend 資料夾。",
+    "mediaToGalleryDescription": "關閉後，將儲存到下載資料夾。",
+    "destinationGallery": "照片和影片儲存到相簿",
+    "destinationDownloads": "照片和影片儲存到下載"
   }
 }
