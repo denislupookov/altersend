@@ -66,7 +66,10 @@
     "scanOrImportQrHintDesktop": "Utilisez la webcam ou importez une image QR enregistrée",
     "scanOrImportQrHintMobile": "Utilisez l’appareil photo ou importez une image enregistrée",
     "importImage": "Importer une image",
-    "importFromImage": "Importer depuis une image"
+    "importFromImage": "Importer depuis une image",
+    "resume": "Reprendre",
+    "stop": "Arrêter",
+    "resumeAll": "Tout reprendre"
   },
   "errors": {
     "invalidCode": "Entrez un code hexadécimal valide de 64 caractères.",
@@ -114,6 +117,9 @@
     "ready": "Prêt",
     "saved": "Enregistré",
     "failed": "Échec",
+    "paused": "En pause",
+    "resuming": "Reprise…",
+    "waiting": "En attente…",
     "downloadingPercent": "Téléchargement de {{percent}} %",
     "percent": "{{percent}} %",
     "waitingForFiles": "En attente des fichiers de l'expéditeur…"

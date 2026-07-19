@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { SenderSession } from '../src/engine/sender'
 import { ReceiverSession } from '../src/engine/receiver'
 import { DiskReader } from '../src/adapters/disk-reader'
-import { DiskWriter } from '../src/adapters/disk-writer'
+import { DiskWriter, discardPartial } from '../src/adapters/disk-writer'
 import { createChannelPair } from './support'
 
 let dir = ''
@@ -70,7 +70,7 @@ describe('expectedSize', () => {
 })
 
 describe('cancel', () => {
-  it('stops the sender mid-flight and leaves no partial file behind', async () => {
+  it('stops the sender mid-flight and keeps the partial for resuming', async () => {
     dir = await mkdtemp(join(tmpdir(), 'drive-cancel-'))
     const src = join(dir, 'input.bin')
     const dst = join(dir, 'output.bin')
@@ -99,6 +99,9 @@ describe('cancel', () => {
     expect(results[1].status).toBe('rejected')
     expect(sent.length).toBeLessThan(16)
     await expect(stat(dst)).rejects.toThrow()
+    expect((await stat(`${dst}.part`)).size).toBeGreaterThan(0)
+
+    await discardPartial(dst)
     await expect(stat(`${dst}.part`)).rejects.toThrow()
   })
 
@@ -143,5 +146,31 @@ describe('unreadable source', () => {
     expect(results[1].status).toBe('rejected')
     expect(results[0].status).toBe('rejected')
     await expect(stat(dst)).rejects.toThrow()
+  })
+})
+
+describe('finalize safety', () => {
+  it('never overwrites a file that appeared at the target during the transfer', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'drive-clobber-'))
+    const src = join(dir, 'input.bin')
+    const dst = join(dir, 'output.bin')
+    const input = new Uint8Array(4096).fill(3)
+    await writeFile(src, input)
+
+    const [senderChannel, receiverChannel] = createChannelPair()
+    const receiver = new ReceiverSession(new DiskWriter(dst), receiverChannel, { transferId: 'x1' })
+    const sender = new SenderSession(new DiskReader(src), senderChannel, {
+      transferId: 'x1',
+      name: 'output.bin'
+    })
+
+    await writeFile(dst, 'a file the user created meanwhile')
+
+    const [savedTo] = await Promise.all([receiver.receive(), sender.start()])
+    await sender.close()
+
+    expect(savedTo).not.toBe(dst)
+    expect(await readFile(dst, 'utf8')).toBe('a file the user created meanwhile')
+    expect(Buffer.from(await readFile(savedTo)).equals(Buffer.from(input))).toBe(true)
   })
 })

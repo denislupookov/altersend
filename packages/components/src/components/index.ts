@@ -1,5 +1,7 @@
 export * from './Badge/index'
 export * from './Button/index'
+export * from './DownloadRow/index'
+export * from './RowGroup/index'
 export * from './Input/index'
 export * from './Textarea/index'
 export * from './Tabs/index'

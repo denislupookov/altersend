@@ -44,7 +44,8 @@
   "dependencies": {
     "bare-fs": "^4.7.0",
     "bare-path": "^3.0.0",
-    "blake2b": "^2.1.4"
+    "blake2b": "^2.1.4",
+    "blake2b-wasm": "^2.4.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

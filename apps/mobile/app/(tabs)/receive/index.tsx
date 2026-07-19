@@ -5,9 +5,9 @@ import { useFocusEffect, useRouter } from 'expo-router'
 import {
   JOIN_CODE_PATTERN,
   getDisplayError,
-  getDownloadTotals,
   getReceivePageCopy,
   getReceiveStep,
+  useReceiveDownloads,
   useTransferStore
 } from '@altersend/domain'
 import { clearSession, joinSession } from '@altersend/domain'
@@ -62,18 +62,12 @@ export default function ReceiveScreen() {
     }
   }
 
-  const hasIncomingFiles = incomingFileOffers.length > 0
-  const totals = useMemo(
-    () => getDownloadTotals(incomingFileOffers, receiveDownloadStates),
-    [incomingFileOffers, receiveDownloadStates]
-  )
-  const downloadableFileCount = incomingFileOffers.filter((offer) => offer.kind === 'file').length
-  const allDownloadsCompleted =
-    downloadableFileCount > 0 && totals.completedCount === downloadableFileCount
+  const { totals, fileOffers, textOffers, allDownloaded } = useReceiveDownloads()
+  const downloadableFileCount = fileOffers.length
 
   const step = getReceiveStep({
-    hasIncomingFiles,
-    allDownloadsCompleted,
+    hasIncomingFiles: downloadableFileCount + textOffers.length > 0,
+    allDownloadsCompleted: allDownloaded,
     role,
     peerCount,
     isReconnecting

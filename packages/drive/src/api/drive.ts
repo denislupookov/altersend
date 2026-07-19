@@ -22,6 +22,7 @@ export interface SendFileOptions {
   transferId?: string
   name?: string
   signal?: AbortSignal
+  notifyPeerOnCancel?: boolean
   highWaterMark?: number
   onProgress?: (sentBytes: number, totalBytes: number) => void
 }
@@ -38,7 +39,9 @@ export async function sendFile(
     highWaterMark: opts.highWaterMark,
     onProgress: opts.onProgress
   })
-  const release = onAbort(opts.signal, () => sender.cancel())
+  const release = onAbort(opts.signal, () =>
+    sender.cancel('Transfer cancelled', { notifyPeer: opts.notifyPeerOnCancel !== false })
+  )
   try {
     return await sender.start()
   } finally {
@@ -53,6 +56,7 @@ export interface ReceiveFileOptions {
   signal?: AbortSignal
   resumeBits?: Uint8Array
   verifyFullFile?: boolean
+  overwrite?: boolean
   onProgress?: (receivedBytes: number, totalBytes: number) => void
   onChunkWritten?: (bitmap: Bitmap) => void
 }
@@ -62,7 +66,7 @@ export function receiveFile(
   channel: DriveChannel,
   opts: ReceiveFileOptions = {}
 ): Promise<string> {
-  const writer = new DiskWriter(targetPath)
+  const writer = new DiskWriter(targetPath, { overwrite: opts.overwrite })
   const receiver = new ReceiverSession(writer, channel, {
     transferId: opts.transferId,
     expectedSize: opts.expectedSize,

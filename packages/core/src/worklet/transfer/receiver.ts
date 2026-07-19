@@ -1,70 +1,45 @@
-import Hyperdrive from 'hyperdrive'
 import type Corestore from 'corestore'
-import b4a from 'b4a'
-import fs from 'bare-fs'
-import { receiveFile, type DriveChannel } from '@altersend/drive'
 import {
-  AbortError,
+  receiveFile,
+  discardPartial,
+  firstFreePath,
+  type Bitmap,
+  type DriveChannel
+} from '@altersend/drive'
+import {
   getDirname,
   getFileName,
   isPathSafe,
   isSafeRelativePath,
-  isValidHexKey,
   joinFilePath,
   onAbort,
   toRelativePath
 } from './utils'
+import { fileExists } from './fs-utils'
+import { LegacyHyperdriveDownloader } from './legacy/downloader'
 import type { DownloadFileRequest, DownloadFileResult } from '../rpc/protocol'
-import type { DownloaderCallbacks } from './download-events'
+import {
+  DownloadReporter,
+  type DownloaderCallbacks,
+  type DownloadFileOutcome
+} from './download-events'
 
-type DownloadFileOutcome = { ok: true; savedTo: string } | { ok: false; message: string }
-
-function fileEvents(
-  file: DownloadFileRequest,
-  callbacks: DownloaderCallbacks,
-  targetPath: string,
-  totalBytes: number
-) {
-  const base = {
-    transferId: file.transferId,
-    fileId: file.fileId,
-    fileName: file.name ?? getFileName(file.path),
-    sourcePath: file.path,
-    targetPath,
-    totalBytes
-  }
-  return {
-    started: () => callbacks.onFileStart({ ...base, bytesTransferred: 0 }),
-    progressed: (bytesTransferred: number) =>
-      callbacks.onFileProgress({ ...base, bytesTransferred }),
-    completed: () => callbacks.onFileComplete({ ...base, bytesTransferred: totalBytes }),
-    failed: (message: string): DownloadFileOutcome => {
-      callbacks.onFileError({ ...base, message })
-      return { ok: false, message }
-    }
-  }
-}
-
-function getChunkSize(chunk: unknown): number {
-  if (typeof chunk === 'string') return Buffer.byteLength(chunk)
-  if (
-    chunk &&
-    typeof chunk === 'object' &&
-    'byteLength' in chunk &&
-    typeof (chunk as { byteLength: unknown }).byteLength === 'number'
-  ) {
-    return (chunk as { byteLength: number }).byteLength
-  }
-  return 0
+interface PartialDownload {
+  finalPath: string
+  bitmap?: Bitmap
+  received: number
+  overwrite?: boolean
 }
 
 export class TransferReceiver {
-  private readonly driveStore: Corestore
-  private readonly remoteDrives: Map<string, Hyperdrive>
+  private readonly legacy: LegacyHyperdriveDownloader
+  private readonly partials = new Map<string, PartialDownload>()
+  private readonly active = new Map<string, AbortController>()
+  private readonly queued = new Set<string>()
+  private readonly paused = new Set<string>()
 
   constructor(driveStore: Corestore) {
-    this.driveStore = driveStore
-    this.remoteDrives = new Map()
+    this.legacy = new LegacyHyperdriveDownloader(driveStore)
   }
 
   async downloadFiles(
@@ -74,15 +49,28 @@ export class TransferReceiver {
     driveFor?: (file: DownloadFileRequest) => Promise<DriveChannel | null>
   ): Promise<DownloadFileResult[]> {
     const results: DownloadFileResult[] = []
+    for (const file of files) {
+      this.paused.delete(file.fileId)
+      this.queued.add(file.fileId)
+    }
 
     for (const file of files) {
+      this.queued.delete(file.fileId)
       const resolvedName = file.name ?? getFileName(file.path)
       const record = (outcome: DownloadFileOutcome) =>
         results.push({ fileId: file.fileId, fileName: resolvedName, ...outcome })
       const fail = (targetPath: string, message: string) =>
-        record(fileEvents(file, callbacks, targetPath, file.size ?? 0).failed(message))
+        record(
+          new DownloadReporter({
+            file,
+            callbacks,
+            targetPath,
+            totalBytes: file.size ?? 0
+          }).failed(message)
+        )
 
-      if (signal?.aborted) {
+      if (signal?.aborted || this.paused.has(file.fileId)) {
+        this.paused.delete(file.fileId)
         results.push({
           fileId: file.fileId,
           fileName: resolvedName,
@@ -106,57 +94,45 @@ export class TransferReceiver {
 
       const targetPath = file.targetPath ?? joinFilePath(file.targetDir!, relativeTarget)
 
+      if (this.active.has(file.fileId)) {
+        fail(targetPath, 'Already downloading this file')
+        continue
+      }
+
+      const perFile = new AbortController()
+      this.active.set(file.fileId, perFile)
+      const releaseOuter = onAbort(signal, () => perFile.abort())
+
       try {
         const channel = (await driveFor?.(file)) ?? null
         record(
           channel
-            ? await this.downloadViaDrive(file, targetPath, callbacks, channel, signal)
-            : await this.downloadFile(file, targetPath, callbacks, signal)
+            ? await this.downloadViaDrive(file, targetPath, callbacks, channel, perFile.signal)
+            : await this.legacy.download(file, targetPath, callbacks, perFile.signal)
         )
       } catch (error) {
-        await this.evictRemoteDrive(file.driveKey)
+        const cancelled = error instanceof Error && error.name === 'AbortError'
+        if (!cancelled) await this.legacy.evictDrive(file.driveKey)
 
-        fail(targetPath, error instanceof Error ? error.message : String(error))
+        record(
+          new DownloadReporter({
+            file,
+            callbacks,
+            targetPath,
+            totalBytes: file.size ?? 0
+          }).failed(
+            cancelled ? 'Cancelled' : error instanceof Error ? error.message : String(error),
+            { cancelled }
+          )
+        )
+      } finally {
+        releaseOuter()
+        this.active.delete(file.fileId)
       }
     }
 
+    for (const file of files) this.queued.delete(file.fileId)
     return results
-  }
-
-  private async downloadFile(
-    file: DownloadFileRequest,
-    targetPath: string,
-    callbacks: DownloaderCallbacks,
-    signal?: AbortSignal
-  ): Promise<DownloadFileOutcome> {
-    const remoteDrive = await this.getRemoteDrive(file.driveKey)
-    const resolvedName = file.name ?? getFileName(file.path)
-    const announced = fileEvents(file, callbacks, targetPath, file.size ?? 0)
-
-    const entry = await remoteDrive.entry(file.path)
-    if (!entry?.value?.blob) {
-      return announced.failed(`Could not find remote file: ${resolvedName}`)
-    }
-
-    const actualBytes = entry.value.blob.byteLength
-    if (typeof file.size === 'number' && file.size !== actualBytes) {
-      return announced.failed(`Sender claimed ${file.size} bytes but file is ${actualBytes} bytes`)
-    }
-
-    const events = fileEvents(file, callbacks, targetPath, actualBytes)
-    events.started()
-
-    const savedTo = await this.writeToDisk(
-      remoteDrive,
-      file.path,
-      targetPath,
-      actualBytes,
-      (bytesTransferred) => events.progressed(bytesTransferred),
-      signal
-    )
-
-    events.completed()
-    return { ok: true, savedTo }
   }
 
   private async downloadViaDrive(
@@ -166,187 +142,118 @@ export class TransferReceiver {
     channel: DriveChannel,
     signal?: AbortSignal
   ): Promise<DownloadFileOutcome> {
+    const partial = await this.findResumablePartial(file.fileId, targetPath)
     try {
-      const finalPath = await this.findUniqueTargetPath(targetPath)
-      const events = fileEvents(file, callbacks, finalPath, file.size ?? 0)
+      const overwrite = partial ? partial.overwrite === true : file.overwrite === true
+      const finalPath =
+        partial?.finalPath ?? (overwrite ? targetPath : await this.availableTargetPath(targetPath))
+      const events = new DownloadReporter({
+        file,
+        callbacks,
+        targetPath: finalPath,
+        totalBytes: file.size ?? 0,
+        pausable: true
+      })
+      const progress: PartialDownload = {
+        finalPath,
+        bitmap: partial?.bitmap,
+        received: partial?.received ?? 0,
+        overwrite
+      }
+      this.partials.set(file.fileId, progress)
 
       const pending = receiveFile(finalPath, channel, {
         transferId: file.fileId,
         expectedSize: file.size,
         signal,
-        onProgress: (bytesTransferred) => events.progressed(bytesTransferred)
+        overwrite,
+        resumeBits: partial?.bitmap?.serialize(),
+        onProgress: (bytesTransferred) => events.progressed(bytesTransferred),
+        onChunkWritten: (bitmap) => {
+          progress.bitmap = bitmap
+          progress.received = bitmap.count()
+        }
       })
 
       events.started()
       try {
-        await pending
-        events.completed()
-        return { ok: true, savedTo: finalPath }
+        const savedTo = await pending
+        this.partials.delete(file.fileId)
+        events.completed(savedTo)
+        return { ok: true, savedTo }
       } catch (err) {
-        return events.failed(err instanceof Error ? err.message : String(err))
+        const corrupt = err instanceof Error && err.name === 'IntegrityError'
+        if (corrupt) await this.discardPartials([file.fileId])
+        return events.failed(err instanceof Error ? err.message : String(err), {
+          resumable: !corrupt && (this.partials.get(file.fileId)?.received ?? 0) > 0
+        })
       }
     } finally {
       channel.close()
     }
   }
 
-  private async evictRemoteDrive(driveKey: string): Promise<void> {
-    const cached = this.remoteDrives.get(driveKey)
-    if (!cached) return
-    this.remoteDrives.delete(driveKey)
-    try {
-      await cached.close()
-    } catch (err) {
-      console.warn('TransferReceiver: failed to close evicted drive', err)
+  private async findResumablePartial(
+    fileId: string,
+    targetPath: string
+  ): Promise<PartialDownload | null> {
+    const partial = this.partials.get(fileId)
+    if (!partial) return null
+    const stale =
+      partial.received === 0 ||
+      getDirname(partial.finalPath) !== getDirname(targetPath) ||
+      !(await fileExists(`${partial.finalPath}.part`))
+    if (stale) {
+      await this.discardPartials([fileId])
+      return null
     }
+    return partial
   }
 
-  private async getRemoteDrive(driveKey: string): Promise<Hyperdrive> {
-    if (!isValidHexKey(driveKey)) {
-      throw new Error(`Invalid drive key format: expected 64 hex chars`)
-    }
-    const existingDrive = this.remoteDrives.get(driveKey)
-    if (existingDrive) {
-      try {
-        await existingDrive.update({ wait: true })
-      } catch (err) {
-        console.warn('TransferReceiver: update on cached drive failed, using cached state', err)
-      }
-      return existingDrive
-    }
+  activeDownloadIds(): string[] {
+    return Array.from(this.active.keys())
+  }
 
-    const remoteDrive = new Hyperdrive(this.driveStore, b4a.from(driveKey, 'hex'))
-    await remoteDrive.ready()
-    try {
-      await remoteDrive.update({ wait: true })
-    } catch (err) {
-      try {
-        await remoteDrive.close()
-      } catch {}
-      throw new Error(
-        `Could not sync with peer drive: ${err instanceof Error ? err.message : String(err)}`
-      )
+  pause(fileId: string): boolean {
+    const controller = this.active.get(fileId)
+    if (controller) {
+      controller.abort()
+      return true
     }
-    this.remoteDrives.set(driveKey, remoteDrive)
-    return remoteDrive
+    if (!this.queued.has(fileId)) return false
+    this.paused.add(fileId)
+    return true
+  }
+
+  async discardPartials(fileIds?: string[]): Promise<void> {
+    const ids = fileIds ?? Array.from(this.partials.keys())
+    for (const id of ids) {
+      const partial = this.partials.get(id)
+      if (!partial) continue
+      this.partials.delete(id)
+      await discardPartial(partial.finalPath)
+    }
   }
 
   async reset(): Promise<void> {
-    const drives = Array.from(this.remoteDrives.values())
-    this.remoteDrives.clear()
-    for (const drive of drives) {
-      try {
-        await drive.close()
-      } catch (err) {
-        console.warn('TransferReceiver: close drive failed', err)
-      }
-    }
+    this.queued.clear()
+    this.paused.clear()
+    await this.discardPartials()
+    await this.legacy.closeAll()
   }
 
   async destroy(): Promise<void> {
     await this.reset()
   }
 
-  private fileExists(filePath: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      // bare-fs.promises lacks stat; the callback form is always present.
-      ;(fs as unknown as { stat(p: string, cb: (e: unknown) => void): void }).stat(
-        filePath,
-        (err) => resolve(!err)
-      )
-    })
+  private isTargetInUse(targetPath: string): boolean {
+    for (const partial of this.partials.values()) {
+      if (partial.finalPath === targetPath) return true
+    }
+    return false
   }
 
-  private async findUniqueTargetPath(targetPath: string): Promise<string> {
-    if (!(await this.fileExists(targetPath))) return targetPath
-    const dir = getDirname(targetPath)
-    const filename = getFileName(targetPath)
-    const dotIdx = filename.lastIndexOf('.')
-    const base = dotIdx > 0 ? filename.slice(0, dotIdx) : filename
-    const ext = dotIdx > 0 ? filename.slice(dotIdx) : ''
-    for (let i = 1; i <= 999; i++) {
-      const candidate = joinFilePath(dir, `${base} (${i})${ext}`)
-      if (!(await this.fileExists(candidate))) return candidate
-    }
-    return targetPath
-  }
-
-  private async writeToDisk(
-    remoteDrive: Hyperdrive,
-    sourcePath: string,
-    targetPath: string,
-    totalBytes: number,
-    onProgress: (bytesTransferred: number) => void,
-    signal?: AbortSignal
-  ): Promise<string> {
-    const { default: Localdrive } = await import('localdrive')
-    const destination = new Localdrive(getDirname(targetPath))
-    const partName = `${getFileName(targetPath)}.part`
-    const partPath = `${targetPath}.part`
-
-    const readStream = remoteDrive.createReadStream(sourcePath)
-    const writeStream = destination.createWriteStream(`/${partName}`)
-
-    let release = () => {}
-
-    try {
-      await new Promise<void>((resolve, reject) => {
-        let settled = false
-        let bytesTransferred = 0
-        let lastReportedBytes = 0
-
-        const finish = (err?: Error) => {
-          if (settled) return
-          settled = true
-          if (err) reject(err)
-          else resolve()
-        }
-
-        // Settle before destroying streams so the outer catch sees AbortError, not stream-destroyed.
-        release = onAbort(signal, () => {
-          finish(new AbortError())
-          try {
-            readStream.destroy()
-          } catch {}
-          try {
-            writeStream.destroy()
-          } catch {}
-        })
-
-        readStream.on('data', (chunk: unknown) => {
-          bytesTransferred += getChunkSize(chunk)
-          const nextBytes =
-            totalBytes > 0 ? Math.min(bytesTransferred, totalBytes) : bytesTransferred
-          if (nextBytes === totalBytes || nextBytes - lastReportedBytes >= 64 * 1024) {
-            lastReportedBytes = nextBytes
-            onProgress(nextBytes)
-          }
-        })
-        readStream.once('error', finish)
-        writeStream.once('error', finish)
-        writeStream.once('close', () => {
-          if (totalBytes > 0 && lastReportedBytes < totalBytes) {
-            onProgress(totalBytes)
-          }
-          finish()
-        })
-        readStream.pipe(writeStream)
-      })
-    } catch (err) {
-      try {
-        await fs.promises.unlink(partPath)
-      } catch (cleanupErr) {
-        if ((cleanupErr as NodeJS.ErrnoException)?.code !== 'ENOENT') {
-          console.warn('TransferReceiver: failed to delete partial file', partPath, cleanupErr)
-        }
-      }
-      throw err
-    } finally {
-      release()
-    }
-
-    const finalPath = await this.findUniqueTargetPath(targetPath)
-    await fs.promises.rename(partPath, finalPath)
-    return finalPath
+  private availableTargetPath(targetPath: string): Promise<string> {
+    return firstFreePath(targetPath, (candidate) => !this.isTargetInUse(candidate))
   }
 }

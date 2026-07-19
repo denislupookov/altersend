@@ -7,8 +7,9 @@ import {
   encodeRPCError,
   encodeRPCSuccess
 } from './protocol'
-import type { TransferRPC } from './protocol'
+import type { TransferMethod, TransferRPC } from './protocol'
 import { AbortError } from '../transfer/utils'
+import { SerialQueue } from './serial-queue'
 
 type EmitEvent = (message: unknown) => void
 
@@ -16,24 +17,43 @@ function toError(err: unknown) {
   return err instanceof Error ? err : new Error('Unknown worker error')
 }
 
+export function runsWithoutWaiting(method: TransferMethod): boolean {
+  return method === 'pauseDownload'
+}
+
+export function isFileTransfer(method: TransferMethod): boolean {
+  return method === 'downloadFiles'
+}
+
+const DOWNLOAD_DRAIN_TIMEOUT_MS = 5_000
+
 export function createTransferWorkerRPCServer(
   stream: unknown,
   orchestrator: TransferRPC,
   emitEvent: EmitEvent,
   abortInFlight: () => void = () => {}
 ) {
-  let commandQueue = Promise.resolve<unknown>(null)
+  const reportFailure = (err: unknown) => {
+    if (err instanceof BadRequestError || err instanceof AbortError) return null
+    const failure = toError(err)
+    console.error('Core: Command queue error', failure)
+    emitEvent(createErrorEvent(failure.message, TRANSFER_ERROR_CODES.transferFailed))
+    return null
+  }
 
-  async function runCommand<T>(handler: () => Promise<T>): Promise<T> {
-    const next = commandQueue.then(handler)
-    commandQueue = next.catch((err: unknown) => {
-      if (err instanceof BadRequestError || err instanceof AbortError) return null
-      const failure = toError(err)
-      console.error('Core: Command queue error', failure)
-      emitEvent(createErrorEvent(failure.message, TRANSFER_ERROR_CODES.transferFailed))
-      return null
-    })
-    return next
+  const downloads = new SerialQueue(reportFailure)
+  const commands = new SerialQueue(reportFailure)
+
+  function schedule<T>(method: TransferMethod, task: () => Promise<T>): Promise<T> {
+    if (runsWithoutWaiting(method)) return task()
+    return isFileTransfer(method) ? downloads.run(task) : commands.run(task)
+  }
+
+  function waitForDownloadsToStop(): Promise<unknown> {
+    return Promise.race([
+      downloads.whenIdle(),
+      new Promise((resolve) => setTimeout(resolve, DOWNLOAD_DRAIN_TIMEOUT_MS))
+    ])
   }
 
   const rpc = new RPC(stream, async (req: RPCRequest) => {
@@ -43,13 +63,17 @@ export function createTransferWorkerRPCServer(
       return
     }
 
-    if (method === 'disconnect' || method === 'closePeers') abortInFlight()
+    if (method === 'disconnect' || method === 'closePeers') {
+      abortInFlight()
+      await waitForDownloadsToStop()
+    }
 
     const args = decodeRPCPayload<unknown[]>(req.data) ?? []
     const invoke = orchestrator[method] as (...a: unknown[]) => Promise<unknown>
+    const run = () => invoke.apply(orchestrator, args)
 
     try {
-      const reply = await runCommand(() => invoke.apply(orchestrator, args))
+      const reply = await schedule(method, run)
       req.reply(encodeRPCSuccess(reply))
     } catch (err: unknown) {
       if (err instanceof BadRequestError) {

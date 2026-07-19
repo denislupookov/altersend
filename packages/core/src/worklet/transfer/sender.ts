@@ -1,10 +1,9 @@
 import crypto from 'hypercore-crypto'
 import fs from 'bare-fs'
-import b4a from 'b4a'
 import Localdrive from 'localdrive'
-import MirrorDrive from 'mirror-drive'
 import type Hyperdrive from 'hyperdrive'
-import { AbortError, getDirname, getFileName, toRelativePath } from './utils'
+import { getDirname, getFileName, toRelativePath } from './utils'
+import { LegacyPeerStaging } from './legacy/staging'
 import type { FileOffer } from './control-channel'
 
 export interface ScannedFile {
@@ -47,15 +46,13 @@ function resolveSource(
 }
 
 export class TransferSender {
-  private readonly drive: Hyperdrive
+  readonly legacy: LegacyPeerStaging
   private readonly scanDrives: Set<Localdrive> = new Set()
   private readonly sourcePaths = new Map<string, string>()
   private readonly temporaryPaths = new Set<string>()
-  private pendingStage: ScannedFile[] = []
-  private staging: Promise<void> | null = null
 
   constructor(drive: Hyperdrive) {
-    this.drive = drive
+    this.legacy = new LegacyPeerStaging(drive)
   }
 
   localPath(fileId: string): string | null {
@@ -63,7 +60,7 @@ export class TransferSender {
   }
 
   get driveKey(): string {
-    return b4a.toString(this.drive.key, 'hex')
+    return this.legacy.driveKey
   }
 
   async scanFiles(
@@ -90,7 +87,7 @@ export class TransferSender {
       const entry = await sourceDrive.entry(sourcePath)
 
       if (!entry?.value?.blob) {
-        const existingEntry = await this.drive.entry(sourcePath)
+        const existingEntry = await this.legacy.stagedEntry(sourcePath)
         if (existingEntry?.value?.blob) {
           const size = existingEntry.value.blob.byteLength
           totalBytes += size
@@ -137,7 +134,7 @@ export class TransferSender {
   }
 
   buildOffers(files: ScannedFile[], transferId: string): FileOffer[] {
-    this.pendingStage = files
+    this.legacy.setPendingFiles(files)
 
     return files.map((file) => {
       const id = createFileId()
@@ -156,43 +153,12 @@ export class TransferSender {
   }
 
   stageForLegacyPeers(onStaging: (file: ScannedFile) => void, signal?: AbortSignal): Promise<void> {
-    if (!this.staging) {
-      const run: Promise<void> = this.runStaging(onStaging, signal).catch((err) => {
-        if (this.staging === run) this.staging = null
-        throw err
-      })
-      this.staging = run
-    }
-    return this.staging
-  }
-
-  private async runStaging(
-    onStaging: (file: ScannedFile) => void,
-    signal?: AbortSignal
-  ): Promise<void> {
-    const files = this.pendingStage
-    const superseded = () => this.pendingStage !== files
-
-    try {
-      for (const file of files) {
-        if (signal?.aborted) throw new AbortError()
-        onStaging(file)
-        if (!file.alreadyStaged) await this.importToDrive(file.sourceDrive, file.sourcePath)
-      }
-    } catch (err) {
-      if (superseded()) return
-      throw err
-    }
-
-    if (superseded()) return
-    this.pendingStage = []
-    await this.closeSourceDrives()
+    return this.legacy.stage(onStaging, () => this.closeSourceDrives(), signal)
   }
 
   async reset(): Promise<void> {
     this.sourcePaths.clear()
-    this.pendingStage = []
-    this.staging = null
+    this.legacy.reset()
     await this.closeSourceDrives()
 
     const temporaries = Array.from(this.temporaryPaths)
@@ -200,14 +166,6 @@ export class TransferSender {
     for (const path of temporaries) {
       await this.tryDeleteFile(path)
     }
-  }
-
-  private async importToDrive(sourceDrive: Localdrive, sourcePath: string): Promise<void> {
-    const mirror = new MirrorDrive(sourceDrive, this.drive, {
-      entries: [sourcePath],
-      prune: false
-    })
-    await mirror.done()
   }
 
   private async tryDeleteFile(filePath: string): Promise<void> {

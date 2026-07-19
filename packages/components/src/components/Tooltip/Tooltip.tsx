@@ -1,7 +1,7 @@
 import { html } from 'react-strict-dom'
 import { styles } from './styles'
 
-export type TooltipSide = 'right' | 'top' | 'bottom'
+export type TooltipSide = 'left' | 'right' | 'top' | 'bottom'
 
 export interface TooltipProps {
   label: string
@@ -10,6 +10,7 @@ export interface TooltipProps {
 }
 
 const sideStyle = {
+  left: styles.left,
   right: styles.right,
   top: styles.top,
   bottom: styles.bottom

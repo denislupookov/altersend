@@ -32,6 +32,7 @@ export interface DownloadFileRequest {
   size?: number
   targetDir?: string
   targetPath?: string
+  overwrite?: boolean
 }
 
 export interface HostReply {
@@ -155,6 +156,7 @@ export interface TransferRPC {
   shareFiles(files: ShareFileRequest[]): Promise<ShareFilesReply>
 
   downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply>
+  pauseDownload(fileId: string): Promise<void>
   disconnect(): Promise<DisconnectReply>
   closePeers(): Promise<void>
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply>

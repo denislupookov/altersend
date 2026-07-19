@@ -2,6 +2,7 @@ import {
   applyDownloadMessage,
   applyDownloadRouted,
   createDownloadStateMap,
+  markDownloadsQueued,
   resolveOfferKey
 } from '../receive/downloadModel'
 import { applySharingProgress, getPhaseFromSelection, mergeSelectedFiles } from '../send/draftModel'
@@ -311,7 +312,11 @@ export function transferSessionReducer(
         offerKey,
         action.event
       )
-      if (action.event.state === 'download-failed') {
+      if (
+        action.event.state === 'download-failed' &&
+        action.event.resumable !== true &&
+        action.event.cancelled !== true
+      ) {
         return {
           ...state,
           receiveDownloadStates: nextDownloadStates,
@@ -322,6 +327,17 @@ export function transferSessionReducer(
       return {
         ...state,
         receiveDownloadStates: nextDownloadStates
+      }
+    }
+    case 'downloads_queued': {
+      if (state.role !== 'receiver') return state
+      return {
+        ...state,
+        receiveDownloadStates: markDownloadsQueued(
+          state.receiveDownloadStates,
+          action.offerKeys,
+          action.queued
+        )
       }
     }
     case 'download_routed':

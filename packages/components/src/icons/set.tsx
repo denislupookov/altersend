@@ -36,9 +36,11 @@ import {
   MoreVertical,
   Music,
   PanelLeft,
+  Pause,
   PanelLeftClose,
   PanelLeftOpen,
   Pencil,
+  Play,
   Plus,
   QrCode,
   Send,
@@ -97,7 +99,9 @@ export const MusicIcon = adaptLucide(Music)
 export const PanelLeftIcon = adaptLucide(PanelLeft)
 export const PanelLeftCloseIcon = adaptLucide(PanelLeftClose)
 export const PanelLeftOpenIcon = adaptLucide(PanelLeftOpen)
+export const PauseIcon = adaptLucide(Pause)
 export const PencilIcon = adaptLucide(Pencil)
+export const PlayIcon = adaptLucide(Play)
 export const PlusIcon = adaptLucide(Plus)
 export const QrCodeIcon = adaptLucide(QrCode)
 export const SendIcon = adaptLucide(Send)

@@ -90,13 +90,26 @@ export const shareFiles = async (files: ShareFileRequest[]): Promise<ShareFilesR
   }
 }
 
+export const pauseDownload = async (fileId: string): Promise<void> => {
+  try {
+    await getTransferApi().worker.pauseDownload(fileId)
+  } catch (error) {
+    reportError('pauseDownload', error)
+    throw error
+  }
+}
+
 export const downloadFiles = async (files: DownloadFileRequest[]): Promise<DownloadFilesReply> => {
+  const offerKeys = files.map((f) => f.fileId)
+  dispatchToTransferStore({ type: 'downloads_queued', offerKeys, queued: true })
   try {
     return await getTransferApi().worker.downloadFiles(files)
   } catch (error) {
     reportError('downloadFiles', error)
     setError(TRANSFER_ERROR_CODES.downloadFailed, error)
     throw error
+  } finally {
+    dispatchToTransferStore({ type: 'downloads_queued', offerKeys, queued: false })
   }
 }
 

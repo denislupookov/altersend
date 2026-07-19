@@ -105,6 +105,7 @@ export type TransferAction =
   | { type: 'set_draft_phase'; phase: SendDraftPhase }
   | { type: 'clear_send_draft' }
   | { type: 'receive_download_event'; event: ReceiveDownloadStatusEvent }
+  | { type: 'downloads_queued'; offerKeys: string[]; queued: boolean }
   | {
       type: 'download_routed'
       offerKey: string

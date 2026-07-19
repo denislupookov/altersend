@@ -7,8 +7,10 @@ export class Bitmap {
     this.size = size
     const byteLength = Math.ceil(size / 8)
     if (bits) {
-      if (bits.length < byteLength) throw new Error('Bitmap bits too short for size')
-      this.bits = bits.slice(0, byteLength)
+      if (bits.length !== byteLength) {
+        throw new Error(`Bitmap is ${bits.length} bytes, expected ${byteLength}`)
+      }
+      this.bits = bits.slice()
       for (let i = 0; i < size; i++) {
         if (this.get(i)) this.setBits++
       }

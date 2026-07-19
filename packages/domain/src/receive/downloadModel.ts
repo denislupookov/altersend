@@ -13,6 +13,10 @@ export interface DownloadItemState {
   destination?: SaveDestination
   intendedDestination?: SaveDestination
   message?: string
+  resumable?: boolean
+  starting?: boolean
+  queued?: boolean
+  pausable?: boolean
 }
 
 export type DownloadRowStatusTone = 'muted' | 'active' | 'success'
@@ -21,7 +25,7 @@ export interface DownloadRowDisplay {
   description: string | undefined
   progressPercent: number | undefined
   status: {
-    kind: 'saved' | 'failed' | 'progress' | 'ready'
+    kind: 'saved' | 'failed' | 'paused' | 'resuming' | 'progress' | 'ready' | 'waiting'
     tone: DownloadRowStatusTone
     message?: string
   }
@@ -99,7 +103,8 @@ export function createDownloadStateMap(
 
 export function getDownloadRowDisplay(
   file: IncomingFileOffer,
-  state: DownloadItemState | undefined
+  state: DownloadItemState | undefined,
+  transferActive = false
 ): DownloadRowDisplay {
   const totalBytes = state?.totalBytes || (file.kind === 'file' ? file.size : 0)
   const percent = getProgressPercent(state?.bytesTransferred ?? 0, totalBytes)
@@ -119,11 +124,28 @@ export function getDownloadRowDisplay(
 
   if (state?.status === 'failed') {
     return {
-      description: undefined,
+      description: state.resumable
+        ? `${formatFileSize(state.bytesTransferred)} / ${formatFileSize(totalBytes)}`
+        : undefined,
       progressPercent: state.bytesTransferred > 0 ? percent : undefined,
-      status: { kind: 'failed', tone: 'muted', message: state.message },
+      status: {
+        kind: state.queued ? 'waiting' : state.resumable ? 'paused' : 'failed',
+        tone: 'muted',
+        message: state.message
+      },
       percent,
       isActive: false,
+      isCompleted: false
+    }
+  }
+
+  if (isActive && state!.starting && state!.bytesTransferred > 0) {
+    return {
+      description: `${formatFileSize(state!.bytesTransferred)} / ${formatFileSize(totalBytes)}`,
+      progressPercent: percent,
+      status: { kind: 'resuming', tone: 'muted' },
+      percent,
+      isActive: true,
       isCompleted: false
     }
   }
@@ -142,11 +164,99 @@ export function getDownloadRowDisplay(
   return {
     description: undefined,
     progressPercent: undefined,
-    status: { kind: 'ready', tone: 'muted' },
+    status: { kind: transferActive || state?.queued ? 'waiting' : 'ready', tone: 'muted' },
     percent: 0,
     isActive: false,
     isCompleted: false
   }
+}
+
+export function getDownloadStatusKey(row: DownloadRowDisplay): string | null {
+  switch (row.status.kind) {
+    case 'saved':
+      return 'receive:status.saved'
+    case 'failed':
+      return 'errors:transfer.downloadFailed'
+    case 'paused':
+      return 'receive:status.paused'
+    case 'resuming':
+      return 'receive:status.resuming'
+    case 'progress':
+      return 'receive:status.percent'
+    case 'waiting':
+      return 'receive:status.waiting'
+    case 'ready':
+      return null
+  }
+}
+
+export type DownloadRowAction = { kind: 'resume'; targetPath: string } | { kind: 'pause' } | null
+
+export function getDownloadRowAction(
+  row: DownloadRowDisplay,
+  state: DownloadItemState | undefined
+): DownloadRowAction {
+  if (row.status.kind === 'paused' && state?.savedTo) {
+    return { kind: 'resume', targetPath: state.savedTo }
+  }
+  if (row.isActive && state?.pausable === true) return { kind: 'pause' }
+  return null
+}
+
+export type PrimaryDownloadAction = 'downloading' | 'resume-all' | 'download-all' | null
+
+export interface PrimaryDownloadInput {
+  hasFiles: boolean
+  allDownloaded: boolean
+  peerCount: number
+  isDownloading: boolean
+  canResumeAll: boolean
+}
+
+export function getPrimaryDownloadAction({
+  hasFiles,
+  allDownloaded,
+  peerCount,
+  isDownloading,
+  canResumeAll
+}: PrimaryDownloadInput): PrimaryDownloadAction {
+  if (!hasFiles || allDownloaded || peerCount === 0) return null
+  if (isDownloading) return 'downloading'
+  return canResumeAll ? 'resume-all' : 'download-all'
+}
+
+export type FolderRowAction = 'pause' | 'resume' | null
+
+export function canStopDownload(state: DownloadItemState | undefined): boolean {
+  if (!state) return false
+  if (state.status === 'downloading') return state.pausable === true
+  return state.queued === true
+}
+
+export function getFolderRowAction(
+  offers: IncomingFileOffer[],
+  states: Record<string, DownloadItemState>
+): FolderRowAction {
+  let resumable = false
+  for (const offer of offers) {
+    const state = states[getOfferKey(offer)]
+    if (canStopDownload(state)) return 'pause'
+    if (isResumable(state)) resumable = true
+  }
+  return resumable ? 'resume' : null
+}
+
+export function isResumable(state: DownloadItemState | undefined): boolean {
+  return state?.status === 'failed' && state.resumable === true && !!state.savedTo
+}
+
+export function getPendingDownloadOffers(
+  offers: IncomingFileOffer[],
+  states: Record<string, DownloadItemState>
+): IncomingFileOffer[] {
+  return offers.filter(
+    (offer) => offer.kind === 'file' && states[getOfferKey(offer)]?.status !== 'completed'
+  )
 }
 
 export function resolveOfferKey(offers: IncomingFileOffer[], message: ReceiveDownloadStatusEvent) {
@@ -163,6 +273,20 @@ export function resolveOfferKey(offers: IncomingFileOffer[], message: ReceiveDow
 
 const pickNumber = (value: unknown, fallback: number): number =>
   typeof value === 'number' ? value : fallback
+
+export function markDownloadsQueued(
+  current: Record<string, DownloadItemState>,
+  offerKeys: string[],
+  queued: boolean
+): Record<string, DownloadItemState> {
+  const next = { ...current }
+  for (const key of offerKeys) {
+    const previous = next[key]
+    if (!previous || previous.status === 'downloading') continue
+    next[key] = { ...previous, queued: queued || undefined }
+  }
+  return next
+}
 
 export function applyDownloadMessage(
   current: Record<string, DownloadItemState>,
@@ -194,17 +318,30 @@ export function applyDownloadMessage(
       [offerKey]: {
         ...previous,
         status: 'failed',
-        message: message.message
+        queued: undefined,
+        message: message.message,
+        resumable: message.resumable === true
       }
     }
   }
 
+  const starting = message.state === 'downloading' && isResumable(previous)
+
   return {
     ...current,
     [offerKey]: {
+      ...previous,
       status: 'downloading',
-      bytesTransferred: pickNumber(message.bytesTransferred, previous.bytesTransferred),
-      totalBytes: pickNumber(message.totalBytes, previous.totalBytes)
+      resumable: undefined,
+      queued: undefined,
+      pausable: message.pausable === true || previous.pausable,
+      starting,
+      bytesTransferred:
+        starting && isResumable(previous)
+          ? previous.bytesTransferred
+          : pickNumber(message.bytesTransferred, previous.bytesTransferred),
+      totalBytes: pickNumber(message.totalBytes, previous.totalBytes),
+      savedTo: message.savedTo ?? previous.savedTo
     }
   }
 }
@@ -250,6 +387,11 @@ export function getDownloadTotals(
 
     if (state.status === 'downloading') {
       activeCount += 1
+      bytesTransferred += Math.min(state.bytesTransferred, state.totalBytes || file.size)
+      continue
+    }
+
+    if (isResumable(state)) {
       bytesTransferred += Math.min(state.bytesTransferred, state.totalBytes || file.size)
     }
   }
@@ -316,7 +458,11 @@ export function getFolderRowDisplay(
   states: Record<string, DownloadItemState>
 ): DownloadRowDisplay {
   const totals = getDownloadTotals(offers, states)
-  const anyFailed = offers.some((offer) => states[getOfferKey(offer)]?.status === 'failed')
+  const anyFailed = offers.some((offer) => {
+    const state = states[getOfferKey(offer)]
+    return state?.status === 'failed' && !isResumable(state)
+  })
+  const anyPaused = offers.some((offer) => isResumable(states[getOfferKey(offer)]))
 
   if (totals.completedCount === offers.length) {
     return {
@@ -329,7 +475,7 @@ export function getFolderRowDisplay(
     }
   }
 
-  if (anyFailed) {
+  if (anyFailed && totals.activeCount === 0 && !anyPaused) {
     return {
       description: undefined,
       progressPercent: totals.bytesTransferred > 0 ? totals.percent : undefined,
@@ -340,11 +486,14 @@ export function getFolderRowDisplay(
     }
   }
 
-  if (totals.activeCount > 0 || totals.completedCount > 0) {
+  if (totals.activeCount > 0 || totals.completedCount > 0 || anyPaused) {
     return {
       description: `${formatFileSize(totals.bytesTransferred)} / ${formatFileSize(totals.totalBytes)}`,
       progressPercent: totals.percent,
-      status: { kind: 'progress', tone: totals.percent > 0 ? 'active' : 'muted' },
+      status: {
+        kind: totals.activeCount === 0 && anyPaused ? 'paused' : 'progress',
+        tone: totals.activeCount > 0 && totals.percent > 0 ? 'active' : 'muted'
+      },
       percent: totals.percent,
       isActive: totals.activeCount > 0,
       isCompleted: false
@@ -363,7 +512,8 @@ export function getFolderRowDisplay(
 
 export function createSingleDownloadRequest(
   file: IncomingFileOffer,
-  targetPath: string
+  targetPath: string,
+  overwrite = false
 ): DownloadFileRequest {
   if (file.kind !== 'file') throw new Error('createSingleDownloadRequest: expected FileOffer')
   return {
@@ -373,7 +523,8 @@ export function createSingleDownloadRequest(
     path: file.path,
     name: file.name,
     size: file.size,
-    targetPath
+    targetPath,
+    overwrite
   }
 }
 
@@ -392,4 +543,22 @@ export function createDirectoryDownloadRequests(
       size: file.size,
       targetDir
     }))
+}
+
+export interface DownloadRowLabels {
+  status?: string
+  resume: string
+  pause: string
+}
+
+export function getDownloadRowLabels(
+  t: (key: string, vars?: Record<string, unknown>) => string,
+  row: DownloadRowDisplay
+): DownloadRowLabels {
+  const key = getDownloadStatusKey(row)
+  return {
+    status: key ? t(key, { percent: row.percent }) : undefined,
+    resume: t('receive:actions.resume'),
+    pause: t('receive:actions.stop')
+  }
 }

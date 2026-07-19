@@ -66,7 +66,10 @@
     "scanOrImportQrHintDesktop": "Webカメラを使うか、保存済みのQR画像を読み込みます",
     "scanOrImportQrHintMobile": "カメラを使うか、保存済み画像を読み込みます",
     "importImage": "画像を読み込む",
-    "importFromImage": "画像から読み込む"
+    "importFromImage": "画像から読み込む",
+    "resume": "再開",
+    "stop": "停止",
+    "resumeAll": "すべて再開"
   },
   "errors": {
     "invalidCode": "有効な64文字の16進コードを入力してください。",
@@ -114,6 +117,9 @@
     "ready": "準備完了",
     "saved": "保存済み",
     "failed": "失敗",
+    "paused": "一時停止中",
+    "resuming": "再開中…",
+    "waiting": "待機中…",
     "downloadingPercent": "{{percent}}% ダウンロード中",
     "percent": "{{percent}}%",
     "waitingForFiles": "送信者からのファイルを待機中…"

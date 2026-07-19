@@ -11,6 +11,8 @@ import { DiskWriter } from '../adapters/disk-writer'
 import { createChannelPair } from '../../test/support'
 import type {
   ChunkHeader,
+  ChunkReader,
+  ChunkWriter,
   CompleteMessage,
   ControlMessage,
   DriveChannel,
@@ -286,7 +288,7 @@ describe('receiver robustness', () => {
     deliverChunk(list[0].header, corrupted)
 
     await expect(done).rejects.toThrow(/hash verification/)
-    await expect(stat(`${dst}.part`)).rejects.toThrow()
+    await expect(stat(dst)).rejects.toThrow()
   })
 
   it('rejects a chunk whose length is wrong', async () => {
@@ -319,7 +321,7 @@ describe('resume', () => {
 
     const first = controlledChannel()
     const receiver1 = new ReceiverSession(new DiskWriter(dst), first.channel, { transferId: 't' })
-    receiver1.receive().catch(() => {})
+    receiver1.receive().catch((err) => console.error('test setup failed', err))
     first.deliverMessage({
       type: 'start',
       transferId: 't',
@@ -365,7 +367,7 @@ describe('resume', () => {
 
     const first = controlledChannel()
     const receiver1 = new ReceiverSession(new DiskWriter(dst), first.channel, { transferId: 't' })
-    receiver1.receive().catch(() => {})
+    receiver1.receive().catch((err) => console.error('test setup failed', err))
     first.deliverMessage({
       type: 'start',
       transferId: 't',
@@ -408,7 +410,7 @@ describe('resume', () => {
 
     const first = controlledChannel()
     const receiver1 = new ReceiverSession(new DiskWriter(dst), first.channel, { transferId: 't' })
-    receiver1.receive().catch(() => {})
+    receiver1.receive().catch((err) => console.error('test setup failed', err))
     first.deliverMessage({
       type: 'start',
       transferId: 't',
@@ -443,7 +445,7 @@ describe('resume', () => {
     second.deliverMessage({ type: 'complete', transferId: 't', fileHash: fileRoot(input) })
 
     await expect(done).rejects.toThrow(/hash mismatch/)
-    await expect(stat(`${dst}.part`)).rejects.toThrow()
+    await expect(stat(dst)).rejects.toThrow()
   })
 })
 
@@ -464,7 +466,7 @@ describe('sender full-file hash', () => {
       close: () => {}
     }
     const sender = new SenderSession(new DiskReader(src), channel, { transferId: 't', name: 'f' })
-    sender.start().catch(() => {})
+    sender.start().catch((err) => console.error('test setup failed', err))
     await waitUntil(() => sent.some((m) => m.type === 'start'))
     msgHandler!({ type: 'need', transferId: 't', indices: [2, 3] })
     await waitUntil(() => sent.some((m) => m.type === 'complete'))
@@ -536,5 +538,117 @@ describe('hostile input', () => {
 
     await expect(done).rejects.toThrow(/Rejected/)
     await sender.close()
+  })
+})
+
+describe('hash reuse is limited to the current session', () => {
+  it('a full send hashes each chunk once and never re-reads for the file hash', async () => {
+    const input = pseudoRandom(200 * 1024)
+    const src = join(dir, 'src.bin')
+    await writeFile(src, input)
+    const { total } = frames(input, 't')
+
+    const disk = new DiskReader(src)
+    let reads = 0
+    const counting: ChunkReader = {
+      size: () => disk.size(),
+      read: (offset, length) => {
+        reads++
+        return disk.read(offset, length)
+      },
+      close: () => disk.close()
+    }
+
+    const { channel, sent, deliverMessage } = controlledChannel()
+    const sender = new SenderSession(counting, channel, { transferId: 't', name: 'f' })
+    sender.start().catch((err) => console.error('test setup failed', err))
+    await waitUntil(() => sent.some((m) => m.type === 'start'))
+    deliverMessage({ type: 'need', transferId: 't', indices: range(0, total) })
+    await waitUntil(() => sent.some((m) => m.type === 'complete'))
+
+    const complete = sent.find((m): m is CompleteMessage => m.type === 'complete')!
+    expect(complete.fileHash).toBe(fileRoot(input))
+    expect(reads).toBe(total)
+  })
+
+  it('a resumed send re-reads the chunks it did not send, so the hash describes the file now', async () => {
+    const input = pseudoRandom(200 * 1024)
+    const src = join(dir, 'src.bin')
+    await writeFile(src, input)
+    const { total } = frames(input, 't')
+
+    const { channel, sent, deliverMessage } = controlledChannel()
+    const sender = new SenderSession(new DiskReader(src), channel, { transferId: 't', name: 'f' })
+    sender.start().catch((err) => console.error('test setup failed', err))
+    await waitUntil(() => sent.some((m) => m.type === 'start'))
+    deliverMessage({ type: 'need', transferId: 't', indices: [total - 1] })
+    await waitUntil(() => sent.some((m) => m.type === 'complete'))
+
+    const complete = sent.find((m): m is CompleteMessage => m.type === 'complete')!
+    expect(complete.fileHash).toBe(fileRoot(input))
+  })
+
+  it('detects a partial file corrupted between attempts', async () => {
+    const input = pseudoRandom(200 * 1024)
+    const dst = join(dir, 'dst.bin')
+    const { list, total } = frames(input, 't')
+
+    const first = controlledChannel()
+    let bits = new Uint8Array()
+    const receiver1 = new ReceiverSession(new DiskWriter(dst), first.channel, {
+      transferId: 't',
+      onChunkWritten: (bitmap) => {
+        bits = bitmap.serialize().slice()
+      }
+    })
+    receiver1.receive().catch((err) => console.error('test setup failed', err))
+    first.deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
+    first.deliverChunk(list[0].header, list[0].data)
+    first.deliverChunk(list[1].header, list[1].data)
+    await waitUntil(() => (receiver1.received?.count() ?? 0) === 2)
+
+    const fh = await open(`${dst}.part`, 'r+')
+    await fh.write(new Uint8Array(CHUNK_64K), 0, CHUNK_64K, 0)
+    await fh.close()
+
+    const inner = new DiskWriter(dst)
+    let readBacks = 0
+    const counting: ChunkWriter = {
+      allocate: (size) => inner.allocate(size),
+      write: (offset, data) => inner.write(offset, data),
+      readBack: (offset, length) => {
+        readBacks++
+        return inner.readBack(offset, length)
+      },
+      finalize: () => inner.finalize(),
+      abort: () => inner.abort()
+    }
+
+    const second = controlledChannel()
+    const receiver2 = new ReceiverSession(counting, second.channel, {
+      transferId: 't',
+      resumeBits: bits
+    })
+    const done = receiver2.receive()
+    second.deliverMessage({
+      type: 'start',
+      transferId: 't',
+      name: 'f',
+      size: input.length,
+      chunkSize: CHUNK_64K
+    })
+    await waitUntil(() => second.sent.some((m) => m.type === 'need'))
+    for (let i = 2; i < total; i++) second.deliverChunk(list[i].header, list[i].data)
+    second.deliverMessage({ type: 'complete', transferId: 't', fileHash: fileRoot(input) })
+
+    await expect(done).rejects.toThrow(/mismatch/)
+    expect(readBacks).toBe(2)
+    await expect(stat(dst)).rejects.toThrow()
   })
 })

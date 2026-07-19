@@ -28,6 +28,24 @@ function socketPair(): [PeerSocket, PeerSocket] {
   ]
 }
 
+class MemoryWriter {
+  bytes = new Uint8Array(0)
+  constructor(private readonly savedTo: string) {}
+  async allocate(size: number) {
+    if (this.bytes.length !== size) this.bytes = new Uint8Array(size)
+  }
+  async write(offset: number, data: Uint8Array) {
+    this.bytes.set(data, offset)
+  }
+  async readBack(offset: number, length: number) {
+    return this.bytes.subarray(offset, offset + length)
+  }
+  async finalize() {
+    return this.savedTo
+  }
+  async abort() {}
+}
+
 function payload(size: number): Uint8Array {
   const bytes = new Uint8Array(size)
   for (let i = 0; i < size; i++) bytes[i] = (i * 31 + 11) & 0xff
@@ -130,5 +148,60 @@ describe('PeerDrive', () => {
     senderSide.destroy()
 
     await expect(serving).rejects.toThrow('cancelled')
+  })
+})
+
+describe('PeerDrive.serve supersession', () => {
+  it('serialises rapid repeat requests for the same file instead of running them together', async () => {
+    const [socketA, socketB] = socketPair()
+    const senderSide = PeerDrive.create(socketA)!
+    PeerDrive.create(socketB)!
+    await senderSide.supported
+
+    const [src] = await sourceFile('in.bin', 64 * 1024)
+
+    let concurrent = 0
+    let peak = 0
+    const original = senderSide.session.bind(senderSide)
+    senderSide.session = (fileId: string) => {
+      concurrent++
+      peak = Math.max(peak, concurrent)
+      const channel = original(fileId)
+      const close = channel.close.bind(channel)
+      channel.close = () => {
+        concurrent--
+        close()
+      }
+      return channel
+    }
+
+    const all = [
+      senderSide.serve('f', 'in.bin', src),
+      senderSide.serve('f', 'in.bin', src),
+      senderSide.serve('f', 'in.bin', src)
+    ]
+    senderSide.destroy()
+    await Promise.allSettled(all)
+
+    expect(peak).toBeLessThanOrEqual(1)
+  })
+
+  it('a superseded send does not cancel the peer session the resume just opened', async () => {
+    const [socketA, socketB] = socketPair()
+    const senderSide = PeerDrive.create(socketA)!
+    const receiverSide = PeerDrive.create(socketB)!
+    await senderSide.supported
+
+    const [src, input] = await sourceFile('in.bin', 300 * 1024)
+    const writer = new MemoryWriter('/saved/in.bin')
+
+    const receiver = new ReceiverSession(writer, receiverSide.session('f'), { transferId: 'f' })
+    const done = receiver.receive()
+
+    senderSide.serve('f', 'in.bin', src).catch((err) => console.error('first serve', err))
+    senderSide.serve('f', 'in.bin', src).catch((err) => console.error('second serve', err))
+
+    await expect(done).resolves.toBe('/saved/in.bin')
+    expect(Buffer.from(writer.bytes).equals(Buffer.from(input))).toBe(true)
   })
 })

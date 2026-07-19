@@ -6,6 +6,17 @@ import type {
   DownloadRequest
 } from './control-channel'
 import type { PeerSession } from './swarm'
+import type { DownloadFileRequest } from '../rpc/protocol'
+import { getFileName } from './utils'
+
+export interface DownloadFailureDetail {
+  resumable?: boolean
+  cancelled?: boolean
+}
+
+export type DownloadFileOutcome =
+  | { ok: true; savedTo: string }
+  | { ok: false; message: string; resumable?: boolean; cancelled?: boolean }
 
 export interface DownloadLifecycleEvent {
   transferId: string
@@ -16,6 +27,9 @@ export interface DownloadLifecycleEvent {
   totalBytes: number
   bytesTransferred?: number
   message?: string
+  resumable?: boolean
+  cancelled?: boolean
+  pausable?: boolean
 }
 
 export interface DownloaderCallbacks {
@@ -35,12 +49,24 @@ export function getDownloadFailureMessage(event: DownloadLifecycleEvent): string
 }
 
 export function createDownloadStatusEvent(event: DownloadLifecycleEvent): Partial<StatusEvent> {
-  const { transferId, fileId, totalBytes, bytesTransferred, message } = event
+  const {
+    transferId,
+    fileId,
+    totalBytes,
+    bytesTransferred,
+    message,
+    resumable,
+    cancelled,
+    pausable
+  } = event
 
   return {
     file: event.fileName,
     path: event.sourcePath,
     savedTo: event.targetPath,
+    resumable,
+    cancelled,
+    pausable,
     transferId,
     fileId,
     totalBytes,
@@ -112,5 +138,57 @@ export function createDownloadFailedMessage(event: DownloadLifecycleEvent): Down
     fileId: event.fileId,
     fileName: event.fileName,
     message: getDownloadFailureMessage(event)
+  }
+}
+
+export interface DownloadReporterInit {
+  file: DownloadFileRequest
+  callbacks: DownloaderCallbacks
+  targetPath: string
+  totalBytes: number
+  pausable?: boolean
+}
+
+export class DownloadReporter {
+  private readonly callbacks: DownloaderCallbacks
+  private readonly targetPath: string
+  private readonly totalBytes: number
+  private readonly pausable: boolean
+  private readonly base: Omit<DownloadLifecycleEvent, 'bytesTransferred'>
+
+  constructor({ file, callbacks, targetPath, totalBytes, pausable = false }: DownloadReporterInit) {
+    this.callbacks = callbacks
+    this.targetPath = targetPath
+    this.totalBytes = totalBytes
+    this.pausable = pausable
+    this.base = {
+      transferId: file.transferId,
+      fileId: file.fileId,
+      fileName: file.name ?? getFileName(file.path),
+      sourcePath: file.path,
+      targetPath,
+      totalBytes
+    }
+  }
+
+  started(): void {
+    this.callbacks.onFileStart({ ...this.base, pausable: this.pausable, bytesTransferred: 0 })
+  }
+
+  progressed(bytesTransferred: number): void {
+    this.callbacks.onFileProgress({ ...this.base, bytesTransferred })
+  }
+
+  completed(savedTo: string = this.targetPath): void {
+    this.callbacks.onFileComplete({
+      ...this.base,
+      targetPath: savedTo,
+      bytesTransferred: this.totalBytes
+    })
+  }
+
+  failed(message: string, extra: DownloadFailureDetail = {}): DownloadFileOutcome {
+    this.callbacks.onFileError({ ...this.base, message, ...extra })
+    return { ok: false, message, ...extra }
   }
 }

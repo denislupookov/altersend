@@ -230,6 +230,57 @@ describe('transferSessionReducer — receive flow', () => {
     expect(next).toBe(state)
   })
 
+  it('a paused download does not put the page into an error state', () => {
+    const ready = apply(make({ role: 'receiver' }), {
+      type: 'transfer_ready',
+      files: [offer('a', 'a.txt')]
+    })
+
+    const next = apply(ready, {
+      type: 'receive_download_event',
+      event: {
+        type: 'status',
+        state: 'download-failed',
+        transferId: 'tx-1',
+        fileId: 'a',
+        file: 'a.txt',
+        path: '/files/a.txt',
+        totalBytes: 1024,
+        bytesTransferred: 256,
+        message: 'Transfer cancelled',
+        resumable: true
+      }
+    })
+
+    expect(next.errorCode).toBeNull()
+    expect(next.receiveDownloadStates.a.status).toBe('failed')
+    expect(next.receiveDownloadStates.a.resumable).toBe(true)
+  })
+
+  it('a genuine download failure still errors the page', () => {
+    const ready = apply(make({ role: 'receiver' }), {
+      type: 'transfer_ready',
+      files: [offer('a', 'a.txt')]
+    })
+
+    const next = apply(ready, {
+      type: 'receive_download_event',
+      event: {
+        type: 'status',
+        state: 'download-failed',
+        transferId: 'tx-1',
+        fileId: 'a',
+        file: 'a.txt',
+        path: '/files/a.txt',
+        totalBytes: 1024,
+        bytesTransferred: 0,
+        message: 'Full-file hash mismatch'
+      }
+    })
+
+    expect(next.errorCode).toBe(TRANSFER_ERROR_CODES.downloadFailed)
+  })
+
   it('receive_download_event preserves an existing transfer error on non-failed updates', () => {
     const state = apply(make({ role: 'receiver' }), {
       type: 'transfer_ready',
@@ -457,5 +508,30 @@ describe('transferSessionReducer — connection type (per-peer)', () => {
     expect(state.connectionType).toBeNull()
     expect(state.transferPeerKey).toBeNull()
     expect(state.connectionTypes).toEqual({})
+  })
+
+  it('a cancelled download does not put the page into an error state', () => {
+    const ready = apply(make({ role: 'receiver' }), {
+      type: 'transfer_ready',
+      files: [offer('a', 'a.txt')]
+    })
+
+    const next = apply(ready, {
+      type: 'receive_download_event',
+      event: {
+        type: 'status',
+        state: 'download-failed',
+        transferId: 'tx-1',
+        fileId: 'a',
+        file: 'a.txt',
+        path: '/files/a.txt',
+        totalBytes: 1024,
+        bytesTransferred: 256,
+        message: 'Cancelled',
+        cancelled: true
+      }
+    })
+
+    expect(next.errorCode).toBeNull()
   })
 })

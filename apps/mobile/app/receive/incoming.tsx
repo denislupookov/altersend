@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect } from 'react'
 import { View, StyleSheet, Pressable } from 'react-native'
 import { Paths } from 'expo-file-system'
 import { Button, useTheme } from '@altersend/components'
-import { ArrowLeftIcon, DownloadIcon, InfoIcon } from '@altersend/components/icons'
+import { ArrowLeftIcon, DownloadIcon, InfoIcon, PlayIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { useNavigation, useRouter } from 'expo-router'
 import { uriToPath } from '@/src/api/mobileApi'
@@ -10,15 +10,15 @@ import { Layout, IllustrationLayout } from '@/src/components'
 import { ErrorPanel, ReceiveIncomingView, ReceiveReconnectingView } from '@/src/transfer/receive'
 import ConnectionLostSvg from '../../../../assets/connection-lost.svg'
 import {
-  createDirectoryDownloadRequests,
   formatFileSize,
   getDisplayError,
-  getDownloadTotals,
   getReceivePageCopy,
   getReceiveStep,
+  useReceiveActions,
+  useReceiveDownloads,
   useTransferStore
 } from '@altersend/domain'
-import { clearSession, downloadFiles } from '@altersend/domain'
+import { clearSession } from '@altersend/domain'
 import { Text } from '@/src/components/ThemedText'
 
 export default function ReceiveIncomingScreen() {
@@ -27,7 +27,8 @@ export default function ReceiveIncomingScreen() {
   const navigation = useNavigation()
   const router = useRouter()
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
-  const receiveDownloadStates = useTransferStore((s) => s.receiveDownloadStates)
+  const downloads = useReceiveDownloads()
+  const actions = useReceiveActions(downloads)
   const role = useTransferStore((s) => s.role)
   const peerCount = useTransferStore((s) => s.peerCount)
   const connectionType = useTransferStore((s) => s.connectionType)
@@ -35,24 +36,16 @@ export default function ReceiveIncomingScreen() {
   const errorCode = useTransferStore((s) => s.errorCode)
   const displayError = getDisplayError(t, errorCode)
 
-  const totals = useMemo(
-    () => getDownloadTotals(incomingFileOffers, receiveDownloadStates),
-    [incomingFileOffers, receiveDownloadStates]
-  )
-
+  const { totals, fileOffers, allDownloaded } = downloads
   const hasIncomingFiles = incomingFileOffers.length > 0
-  const downloadableFileCount = incomingFileOffers.filter((offer) => offer.kind === 'file').length
-  const hasDownloadableFiles = downloadableFileCount > 0
-  const allDownloadsCompleted =
-    hasDownloadableFiles && totals.completedCount === downloadableFileCount
+  const downloadableFileCount = fileOffers.length
   const step = getReceiveStep({
     hasIncomingFiles,
-    allDownloadsCompleted,
+    allDownloadsCompleted: allDownloaded,
     role,
     peerCount,
     isReconnecting
   })
-  const isDownloading = totals.activeCount > 0
 
   useEffect(() => {
     if (step === 'completed') {
@@ -96,13 +89,14 @@ export default function ReceiveIncomingScreen() {
     totalBytes
   )
 
-  const handleDownloadAll = async () => {
-    if (incomingFileOffers.length === 0 || isDownloading) return
-    const targetDir = uriToPath(Paths.document.uri)
+  const handlePrimaryAction = async () => {
     try {
-      await downloadFiles(createDirectoryDownloadRequests(incomingFileOffers, targetDir))
+      if (downloads.primaryAction === 'resume-all') await actions.resumeAll()
+      else if (downloads.primaryAction === 'download-all') {
+        await actions.downloadInto(uriToPath(Paths.document.uri))
+      }
     } catch (err) {
-      console.warn('ReceiveIncomingScreen: downloadFiles failed', err)
+      console.warn('ReceiveIncomingScreen: download failed', err)
     }
   }
 
@@ -181,20 +175,28 @@ export default function ReceiveIncomingScreen() {
       hasNativeHeader
       footer={
         <View style={styles.footerStack}>
-          {hasDownloadableFiles ? (
+          {downloads.primaryAction ? (
             <Button
-              disabled={isDownloading}
-              icon={<DownloadIcon size={18} color={theme.colors.colorOnAccent} />}
-              onClick={() => void handleDownloadAll()}
+              disabled={downloads.primaryAction === 'downloading'}
+              icon={
+                downloads.primaryAction === 'resume-all' ? (
+                  <PlayIcon size={18} color={theme.colors.colorOnAccent} />
+                ) : (
+                  <DownloadIcon size={18} color={theme.colors.colorOnAccent} />
+                )
+              }
+              onClick={() => void handlePrimaryAction()}
               size='lg'
               variant='light'
               width='full'
             >
-              {isDownloading
+              {downloads.primaryAction === 'downloading'
                 ? t('receive:actions.downloadingPercent', { percent: totals.percent })
-                : sizeLabel
-                  ? t('receive:actions.downloadAllWithSize', { size: formatFileSize(totalBytes) })
-                  : t('receive:actions.downloadAll')}
+                : downloads.primaryAction === 'resume-all'
+                  ? t('receive:actions.resumeAll')
+                  : sizeLabel
+                    ? t('receive:actions.downloadAllWithSize', { size: formatFileSize(totalBytes) })
+                    : t('receive:actions.downloadAll')}
             </Button>
           ) : null}
           {endSessionButton}

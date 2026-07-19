@@ -40,16 +40,22 @@ const chunkEncoding: Encoding<ChunkFrame> = {
 interface Session {
   onMessage?: (message: ControlMessage) => void
   onChunk?: (header: ChunkHeader, data: Uint8Array) => void
+  pendingCancel?: ControlMessage
 }
 
 type ProtomuxChannelLike = NonNullable<ReturnType<Protomux['createChannel']>>
+
+function cancelForDisconnect(transferId: string): ControlMessage {
+  return { type: 'cancel', transferId, reason: 'Peer disconnected' }
+}
 
 export class PeerDrive {
   private readonly channel: ProtomuxChannelLike
   private readonly control: ProtomuxMessage<ControlMessage>
   private readonly chunk: ProtomuxMessage<ChunkFrame>
   private readonly sessions = new Map<string, Session>()
-  private readonly sends = new Map<string, AbortController>()
+  private readonly sends = new Map<string, { abort: AbortController; done: Promise<void> }>()
+  private destroyed = false
 
   readonly supported: Promise<boolean>
 
@@ -80,13 +86,15 @@ export class PeerDrive {
 
   session(fileId: string): DriveChannel {
     const session: Session = {}
-    this.sessions.set(fileId, session)
+    if (this.destroyed) session.pendingCancel = cancelForDisconnect(fileId)
+    else this.sessions.set(fileId, session)
 
     return {
       send: (message) => this.control.send(message),
       sendChunk: (header, data) => this.chunk.send({ ...header, data }),
       onMessage: (handler) => {
         session.onMessage = handler
+        if (session.pendingCancel) handler(session.pendingCancel)
       },
       onChunk: (handler) => {
         session.onChunk = handler
@@ -99,10 +107,19 @@ export class PeerDrive {
   }
 
   async serve(fileId: string, name: string, localPath: string | null): Promise<void> {
-    if (this.sends.has(fileId)) return
+    const previous = this.sends.get(fileId)
     const abort = new AbortController()
+    let settle!: () => void
+    const done = new Promise<void>((resolve) => {
+      settle = resolve
+    })
+    this.sends.set(fileId, { abort, done })
 
-    this.sends.set(fileId, abort)
+    if (previous) {
+      previous.abort.abort()
+      await previous.done
+    }
+
     let channel: DriveChannel | null = null
 
     try {
@@ -120,22 +137,27 @@ export class PeerDrive {
       await sendFile(localPath, channel, {
         transferId: fileId,
         name,
-        signal: abort.signal
+        signal: abort.signal,
+        notifyPeerOnCancel: false
       })
     } finally {
       channel?.close()
-      this.sends.delete(fileId)
+      if (this.sends.get(fileId)?.abort === abort) this.sends.delete(fileId)
+      settle()
     }
   }
 
   cancel(): void {
-    for (const abort of this.sends.values()) abort.abort()
+    for (const entry of this.sends.values()) entry.abort.abort()
   }
 
   destroy(): void {
+    this.destroyed = true
     this.cancel()
     for (const [transferId, session] of this.sessions) {
-      session.onMessage?.({ type: 'cancel', transferId, reason: 'Peer disconnected' })
+      const cancel = cancelForDisconnect(transferId)
+      if (session.onMessage) session.onMessage(cancel)
+      else session.pendingCancel = cancel
     }
     this.sessions.clear()
 

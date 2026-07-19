@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import type Hyperdrive from 'hyperdrive'
 import type Localdrive from 'localdrive'
+import { LegacyPeerStaging } from './legacy/staging'
 import { TransferSender, type ScannedFile } from './sender'
 
 function untouchableDrive(): Hyperdrive {
@@ -114,7 +115,7 @@ describe('TransferSender staging races', () => {
     })
     const importing = vi
       .spyOn(
-        TransferSender.prototype as unknown as { importToDrive: () => Promise<void> },
+        LegacyPeerStaging.prototype as unknown as { importToDrive: () => Promise<void> },
         'importToDrive'
       )
       .mockImplementation(() => stuck)
