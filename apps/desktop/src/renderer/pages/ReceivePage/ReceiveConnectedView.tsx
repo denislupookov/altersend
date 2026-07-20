@@ -153,7 +153,8 @@ export function ReceiveConnectedView() {
               variant={downloads.primaryAction === 'downloading' ? 'secondary' : 'primary'}
             >
               {getPrimaryDownloadLabel(t, downloads.primaryAction, {
-                percent: downloads.totals.percent
+                percent: downloads.totals.percent,
+                totalBytes: downloads.totals.totalBytes
               })}
             </Button>
           ) : null}
