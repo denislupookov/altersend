@@ -160,14 +160,10 @@ export class LegacyHyperdriveDownloader {
         const destroyStreams = () => {
           try {
             readStream.destroy()
-          } catch (err) {
-            console.warn('LegacyHyperdrive: destroy read stream failed', err)
-          }
+          } catch {}
           try {
             writeStream.destroy()
-          } catch (err) {
-            console.warn('LegacyHyperdrive: destroy write stream failed', err)
-          }
+          } catch {}
         }
 
         const finish = (err?: Error) => {
