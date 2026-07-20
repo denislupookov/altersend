@@ -5,7 +5,7 @@
   "description": "AlterSend mobile app (React Native / Expo)",
   "main": "expo-router/entry",
   "scripts": {
-    "build:packages": "cd ../.. && npm run build -w packages/core && npm run build -w packages/locales && npm run build -w packages/domain && npm run build -w packages/components",
+    "build:packages": "cd ../.. && npm run build -w packages/drive && npm run build -w packages/core && npm run build -w packages/locales && npm run build -w packages/domain && npm run build -w packages/components",
     "prestart": "npm run build:packages && npm run bundle-bare",
     "start": "expo start --dev-client",
     "postinstall": "npm run barekit:link-ios-addons && npm run barekit:link-android-addons",

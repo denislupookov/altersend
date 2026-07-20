@@ -2,7 +2,13 @@ import { html } from 'react-strict-dom'
 import { Button } from '../Button'
 import { styles } from './styles'
 
-export type PeerListCardStatus = 'online' | 'downloading' | 'downloaded' | 'failed' | 'disconnected'
+export type PeerListCardStatus =
+  | 'online'
+  | 'downloading'
+  | 'downloaded'
+  | 'paused'
+  | 'failed'
+  | 'disconnected'
 export type PeerPairState = 'pairable' | 'requested' | 'paired'
 
 export interface PeerListCardEntry {

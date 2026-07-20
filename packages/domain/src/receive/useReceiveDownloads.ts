@@ -97,7 +97,7 @@ export interface ReceiveActions {
   resumeFile: (offer: ReceiveFileOffer, targetPath: string) => void
   pauseFile: (offer: ReceiveFileOffer) => void
   pauseFolder: (offers: ReceiveFileOffer[]) => void
-  resumeFolder: (offers: ReceiveFileOffer[]) => Promise<void>
+  resumeFolder: (offers: ReceiveFileOffer[]) => void
   resumeAll: () => Promise<void>
   downloadInto: (targetDir: string) => Promise<void>
   replaceWith: (offer: ReceiveFileOffer, targetPath: string) => Promise<void>
@@ -127,7 +127,7 @@ export function useReceiveActions(downloads: ReceiveDownloads): ReceiveActions {
   )
 
   const resumeFolder = useCallback(
-    async (offers: ReceiveFileOffer[]) => {
+    (offers: ReceiveFileOffer[]) => {
       const requests = offers
         .map((offer) => {
           const state = states[getOfferKey(offer)]
@@ -136,7 +136,7 @@ export function useReceiveActions(downloads: ReceiveDownloads): ReceiveActions {
             : null
         })
         .filter((request) => request !== null)
-      if (requests.length > 0) await downloadFiles(requests)
+      if (requests.length > 0) downloadFiles(requests).catch(report('resume folder'))
     },
     [states]
   )

@@ -25,7 +25,10 @@ export class Timeout {
   }
 
   private schedule(): void {
-    this.timer = setTimeout(this.onExpire, this.ms)
+    this.timer = setTimeout(() => {
+      this.timer = null
+      this.onExpire()
+    }, this.ms)
     this.timer.unref?.()
   }
 }

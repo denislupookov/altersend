@@ -157,22 +157,31 @@ export class LegacyHyperdriveDownloader {
         let bytesTransferred = 0
         let lastReportedBytes = 0
 
+        const destroyStreams = () => {
+          try {
+            readStream.destroy()
+          } catch (err) {
+            console.warn('LegacyHyperdrive: destroy read stream failed', err)
+          }
+          try {
+            writeStream.destroy()
+          } catch (err) {
+            console.warn('LegacyHyperdrive: destroy write stream failed', err)
+          }
+        }
+
         const finish = (err?: Error) => {
           if (settled) return
           settled = true
-          if (err) reject(err)
-          else resolve()
+          if (!err) {
+            resolve()
+            return
+          }
+          destroyStreams()
+          reject(err)
         }
 
-        release = onAbort(signal, () => {
-          finish(new AbortError())
-          try {
-            readStream.destroy()
-          } catch {}
-          try {
-            writeStream.destroy()
-          } catch {}
-        })
+        release = onAbort(signal, () => finish(new AbortError()))
 
         readStream.on('data', (chunk: unknown) => {
           bytesTransferred += getChunkSize(chunk)
