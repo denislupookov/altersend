@@ -2,7 +2,7 @@ import type { ChunkWriter, DriveChannel, ChunkHeader, ControlMessage } from './t
 import { selectChunkSize, chunkCount, chunkRange } from './chunker'
 import { hashChunk, createFileHasher } from './hash'
 import { Bitmap } from './bitmap'
-import { IntegrityError, PEER_SILENCE_TIMEOUT_MS } from './errors'
+import { IntegrityError, PEER_SILENCE_TIMEOUT_MS, PROGRESS_STEP_BYTES } from './errors'
 import { Timeout } from './timeout'
 
 interface CancelOptions {
@@ -15,6 +15,7 @@ export interface ReceiverOptions {
   resumeBits?: Uint8Array
   verifyFullFile?: boolean
   stallTimeoutMs?: number
+  progressStepBytes?: number
   onProgress?: (receivedBytes: number, totalBytes: number) => void
   onChunkWritten?: (bitmap: Bitmap) => void
 }
@@ -27,11 +28,12 @@ export class ReceiverSession {
   private size = 0
   private chunkSize = 0
   private bitmap: Bitmap | null = null
-  private readonly hashes = new Map<number, string>()
   private receivedBytes = 0
+  private reportedBytes = 0
   private resumed = false
   private transferId: string | null
   private settled = false
+  private cancelling = false
   private settle!: { resolve: (savedTo: string) => void; reject: (err: Error) => void }
   private readonly done: Promise<string>
   private tail: Promise<void> = Promise.resolve()
@@ -105,7 +107,7 @@ export class ReceiverSession {
   }
 
   private async onStart(size: number, chunkSize: number): Promise<void> {
-    if (this.settled) return
+    if (this.settled || this.cancelling) return
     if (!this.isValidGeometry(size, chunkSize)) {
       throw new IntegrityError(`Rejected transfer geometry: size=${size} chunkSize=${chunkSize}`)
     }
@@ -120,7 +122,8 @@ export class ReceiverSession {
       this.channel.send({
         type: 'need',
         transferId: this.transferId!,
-        indices: this.bitmap.missing()
+        indices: this.bitmap.missing(),
+        verify: this.needsVerification()
       })
       return
     }
@@ -147,15 +150,20 @@ export class ReceiverSession {
     this.channel.send({
       type: 'need',
       transferId: this.transferId!,
-      indices: this.bitmap.missing()
+      indices: this.bitmap.missing(),
+      verify: this.needsVerification()
     })
   }
 
+  private needsVerification(): boolean {
+    return this.opts.verifyFullFile === true || this.resumed
+  }
+
   private async onChunk(header: ChunkHeader, data: Uint8Array): Promise<void> {
-    if (this.settled) return
+    if (this.settled || this.cancelling) return
     if (header.transferId !== this.transferId) return
     const bitmap = this.bitmap
-    if (!bitmap) throw new Error('Received chunk before start')
+    if (!bitmap) return
     if (!Number.isInteger(header.index) || header.index < 0 || header.index >= bitmap.size) {
       throw new Error(`Chunk index ${header.index} out of range`)
     }
@@ -166,20 +174,23 @@ export class ReceiverSession {
     if (data.length !== length) {
       throw new Error(`Chunk ${header.index} length ${data.length}, expected ${length}`)
     }
-    if (hashChunk(data) !== header.hash) {
-      throw new Error(`Chunk ${header.index} failed hash verification`)
-    }
 
     await this.writer.write(offset, data)
     bitmap.set(header.index)
-    this.hashes.set(header.index, header.hash)
     this.receivedBytes += length
     this.opts.onChunkWritten?.(bitmap)
+    this.reportProgress(bitmap.allSet())
+  }
+
+  private reportProgress(force: boolean): void {
+    const step = this.opts.progressStepBytes ?? PROGRESS_STEP_BYTES
+    if (!force && this.receivedBytes - this.reportedBytes < step) return
+    this.reportedBytes = this.receivedBytes
     this.opts.onProgress?.(this.receivedBytes, this.size)
   }
 
   private async onComplete(fileHash: string | null): Promise<void> {
-    if (this.settled) return
+    if (this.settled || this.cancelling) return
     this.silence.stop()
     const bitmap = this.bitmap
     if (!bitmap) throw new Error('Received complete before start')
@@ -187,7 +198,7 @@ export class ReceiverSession {
       throw new Error(`Transfer incomplete: ${bitmap.count()}/${bitmap.size} chunks`)
     }
 
-    if (this.opts.verifyFullFile || this.resumed) {
+    if (this.needsVerification()) {
       if (!fileHash) throw new IntegrityError('Missing file hash: cannot verify the assembled file')
       await this.verifyFullFile(fileHash)
     }
@@ -205,11 +216,6 @@ export class ReceiverSession {
     const root = createFileHasher()
     const total = chunkCount(this.size, this.chunkSize)
     for (let i = 0; i < total; i++) {
-      const known = this.hashes.get(i)
-      if (known) {
-        root.add(known)
-        continue
-      }
       const { offset, length } = chunkRange(i, this.size, this.chunkSize)
       const bytes = await this.writer.readBack(offset, length)
       if (!bytes) throw new IntegrityError('Full-file verification could not read back file')
@@ -219,6 +225,9 @@ export class ReceiverSession {
   }
 
   cancel(reason = 'Transfer cancelled'): void {
+    if (this.settled || this.cancelling) return
+    this.cancelling = true
+    this.silence.stop()
     this.enqueue(() => this.fail(new Error(reason)))
   }
 

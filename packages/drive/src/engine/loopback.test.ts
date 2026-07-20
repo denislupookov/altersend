@@ -79,7 +79,7 @@ function frames(input: Uint8Array, transferId: string) {
   for (let i = 0; i < total; i++) {
     const { offset, length } = chunkRange(i, input.length, chunkSize)
     const data = input.slice(offset, offset + length)
-    list.push({ header: { transferId, index: i, hash: hashChunk(data) }, data })
+    list.push({ header: { transferId, index: i }, data })
   }
   return { chunkSize, total, list }
 }
@@ -175,6 +175,29 @@ describe('full sender ↔ receiver loopback', () => {
     await sender.close()
     expect(lastReceived).toBe(input.length)
   })
+
+  it('reports absolute progress when the peer only needs the tail', async () => {
+    const input = pseudoRandom(200 * 1024)
+    const src = join(dir, 'src.bin')
+    await writeFile(src, input)
+
+    const { channel, sent, deliverMessage } = controlledChannel()
+    const progress: number[] = []
+    const sender = new SenderSession(new DiskReader(src), channel, {
+      transferId: 't',
+      name: 'file.bin',
+      onProgress: (bytes) => progress.push(bytes)
+    })
+    sender.start().catch((err) => console.error('test setup failed', err))
+    await waitUntil(() => sent.some((m) => m.type === 'start'))
+
+    const total = chunkCount(input.length, CHUNK_64K)
+    deliverMessage({ type: 'need', transferId: 't', indices: [total - 1] })
+    await waitUntil(() => progress.length > 0)
+    await sender.close()
+
+    expect(progress.at(-1)).toBe(input.length)
+  })
 })
 
 describe('receiver robustness', () => {
@@ -239,11 +262,9 @@ describe('receiver robustness', () => {
       size: input.length,
       chunkSize: CHUNK_64K
     })
-    const corrupted = list[0].data.slice()
-    corrupted[0] ^= 0xff
-    deliverChunk(list[0].header, corrupted)
+    deliverChunk(list[0].header, list[0].data.slice(0, 8))
 
-    await expect(done).rejects.toThrow(/hash verification/)
+    await expect(done).rejects.toThrow(/length/)
     expect(sent.some((m) => m.type === 'cancel')).toBe(true)
   })
 
@@ -267,7 +288,7 @@ describe('receiver robustness', () => {
     expect(sent.some((m) => m.type === 'cancel')).toBe(false)
   })
 
-  it('rejects a chunk that fails hash verification', async () => {
+  it('rejects a chunk whose length does not match its slot', async () => {
     const input = pseudoRandom(200 * 1024)
     const dst = join(dir, 'dst.bin')
     const { list } = frames(input, 't')
@@ -283,11 +304,9 @@ describe('receiver robustness', () => {
       size: input.length,
       chunkSize: CHUNK_64K
     })
-    const corrupted = list[0].data.slice()
-    corrupted[0] ^= 0xff
-    deliverChunk(list[0].header, corrupted)
+    deliverChunk(list[0].header, list[0].data.slice(0, 8))
 
-    await expect(done).rejects.toThrow(/hash verification/)
+    await expect(done).rejects.toThrow(/length/)
     await expect(stat(dst)).rejects.toThrow()
   })
 
@@ -468,7 +487,7 @@ describe('sender full-file hash', () => {
     const sender = new SenderSession(new DiskReader(src), channel, { transferId: 't', name: 'f' })
     sender.start().catch((err) => console.error('test setup failed', err))
     await waitUntil(() => sent.some((m) => m.type === 'start'))
-    msgHandler!({ type: 'need', transferId: 't', indices: [2, 3] })
+    msgHandler!({ type: 'need', transferId: 't', indices: [2, 3], verify: true })
     await waitUntil(() => sent.some((m) => m.type === 'complete'))
     await sender.close()
 
@@ -542,7 +561,7 @@ describe('hostile input', () => {
 })
 
 describe('hash reuse is limited to the current session', () => {
-  it('a full send hashes each chunk once and never re-reads for the file hash', async () => {
+  it('a full send reads each chunk once and computes no hash', async () => {
     const input = pseudoRandom(200 * 1024)
     const src = join(dir, 'src.bin')
     await writeFile(src, input)
@@ -567,7 +586,7 @@ describe('hash reuse is limited to the current session', () => {
     await waitUntil(() => sent.some((m) => m.type === 'complete'))
 
     const complete = sent.find((m): m is CompleteMessage => m.type === 'complete')!
-    expect(complete.fileHash).toBe(fileRoot(input))
+    expect(complete.fileHash).toBe(null)
     expect(reads).toBe(total)
   })
 
@@ -581,7 +600,7 @@ describe('hash reuse is limited to the current session', () => {
     const sender = new SenderSession(new DiskReader(src), channel, { transferId: 't', name: 'f' })
     sender.start().catch((err) => console.error('test setup failed', err))
     await waitUntil(() => sent.some((m) => m.type === 'start'))
-    deliverMessage({ type: 'need', transferId: 't', indices: [total - 1] })
+    deliverMessage({ type: 'need', transferId: 't', indices: [total - 1], verify: true })
     await waitUntil(() => sent.some((m) => m.type === 'complete'))
 
     const complete = sent.find((m): m is CompleteMessage => m.type === 'complete')!
@@ -648,7 +667,7 @@ describe('hash reuse is limited to the current session', () => {
     second.deliverMessage({ type: 'complete', transferId: 't', fileHash: fileRoot(input) })
 
     await expect(done).rejects.toThrow(/mismatch/)
-    expect(readBacks).toBe(2)
+    expect(readBacks).toBe(total)
     await expect(stat(dst)).rejects.toThrow()
   })
 })

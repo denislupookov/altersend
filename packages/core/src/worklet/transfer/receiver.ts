@@ -7,6 +7,7 @@ import {
   type DriveChannel
 } from '@altersend/drive'
 import {
+  type AbortLike,
   getDirname,
   getFileName,
   isPathSafe,
@@ -31,6 +32,10 @@ interface PartialDownload {
   overwrite?: boolean
 }
 
+function toMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
+}
+
 export class TransferReceiver {
   private readonly legacy: LegacyHyperdriveDownloader
   private readonly partials = new Map<string, PartialDownload>()
@@ -45,7 +50,7 @@ export class TransferReceiver {
   async downloadFiles(
     files: DownloadFileRequest[],
     callbacks: DownloaderCallbacks,
-    signal?: AbortSignal,
+    signal?: AbortLike,
     driveFor?: (file: DownloadFileRequest) => Promise<DriveChannel | null>
   ): Promise<DownloadFileResult[]> {
     const results: DownloadFileResult[] = []
@@ -120,10 +125,7 @@ export class TransferReceiver {
             callbacks,
             targetPath,
             totalBytes: file.size ?? 0
-          }).failed(
-            cancelled ? 'Cancelled' : error instanceof Error ? error.message : String(error),
-            { cancelled }
-          )
+          }).failed(cancelled ? 'Cancelled' : toMessage(error), { cancelled })
         )
       } finally {
         releaseOuter()
@@ -140,7 +142,7 @@ export class TransferReceiver {
     targetPath: string,
     callbacks: DownloaderCallbacks,
     channel: DriveChannel,
-    signal?: AbortSignal
+    signal?: AbortLike
   ): Promise<DownloadFileOutcome> {
     const partial = await this.findResumablePartial(file.fileId, targetPath)
     try {
@@ -184,8 +186,9 @@ export class TransferReceiver {
       } catch (err) {
         const corrupt = err instanceof Error && err.name === 'IntegrityError'
         if (corrupt) await this.discardPartials([file.fileId])
-        return events.failed(err instanceof Error ? err.message : String(err), {
-          resumable: !corrupt && (this.partials.get(file.fileId)?.received ?? 0) > 0
+        return events.failed(toMessage(err), {
+          resumable: !corrupt && (this.partials.get(file.fileId)?.received ?? 0) > 0,
+          cancelled: this.paused.delete(file.fileId)
         })
       }
     } finally {
@@ -217,6 +220,7 @@ export class TransferReceiver {
   pause(fileId: string): boolean {
     const controller = this.active.get(fileId)
     if (controller) {
+      this.paused.add(fileId)
       controller.abort()
       return true
     }

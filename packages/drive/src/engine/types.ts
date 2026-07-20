@@ -1,3 +1,9 @@
+export interface AbortLike {
+  readonly aborted: boolean
+  addEventListener(type: 'abort', listener: () => void): void
+  removeEventListener(type: 'abort', listener: () => void): void
+}
+
 export interface ChunkReader {
   size(): Promise<number>
   read(offset: number, length: number): Promise<Uint8Array>
@@ -24,7 +30,6 @@ export interface DriveChannel {
 export interface ChunkHeader {
   transferId: string
   index: number
-  hash: string
 }
 
 export type ControlMessage =
@@ -46,12 +51,13 @@ export interface NeedMessage {
   type: 'need'
   transferId: string
   indices: number[]
+  verify?: boolean
 }
 
 export interface CompleteMessage {
   type: 'complete'
   transferId: string
-  fileHash: string
+  fileHash: string | null
 }
 
 export interface AckMessage {

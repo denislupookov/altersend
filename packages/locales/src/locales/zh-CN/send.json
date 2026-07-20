@@ -41,6 +41,7 @@
     "uploading": "正在上传...",
     "waiting": "等待",
     "failed": "失败",
+    "paused": "已暂停",
     "downloaded": "已下载",
     "disconnected": "已断开连接",
     "online": "在线",

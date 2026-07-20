@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 import { ReceiverSession } from '../src/engine/receiver'
 import { SenderSession } from '../src/engine/sender'
 import { selectChunkSize, chunkCount, chunkRange } from '../src/engine/chunker'
-import { hashChunk } from '../src/engine/hash'
 import type { ChunkHeader, ChunkWriter, ControlMessage, DriveChannel } from '../src/engine/types'
 
 class MemoryWriter implements ChunkWriter {
@@ -75,7 +74,7 @@ describe('sender re-announcing start', () => {
     for (let i = 0; i < half; i++) {
       const { offset, length } = chunkRange(i, size, chunkSize)
       const data = source.subarray(offset, offset + length)
-      link.channel.sendChunk({ transferId: 't1', index: i, hash: hashChunk(data) }, data)
+      link.channel.sendChunk({ transferId: 't1', index: i }, data)
     }
     await new Promise((r) => setTimeout(r, 0))
 
@@ -233,7 +232,7 @@ describe('stall timeout', () => {
       await new Promise((r) => setTimeout(r, 40))
       const { offset, length } = chunkRange(i, size, chunkSize)
       const data = source.subarray(offset, offset + length)
-      link.channel.sendChunk({ transferId: 't1', index: i, hash: hashChunk(data) }, data)
+      link.channel.sendChunk({ transferId: 't1', index: i }, data)
     }
     await new Promise((r) => setTimeout(r, 10))
     link.deliver({ type: 'complete', transferId: 't1', fileHash: '' })
@@ -259,5 +258,71 @@ describe('partial preservation', () => {
     const err = await settled
     expect(err?.message).toMatch(/incomplete/)
     expect(err?.name).not.toBe('IntegrityError')
+  })
+})
+
+describe('progress reporting', () => {
+  it('does not emit one event per chunk', async () => {
+    const size = 16 * 1024 * 1024
+    const chunkSize = selectChunkSize(size)
+    const total = chunkCount(size, chunkSize)
+    const source = new Uint8Array(size).fill(5)
+
+    const writer = new MemoryWriter()
+    const link = loopback()
+    const ticks: number[] = []
+    const receiver = new ReceiverSession(writer, link.channel, {
+      transferId: 't1',
+      onProgress: (bytes) => ticks.push(bytes)
+    })
+    receiver.receive().catch(() => {})
+
+    link.deliver({ type: 'start', transferId: 't1', name: 'f', size, chunkSize })
+    await new Promise((r) => setTimeout(r, 0))
+    for (let i = 0; i < total; i++) {
+      const { offset, length } = chunkRange(i, size, chunkSize)
+      link.channel.sendChunk(
+        { transferId: 't1', index: i },
+        source.subarray(offset, offset + length)
+      )
+    }
+    await new Promise((r) => setTimeout(r, 20))
+
+    expect(total).toBeGreaterThan(20)
+    expect(ticks.length).toBeLessThan(total)
+    expect(ticks[ticks.length - 1]).toBe(size)
+  })
+})
+
+describe('stale chunks from a superseded send', () => {
+  it('ignores chunks that arrive before this session knows the geometry', async () => {
+    const writer = new MemoryWriter()
+    const link = loopback()
+    const receiver = new ReceiverSession(writer, link.channel, { transferId: 't1' })
+    const settled = receiver.receive().then(
+      () => 'resolved',
+      (err: Error) => err.message
+    )
+
+    const size = 4096
+    const chunkSize = selectChunkSize(size)
+    const source = new Uint8Array(size).fill(1)
+
+    link.channel.sendChunk({ transferId: 't1', index: 0 }, source.subarray(0, chunkSize))
+    await new Promise((r) => setTimeout(r, 0))
+
+    link.deliver({ type: 'start', transferId: 't1', name: 'f', size, chunkSize })
+    await new Promise((r) => setTimeout(r, 0))
+    for (let i = 0; i < chunkCount(size, chunkSize); i++) {
+      const { offset, length } = chunkRange(i, size, chunkSize)
+      link.channel.sendChunk(
+        { transferId: 't1', index: i },
+        source.subarray(offset, offset + length)
+      )
+    }
+    await new Promise((r) => setTimeout(r, 0))
+    link.deliver({ type: 'complete', transferId: 't1', fileHash: '' })
+
+    expect(await settled).toBe('resolved')
   })
 })

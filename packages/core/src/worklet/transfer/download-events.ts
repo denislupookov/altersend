@@ -95,7 +95,8 @@ export function createPeerDownloadStatusEvent(
     fileId: message.fileId,
     totalBytes: 'totalBytes' in message ? message.totalBytes : undefined,
     bytesTransferred: 'bytesTransferred' in message ? message.bytesTransferred : undefined,
-    message: 'message' in message ? message.message : undefined
+    message: 'message' in message ? message.message : undefined,
+    paused: 'paused' in message ? message.paused : undefined
   }
 }
 
@@ -137,7 +138,8 @@ export function createDownloadFailedMessage(event: DownloadLifecycleEvent): Down
     transferId: event.transferId,
     fileId: event.fileId,
     fileName: event.fileName,
-    message: getDownloadFailureMessage(event)
+    message: getDownloadFailureMessage(event),
+    paused: event.cancelled === true
   }
 }
 

@@ -9,6 +9,7 @@ import {
   useReceiveDownloads
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
+import { openCompletedFile } from '../utils/openCompletedFile'
 import { Text } from '@/src/components/ThemedText'
 
 export function ReceiveIncomingView() {
@@ -48,6 +49,7 @@ export function ReceiveIncomingView() {
               isFirst={index === 0}
               onResume={actions.resumeFile}
               onPause={actions.pauseFile}
+              onOpen={(offer) => openCompletedFile(getOfferKey(offer))}
               onPauseFolder={actions.pauseFolder}
               onResumeFolder={actions.resumeFolder}
             />

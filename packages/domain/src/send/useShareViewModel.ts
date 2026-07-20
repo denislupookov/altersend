@@ -77,6 +77,8 @@ function statusLabel(status: PeerListEntryWithPair['status'], t: Translate): str
   switch (status) {
     case 'failed':
       return t('send:status.failed')
+    case 'paused':
+      return t('send:status.paused')
     case 'downloaded':
       return t('send:status.downloaded')
     case 'disconnected':

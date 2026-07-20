@@ -56,6 +56,7 @@ export interface StatusEvent {
   resumable?: boolean
   cancelled?: boolean
   pausable?: boolean
+  paused?: boolean
   connectionType?: 'direct' | 'relay'
 }
 

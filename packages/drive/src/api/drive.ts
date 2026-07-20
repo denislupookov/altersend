@@ -1,6 +1,7 @@
 import nodePath from '#path'
 import type { DriveChannel } from '../engine/types'
 import type { Bitmap } from '../engine/bitmap'
+import type { AbortLike } from '../engine/types'
 import { SenderSession } from '../engine/sender'
 import { ReceiverSession } from '../engine/receiver'
 import { DiskReader } from '../adapters/disk-reader'
@@ -8,7 +9,7 @@ import { DiskWriter } from '../adapters/disk-writer'
 
 const { basename, join } = nodePath
 
-function onAbort(signal: AbortSignal | undefined, cancel: () => void): () => void {
+function onAbort(signal: AbortLike | undefined, cancel: () => void): () => void {
   if (!signal) return () => {}
   if (signal.aborted) {
     cancel()
@@ -21,7 +22,7 @@ function onAbort(signal: AbortSignal | undefined, cancel: () => void): () => voi
 export interface SendFileOptions {
   transferId?: string
   name?: string
-  signal?: AbortSignal
+  signal?: AbortLike
   notifyPeerOnCancel?: boolean
   highWaterMark?: number
   onProgress?: (sentBytes: number, totalBytes: number) => void
@@ -53,7 +54,7 @@ export async function sendFile(
 export interface ReceiveFileOptions {
   transferId?: string
   expectedSize?: number
-  signal?: AbortSignal
+  signal?: AbortLike
   resumeBits?: Uint8Array
   verifyFullFile?: boolean
   overwrite?: boolean
@@ -75,7 +76,9 @@ export function receiveFile(
     onProgress: opts.onProgress,
     onChunkWritten: opts.onChunkWritten
   })
-  const release = onAbort(opts.signal, () => receiver.cancel())
+  const release = onAbort(opts.signal, () => {
+    receiver.cancel()
+  })
   return receiver.receive().finally(release)
 }
 

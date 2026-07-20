@@ -44,6 +44,15 @@ function getStatusDetail(data: PeerStatusData): PeerListEntryDetail | null {
   switch (data.status) {
     case 'failed':
       return data.failedFileName ? { type: 'failed-file', fileName: data.failedFileName } : null
+    case 'paused':
+      if (data.transferredBytes != null && data.totalForDisplay != null) {
+        return {
+          type: 'progress-bytes',
+          transferredBytes: data.transferredBytes,
+          totalBytes: data.totalForDisplay
+        }
+      }
+      return null
     case 'downloaded':
       return { type: 'completed-files', count: data.completedCount }
     case 'disconnected':

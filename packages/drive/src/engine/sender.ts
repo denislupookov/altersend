@@ -1,7 +1,7 @@
 import type { ChunkReader, DriveChannel, ControlMessage } from './types'
 import { selectChunkSize, chunkCount, chunkRange } from './chunker'
 import { hashChunk, createFileHasher } from './hash'
-import { PEER_SILENCE_TIMEOUT_MS } from './errors'
+import { PEER_SILENCE_TIMEOUT_MS, PROGRESS_STEP_BYTES } from './errors'
 import { Timeout } from './timeout'
 
 interface CancelOptions {
@@ -13,6 +13,7 @@ export interface SenderOptions {
   name: string
   highWaterMark?: number
   ackTimeoutMs?: number
+  progressStepBytes?: number
   onProgress?: (sentBytes: number, totalBytes: number) => void
 }
 
@@ -23,7 +24,6 @@ export class SenderSession {
   private readonly channel: DriveChannel
   private readonly opts: SenderOptions
   private readonly highWater: number
-  private readonly chunkHashes = new Map<number, string>()
   private readonly done: Promise<string>
 
   private size = 0
@@ -86,7 +86,7 @@ export class SenderSession {
     switch (message.type) {
       case 'need':
         if (!this.announced) break
-        this.sendChunks(message.indices).catch((err) => this.fail(err))
+        this.sendChunks(message.indices, message.verify === true).catch((err) => this.fail(err))
         break
       case 'ack':
         if (this.settled) break
@@ -112,7 +112,7 @@ export class SenderSession {
     return true
   }
 
-  private async sendChunks(indices: number[]): Promise<void> {
+  private async sendChunks(indices: number[], verify: boolean): Promise<void> {
     if (this.sending) return
     this.sending = true
     try {
@@ -121,24 +121,31 @@ export class SenderSession {
         return
       }
 
-      let sentBytes = 0
+      const step = this.opts.progressStepBytes ?? PROGRESS_STEP_BYTES
+      const pendingBytes = indices.reduce(
+        (total, index) => total + chunkRange(index, this.size, this.chunkSize).length,
+        0
+      )
+      let sentBytes = this.size - pendingBytes
+      let reportedBytes = sentBytes
       for (const index of indices) {
         if (this.settled) return
         const { offset, length } = chunkRange(index, this.size, this.chunkSize)
         const data = await this.reader.read(offset, length)
-        const hash = hashChunk(data)
-        this.chunkHashes.set(index, hash)
 
         await this.drain()
         if (this.settled) return
-        this.channel.sendChunk({ transferId: this.opts.transferId, index, hash }, data)
+        this.channel.sendChunk({ transferId: this.opts.transferId, index }, data)
 
         sentBytes += data.length
-        this.opts.onProgress?.(sentBytes, this.size)
+        if (sentBytes - reportedBytes >= step || sentBytes === this.size) {
+          reportedBytes = sentBytes
+          this.opts.onProgress?.(sentBytes, this.size)
+        }
       }
 
       if (this.settled) return
-      const fileHash = await this.computeFileHash()
+      const fileHash = verify ? await this.computeFileHash() : null
       if (this.settled) return
       this.channel.send({
         type: 'complete',
@@ -155,11 +162,6 @@ export class SenderSession {
     const root = createFileHasher()
     for (let i = 0; i < this.totalChunks; i++) {
       if (this.settled) throw new Error('Transfer cancelled')
-      const cached = this.chunkHashes.get(i)
-      if (cached) {
-        root.add(cached)
-        continue
-      }
       const { offset, length } = chunkRange(i, this.size, this.chunkSize)
       root.add(hashChunk(await this.reader.read(offset, length)))
     }

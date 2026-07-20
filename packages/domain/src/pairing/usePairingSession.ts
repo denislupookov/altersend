@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { loadPeers } from '../transfer/commands'
+import { loadPeers } from '../transfer/binding'
 import { useTransferStore } from '../transfer/store'
 import { usePairingHost } from './usePairingHost'
 import { usePairingJoin } from './usePairingJoin'

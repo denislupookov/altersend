@@ -41,6 +41,7 @@
     "uploading": "アップロード中…",
     "waiting": "待機中",
     "failed": "失敗",
+    "paused": "一時停止中",
     "downloaded": "ダウンロード済み",
     "disconnected": "切断",
     "online": "オンライン",

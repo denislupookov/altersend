@@ -21,6 +21,7 @@ export * from './send/uploadItemUi'
 export * from './receive/pageUi'
 export * from './receive/joinCode'
 export * from './receive/downloadModel'
+export * from './receive/linkifyText'
 export * from './transfer'
 
 export * from './constants'

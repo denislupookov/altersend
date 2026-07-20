@@ -7,6 +7,7 @@ import { isAskEveryTime } from '../../lifecycle/downloadLocationStorage'
 import {
   clearSession,
   getDownloadRowLabels,
+  getPrimaryDownloadLabel,
   getOfferKey,
   useCopiedFlag,
   useReceiveActions,
@@ -16,6 +17,15 @@ import {
 function toSafeFileName(name: string): string {
   const base = name.split(/[/\\]/).pop() ?? ''
   return base.replace(/\0/g, '').trim() || 'file'
+}
+
+function openSavedFile(filePath: string): void {
+  bridgeApi
+    .openFile(filePath)
+    .then((err) => {
+      if (err) console.error('ReceiveConnectedView: failed to open', filePath, err)
+    })
+    .catch((err) => console.error('ReceiveConnectedView: failed to open', filePath, err))
 }
 
 export function ReceiveConnectedView() {
@@ -88,6 +98,7 @@ export function ReceiveConnectedView() {
                 compact
                 onResume={actions.resumeFile}
                 onPause={actions.pauseFile}
+                onOpen={(_offer, savedTo) => openSavedFile(savedTo)}
                 onPauseFolder={actions.pauseFolder}
                 onResumeFolder={actions.resumeFolder}
               />
@@ -141,11 +152,9 @@ export function ReceiveConnectedView() {
               size='sm'
               variant={downloads.primaryAction === 'downloading' ? 'secondary' : 'primary'}
             >
-              {downloads.primaryAction === 'downloading'
-                ? t('receive:actions.downloadingPercent', { percent: downloads.totals.percent })
-                : downloads.primaryAction === 'resume-all'
-                  ? t('receive:actions.resumeAll')
-                  : t('receive:actions.downloadAll')}
+              {getPrimaryDownloadLabel(t, downloads.primaryAction, {
+                percent: downloads.totals.percent
+              })}
             </Button>
           ) : null}
         </div>

@@ -74,7 +74,13 @@ export class AbortError extends Error {
   }
 }
 
-export function onAbort(signal: AbortSignal | undefined, abort: () => void): () => void {
+export interface AbortLike {
+  readonly aborted: boolean
+  addEventListener(type: 'abort', listener: () => void): void
+  removeEventListener(type: 'abort', listener: () => void): void
+}
+
+export function onAbort(signal: AbortLike | undefined, abort: () => void): () => void {
   if (!signal) return () => {}
   if (signal.aborted) {
     abort()

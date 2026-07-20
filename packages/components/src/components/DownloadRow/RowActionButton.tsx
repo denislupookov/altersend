@@ -1,18 +1,26 @@
+import type { ReactNode } from 'react'
 import { Button } from '../Button'
-import { PauseIcon, PlayIcon } from '../../icons'
+import { ArrowUpRightIcon, PauseIcon, PlayIcon } from '../../icons'
+
+export type RowActionKind = 'resume' | 'pause' | 'open'
+
+const ICONS: Record<RowActionKind, ReactNode> = {
+  resume: <PlayIcon size={14} />,
+  pause: <PauseIcon size={14} />,
+  open: <ArrowUpRightIcon size={14} />
+}
 
 export interface RowActionButtonProps {
-  kind: 'resume' | 'pause'
+  kind: RowActionKind
   label: string
   onPress: () => void
 }
 
 export function RowActionButton({ kind, label, onPress }: RowActionButtonProps) {
-  const icon = kind === 'resume' ? <PlayIcon size={14} /> : <PauseIcon size={14} />
   return (
     <Button
       aria-label={label}
-      icon={icon}
+      icon={ICONS[kind]}
       iconOnly
       onClick={onPress}
       size='sm'

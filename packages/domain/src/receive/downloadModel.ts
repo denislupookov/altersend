@@ -48,36 +48,6 @@ export function getOfferKey(file: IncomingFileOffer) {
   return file.id
 }
 
-export interface TextSegment {
-  text: string
-  url?: string
-}
-
-const TRAILING_URL_PUNCT = new Set(['.', ',', ';', ':', '!', '?', ')', ']', '}', "'", '"'])
-
-function stripTrailingPunctuation(url: string): string {
-  let end = url.length
-  while (end > 0 && TRAILING_URL_PUNCT.has(url[end - 1])) end--
-  return url.slice(0, end)
-}
-
-export function linkifyText(text: string): TextSegment[] {
-  const pattern = /https?:\/\/[^\s]+/g
-  const segments: TextSegment[] = []
-  let lastIndex = 0
-  let match: RegExpExecArray | null
-
-  while ((match = pattern.exec(text)) !== null) {
-    const raw = stripTrailingPunctuation(match[0])
-    if (match.index > lastIndex) segments.push({ text: text.slice(lastIndex, match.index) })
-    segments.push({ text: raw, url: raw })
-    lastIndex = match.index + raw.length
-  }
-
-  if (lastIndex < text.length) segments.push({ text: text.slice(lastIndex) })
-  return segments
-}
-
 function getProgressPercent(bytesTransferred: number, totalBytes: number) {
   if (totalBytes <= 0) return 0
   return Math.max(0, Math.min(100, Math.round((bytesTransferred / totalBytes) * 100)))
@@ -99,6 +69,11 @@ export function createDownloadStateMap(
   }
 
   return next
+}
+
+function stoppedRowKind(state: DownloadItemState): DownloadRowDisplay['status']['kind'] {
+  if (state.queued) return 'waiting'
+  return state.resumable ? 'paused' : 'failed'
 }
 
 export function getDownloadRowDisplay(
@@ -129,7 +104,7 @@ export function getDownloadRowDisplay(
         : undefined,
       progressPercent: state.bytesTransferred > 0 ? percent : undefined,
       status: {
-        kind: state.queued ? 'waiting' : state.resumable ? 'paused' : 'failed',
+        kind: stoppedRowKind(state),
         tone: 'muted',
         message: state.message
       },
@@ -190,12 +165,17 @@ export function getDownloadStatusKey(row: DownloadRowDisplay): string | null {
   }
 }
 
-export type DownloadRowAction = { kind: 'resume'; targetPath: string } | { kind: 'pause' } | null
+export type DownloadRowAction =
+  | { kind: 'resume'; targetPath: string }
+  | { kind: 'pause' }
+  | { kind: 'open'; savedTo: string }
+  | null
 
 export function getDownloadRowAction(
   row: DownloadRowDisplay,
   state: DownloadItemState | undefined
 ): DownloadRowAction {
+  if (row.isCompleted && state?.savedTo) return { kind: 'open', savedTo: state.savedTo }
   if (row.status.kind === 'paused' && state?.savedTo) {
     return { kind: 'resume', targetPath: state.savedTo }
   }
@@ -320,6 +300,7 @@ export function applyDownloadMessage(
         status: 'failed',
         queued: undefined,
         message: message.message,
+        savedTo: message.savedTo ?? previous.savedTo,
         resumable: message.resumable === true
       }
     }
@@ -549,6 +530,29 @@ export interface DownloadRowLabels {
   status?: string
   resume: string
   pause: string
+  open: string
+}
+
+export interface PrimaryLabelOptions {
+  percent: number
+  totalBytes?: number
+}
+
+export function getPrimaryDownloadLabel(
+  t: (key: string, vars?: Record<string, unknown>) => string,
+  action: PrimaryDownloadAction,
+  { percent, totalBytes }: PrimaryLabelOptions
+): string {
+  switch (action) {
+    case 'downloading':
+      return t('receive:actions.downloadingPercent', { percent })
+    case 'resume-all':
+      return t('receive:actions.resumeAll')
+    default:
+      return totalBytes && totalBytes > 0
+        ? t('receive:actions.downloadAllWithSize', { size: formatFileSize(totalBytes) })
+        : t('receive:actions.downloadAll')
+  }
 }
 
 export function getDownloadRowLabels(
@@ -559,6 +563,7 @@ export function getDownloadRowLabels(
   return {
     status: key ? t(key, { percent: row.percent }) : undefined,
     resume: t('receive:actions.resume'),
-    pause: t('receive:actions.stop')
+    pause: t('receive:actions.stop'),
+    open: t('receive:actions.open')
   }
 }

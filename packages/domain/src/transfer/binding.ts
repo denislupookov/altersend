@@ -1,7 +1,6 @@
 import { dispatchToTransferStore } from './store'
 import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES } from './types'
-import { loadPeers } from './commands'
 import type { SharingStatusEvent } from '../send/draftModel'
 import type { RendererTransferEvent, TransferRPC } from '@altersend/core'
 
@@ -27,6 +26,15 @@ export function getTransferApi(): TransferApi {
     )
   }
   return api
+}
+
+export async function loadPeers(): Promise<void> {
+  try {
+    const peers = await getTransferApi().worker.peersList()
+    dispatchToTransferStore({ type: 'set_peers', peers })
+  } catch (error) {
+    reportError('loadPeers', error)
+  }
 }
 
 export function reportError(context: string, error: unknown): void {
@@ -103,6 +111,34 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
   }
 }
 
+const PROGRESS_FLUSH_MS = 100
+const pendingProgress = new Map<string, () => void>()
+let progressTimer: ReturnType<typeof setTimeout> | null = null
+
+function stopProgressTimer(): void {
+  if (!progressTimer) return
+  clearTimeout(progressTimer)
+  progressTimer = null
+}
+
+function queueProgress(key: string, dispatch: () => void): void {
+  pendingProgress.set(key, dispatch)
+  if (progressTimer) return
+  progressTimer = setTimeout(flushProgress, PROGRESS_FLUSH_MS)
+}
+
+function flushProgress(): void {
+  stopProgressTimer()
+  const pending = Array.from(pendingProgress.values())
+  pendingProgress.clear()
+  for (const dispatch of pending) dispatch()
+}
+
+export function discardPendingProgress(): void {
+  stopProgressTimer()
+  pendingProgress.clear()
+}
+
 function dispatchStatusEvent(event: StatusEvent): void {
   switch (event.state) {
     case 'reconnecting':
@@ -112,15 +148,23 @@ function dispatchStatusEvent(event: StatusEvent): void {
         type: 'apply_sharing_progress',
         event: event as SharingStatusEvent
       })
-    case 'peer-download-started':
     case 'peer-download-progress':
+      return queueProgress(`peer:${event.peer ?? ''}:${event.fileId ?? ''}`, () =>
+        dispatchToTransferStore({ type: 'peer_download_event', event })
+      )
+    case 'peer-download-started':
     case 'peer-downloaded':
     case 'peer-download-failed':
+      flushProgress()
       return dispatchToTransferStore({ type: 'peer_download_event', event })
-    case 'downloading':
     case 'download-progress':
+      return queueProgress(`file:${event.fileId ?? ''}`, () =>
+        dispatchToTransferStore({ type: 'receive_download_event', event })
+      )
+    case 'downloading':
     case 'downloaded':
     case 'download-failed':
+      flushProgress()
       return dispatchToTransferStore({ type: 'receive_download_event', event })
     case 'peer-connected':
       dispatchToTransferStore({ type: 'status_changed', state: event.state, peers: event.peers })
@@ -183,6 +227,7 @@ export function bindTransferApi(
 
   unbindCurrent = () => {
     off()
+    discardPendingProgress()
     api = null
     errorHandler = null
     unbindCurrent = null

@@ -18,20 +18,17 @@ const chunkEncoding: Encoding<ChunkFrame> = {
   preencode(state, frame) {
     c.string.preencode(state, frame.transferId)
     c.uint.preencode(state, frame.index)
-    c.string.preencode(state, frame.hash)
     c.raw.preencode(state, frame.data)
   },
   encode(state, frame) {
     c.string.encode(state, frame.transferId)
     c.uint.encode(state, frame.index)
-    c.string.encode(state, frame.hash)
     c.raw.encode(state, frame.data)
   },
   decode(state) {
     return {
       transferId: c.string.decode(state),
       index: c.uint.decode(state),
-      hash: c.string.decode(state),
       data: c.raw.decode(state)
     }
   }
@@ -71,8 +68,8 @@ export class PeerDrive {
     })
     this.chunk = channel.addMessage<ChunkFrame>({
       encoding: chunkEncoding,
-      onmessage: ({ transferId, index, hash, data }) => {
-        this.sessions.get(transferId)?.onChunk?.({ transferId, index, hash }, data)
+      onmessage: ({ transferId, index, data }) => {
+        this.sessions.get(transferId)?.onChunk?.({ transferId, index }, data)
       }
     })
     channel.open()

@@ -1,5 +1,5 @@
 import { dispatchToTransferStore, transferStore } from './store'
-import { getTransferApi, reportError } from './binding'
+import { discardPendingProgress, getTransferApi, loadPeers, reportError } from './binding'
 import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES, type TransferErrorCode } from './types'
 import { createInitialUploadItems, getPhaseFromSelection } from '../send/draftModel'
@@ -23,6 +23,7 @@ const setError = (code: TransferErrorCode, error: unknown): void => {
 }
 
 export const clearSession = async (): Promise<void> => {
+  discardPendingProgress()
   dispatchToTransferStore({ type: 'clear_session' })
   try {
     await getTransferApi().worker.disconnect()
@@ -141,15 +142,6 @@ export function subscribeToPairingPeerConnected(cb: (peerKey: string) => void): 
   return getTransferApi().onTransferEvent((event) => {
     if (event.type === 'pairing-peer-connected') cb(event.peerKey)
   })
-}
-
-export const loadPeers = async (): Promise<void> => {
-  try {
-    const peers = await getTransferApi().worker.peersList()
-    dispatchToTransferStore({ type: 'set_peers', peers })
-  } catch (error) {
-    reportError('loadPeers', error)
-  }
 }
 
 export const forgetPeer = async (pubkey: string): Promise<boolean> => {

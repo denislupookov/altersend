@@ -25,6 +25,7 @@ const DOT_TONE = {
   online: styles.dotOnline,
   downloading: styles.dotDownloading,
   downloaded: styles.dotDownloaded,
+  paused: styles.dotPaused,
   failed: styles.dotFailed,
   disconnected: styles.dotDisconnected
 } as const
@@ -33,6 +34,7 @@ const TEXT_TONE = {
   online: styles.textOnline,
   downloading: styles.textDownloading,
   downloaded: styles.textDownloaded,
+  paused: styles.textPaused,
   failed: styles.textFailed,
   disconnected: styles.textDisconnected
 } as const

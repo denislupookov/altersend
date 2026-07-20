@@ -8,10 +8,11 @@ import { useNavigation, useRouter } from 'expo-router'
 import { uriToPath } from '@/src/api/mobileApi'
 import { Layout, IllustrationLayout } from '@/src/components'
 import { ErrorPanel, ReceiveIncomingView, ReceiveReconnectingView } from '@/src/transfer/receive'
+import { exitToReceiveTab } from '@/src/transfer/receive/utils/exitToReceiveTab'
 import ConnectionLostSvg from '../../../../assets/connection-lost.svg'
 import {
-  formatFileSize,
   getDisplayError,
+  getPrimaryDownloadLabel,
   getReceivePageCopy,
   getReceiveStep,
   useReceiveActions,
@@ -55,7 +56,7 @@ export default function ReceiveIncomingScreen() {
 
   const handleEndSession = useCallback(() => {
     void clearSession()
-    if (router.canDismiss()) router.dismissAll()
+    exitToReceiveTab(router)
   }, [router])
 
   useEffect(() => {
@@ -100,7 +101,6 @@ export default function ReceiveIncomingScreen() {
     }
   }
 
-  const sizeLabel = totalBytes > 0 ? ` (${formatFileSize(totalBytes)})` : ''
   const isReconnectingStep = step === 'reconnecting'
 
   const endSessionButton = (
@@ -177,26 +177,23 @@ export default function ReceiveIncomingScreen() {
         <View style={styles.footerStack}>
           {downloads.primaryAction ? (
             <Button
-              disabled={downloads.primaryAction === 'downloading'}
               icon={
                 downloads.primaryAction === 'resume-all' ? (
-                  <PlayIcon size={18} color={theme.colors.colorOnAccent} />
+                  <PlayIcon size={18} />
                 ) : (
-                  <DownloadIcon size={18} color={theme.colors.colorOnAccent} />
+                  <DownloadIcon size={18} />
                 )
               }
+              loading={downloads.primaryAction === 'downloading'}
               onClick={() => void handlePrimaryAction()}
               size='lg'
               variant='light'
               width='full'
             >
-              {downloads.primaryAction === 'downloading'
-                ? t('receive:actions.downloadingPercent', { percent: totals.percent })
-                : downloads.primaryAction === 'resume-all'
-                  ? t('receive:actions.resumeAll')
-                  : sizeLabel
-                    ? t('receive:actions.downloadAllWithSize', { size: formatFileSize(totalBytes) })
-                    : t('receive:actions.downloadAll')}
+              {getPrimaryDownloadLabel(t, downloads.primaryAction, {
+                percent: totals.percent,
+                totalBytes
+              })}
             </Button>
           ) : null}
           {endSessionButton}

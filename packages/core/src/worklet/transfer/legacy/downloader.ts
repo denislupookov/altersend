@@ -3,7 +3,15 @@ import type Corestore from 'corestore'
 import b4a from 'b4a'
 import fs from 'bare-fs'
 import { firstFreePath } from '@altersend/drive'
-import { AbortError, getChunkSize, getDirname, getFileName, isValidHexKey, onAbort } from '../utils'
+import {
+  AbortError,
+  type AbortLike,
+  getChunkSize,
+  getDirname,
+  getFileName,
+  isValidHexKey,
+  onAbort
+} from '../utils'
 import { fileExists } from '../fs-utils'
 import {
   DownloadReporter,
@@ -24,7 +32,7 @@ export class LegacyHyperdriveDownloader {
     file: DownloadFileRequest,
     targetPath: string,
     callbacks: DownloaderCallbacks,
-    signal?: AbortSignal
+    signal?: AbortLike
   ): Promise<DownloadFileOutcome> {
     const remoteDrive = await this.getRemoteDrive(file.driveKey)
     const resolvedName = file.name ?? getFileName(file.path)
@@ -130,7 +138,7 @@ export class LegacyHyperdriveDownloader {
     targetPath: string,
     totalBytes: number,
     onProgress: (bytesTransferred: number) => void,
-    signal?: AbortSignal,
+    signal?: AbortLike,
     overwrite = false
   ): Promise<string> {
     const { default: Localdrive } = await import('localdrive')

@@ -8,6 +8,7 @@ import {
   getOfferKey,
   type DownloadItemState,
   type DownloadRowDisplay,
+  type DownloadRowAction,
   type DownloadRowLabels,
   type ReceiveRow
 } from '@altersend/domain'
@@ -33,8 +34,35 @@ export interface DownloadRowProps {
   compact?: boolean
   onResume: (offer: FileOffer, targetPath: string) => void
   onPause: (offer: FileOffer) => void
+  onOpen: (offer: FileOffer, savedTo: string) => void
   onPauseFolder: (offers: FileOffer[]) => void
   onResumeFolder: (offers: FileOffer[]) => void
+}
+
+type RowHandlers = Pick<DownloadRowProps, 'onResume' | 'onPause' | 'onOpen'>
+
+interface FileRowProps extends RowHandlers {
+  offer: FileOffer
+  states: Record<string, DownloadItemState>
+  labelsFor: (display: DownloadRowDisplay) => DownloadRowLabels
+  transferActive: boolean
+  isFirst?: boolean
+  compact?: boolean
+}
+
+function runRowAction(
+  action: NonNullable<DownloadRowAction>,
+  offer: FileOffer,
+  handlers: RowHandlers
+): void {
+  switch (action.kind) {
+    case 'resume':
+      return handlers.onResume(offer, action.targetPath)
+    case 'pause':
+      return handlers.onPause(offer)
+    case 'open':
+      return handlers.onOpen(offer, action.savedTo)
+  }
 }
 
 export function DownloadRow(props: DownloadRowProps) {
@@ -53,8 +81,9 @@ function FileRow({
   isFirst = false,
   compact = false,
   onResume,
-  onPause
-}: DownloadRowProps & { offer: FileOffer }) {
+  onPause,
+  onOpen
+}: FileRowProps) {
   const state = states[getOfferKey(offer)]
   const display = getDownloadRowDisplay(offer, state, transferActive)
   const labels = labelsFor(display)
@@ -72,14 +101,12 @@ function FileRow({
       status={labels.status ? { label: labels.status, tone: display.status.tone } : undefined}
       progressPercent={display.progressPercent}
       trailing={
-        action?.kind === 'resume' ? (
+        action ? (
           <RowActionButton
-            kind='resume'
-            label={labels.resume}
-            onPress={() => onResume(offer, action.targetPath)}
+            kind={action.kind}
+            label={labels[action.kind]}
+            onPress={() => runRowAction(action, offer, { onResume, onPause, onOpen })}
           />
-        ) : action?.kind === 'pause' ? (
-          <RowActionButton kind='pause' label={labels.pause} onPress={() => onPause(offer)} />
         ) : undefined
       }
     />
@@ -94,6 +121,7 @@ function FolderRow({
   isFirst = false,
   onResume,
   onPause,
+  onOpen,
   onPauseFolder,
   onResumeFolder
 }: DownloadRowProps & { folder: Extract<ReceiveRow, { kind: 'folder' }> }) {
@@ -118,17 +146,13 @@ function FolderRow({
         onPress={() => setExpanded((open) => !open)}
         trailing={
           <html.div style={styles.trailing}>
-            {action === 'pause' ? (
+            {action ? (
               <RowActionButton
-                kind='pause'
-                label={labels.pause}
-                onPress={() => onPauseFolder(folder.offers)}
-              />
-            ) : action === 'resume' ? (
-              <RowActionButton
-                kind='resume'
-                label={labels.resume}
-                onPress={() => onResumeFolder(folder.offers)}
+                kind={action}
+                label={labels[action]}
+                onPress={() =>
+                  action === 'pause' ? onPauseFolder(folder.offers) : onResumeFolder(folder.offers)
+                }
               />
             ) : null}
             <html.div style={[styles.chevron, expanded && styles.chevronOpen]}>
@@ -142,15 +166,13 @@ function FolderRow({
           {folder.offers.map((offer) => (
             <FileRow
               key={getOfferKey(offer)}
-              row={{ kind: 'file', offer }}
               offer={offer}
               states={states}
               labelsFor={labelsFor}
               transferActive={transferActive}
               onResume={onResume}
               onPause={onPause}
-              onPauseFolder={onPauseFolder}
-              onResumeFolder={onResumeFolder}
+              onOpen={onOpen}
             />
           ))}
         </html.div>

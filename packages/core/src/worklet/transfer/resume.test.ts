@@ -65,7 +65,7 @@ describe('drive resume through TransferReceiver', () => {
   it('resumes a dropped download and sends only the missing chunks', async () => {
     dir = await mkdtemp(join(tmpdir(), 'core-resume-'))
     const src = join(dir, 'in.bin')
-    const input = new Uint8Array(700 * 1024)
+    const input = new Uint8Array(8 * 1024 * 1024)
     for (let i = 0; i < input.length; i++) input[i] = (i * 31 + 11) & 0xff
     await writeFile(src, input)
 
@@ -89,14 +89,14 @@ describe('drive resume through TransferReceiver', () => {
 
       const controller = new AbortController()
       const { callbacks, errors } = collect()
-      let chunksReceived = 0
+      let receivedBytes = 0
       callbacks.onFileStart = () => {
         senderSide
           .serve(request.fileId, 'in.bin', src)
           .catch((err) => console.error('test setup failed', err))
       }
-      callbacks.onFileProgress = () => {
-        chunksReceived++
+      callbacks.onFileProgress = (event) => {
+        receivedBytes = event.bytesTransferred ?? 0
         if (abortAfterFirstChunk) controller.abort()
       }
 
@@ -106,22 +106,21 @@ describe('drive resume through TransferReceiver', () => {
         controller.signal,
         async () => receiverSide.session(request.fileId)
       )
-      return { result, errors, chunksReceived }
+      return { result, errors, receivedBytes }
     }
 
     const dst = join(dir, 'out.bin')
-    const totalChunks = Math.ceil(input.length / (64 * 1024))
 
     const first = await attempt(true)
     expect(first.result.ok).toBe(false)
     expect(first.errors[0]?.resumable).toBe(true)
     expect((await stat(`${dst}.part`)).size).toBe(input.length)
-    const receivedFirst = first.chunksReceived
-    expect(receivedFirst).toBeGreaterThan(0)
+    expect(first.receivedBytes).toBeGreaterThan(0)
+    expect(first.receivedBytes).toBeLessThan(input.length)
 
     const second = await attempt(false)
     expect(second.result.ok).toBe(true)
-    expect(second.chunksReceived).toBe(totalChunks - receivedFirst)
+    expect(second.receivedBytes).toBe(input.length)
     expect(Buffer.from(await readFile(dst)).equals(Buffer.from(input))).toBe(true)
     await expect(stat(`${dst}.part`)).rejects.toThrow()
   })

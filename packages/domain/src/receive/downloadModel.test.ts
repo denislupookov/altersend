@@ -5,15 +5,17 @@ import {
   applyDownloadMessage,
   getDownloadTotals,
   getFolderRowDisplay,
+  getDownloadRowAction,
   getDownloadRowDisplay,
   isResumable,
   canStopDownload,
   getFolderRowAction,
   getPrimaryDownloadAction,
-  linkifyText,
+  getPrimaryDownloadLabel,
   markDownloadsQueued,
   type DownloadItemState
 } from './downloadModel'
+import { linkifyText } from './linkifyText'
 
 type FileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
 
@@ -439,5 +441,69 @@ describe('primary download action', () => {
 
   it('falls back to download-all', () => {
     expect(getPrimaryDownloadAction(base)).toBe('download-all')
+  })
+})
+
+describe('open action on saved files', () => {
+  const file = offer('/a.bin')
+
+  it('offers open once a file is saved', () => {
+    const state: DownloadItemState = {
+      status: 'completed',
+      bytesTransferred: 100,
+      totalBytes: 100,
+      savedTo: '/dl/a.bin'
+    }
+    const row = getDownloadRowDisplay(file, state)
+    expect(getDownloadRowAction(row, state)).toEqual({ kind: 'open', savedTo: '/dl/a.bin' })
+  })
+
+  it('offers nothing when the save path is unknown', () => {
+    const state: DownloadItemState = {
+      status: 'completed',
+      bytesTransferred: 100,
+      totalBytes: 100
+    }
+    expect(getDownloadRowAction(getDownloadRowDisplay(file, state), state)).toBe(null)
+  })
+
+  it('still prefers resume for a paused file', () => {
+    const state: DownloadItemState = {
+      status: 'failed',
+      bytesTransferred: 50,
+      totalBytes: 100,
+      resumable: true,
+      savedTo: '/dl/a.bin'
+    }
+    expect(getDownloadRowAction(getDownloadRowDisplay(file, state), state)).toEqual({
+      kind: 'resume',
+      targetPath: '/dl/a.bin'
+    })
+  })
+})
+
+describe('primary button label', () => {
+  const t = ((key: string, vars?: Record<string, unknown>) =>
+    vars ? `${key}:${Object.values(vars).join(',')}` : key) as never
+
+  it('shows progress while downloading', () => {
+    expect(getPrimaryDownloadLabel(t, 'downloading', { percent: 42 })).toBe(
+      'receive:actions.downloadingPercent:42'
+    )
+  })
+
+  it('shows resume-all when everything is paused', () => {
+    expect(getPrimaryDownloadLabel(t, 'resume-all', { percent: 0 })).toBe(
+      'receive:actions.resumeAll'
+    )
+  })
+
+  it('adds the size only when one is given', () => {
+    expect(getPrimaryDownloadLabel(t, 'download-all', { percent: 0 })).toBe(
+      'receive:actions.downloadAll'
+    )
+    expect(getPrimaryDownloadLabel(t, 'download-all', { percent: 0, totalBytes: 1024 })).toBe(
+      'receive:actions.downloadAllWithSize:1.0 KB'
+    )
   })
 })
