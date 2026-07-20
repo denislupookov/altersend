@@ -24,6 +24,7 @@ import type {
   JoinReply,
   RememberVoteInput,
   RememberVoteReply,
+  RenamePeerInput,
   SetRelayConfigInput,
   SetRelayConfigReply,
   ShareFileRequest,
@@ -65,7 +66,7 @@ import {
   type DeviceSecretInit
 } from '../identity/device-identity-store'
 import { RememberedPeerStore } from '../peers/store'
-import type { RememberedPeer } from '../peers/remembered-peer'
+import { MAX_DISPLAY_NAME_LEN, type RememberedPeer } from '../peers/remembered-peer'
 import { RememberCoordinator } from '../peers/remember-coordinator'
 import { RecognitionCoordinator } from '../peers/recognition-coordinator'
 import { DiscoveryCoordinator } from '../peers/discovery'
@@ -206,6 +207,20 @@ export class TransferOrchestrator implements TransferRPC {
   async forgetPeer(pubkey: string): Promise<void> {
     await this.rememberedStore.forget(pubkey)
     this.discovery.forget(pubkey)
+  }
+
+  renamePeer(input: RenamePeerInput): Promise<RememberedPeer | null> {
+    if (!input || typeof input !== 'object') throw new BadRequestError('Missing rename input')
+    if (!isValidHexKey(input.remoteDevicePubkey)) {
+      throw new BadRequestError('Invalid remoteDevicePubkey')
+    }
+    if (typeof input.displayName !== 'string') throw new BadRequestError('Missing displayName')
+    const displayName = input.displayName.trim()
+    if (displayName.length === 0) throw new BadRequestError('Missing displayName')
+    if (displayName.length > MAX_DISPLAY_NAME_LEN) {
+      throw new BadRequestError('displayName is too long')
+    }
+    return this.rememberedStore.rename(input.remoteDevicePubkey, displayName)
   }
 
   async initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply> {

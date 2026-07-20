@@ -455,6 +455,44 @@ describe('transferSessionReducer — misc', () => {
       }
     })
   })
+
+  it('rename_peer updates the peer and the session display-name cache', () => {
+    const peerKey = 'a'.repeat(64)
+    const otherPeerKey = 'b'.repeat(64)
+    const state = make({
+      peers: [rememberedPeer(peerKey), rememberedPeer(otherPeerKey)],
+      remember: {
+        ...initialTransferSessionState.remember,
+        peerDisplayNames: { [peerKey]: 'Phone', [otherPeerKey]: 'Tablet' }
+      }
+    })
+
+    const next = apply(state, { type: 'rename_peer', peerKey, displayName: 'Work Phone' })
+
+    expect(next.peers.find((p) => p.remoteDevicePubkey === peerKey)?.displayName).toBe('Work Phone')
+    expect(next.peers.find((p) => p.remoteDevicePubkey === otherPeerKey)?.displayName).toBe(
+      'My Laptop'
+    )
+    expect(next.remember.peerDisplayNames).toEqual({
+      [peerKey]: 'Work Phone',
+      [otherPeerKey]: 'Tablet'
+    })
+  })
+
+  it('rename_peer matches the display-name cache case-insensitively', () => {
+    const peerKey = 'a'.repeat(64)
+    const state = make({
+      peers: [rememberedPeer(peerKey)],
+      remember: {
+        ...initialTransferSessionState.remember,
+        peerDisplayNames: { [peerKey.toUpperCase()]: 'Phone' }
+      }
+    })
+
+    const next = apply(state, { type: 'rename_peer', peerKey, displayName: 'Work Phone' })
+
+    expect(next.remember.peerDisplayNames).toEqual({ [peerKey.toUpperCase()]: 'Work Phone' })
+  })
 })
 
 describe('transferSessionReducer — connection type (per-peer)', () => {

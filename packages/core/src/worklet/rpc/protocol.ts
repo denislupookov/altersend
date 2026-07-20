@@ -104,6 +104,11 @@ export interface InviteResponseReply {
   delivered: boolean
 }
 
+export interface RenamePeerInput {
+  remoteDevicePubkey: string
+  displayName: string
+}
+
 export interface InitDeviceSecretReply {
   secretKey: string | null
 }
@@ -164,6 +169,7 @@ export interface TransferRPC {
   inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply>
   respondToInvite(input: InviteResponseInput): Promise<InviteResponseReply>
   forgetPeer(pubkey: string): Promise<void>
+  renamePeer(input: RenamePeerInput): Promise<RememberedPeer | null>
   initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply>
   hostPairing(): Promise<HostReply>
   joinPairing(topic: string): Promise<JoinReply>

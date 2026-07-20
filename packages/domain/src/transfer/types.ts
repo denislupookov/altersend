@@ -121,6 +121,7 @@ export type TransferAction =
   | { type: 'remember_requested'; request: IncomingPairRequest }
   | { type: 'set_peers'; peers: RememberedPeer[] }
   | { type: 'forget_peer'; peerKey: string }
+  | { type: 'rename_peer'; peerKey: string; displayName: string }
   | { type: 'request_pair_peer'; peerKey: string }
   | { type: 'invite_received'; invite: IncomingInvite }
   | { type: 'invite_response_received'; response: InviteResponse }

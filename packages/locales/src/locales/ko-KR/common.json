@@ -16,6 +16,7 @@
     "connect": "연결",
     "connecting": "연결 중…",
     "done": "완료",
+    "save": "저장",
     "endSession": "세션 종료",
     "restart": "다시 시작",
     "tryAgain": "다시 시도",

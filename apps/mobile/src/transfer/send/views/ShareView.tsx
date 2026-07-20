@@ -5,7 +5,8 @@ import {
   buildInviteText,
   formatFileSize,
   formatItemsCount,
-  useShareViewModel
+  useShareViewModel,
+  type DeviceRenameTarget
 } from '@altersend/domain'
 import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
 import {
@@ -19,7 +20,8 @@ import {
 } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { useToast } from '@/src/components/Toast'
-import { DeviceActionsSheet } from '@/src/components'
+import { DeviceActionsSheet, DeviceRenameSheet } from '@/src/components'
+import { useDeviceRename } from '@/src/pairing/useDeviceRename'
 import { QRSection } from './QRSection'
 import { ShareQrSheet } from './ShareQrSheet'
 import { ShareFilesSheet } from './ShareFilesSheet'
@@ -49,7 +51,8 @@ export function ShareView() {
   })
   const [isFilesSheetOpen, setIsFilesSheetOpen] = useState(false)
   const [isQrOpen, setIsQrOpen] = useState(false)
-  const [actionsTarget, setActionsTarget] = useState<{ peerKey: string; name: string } | null>(null)
+  const [actionsTarget, setActionsTarget] = useState<DeviceRenameTarget | null>(null)
+  const { openRename, renameSheet } = useDeviceRename(vm.rename)
 
   const copyTopic = async () => {
     if (!vm.topic) return
@@ -264,7 +267,14 @@ export function ShareView() {
             title: t(removed ? 'settings:pairing.deviceRemoved' : 'settings:pairing.removeFailed')
           })
         }}
+        onRename={() => {
+          const target = actionsTarget
+          setActionsTarget(null)
+          if (target) openRename(target)
+        }}
       />
+
+      <DeviceRenameSheet {...renameSheet} />
 
       <ShareFilesSheet
         open={isFilesSheetOpen}

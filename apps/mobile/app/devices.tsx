@@ -5,6 +5,7 @@ import { useTranslation } from '@altersend/locales'
 import {
   AddPairDeviceSheet,
   DeviceActionsSheet,
+  DeviceRenameSheet,
   Layout,
   PairingManualCodeSheet,
   PairingQrSheet,
@@ -77,6 +78,7 @@ export default function DevicesScreen() {
       )}
 
       <DeviceActionsSheet {...flow.deviceActionsSheet} />
+      <DeviceRenameSheet {...flow.renameSheet} />
       <AddPairDeviceSheet {...flow.addSheet} />
       <PairingQrSheet {...flow.qrSheet} />
       <PairingScanSheet {...flow.scanSheet} />

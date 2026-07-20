@@ -4,18 +4,25 @@ import { Button, LinkRow, ListItem, useTheme } from '@altersend/components'
 import {
   ClipboardIcon,
   MoreHorizontalIcon,
+  PencilIcon,
   PlusIcon,
   QrCodeIcon,
   TrashIcon,
   deviceIcon
 } from '@altersend/components/icons'
-import { forgetPeer, usePairingSession } from '@altersend/domain'
+import {
+  forgetPeer,
+  renamePeer,
+  usePairingSession,
+  type DeviceRenameTarget
+} from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import syncDevicesSvg from '../../../../../../../assets/sync_devices.svg'
 import { useToast } from '../../Toast'
 import { Popover } from '../../Popover'
 import { PairingQrModal } from '../PairingQrModal'
 import { PairingJoinModal } from '../PairingJoinModal'
+import { DeviceRenameModal } from '../DeviceRenameModal'
 import { SectionShell } from './SectionShell'
 
 export function DevicesSection() {
@@ -26,6 +33,7 @@ export function DevicesSection() {
 
   const [qrOpen, setQrOpen] = useState(false)
   const [joinOpen, setJoinOpen] = useState(false)
+  const [renameTarget, setRenameTarget] = useState<DeviceRenameTarget | null>(null)
 
   const { peers, pairingTopic, isJoining, isJoinWaiting, join } = usePairingSession({
     hostOpen: qrOpen,
@@ -108,31 +116,45 @@ export function DevicesSection() {
                     }
                   >
                     {(close) => (
-                      <ListItem
-                        tone='danger'
-                        icon={<TrashIcon size={16} />}
-                        label={t('settings:pairing.removeDevice')}
-                        onClick={() => {
-                          close()
-                          forgetPeer(peer.remoteDevicePubkey)
-                            .then((removed) =>
-                              toast.show(
-                                removed
-                                  ? { title: t('settings:pairing.deviceRemoved') }
-                                  : {
-                                      title: t('settings:pairing.removeFailed'),
-                                      variant: 'error'
-                                    }
+                      <>
+                        <ListItem
+                          variant='plain'
+                          icon={<PencilIcon size={16} />}
+                          label={t('settings:pairing.renameDevice')}
+                          onClick={() => {
+                            close()
+                            setRenameTarget({
+                              peerKey: peer.remoteDevicePubkey,
+                              name: peer.displayName
+                            })
+                          }}
+                        />
+                        <ListItem
+                          tone='danger'
+                          icon={<TrashIcon size={16} />}
+                          label={t('settings:pairing.removeDevice')}
+                          onClick={() => {
+                            close()
+                            forgetPeer(peer.remoteDevicePubkey)
+                              .then((removed) =>
+                                toast.show(
+                                  removed
+                                    ? { title: t('settings:pairing.deviceRemoved') }
+                                    : {
+                                        title: t('settings:pairing.removeFailed'),
+                                        variant: 'error'
+                                      }
+                                )
                               )
-                            )
-                            .catch(() =>
-                              toast.show({
-                                title: t('settings:pairing.removeFailed'),
-                                variant: 'error'
-                              })
-                            )
-                        }}
-                      />
+                              .catch(() =>
+                                toast.show({
+                                  title: t('settings:pairing.removeFailed'),
+                                  variant: 'error'
+                                })
+                              )
+                          }}
+                        />
+                      </>
                     )}
                   </Popover>
                 }
@@ -152,6 +174,24 @@ export function DevicesSection() {
           isLoading={isJoining || isJoinWaiting}
           onClose={() => setJoinOpen(false)}
           onJoin={join}
+        />,
+        document.body
+      )}
+      {createPortal(
+        <DeviceRenameModal
+          open={renameTarget !== null}
+          initialName={renameTarget?.name ?? ''}
+          onClose={() => setRenameTarget(null)}
+          onRename={async (name) => {
+            if (!renameTarget) return false
+            const renamed = await renamePeer(renameTarget.peerKey, name)
+            toast.show(
+              renamed
+                ? { title: t('settings:pairing.deviceRenamed') }
+                : { title: t('settings:pairing.renameFailed'), variant: 'error' }
+            )
+            return renamed
+          }}
         />,
         document.body
       )}

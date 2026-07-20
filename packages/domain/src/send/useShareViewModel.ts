@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { RememberedPeer } from '@altersend/core'
 import { formatFileSize, formatRelativeTime, type InviteStatus } from '../format'
-import { forgetPeer, inviteDevice, requestPair, startSendSession } from '../transfer/commands'
+import {
+  forgetPeer,
+  inviteDevice,
+  renamePeer,
+  requestPair,
+  startSendSession
+} from '../transfer/commands'
 import { useTransferStore } from '../transfer/store'
 import { applyPairState, getPeerListEntries } from './peerListUi'
 import type { PairState, PeerListEntryWithPair } from './peerListUi'
@@ -71,6 +77,7 @@ export interface ShareViewModel {
   pair: (peerKey: string) => void
   invite: (peerKey: string) => Promise<void>
   forget: (peerKey: string) => Promise<boolean>
+  rename: (peerKey: string, displayName: string) => Promise<boolean>
 }
 
 function statusLabel(status: PeerListEntryWithPair['status'], t: Translate): string {
@@ -343,6 +350,7 @@ export function useShareViewModel(
     markCopied: () => setIsCopied(true),
     pair,
     invite,
-    forget: forgetPeer
+    forget: forgetPeer,
+    rename: renamePeer
   }
 }
