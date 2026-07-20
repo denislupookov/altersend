@@ -70,6 +70,22 @@ describe('renamePeer', () => {
     expect(transferStore.getState().remember.peerDisplayNames[KEY]).toBe('Phone')
   })
 
+  it('reverts the cache when the peer is not in the loaded list yet', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    transferStore.setState({
+      ...initialTransferSessionState,
+      peers: [],
+      remember: { ...initialTransferSessionState.remember, peerDisplayNames: { [KEY]: 'Phone' } }
+    })
+    bindWorker({
+      renamePeer: () => Promise.reject(new Error('store locked')),
+      peersList: () => Promise.resolve([])
+    })
+
+    expect(await renamePeer(KEY, 'Work Phone')).toBe(false)
+    expect(transferStore.getState().remember.peerDisplayNames[KEY]).toBe('Phone')
+  })
+
   it('rejects an empty name without dispatching', async () => {
     bindWorker({
       renamePeer: () => Promise.reject(new Error('should not be called')),

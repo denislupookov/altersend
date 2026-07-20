@@ -159,9 +159,15 @@ export const forgetPeer = async (pubkey: string): Promise<boolean> => {
 }
 
 const findPeerDisplayName = (pubkey: string): string | undefined => {
-  const peers = transferStore.getState().peers
-  const match = peers.find((peer) => peer.remoteDevicePubkey.toLowerCase() === pubkey.toLowerCase())
-  return match?.displayName
+  const key = pubkey.toLowerCase()
+  const { peers, remember } = transferStore.getState()
+  const match = peers.find((peer) => peer.remoteDevicePubkey.toLowerCase() === key)
+  if (match) return match.displayName
+
+  const cached = Object.entries(remember.peerDisplayNames).find(
+    ([cachedKey]) => cachedKey.toLowerCase() === key
+  )
+  return cached?.[1]
 }
 
 const undoRename = async (pubkey: string, previousName: string | undefined): Promise<void> => {
