@@ -1,0 +1,41 @@
+{
+  "join": {
+    "title": "下载共享的文件",
+    "description": "粘贴发件人提供的传输代码即可连接。",
+    "codeLabel": "传输代码",
+    "linkHint": "直接打开了完整链接？将自动连接。",
+    "invalidCode": "这看起来不是有效的传输代码。"
+  },
+  "connecting": {
+    "description": "正在建立安全的点对点连接，通常只需几秒钟。",
+    "stage": {
+      "idle": "正在验证传输代码并获取文件列表…",
+      "relay": "正在连接中继…",
+      "finding": "正在查找发件人…",
+      "waiting": "已连接 — 正在等待文件列表…",
+      "preparing": "发件人正在准备文件…"
+    }
+  },
+  "download": {
+    "title": "已与你共享 {{files}}",
+    "description": "无需应用或账户，直接在浏览器中下载。",
+    "connected": "已连接到发件人",
+    "allDownloaded": "所有文件已下载",
+    "complete": "{{size}} · 已完成",
+    "savedToDownloads": "{{files}}已保存到下载",
+    "keepTabOpen": "正在下载 — 请保持此标签页打开",
+    "saveHint": "下载内容将保存到浏览器的下载文件夹",
+    "enterAnother": "输入其他代码"
+  },
+  "errors": {
+    "relayUnreachable": "无法连接到 AlterSend 中继。请检查网络连接后重试。",
+    "senderNotFound": "未找到发件人 — 请确认对方正在共享。",
+    "nothingShared": "已连接，但发件人没有共享任何内容。"
+  },
+  "footer": {
+    "getApp": "获取应用",
+    "privacy": "隐私",
+    "terms": "条款",
+    "help": "帮助"
+  }
+}

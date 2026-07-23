@@ -1,0 +1,45 @@
+{
+  "name": "@altersend/web",
+  "version": "1.7.0",
+  "description": "Browser receiver for AlterSend — no install, end-to-end encrypted.",
+  "license": "Apache-2.0",
+  "author": "AlterSend",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@altersend/components": "1.7.0",
+    "@altersend/drive": "1.7.0",
+    "@altersend/locales": "^1.7.0",
+    "@hyperswarm/dht-relay": "^0.4.3",
+    "@noble/curves": "^2.2.0",
+    "b4a": "^1.8.1",
+    "compact-encoding": "^2.19.0",
+    "hypercore-crypto": "^3.7.0",
+    "lucide-react": "^1.8.0",
+    "protomux": "^3.11.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sodium-javascript": "^0.8.0",
+    "sodium-universal": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@stylexjs/babel-plugin": "^0.15.4",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^25.4.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.2.0",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-babel": "^1.6.0",
+    "vite-plugin-node-polyfills": "^0.24.0"
+  }
+}

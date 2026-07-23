@@ -1,0 +1,41 @@
+{
+  "join": {
+    "title": "공유된 파일 다운로드",
+    "description": "보낸 사람에게 받은 전송 코드를 붙여넣어 연결하세요.",
+    "codeLabel": "전송 코드",
+    "linkHint": "전체 링크를 열었나요? 자동으로 연결됩니다.",
+    "invalidCode": "올바른 전송 코드가 아닌 것 같습니다."
+  },
+  "connecting": {
+    "description": "안전한 피어 투 피어 연결을 설정하고 있습니다. 보통 몇 초면 완료됩니다.",
+    "stage": {
+      "idle": "전송 코드를 확인하고 파일 목록을 가져오는 중…",
+      "relay": "릴레이에 연결하는 중…",
+      "finding": "보낸 사람을 찾는 중…",
+      "waiting": "연결됨 — 파일 목록을 기다리는 중…",
+      "preparing": "보낸 사람이 파일을 준비하는 중…"
+    }
+  },
+  "download": {
+    "title": "{{files}}이(가) 공유되었습니다",
+    "description": "앱이나 계정 없이 브라우저에서 바로 다운로드하세요.",
+    "connected": "보낸 사람에 연결됨",
+    "allDownloaded": "모든 파일 다운로드 완료",
+    "complete": "{{size}} · 완료",
+    "savedToDownloads": "{{files}}을(를) 다운로드에 저장했습니다",
+    "keepTabOpen": "다운로드 중 — 이 탭을 열어 두세요",
+    "saveHint": "다운로드는 브라우저의 다운로드 폴더에 저장됩니다",
+    "enterAnother": "다른 코드 입력"
+  },
+  "errors": {
+    "relayUnreachable": "AlterSend 릴레이에 연결할 수 없습니다. 연결 상태를 확인한 후 다시 시도하세요.",
+    "senderNotFound": "보낸 사람을 찾을 수 없습니다 — 공유 중인지 확인하세요.",
+    "nothingShared": "연결되었지만 보낸 사람이 아무것도 공유하지 않았습니다."
+  },
+  "footer": {
+    "getApp": "앱 다운로드",
+    "privacy": "개인정보",
+    "terms": "약관",
+    "help": "도움말"
+  }
+}

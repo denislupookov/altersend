@@ -6,6 +6,7 @@ import onboarding from './locales/en-US/onboarding.json'
 import receive from './locales/en-US/receive.json'
 import send from './locales/en-US/send.json'
 import settings from './locales/en-US/settings.json'
+import web from './locales/en-US/web.json'
 
 export interface Resources {
   common: typeof common
@@ -16,6 +17,7 @@ export interface Resources {
   receive: typeof receive
   send: typeof send
   settings: typeof settings
+  web: typeof web
 }
 
 declare module 'i18next' {

@@ -1,0 +1,41 @@
+{
+  "join": {
+    "title": "下載共享的檔案",
+    "description": "貼上寄件者提供的傳輸代碼即可連線。",
+    "codeLabel": "傳輸代碼",
+    "linkHint": "直接開啟了完整連結？系統會自動連線。",
+    "invalidCode": "這看起來不是有效的傳輸代碼。"
+  },
+  "connecting": {
+    "description": "正在建立安全的點對點連線，通常只需幾秒鐘。",
+    "stage": {
+      "idle": "正在驗證傳輸代碼並取得檔案清單…",
+      "relay": "正在連線至中繼…",
+      "finding": "正在尋找寄件者…",
+      "waiting": "已連線 — 正在等待檔案清單…",
+      "preparing": "寄件者正在準備檔案…"
+    }
+  },
+  "download": {
+    "title": "已與你共享 {{files}}",
+    "description": "無需應用程式或帳號，直接在瀏覽器中下載。",
+    "connected": "已連線至寄件者",
+    "allDownloaded": "所有檔案已下載",
+    "complete": "{{size}} · 已完成",
+    "savedToDownloads": "{{files}}已儲存至下載",
+    "keepTabOpen": "正在下載 — 請保持此分頁開啟",
+    "saveHint": "下載內容會儲存至瀏覽器的下載資料夾",
+    "enterAnother": "輸入其他代碼"
+  },
+  "errors": {
+    "relayUnreachable": "無法連線至 AlterSend 中繼。請檢查網路連線後重試。",
+    "senderNotFound": "找不到寄件者 — 請確認對方正在共享。",
+    "nothingShared": "已連線，但寄件者未共享任何內容。"
+  },
+  "footer": {
+    "getApp": "取得應用程式",
+    "privacy": "隱私權",
+    "terms": "條款",
+    "help": "說明"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "join": {
+    "title": "Descargar archivos compartidos",
+    "description": "Pegue el código de transferencia que le dio el remitente para conectarse.",
+    "codeLabel": "Código de transferencia",
+    "linkHint": "¿Abrió un enlace completo? La conexión se establece automáticamente.",
+    "invalidCode": "Eso no parece un código de transferencia válido."
+  },
+  "connecting": {
+    "description": "Estableciendo un enlace seguro entre pares. Normalmente tarda unos segundos.",
+    "stage": {
+      "idle": "Verificando el código de transferencia y obteniendo la lista de archivos…",
+      "relay": "Conectando al relé…",
+      "finding": "Buscando al remitente…",
+      "waiting": "Conectado: esperando la lista de archivos…",
+      "preparing": "El remitente está preparando los archivos…"
+    }
+  },
+  "download": {
+    "title": "{{files}} compartidos con usted",
+    "description": "Descárguelos aquí mismo en su navegador: sin apps ni cuentas.",
+    "connected": "Conectado al remitente",
+    "allDownloaded": "Todos los archivos descargados",
+    "complete": "{{size}} · completado",
+    "savedToDownloads": "{{files}} guardados en Descargas",
+    "keepTabOpen": "Descargando: mantenga esta pestaña abierta",
+    "saveHint": "Las descargas se guardan en la carpeta Descargas de su navegador",
+    "enterAnother": "Ingresar otro código"
+  },
+  "errors": {
+    "relayUnreachable": "No se puede conectar con el relé de AlterSend. Revise su conexión e inténtelo de nuevo.",
+    "senderNotFound": "No se encontró al remitente: asegúrese de que esté compartiendo.",
+    "nothingShared": "Conectado, pero el remitente no compartió nada."
+  },
+  "footer": {
+    "getApp": "Obtener la app",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "help": "Ayuda"
+  }
+}

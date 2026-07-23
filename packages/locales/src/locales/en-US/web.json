@@ -1,0 +1,41 @@
+{
+  "join": {
+    "title": "Download shared files",
+    "description": "Paste the transfer code your sender gave you to connect.",
+    "codeLabel": "Transfer code",
+    "linkHint": "Opened a full link instead? It connects automatically.",
+    "invalidCode": "That doesn’t look like a valid transfer code."
+  },
+  "connecting": {
+    "description": "Establishing a secure peer-to-peer link. This usually takes a few seconds.",
+    "stage": {
+      "idle": "Verifying transfer code and fetching the file list…",
+      "relay": "Connecting to relay…",
+      "finding": "Finding sender…",
+      "waiting": "Connected — waiting for the file list…",
+      "preparing": "Sender is preparing files…"
+    }
+  },
+  "download": {
+    "title": "{{files}} shared with you",
+    "description": "Download them right here in your browser — no app or account needed.",
+    "connected": "Connected to sender",
+    "allDownloaded": "All files downloaded",
+    "complete": "{{size}} · complete",
+    "savedToDownloads": "{{files}} saved to Downloads",
+    "keepTabOpen": "Downloading — keep this tab open",
+    "saveHint": "Downloads save to your browser’s Downloads folder",
+    "enterAnother": "Enter another code"
+  },
+  "errors": {
+    "relayUnreachable": "Cannot reach the AlterSend relay. Check your connection and try again.",
+    "senderNotFound": "Sender not found — make sure the sender is sharing.",
+    "nothingShared": "Connected, but the sender did not share anything."
+  },
+  "footer": {
+    "getApp": "Download",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "help": "Help"
+  }
+}

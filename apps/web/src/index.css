@@ -1,0 +1,101 @@
+@layer theme, base, components, utilities;
+@import "../../../packages/components/src/theme/tailwind-theme.css";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme inline {
+  --font-sans: var(--as-font-family-sans);
+  --font-display: var(--as-font-family-display);
+  --font-mono: var(--as-font-family-mono);
+
+  --radius-xs: var(--as-radius-xs);
+  --radius-sm: var(--as-radius-sm);
+  --radius-md: var(--as-radius-md);
+  --radius-lg: var(--as-radius-lg);
+  --radius-xl: var(--as-radius-xl);
+  --radius-full: var(--as-radius-full);
+
+  --text-xs: var(--as-font-size-xs);
+  --text-sm: var(--as-font-size-sm);
+  --text-md: var(--as-font-size-md);
+  --text-base: var(--as-font-size-base);
+  --text-lg: var(--as-font-size-lg);
+  --text-xl: var(--as-font-size-xl);
+
+  --font-weight-regular: var(--as-font-weight-regular);
+  --font-weight-medium: var(--as-font-weight-medium);
+  --font-weight-semibold: var(--as-font-weight-semibold);
+  --font-weight-bold: var(--as-font-weight-bold);
+
+  --leading-tight: var(--as-line-height-tight);
+  --leading-snug: var(--as-line-height-snug);
+  --leading-normal: var(--as-line-height-normal);
+  --leading-relaxed: var(--as-line-height-relaxed);
+
+  --color-background: var(--as-color-background);
+  --color-background-deep: var(--as-color-background-deep);
+  --color-background-subtle: var(--as-color-background-subtle);
+  --color-surface-primary: var(--as-color-surface-primary);
+  --color-surface-secondary: var(--as-color-surface-secondary);
+  --color-surface-tertiary: var(--as-color-surface-tertiary);
+  --color-surface-hover: var(--as-color-surface-hover);
+  --color-surface-accent: var(--as-color-surface-accent);
+  --color-border-primary: var(--as-color-border-primary);
+  --color-border-strong: var(--as-color-border-strong);
+  --color-text-primary: var(--as-color-text-primary);
+  --color-text-secondary: var(--as-color-text-secondary);
+  --color-text-muted: var(--as-color-text-muted);
+  --color-text-faint: var(--as-color-text-faint);
+  --color-accent: var(--as-color-accent);
+  --color-accent-hover: var(--as-color-accent-hover);
+  --color-accent-active: var(--as-color-accent-active);
+  --color-on-accent: var(--as-color-on-accent);
+  --color-success: var(--as-color-success);
+  --color-success-subtle: var(--as-color-success-subtle);
+  --color-warning: var(--as-color-warning);
+  --color-warning-subtle: var(--as-color-warning-subtle);
+  --color-danger: var(--as-color-danger);
+  --color-danger-subtle: var(--as-color-danger-subtle);
+  --color-info: var(--as-color-info);
+  --color-info-subtle: var(--as-color-info-subtle);
+  --color-accent-subtle: var(--as-color-accent-subtle);
+  --color-scrim: var(--as-color-scrim);
+  --color-shadow: var(--as-color-shadow);
+  --color-highlight: var(--as-color-highlight);
+  --color-focus-ring: var(--as-color-focus-ring);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--as-color-background);
+    color: var(--as-color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+  }
+
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+}

@@ -44,6 +44,7 @@ jobs:
           npm run typecheck -w packages/components
           npm run typecheck -w apps/desktop
           npm run typecheck -w apps/mobile
+          npm run typecheck -w apps/web
 
       - name: Test
         run: npm test --workspaces --if-present

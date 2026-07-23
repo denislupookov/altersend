@@ -1,0 +1,41 @@
+{
+  "join": {
+    "title": "Baixar arquivos compartilhados",
+    "description": "Cole o código de transferência que o remetente lhe deu para conectar.",
+    "codeLabel": "Código de transferência",
+    "linkHint": "Abriu um link completo? A conexão acontece automaticamente.",
+    "invalidCode": "Isso não parece um código de transferência válido."
+  },
+  "connecting": {
+    "description": "Estabelecendo uma conexão ponto a ponto segura. Isso costuma levar alguns segundos.",
+    "stage": {
+      "idle": "Verificando o código de transferência e obtendo a lista de arquivos…",
+      "relay": "Conectando ao retransmissor…",
+      "finding": "Procurando o remetente…",
+      "waiting": "Conectado — aguardando a lista de arquivos…",
+      "preparing": "O remetente está preparando os arquivos…"
+    }
+  },
+  "download": {
+    "title": "{{files}} compartilhados com você",
+    "description": "Baixe tudo aqui mesmo no navegador — sem aplicativo nem conta.",
+    "connected": "Conectado ao remetente",
+    "allDownloaded": "Todos os arquivos baixados",
+    "complete": "{{size}} · concluído",
+    "savedToDownloads": "{{files}} salvos em Downloads",
+    "keepTabOpen": "Baixando — mantenha esta aba aberta",
+    "saveHint": "Os downloads são salvos na pasta Downloads do seu navegador",
+    "enterAnother": "Inserir outro código"
+  },
+  "errors": {
+    "relayUnreachable": "Não foi possível acessar o retransmissor do AlterSend. Verifique sua conexão e tente novamente.",
+    "senderNotFound": "Remetente não encontrado — verifique se ele está compartilhando.",
+    "nothingShared": "Conectado, mas o remetente não compartilhou nada."
+  },
+  "footer": {
+    "getApp": "Baixar o app",
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "help": "Ajuda"
+  }
+}

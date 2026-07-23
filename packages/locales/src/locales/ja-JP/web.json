@@ -1,0 +1,41 @@
+{
+  "join": {
+    "title": "共有されたファイルをダウンロード",
+    "description": "送信側から受け取った転送コードを貼り付けて接続します。",
+    "codeLabel": "転送コード",
+    "linkHint": "リンクを直接開いた場合は、自動的に接続されます。",
+    "invalidCode": "有効な転送コードではないようです。"
+  },
+  "connecting": {
+    "description": "安全なピアツーピア接続を確立しています。通常は数秒で完了します。",
+    "stage": {
+      "idle": "転送コードを確認し、ファイル一覧を取得しています…",
+      "relay": "リレーに接続しています…",
+      "finding": "送信側を探しています…",
+      "waiting": "接続済み — ファイル一覧を待っています…",
+      "preparing": "送信側がファイルを準備しています…"
+    }
+  },
+  "download": {
+    "title": "{{files}}が共有されました",
+    "description": "アプリもアカウントも不要。このままブラウザでダウンロードできます。",
+    "connected": "送信側に接続済み",
+    "allDownloaded": "すべてのファイルをダウンロードしました",
+    "complete": "{{size}} · 完了",
+    "savedToDownloads": "{{files}}をダウンロードに保存しました",
+    "keepTabOpen": "ダウンロード中 — このタブを開いたままにしてください",
+    "saveHint": "ダウンロードはブラウザのダウンロードフォルダに保存されます",
+    "enterAnother": "別のコードを入力"
+  },
+  "errors": {
+    "relayUnreachable": "AlterSend リレーに接続できません。接続を確認してもう一度お試しください。",
+    "senderNotFound": "送信側が見つかりません — 共有中かどうか確認してください。",
+    "nothingShared": "接続しましたが、送信側は何も共有していません。"
+  },
+  "footer": {
+    "getApp": "アプリを入手",
+    "privacy": "プライバシー",
+    "terms": "利用規約",
+    "help": "ヘルプ"
+  }
+}

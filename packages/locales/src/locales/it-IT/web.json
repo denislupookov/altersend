@@ -1,0 +1,41 @@
+{
+  "join": {
+    "title": "Scarica i file condivisi",
+    "description": "Incolla il codice di trasferimento che ti ha dato il mittente per connetterti.",
+    "codeLabel": "Codice di trasferimento",
+    "linkHint": "Hai aperto un link completo? La connessione avviene automaticamente.",
+    "invalidCode": "Non sembra un codice di trasferimento valido."
+  },
+  "connecting": {
+    "description": "Creazione di un collegamento peer-to-peer sicuro. Di solito richiede pochi secondi.",
+    "stage": {
+      "idle": "Verifica del codice di trasferimento e recupero dell’elenco dei file…",
+      "relay": "Connessione al relay…",
+      "finding": "Ricerca del mittente…",
+      "waiting": "Connesso — in attesa dell’elenco dei file…",
+      "preparing": "Il mittente sta preparando i file…"
+    }
+  },
+  "download": {
+    "title": "{{files}} condivisi con te",
+    "description": "Scaricali direttamente nel browser — senza app né account.",
+    "connected": "Connesso al mittente",
+    "allDownloaded": "Tutti i file scaricati",
+    "complete": "{{size}} · completato",
+    "savedToDownloads": "{{files}} salvati in Download",
+    "keepTabOpen": "Download in corso — tieni aperta questa scheda",
+    "saveHint": "I download vengono salvati nella cartella Download del browser",
+    "enterAnother": "Inserisci un altro codice"
+  },
+  "errors": {
+    "relayUnreachable": "Impossibile raggiungere il relay di AlterSend. Controlla la connessione e riprova.",
+    "senderNotFound": "Mittente non trovato — assicurati che stia condividendo.",
+    "nothingShared": "Connesso, ma il mittente non ha condiviso nulla."
+  },
+  "footer": {
+    "getApp": "Scarica l’app",
+    "privacy": "Privacy",
+    "terms": "Termini",
+    "help": "Aiuto"
+  }
+}
