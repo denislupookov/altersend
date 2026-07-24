@@ -3865,6 +3865,13 @@
     },
     {
         "type": "file",
+        "url": "https://registry.npmjs.org/@types/node/-/node-22.20.1.tgz",
+        "sha512": "10036a38217d405cab6bee297f151c5fd493289a422e331b39b573963209a260164a7b9220402fcb3114e7719a6a36d724481d87488470f2fe0c6be951de24d5",
+        "dest-filename": "6a38217d405cab6bee297f151c5fd493289a422e331b39b573963209a260164a7b9220402fcb3114e7719a6a36d724481d87488470f2fe0c6be951de24d5",
+        "dest": "flatpak-node/npm-cache/_cacache/content-v2/sha512/10/03"
+    },
+    {
+        "type": "file",
         "url": "https://registry.npmjs.org/@types/node/-/node-24.12.4.tgz",
         "sha512": "1945044a17fe3c10865b629a5f0708b77624f9ede990ac1629bf464b233d590544f9ea768f3987746b07ceee3081c672e5f37d141755ce3a4142c625a5fa602c",
         "dest-filename": "044a17fe3c10865b629a5f0708b77624f9ede990ac1629bf464b233d590544f9ea768f3987746b07ceee3081c672e5f37d141755ce3a4142c625a5fa602c",
@@ -17770,6 +17777,12 @@
         "contents": "78991017ac9bab92691347a81695232dc59ea7b7\t{\"key\": \"make-fetch-happen:request-cache:https://registry.npmjs.org/memoize-one/-/memoize-one-5.2.1.tgz\", \"integrity\": \"sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==\", \"time\": 0, \"size\": 7122, \"metadata\": {\"url\": \"https://registry.npmjs.org/memoize-one/-/memoize-one-5.2.1.tgz\", \"reqHeaders\": {}, \"resHeaders\": {}}}",
         "dest-filename": "db34f86e733092d2e035727d9d69a1aad9b5f14718f32529e8c75fb703c9",
         "dest": "flatpak-node/npm-cache/_cacache/index-v5/4c/59"
+    },
+    {
+        "type": "inline",
+        "contents": "78ad735b7677c0148e8c6309497d5d13ed40beca\t{\"key\": \"make-fetch-happen:request-cache:https://registry.npmjs.org/@types/node/-/node-22.20.1.tgz\", \"integrity\": \"sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==\", \"time\": 0, \"size\": 447075, \"metadata\": {\"url\": \"https://registry.npmjs.org/@types/node/-/node-22.20.1.tgz\", \"reqHeaders\": {}, \"resHeaders\": {}}}",
+        "dest-filename": "7045ede9042720cbfe57ee43964745d7a0772718e3203e8ff987848ad38e",
+        "dest": "flatpak-node/npm-cache/_cacache/index-v5/a2/0f"
     },
     {
         "type": "inline",

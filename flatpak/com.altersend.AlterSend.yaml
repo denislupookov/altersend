@@ -35,6 +35,7 @@ modules:
     build-commands:
       - npm ci --ignore-scripts
 
+      - npm run build -w packages/drive
       - npm run build -w packages/core
       - npm run build -w packages/locales
       - npm run build -w packages/domain
