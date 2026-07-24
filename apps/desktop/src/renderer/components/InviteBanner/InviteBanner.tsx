@@ -8,6 +8,7 @@ import {
 import { useTranslation } from '@altersend/locales'
 import { Button } from '@altersend/components'
 import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
+import { zLayer } from '../../zLayer'
 
 export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }) {
   const { t } = useTranslation(['common'])
@@ -43,8 +44,9 @@ export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }
 
   return (
     <div
-      className='fixed inset-0 z-50 flex justify-center pt-4'
+      className='fixed inset-0 flex justify-center pt-4'
       style={{
+        zIndex: zLayer.interrupt,
         backgroundColor: 'color-mix(in oklab, var(--as-color-scrim) 25%, transparent)',
         backdropFilter: 'blur(2px)',
         WebkitBackdropFilter: 'blur(2px)',

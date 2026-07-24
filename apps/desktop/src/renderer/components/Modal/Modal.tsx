@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { ArrowLeftIcon, CloseIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
+import { zLayer } from '../../zLayer'
 
 interface ModalProps {
   open: boolean
@@ -38,9 +39,10 @@ export function Modal({
     <div
       aria-modal='true'
       role='dialog'
-      className='fixed inset-0 z-[60] flex items-center justify-center p-6'
+      className='fixed inset-0 flex items-center justify-center p-6'
       onClick={onClose}
       style={{
+        zIndex: zLayer.modal,
         animation: 'as-fade-in 180ms ease-out',
         backgroundColor: 'color-mix(in oklab, var(--as-color-scrim) 45%, transparent)'
       }}

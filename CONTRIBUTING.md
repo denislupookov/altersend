@@ -16,11 +16,9 @@ git clone https://github.com/denislupookov/altersend.git
 cd altersend
 npm install
 
-# Optional — apps run without these in dev
 cp apps/desktop/.env.example apps/desktop/.env
 cp apps/mobile/.env.example apps/mobile/.env
 
-# iOS only — installs Pods and builds the Bare worklet for the mobile app
 npm run mobile:setup
 ```
 
@@ -30,7 +28,7 @@ Three layers: **App → Domain → Core worklet** (separate process).
 
 - **App** (Electron renderer / React Native) — UI, reads Zustand state, dispatches commands.
 - **Domain** (`packages/domain`) — Zustand store, pure reducer, page view-models. Bridges to the worklet via RPC.
-- **Core worklet** (`packages/core`) — runs in a **Bare worklet**, a separate `bare-process` spawned by the host app. Owns all P2P networking (Hyperswarm peer discovery, Hyperdrive file transfer).
+- **Core worklet** (`packages/core`) — runs in a **Bare worklet**, a separate `bare-process` spawned by the host app. Owns all P2P networking (Hyperswarm peer discovery, file transfer via `packages/drive`).
 
 The worklet has **no DOM and no Node APIs** — only Bare-flavored modules (`bare-fs`, `bare-process`, etc.). Don't `import` Node built-ins from `packages/core`.
 
@@ -39,20 +37,14 @@ Full diagrams and inter-process boundaries: [docs/architecture.md](docs/architec
 ## Running in development
 
 > **Build order matters.** Packages must be built in dependency order before apps can start:
-> `core → domain → components → apps`. The scripts below handle this automatically. Don't run `npm start -w apps/desktop` directly.
+> `core → drive → locales → domain → components → apps`. The scripts below handle this automatically. Don't run `npm start -w apps/desktop` directly.
 
 ```sh
-# Desktop
 npm run dev
 
-# Mobile (Metro bundler — Expo dev client)
 npm run mobile:start
 
-# Mobile (build packages + launch iOS simulator)
 npm run mobile
-
-# UI development in isolation
-npm run components:storybook   # http://localhost:6100
 ```
 
 ### Multi-peer local testing
@@ -60,8 +52,7 @@ npm run components:storybook   # http://localhost:6100
 To exercise peer-to-peer transfer on a single machine, launch additional desktop instances with their own storage:
 
 ```sh
-npm run desktop:dev:peer2      # second Electron instance
-npm run desktop:dev:peer3      # third Electron instance
+npm run desktop:dev:peer2
 ```
 
 Each peer has an isolated identity and storage, so they can discover and transfer to each other as if they were separate devices.
@@ -73,12 +64,14 @@ apps/
   desktop/    Electron app — main + renderer + Bare worklet runtime
   mobile/     React Native / Expo app
 packages/
-  core/       P2P protocol — Hyperswarm, Hyperdrive, RPC (Bare worklet)
+  core/       P2P protocol — Hyperswarm, RPC, transfer orchestration (Bare worklet)
+  drive/      File transfer engine
   domain/     State + business logic — Zustand store, reducer, page models
   components/ Cross-platform UI — React Strict DOM + Tailwind
+  locales/    Translation catalogues
 docs/
   architecture.md   System overview, data flow, process boundaries
-  SIGNING.md        Code-signing and notarization (release work)
+  i18n.md           Adding and updating translations
 ```
 
 ## Design tokens
@@ -87,27 +80,36 @@ docs/
 
 The only allowed exceptions are files under `packages/components/src/theme/` — that's the source of truth. `npm run check:tokens` enforces this in CI.
 
+## Translations
+
+User-facing strings live in `packages/locales/src/locales/<locale>/<namespace>.json` — never hardcode them in `apps/**` or `packages/components/**`. See [docs/i18n.md](docs/i18n.md) for namespaces, the supported locale set, and how to add a key or a language.
+
 ## Making changes
 
 1. Fork the repo and create a branch from `main`
 2. Make your changes
-3. Run the full PR gate locally:
+3. Run the full PR gate locally — these are exactly the steps CI runs, in order:
+
    ```sh
-   npm run lint                  # ESLint, --max-warnings=0
-   npm run check:tokens          # token-system enforcement
-   npm run components:typecheck  # type-check the components package
-   npm test                      # runs tests across all workspaces
+   npm run lint
+   npm run format:check
+   npm run check:tokens
+   npm run knip
+   npm run build
+
+   npm test
    ```
+
 4. Open a pull request — fill in the PR template
 
-CI runs the same checks; a PR with any of them failing won't be merged.
+CI runs the same checks (`.github/workflows/checks.yml`); a PR with any of them failing won't be merged.
 
 ## Code style
 
 - TypeScript everywhere — `strict: true` across all packages
 - Prettier for formatting (config in `.prettierrc` at the repo root)
 - ESLint must pass with `--max-warnings=0` (`npm run lint`)
-- Comments: default to none. Add one only when the *why* is non-obvious (a hidden constraint, a subtle invariant, a workaround). Don't explain what well-named code already says.
+- Comments: default to none. Add one only when the _why_ is non-obvious (a hidden constraint, a subtle invariant, a workaround). Don't explain what well-named code already says.
 - Avoid stray `console.log` in committed code — `console.warn` / `console.error` are fine for legitimate error paths
 
 ## Submitting issues

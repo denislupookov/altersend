@@ -58,6 +58,12 @@ export const bridgeApi = {
   getPathForFile(file: File) {
     return requireBridge().getPathForFile(file)
   },
+  async getDownloadFolder() {
+    return requireBridge().getDownloadFolder()
+  },
+  async chooseDownloadFolder() {
+    return requireBridge().chooseDownloadFolder()
+  },
   appRestart() {
     return requireBridge().appRestart()
   },

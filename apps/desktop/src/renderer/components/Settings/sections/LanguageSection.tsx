@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { LinkRow, getFontFamilyCssVariables, useTheme } from '@altersend/components'
+import { LinkCard, LinkRow, getFontFamilyCssVariables, useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import {
   LOCALE_OPTIONS,
@@ -39,23 +39,23 @@ export function LanguageSection() {
 
   return (
     <SectionShell title={t('settings:languageTitle')}>
-      <div className='flex flex-col gap-2.5'>
-        {LOCALE_OPTIONS.map((option) => {
+      <LinkCard>
+        {LOCALE_OPTIONS.map((option, index) => {
           const isSelected = option.preference === localePreference
           return (
             <LinkRow
               key={option.preference}
-              standalone
               compact
               label={option.nativeName ?? t('common:labels.systemDefault')}
               labelFontFamily={getLocaleOptionFontFamily(option)}
               subtitle={option.nativeName ? option.label : undefined}
               trailing={isSelected ? <CheckIcon size={16} color={c.colorTextPrimary} /> : null}
               onPress={() => handleLocaleChange(option.preference)}
+              isLast={index === LOCALE_OPTIONS.length - 1}
             />
           )
         })}
-      </div>
+      </LinkCard>
     </SectionShell>
   )
 }

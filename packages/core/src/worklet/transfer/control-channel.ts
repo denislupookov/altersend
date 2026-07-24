@@ -71,6 +71,7 @@ export interface DownloadFailed {
   fileId: string
   fileName: string
   message: string
+  paused?: boolean
 }
 
 export interface PairingInfo {

@@ -53,6 +53,10 @@ export interface StatusEvent {
   totalBytes?: number
   bytesTransferred?: number
   message?: string
+  resumable?: boolean
+  cancelled?: boolean
+  pausable?: boolean
+  paused?: boolean
   connectionType?: 'direct' | 'relay'
 }
 

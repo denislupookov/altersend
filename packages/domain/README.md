@@ -82,7 +82,7 @@ UI ────────────► commands ──► dispatchToTransfer
 **Commands**
 
 - `joinSession(topic)` / `startSendSession()` / `clearSession()`
-- `shareFiles(paths)` / `downloadFiles(files)`
+- `shareFiles(files)` / `downloadFiles(files)`
 - `addSelectedFiles(files)` / `removeSelectedFile(path)` / `continueShare(files)` / `clearSenderFlow()`
 
 **Remembered devices (pairing)**
@@ -101,7 +101,8 @@ UI ────────────► commands ──► dispatchToTransfer
 
 **Receive-specific helpers**
 
-- `getOfferKey`, `getStatusCopy`, `getDownloadTotals`, `createSingleDownloadRequest`, `createDirectoryDownloadRequests`, `applyDownloadRouted`.
+- `getOfferKey`, `getDownloadTotals`, `createSingleDownloadRequest`, `createDirectoryDownloadRequests`, `applyDownloadRouted`.
+- `getReceivePageCopy`, `getReceiveStep`, `isConnectedStep` — receive-page view-model helpers.
 
 **Send-specific helpers**
 
@@ -118,8 +119,6 @@ UI ────────────► commands ──► dispatchToTransfer
 ```ts
 bindTransferApi(api, {
   onError: (context, error) => {
-    // context: "clearSession" | "joinSession" | "shareFiles" |
-    //          "downloadFiles" | "startSendSession" | "bindTransferApi.startP2P"
     Sentry.captureException(error, { tags: { context } })
   }
 })

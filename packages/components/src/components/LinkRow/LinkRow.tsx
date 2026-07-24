@@ -19,6 +19,7 @@ interface LinkRowBaseProps {
   size?: number
   subtitle?: string
   subtitleTone?: 'muted' | 'faint' | 'success' | 'danger' | 'info'
+  subtitleWrap?: boolean
   description?: string
   isActive?: boolean
   isFirst?: boolean
@@ -85,6 +86,7 @@ export function LinkRow({
   size,
   subtitle,
   subtitleTone = 'muted',
+  subtitleWrap = false,
   description,
   isActive,
   isFirst = false,
@@ -212,7 +214,8 @@ export function LinkRow({
                   style={[
                     styles.subtitle,
                     subtitleToneStyle[subtitleTone],
-                    compact && styles.subtitleCompact
+                    compact && styles.subtitleCompact,
+                    subtitleWrap && styles.subtitleWrap
                   ]}
                 >
                   {rowSubtitle}

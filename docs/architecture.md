@@ -1,6 +1,6 @@
 # Architecture
 
-AlterSend is a monorepo with two apps (desktop, mobile) sharing four packages (core, domain, components, i18n). All P2P networking runs in a Bare worklet process, isolated from both the UI and the host runtime.
+AlterSend is a monorepo with two apps (desktop, mobile) sharing five packages (core, drive, domain, components, locales). All P2P networking runs in a Bare worklet process, isolated from both the UI and the host runtime.
 
 ## Repository layout
 
@@ -9,10 +9,11 @@ apps/
   desktop/          Electron app (macOS, Windows, Linux)
   mobile/           React Native / Expo app (iOS, Android)
 packages/
-  core/             P2P protocol — Hyperswarm/Hyperdrive transfers, device pairing, RPC
+  core/             P2P protocol — Hyperswarm, transfer orchestration, device pairing, RPC
+  drive/            Chunked file transfer — fixed chunks, pread/pwrite, resume
   domain/           State management — Zustand store, reducers, business logic
   components/       Shared UI — React Strict DOM components, Tailwind tokens
-  i18n/             Shared locale metadata, i18next setup, and catalogs
+  locales/          Shared locale metadata, i18next setup, and catalogs
 ```
 
 ## Data flow
@@ -54,9 +55,11 @@ Key modules:
 - `worklet/index.ts` — entrypoint; wires Bare IPC → RPC server → orchestrator
 - `worklet/transfer/orchestrator.ts` — top-level coordinator, owns session lifecycle + state and composes the transfer and remembered-device subsystems below
 - `worklet/transfer/swarm.ts` — `TransferSwarm`: Hyperswarm peer connectivity, Corestore replication, and per-peer control channels
+- `worklet/transfer/drive.ts` — the `@altersend/drive` chunk channel over Protomux (`altersend/drive`); the preferred transfer path
+- `worklet/transfer/control-channel.ts` — per-peer control messages (file offers, requests, progress, cancel)
 - `worklet/transfer/storage.ts` — `TransferStorage`: the ephemeral Corestore + Hyperdrive backing a session, plus the sender/receiver bound to them (wiped on every disconnect)
-- `worklet/transfer/sender.ts` — `TransferSender`: stages local files into the writable Hyperdrive (sender path)
-- `worklet/transfer/receiver.ts` — `TransferReceiver`: writes replicated remote Hyperdrive contents to disk (receiver path)
+- `worklet/transfer/sender.ts` — `TransferSender`: stages local files into the writable Hyperdrive (legacy sender path)
+- `worklet/transfer/receiver.ts` — `TransferReceiver`: picks the transfer path per file — the drive channel when the peer offers one, else the replicated Hyperdrive
 - `worklet/relay/config.ts` — relay enable state + relay list; `relayThrough` (the Hyperswarm fallback callback) and `isRelayHost` (connection-type classification)
 - `worklet/relay/conf.ts` — fetches the relay list from a signed HyperDHT mutable record; loads lazily once the relay is enabled (see [Relay fallback](#relay-fallback))
 - `worklet/identity/device-identity-store.ts` — `DeviceIdentityStore`: the stable device keypair, its secret is sealed in the OS keychain and injected at startup (see [Remembered devices & pairing](#remembered-devices--pairing))
@@ -68,6 +71,12 @@ Key modules:
 - `worklet/rpc/server.ts` — RPC server that bridges IPC to events/commands
 - `worklet/rpc/protocol.ts` — canonical RPC command/reply types and encode/decode helpers
 - `client/worker-client.ts` — typed client used by the host app to talk to the worklet
+
+### `packages/drive`
+
+The chunked file-transfer engine, independent of Hyperswarm and Hyperdrive. A sender reads fixed-size chunks with `pread` and a receiver writes them at their offset with `pwrite`, so neither side keeps a second copy of the file on disk. A resume bitmap lets an interrupted transfer pick up where it stopped.
+
+It talks over a caller-supplied `DriveChannel` rather than owning a socket, which keeps it transport-agnostic — `packages/core` supplies a Protomux channel today. `DiskReader` / `DiskWriter` are the Bare-flavored adapters; the root export stays fs-free so the engine can run in a browser. See `packages/drive/README.md` for the wire protocol.
 
 ### `packages/domain`
 
@@ -86,7 +95,7 @@ Shared React components using **React Strict DOM** (works on both web and native
 
 ### `packages/locales`
 
-Shared internationalization package used by desktop and mobile. It owns supported locale metadata, locale preference resolution, i18next initialization, and bundled translation catalogs. Desktop and mobile let users pick from 12 supported locales; the active locale resolves from the user's preference, falling back to the system locale and then `en-US`. See [i18n.md](i18n.md) for catalog structure and translation workflow.
+Shared internationalization package used by desktop and mobile. It owns supported locale metadata, locale preference resolution, i18next initialization, and bundled translation catalogs. Desktop and mobile let users pick from 13 supported locales; the active locale resolves from the user's preference, falling back to the system locale and then `en-US`. See [i18n.md](i18n.md) for catalog structure and translation workflow.
 
 ## Transfer flow
 
@@ -94,7 +103,9 @@ Shared internationalization package used by desktop and mobile. It owns supporte
 2. **Receiver** scans the QR or types the join code → domain validates and extracts the hex topic, then passes it to core.
 3. Core worklet on both sides joins the Hyperswarm topic for that key. On each peer connection the shared Corestore replicates over the noise-encrypted socket.
 4. Sender stages the selected files into its writable Hyperdrive, then broadcasts a `transfer-ready` control message carrying file offers (each with the drive key).
-5. Receiver requests the offered files and downloads their blobs from the replicated drive. Progress and completion events flow back over the control channel → RPC → domain reducer → UI.
+5. Receiver requests the offered files. Per file it opens a `@altersend/drive` chunk channel and streams chunks straight to disk; if the peer doesn't offer one (an older build), it falls back to downloading blobs from the replicated Hyperdrive. Progress and completion events flow back over the control channel → RPC → domain reducer → UI.
+
+Step 5 is mid-migration. `@altersend/drive` is the path both sides take when they support it, and Hyperdrive remains only as the fallback for older peers — see the branch in `worklet/transfer/receiver.ts`. New transfer work belongs in `packages/drive`.
 
 ## Relay fallback
 
@@ -104,7 +115,7 @@ Most transfers connect directly (P2P hole-punching). When two peers can't reach 
 - **Relay discovery (relay-conf).** The relay's public key isn't baked into the app. `relay/conf.ts` reads the current relay list from a signed HyperDHT **mutable record** whose public key ships with the app (`--relay-conf-pubkey`, injected at build time); only the relay operator's secret can update it, so relays rotate with no app release. The list is fetched **lazily** — only once the relay is enabled — with a small bounded retry to survive a cold-start DHT miss. This uses a mutable record (not a hypercore) specifically because the worklet wipes its Corestore on every startup.
 - **Connection-type classification.** `TransferSwarm.classifyConnection` compares a peer socket's `remoteHost` against the known relay hosts (`isRelayHost`) and emits a per-peer `connection-type` (`direct` / `relay`) event. The receiver keys this per sender (`transferPeerKey`) so a mesh of receivers can't cross-contaminate the badge, and the UI shows **Connected** vs **Connected via relay**.
 
-The app is only ever a relay *client* — it holds the relay's **public** key and address (from the relay-conf record) and never any relay secret.
+The app is only ever a relay _client_ — it holds the relay's **public** key and address (from the relay-conf record) and never any relay secret.
 
 ## Remembered devices & pairing
 

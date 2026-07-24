@@ -12,7 +12,7 @@ export interface ConnectedPeer {
   disconnectedAt?: number
 }
 
-export type PeerDownloadState = 'started' | 'progress' | 'completed' | 'failed'
+export type PeerDownloadState = 'started' | 'progress' | 'completed' | 'failed' | 'paused'
 
 export interface PeerDownloadEvent {
   id: string
@@ -25,7 +25,13 @@ export interface PeerDownloadEvent {
   updatedAt: number
 }
 
-export type PeerListStatus = 'online' | 'downloading' | 'downloaded' | 'failed' | 'disconnected'
+export type PeerListStatus =
+  | 'online'
+  | 'downloading'
+  | 'downloaded'
+  | 'paused'
+  | 'failed'
+  | 'disconnected'
 
 export interface PeerStatusData {
   status: PeerListStatus
@@ -53,7 +59,7 @@ function getPeerDownloadState(
     case 'peer-downloaded':
       return 'completed'
     case 'peer-download-failed':
-      return 'failed'
+      return message.paused === true ? 'paused' : 'failed'
     default:
       return null
   }
@@ -90,6 +96,7 @@ export function applyPeerDownloadEvent(
 
 interface EventsSummary {
   failed: PeerDownloadEvent | null
+  paused: PeerDownloadEvent | null
   inFlight: PeerDownloadEvent | null
   newest: PeerDownloadEvent
   completedCount: number
@@ -101,6 +108,7 @@ function summarizeEvents(events: PeerDownloadEvent[]): EventsSummary | null {
   if (events.length === 0) return null
 
   let failed: PeerDownloadEvent | null = null
+  let paused: PeerDownloadEvent | null = null
   let inFlight: PeerDownloadEvent | null = null
   let newest = events[0]
   let completedCount = 0
@@ -115,6 +123,10 @@ function summarizeEvents(events: PeerDownloadEvent[]): EventsSummary | null {
       case 'failed':
         failed ??= event
         break
+      case 'paused':
+        paused ??= event
+        transferredBytes += event.bytesTransferred
+        break
       case 'started':
       case 'progress':
         inFlight ??= event
@@ -127,7 +139,7 @@ function summarizeEvents(events: PeerDownloadEvent[]): EventsSummary | null {
     }
   }
 
-  return { failed, inFlight, newest, completedCount, transferredBytes, sumOfKnownTotals }
+  return { failed, paused, inFlight, newest, completedCount, transferredBytes, sumOfKnownTotals }
 }
 
 export function derivePeerStatus(
@@ -145,7 +157,8 @@ export function derivePeerStatus(
     }
   }
 
-  const { failed, inFlight, newest, completedCount, transferredBytes, sumOfKnownTotals } = summary
+  const { failed, paused, inFlight, newest, completedCount, transferredBytes, sumOfKnownTotals } =
+    summary
 
   if (failed) {
     return {
@@ -162,6 +175,16 @@ export function derivePeerStatus(
 
   if (!isConnected) {
     return { status: 'disconnected', completedCount, sortKey: newest.updatedAt }
+  }
+
+  if (paused && !inFlight) {
+    return {
+      status: 'paused',
+      completedCount,
+      transferredBytes,
+      totalForDisplay: sumOfKnownTotals || expectedTotalBytes,
+      sortKey: paused.updatedAt
+    }
   }
 
   if (inFlight) {

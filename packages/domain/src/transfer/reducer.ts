@@ -2,6 +2,7 @@ import {
   applyDownloadMessage,
   applyDownloadRouted,
   createDownloadStateMap,
+  markDownloadsQueued,
   resolveOfferKey
 } from '../receive/downloadModel'
 import { applySharingProgress, getPhaseFromSelection, mergeSelectedFiles } from '../send/draftModel'
@@ -311,7 +312,11 @@ export function transferSessionReducer(
         offerKey,
         action.event
       )
-      if (action.event.state === 'download-failed') {
+      if (
+        action.event.state === 'download-failed' &&
+        action.event.resumable !== true &&
+        action.event.cancelled !== true
+      ) {
         return {
           ...state,
           receiveDownloadStates: nextDownloadStates,
@@ -322,6 +327,17 @@ export function transferSessionReducer(
       return {
         ...state,
         receiveDownloadStates: nextDownloadStates
+      }
+    }
+    case 'downloads_queued': {
+      if (state.role !== 'receiver') return state
+      return {
+        ...state,
+        receiveDownloadStates: markDownloadsQueued(
+          state.receiveDownloadStates,
+          action.offerKeys,
+          action.queued
+        )
       }
     }
     case 'download_routed':
@@ -432,6 +448,30 @@ export function transferSessionReducer(
               ? null
               : state.remember.incomingInvite
         }
+      }
+    }
+    case 'rename_peer': {
+      const key = action.peerKey.toLowerCase()
+      const peers = state.peers.map((peer) => {
+        if (peer.remoteDevicePubkey.toLowerCase() !== key) return peer
+        return { ...peer, displayName: action.displayName }
+      })
+
+      const peerDisplayNames = { ...state.remember.peerDisplayNames }
+      for (const cachedKey of Object.keys(peerDisplayNames)) {
+        if (cachedKey.toLowerCase() === key) peerDisplayNames[cachedKey] = action.displayName
+      }
+
+      const invite = state.remember.incomingInvite
+      const incomingInvite =
+        invite?.remoteDevicePubkey.toLowerCase() === key
+          ? { ...invite, displayName: action.displayName }
+          : invite
+
+      return {
+        ...state,
+        peers,
+        remember: { ...state.remember, peerDisplayNames, incomingInvite }
       }
     }
     case 'invite_received':

@@ -9,7 +9,7 @@ import {
   type LocalePreference,
   type SupportedLocaleCode
 } from '@altersend/locales'
-import { getNativeFontFamilyName, useTheme } from '@altersend/components'
+import { LinkCard, LinkRow, getNativeFontFamilyName, useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
 import {
@@ -20,8 +20,6 @@ import {
 import { getMobileSystemLocales } from '@/src/lifecycle/systemLocale'
 import { useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
-import { Text } from '@/src/components/ThemedText'
 
 export default function LanguageScreen() {
   const { t } = useTranslation(['settings', 'common'])
@@ -48,55 +46,30 @@ export default function LanguageScreen() {
     scheduleLanguageChange(resolvedLocale)
   }
 
-  const cardStyle = {
-    backgroundColor: theme.colors.colorBackgroundSubtle,
-    borderColor: theme.colors.colorBorderPrimary
-  }
-
   return (
     <Layout
       title={t('settings:languageTitle')}
       description={t('settings:languageHint')}
       hasNativeHeader
     >
-      <View style={styles.list}>
-        {LOCALE_OPTIONS.map((option) => {
+      <LinkCard>
+        {LOCALE_OPTIONS.map((option, index) => {
           const selected = option.preference === preference
           return (
-            <Pressable
+            <LinkRow
               key={option.preference}
-              accessibilityRole='button'
-              accessibilityState={{ selected }}
+              label={option.nativeName ?? t('common:labels.systemDefault')}
+              labelFontFamily={getOptionNativeNameFontFamily(option)}
+              subtitle={option.nativeName ? option.label : undefined}
+              trailing={
+                selected ? <CheckIcon size={18} color={theme.colors.colorTextPrimary} /> : null
+              }
               onPress={() => void handleSelect(option.preference)}
-              style={({ pressed }) => [
-                styles.rowCard,
-                cardStyle,
-                pressed && { backgroundColor: theme.colors.colorSurfacePrimary }
-              ]}
-            >
-              <View style={styles.rowText}>
-                <Text
-                  style={[
-                    styles.label,
-                    {
-                      color: theme.colors.colorTextPrimary,
-                      fontFamily: getOptionNativeNameFontFamily(option)
-                    }
-                  ]}
-                >
-                  {option.nativeName ?? t('common:labels.systemDefault')}
-                </Text>
-                {option.nativeName ? (
-                  <Text style={[styles.hint, { color: theme.colors.colorTextMuted }]}>
-                    {option.label}
-                  </Text>
-                ) : null}
-              </View>
-              {selected && <CheckIcon size={18} color={theme.colors.colorTextPrimary} />}
-            </Pressable>
+              isLast={index === LOCALE_OPTIONS.length - 1}
+            />
           )
         })}
-      </View>
+      </LinkCard>
     </Layout>
   )
 }
@@ -118,33 +91,3 @@ function getOptionNativeNameFontFamily(option: LocaleOption) {
   if (!option.resolvedCode) return undefined
   return getNativeFontFamilyName(getLocaleFontFamily(option.resolvedCode))
 }
-
-const styles = StyleSheet.create({
-  list: {
-    gap: 10
-  },
-  rowCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 13,
-    borderRadius: 10,
-    borderWidth: 1
-  },
-  rowText: {
-    flex: 1,
-    gap: 2
-  },
-  label: {
-    fontSize: 15,
-    includeFontPadding: false,
-    lineHeight: 20
-  },
-  hint: {
-    fontSize: 12,
-    includeFontPadding: false,
-    lineHeight: 16
-  }
-})

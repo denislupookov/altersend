@@ -18,11 +18,13 @@
     "fairUse": "El relé tiene límites en el tamaño de las transferencias y en cuántas pueden ejecutarse a la vez."
   },
   "rows": {
-    "security": "Seguridad",
     "feedback": "Comentarios",
     "feedbackHint": "Informar un problema o sugerir una característica",
     "discord": "Discord",
+    "x": "X",
     "discordHint": "Únete a la comunidad",
+    "github": "GitHub",
+    "sponsor": "Apoyar AlterSend",
     "contact": "Contáctenos",
     "privacyPolicy": "Política de privacidad",
     "privacyPolicyHint": "Cómo AlterSend maneja tus datos",
@@ -32,11 +34,6 @@
     "noDevices": "Aún no hay dispositivos",
     "pairedCount": "{{count}} emparejados",
     "connection": "Relé"
-  },
-  "legal": {
-    "terms": "Términos de uso",
-    "privacy": "Declaración de privacidad",
-    "sentence": "<terms>Términos de uso</terms> y <privacy>Declaración de privacidad</privacy>."
   },
   "pairing": {
     "pairNewDevice": "Emparejar nuevo dispositivo",
@@ -56,6 +53,9 @@
     "generating": "Generando...",
     "discard": "Descartar",
     "removeDevice": "Eliminar dispositivo",
+    "renameDevice": "Cambiar nombre del dispositivo",
+    "nameLabel": "Nombre del dispositivo",
+    "namePlaceholder": "Escribe el nombre del dispositivo",
     "pairANewDevice": "Emparejar un nuevo dispositivo",
     "couldNotJoin": "No se pudo conectar con el dispositivo",
     "couldNotJoinHint": "Asegúrate de que el código de invitación siga activo.",
@@ -73,6 +73,8 @@
     "pairFailed": "No se pudo emparejar: inténtalo de nuevo",
     "deviceRemoved": "Dispositivo emparejado eliminado",
     "removeFailed": "No se pudo eliminar el dispositivo emparejado",
+    "deviceRenamed": "Nombre del dispositivo cambiado",
+    "renameFailed": "No se pudo cambiar el nombre del dispositivo",
     "deviceActions": "Acciones del dispositivo",
     "pairingDevice": "Emparejando dispositivo",
     "couldNotReadImage": "No se pudo leer la imagen",
@@ -85,5 +87,21 @@
     "body": "Empareja un dispositivo que uses a menudo y envíale al instante, sin escanear ni escribir un código cada vez.",
     "pairButton": "Emparejar un dispositivo",
     "skip": "Omitir por ahora"
+  },
+  "downloads": {
+    "title": "Descargas",
+    "autoSaveLabel": "Guardar archivos en una carpeta",
+    "autoSaveDescription": "Si está desactivado, se te preguntará dónde guardar cada transferencia.",
+    "change": "Cambiar…",
+    "chooseFolder": "Elegir una carpeta…",
+    "changeFailed": "No se pudo guardar la carpeta de descargas",
+    "mediaToPhotosLabel": "Guardar fotos y videos en Fotos",
+    "mediaToGalleryLabel": "Guardar fotos y videos en la Galería",
+    "destinationPhotos": "Fotos y videos en Fotos",
+    "destinationFiles": "Fotos y videos en Archivos",
+    "mediaToPhotosDescription": "Si está desactivado, se guardan en la carpeta AlterSend de Archivos.",
+    "mediaToGalleryDescription": "Si está desactivado, se guardan en tu carpeta de Descargas.",
+    "destinationGallery": "Fotos y videos en la Galería",
+    "destinationDownloads": "Fotos y videos en Descargas"
   }
 }

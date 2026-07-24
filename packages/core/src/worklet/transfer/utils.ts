@@ -73,3 +73,32 @@ export class AbortError extends Error {
     this.name = 'AbortError'
   }
 }
+
+export interface AbortLike {
+  readonly aborted: boolean
+  addEventListener(type: 'abort', listener: () => void): void
+  removeEventListener(type: 'abort', listener: () => void): void
+}
+
+export function onAbort(signal: AbortLike | undefined, abort: () => void): () => void {
+  if (!signal) return () => {}
+  if (signal.aborted) {
+    abort()
+    return () => {}
+  }
+  signal.addEventListener('abort', abort)
+  return () => signal.removeEventListener('abort', abort)
+}
+
+export function getChunkSize(chunk: unknown): number {
+  if (typeof chunk === 'string') return Buffer.byteLength(chunk)
+  if (
+    chunk &&
+    typeof chunk === 'object' &&
+    'byteLength' in chunk &&
+    typeof (chunk as { byteLength: unknown }).byteLength === 'number'
+  ) {
+    return (chunk as { byteLength: number }).byteLength
+  }
+  return 0
+}

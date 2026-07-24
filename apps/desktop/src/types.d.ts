@@ -66,9 +66,11 @@ declare global {
     ) => TransferMethodReturn<T>
     onTransferEvent: (cb: (message: RendererTransferEvent) => void) => () => void
     pickFiles: (mode?: PickMode) => Promise<PickedFile[] | null>
-    pickDirectory: () => Promise<PickedFile | null>
+    pickDirectory: () => Promise<string | null>
     pickSaveFile: (defaultName: string) => Promise<PickedFile | null>
     getPathForFile: (file: File) => string
+    getDownloadFolder: () => Promise<string | null>
+    chooseDownloadFolder: () => Promise<string | null>
     appRestart: () => Promise<unknown>
     onDeepLink: (cb: (url: string) => void) => () => void
     onRuntimeUpdated: (cb: () => void) => () => void

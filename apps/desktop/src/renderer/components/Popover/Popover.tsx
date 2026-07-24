@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { zLayer } from '../../zLayer'
 
 interface PopoverProps {
   trigger: React.ReactNode
@@ -58,8 +59,13 @@ export function Popover({ trigger, children, align = 'right', variant = 'menu' }
       {open && anchorRect && (
         <div
           ref={popoverRef}
-          className={`fixed z-[200] ${menuClass}`}
-          style={{ ...posStyle, transformOrigin, animation: 'as-scale-in 130ms ease-out' }}
+          className={`fixed ${menuClass}`}
+          style={{
+            ...posStyle,
+            zIndex: zLayer.popover,
+            transformOrigin,
+            animation: 'as-scale-in 130ms ease-out'
+          }}
         >
           {children(close)}
         </div>

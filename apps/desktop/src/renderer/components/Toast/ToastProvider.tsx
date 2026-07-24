@@ -8,6 +8,7 @@ import {
   type ReactNode
 } from 'react'
 import { AlertCircleIcon, CheckIcon } from '@altersend/components/icons'
+import { zLayer } from '../../zLayer'
 
 interface ShowToastInput {
   title: string
@@ -62,7 +63,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ show }}>
       {children}
       {current && (
-        <div className='pointer-events-none fixed inset-x-0 top-6 z-[100] flex justify-center px-6'>
+        <div
+          className='pointer-events-none fixed inset-x-0 top-6 flex justify-center px-6'
+          style={{ zIndex: zLayer.toast }}
+        >
           <div
             key={current.id}
             className='pointer-events-auto flex max-w-[420px] items-center gap-3 rounded-[12px] border border-border-primary bg-surface-primary px-4 py-3 shadow-[0_12px_32px_color-mix(in_oklab,var(--as-color-scrim)_45%,transparent)]'

@@ -18,11 +18,13 @@
     "fairUse": "릴레이에는 전송 크기와 동시에 실행할 수 있는 전송 수에 제한이 있습니다."
   },
   "rows": {
-    "security": "보안",
     "feedback": "피드백",
     "feedbackHint": "문제 신고 또는 기능 제안",
     "discord": "Discord",
+    "x": "X",
     "discordHint": "커뮤니티에 가입하세요",
+    "github": "GitHub",
+    "sponsor": "AlterSend 후원하기",
     "contact": "문의하기",
     "privacyPolicy": "개인 정보 보호 정책",
     "privacyPolicyHint": "AlterSend가 데이터를 처리하는 방법",
@@ -32,11 +34,6 @@
     "noDevices": "아직 기기가 없습니다",
     "pairedCount": "{{count}}개 페어링됨",
     "connection": "릴레이"
-  },
-  "legal": {
-    "terms": "이용약관",
-    "privacy": "개인 정보 보호 정책",
-    "sentence": "<terms>이용 약관</terms> 및 <privacy>개인정보 처리방침</privacy>."
   },
   "pairing": {
     "pairNewDevice": "새 기기 페어링",
@@ -56,6 +53,9 @@
     "generating": "생성 중...",
     "discard": "취소",
     "removeDevice": "기기 삭제",
+    "renameDevice": "기기 이름 변경",
+    "nameLabel": "기기 이름",
+    "namePlaceholder": "기기 이름 입력",
     "pairANewDevice": "새 기기 페어링",
     "couldNotJoin": "기기에 연결할 수 없습니다",
     "couldNotJoinHint": "초대 코드가 아직 유효한지 확인하세요.",
@@ -73,6 +73,8 @@
     "pairFailed": "페어링하지 못했습니다 — 다시 시도하세요",
     "deviceRemoved": "페어링된 기기를 삭제했습니다",
     "removeFailed": "페어링된 기기를 삭제할 수 없습니다",
+    "deviceRenamed": "기기 이름을 변경했습니다",
+    "renameFailed": "기기 이름을 변경할 수 없습니다",
     "deviceActions": "기기 작업",
     "pairingDevice": "기기 페어링 중",
     "couldNotReadImage": "이미지를 읽을 수 없습니다",
@@ -85,5 +87,21 @@
     "body": "자주 쓰는 기기를 페어링하면 매번 코드를 스캔하거나 입력하지 않고 바로 보낼 수 있습니다.",
     "pairButton": "기기 페어링",
     "skip": "나중에"
+  },
+  "downloads": {
+    "title": "다운로드",
+    "autoSaveLabel": "폴더에 저장",
+    "autoSaveDescription": "끄면 전송할 때마다 저장 위치를 묻습니다.",
+    "change": "변경…",
+    "chooseFolder": "폴더 선택…",
+    "changeFailed": "다운로드 폴더를 저장하지 못했습니다",
+    "mediaToPhotosLabel": "사진 및 동영상을 사진 앱에 저장",
+    "mediaToGalleryLabel": "사진 및 동영상을 갤러리에 저장",
+    "destinationPhotos": "사진 및 동영상을 사진 앱으로",
+    "destinationFiles": "사진 및 동영상을 파일 앱으로",
+    "mediaToPhotosDescription": "끄면 파일 앱의 AlterSend 폴더에 저장됩니다.",
+    "mediaToGalleryDescription": "끄면 다운로드 폴더에 저장됩니다.",
+    "destinationGallery": "사진 및 동영상을 갤러리로",
+    "destinationDownloads": "사진 및 동영상을 다운로드로"
   }
 }

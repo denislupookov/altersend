@@ -15,6 +15,7 @@ export default function SendShareScreen() {
   const connectionState = useTransferStore((s) => s.connectionState)
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
   const copy = getSendPageCopy(t, step)
+  const description = step === 'receiver_connected' ? t('send:hints.keepOpen') : copy.description
   const navigation = useNavigation()
 
   const handleBack = useCallback(() => {
@@ -45,7 +46,7 @@ export default function SendShareScreen() {
   return (
     <Layout
       title={copy.title}
-      description={copy.description}
+      description={description}
       hasNativeHeader
       noScroll
       footer={

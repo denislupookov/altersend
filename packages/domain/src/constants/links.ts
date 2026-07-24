@@ -1,0 +1,8 @@
+export const websiteUrl = 'https://altersend.com'
+export const sponsorUrl = 'https://altersend.com/sponsor'
+export const privacyPolicyUrl = 'https://altersend.com/privacy'
+export const termsOfServiceUrl = 'https://altersend.com/terms'
+export const githubUrl = 'https://github.com/denislupookov/altersend'
+export const discordUrl = 'https://discord.gg/R6tmrk85Vx'
+export const xUrl = 'https://x.com/altersend_app'
+export const supportEmail = 'hello@altersend.com'

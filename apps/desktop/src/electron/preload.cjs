@@ -29,6 +29,8 @@ contextBridge.exposeInMainWorld('bridge', {
     return ipcRenderer.invoke('app:pickSaveFile', defaultName)
   },
   getPathForFile: (file) => webUtils.getPathForFile(file),
+  getDownloadFolder: () => ipcRenderer.invoke('app:getDownloadFolder'),
+  chooseDownloadFolder: () => ipcRenderer.invoke('app:chooseDownloadFolder'),
   appRestart: () => ipcRenderer.invoke('app:restart'),
   showInFolder: (filePath) => ipcRenderer.invoke('app:showInFolder', filePath),
   openFile: (filePath) => ipcRenderer.invoke('app:openFile', filePath),

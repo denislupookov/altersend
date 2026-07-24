@@ -1,17 +1,15 @@
-const { spawnSync } = require("node:child_process");
-const path = require("node:path");
+const { spawnSync } = require('node:child_process')
+const path = require('node:path')
 
-const appRoot = path.join(__dirname, "..");
-const bareKitDir = path.dirname(
-  require.resolve("react-native-bare-kit/package.json")
-);
-const addonsOut = path.join(bareKitDir, "android", "src", "main", "addons");
+const appRoot = path.join(__dirname, '..')
+const bareKitDir = path.dirname(require.resolve('react-native-bare-kit/package.json'))
+const addonsOut = path.join(bareKitDir, 'android', 'src', 'main', 'addons')
 
 const result = spawnSync(
   process.execPath,
   [
-    "--input-type=module",
-    "-e",
+    '--input-type=module',
+    '-e',
     `
 import link from 'bare-link';
 
@@ -21,15 +19,15 @@ for await (const resource of link(${JSON.stringify(appRoot)}, {
 })) {
   console.log('Wrote', resource);
 }
-`,
+`
   ],
-  { stdio: "inherit" }
-);
+  { stdio: 'inherit' }
+)
 
 if (result.error) {
-  throw result.error;
+  throw result.error
 }
 
-if (typeof result.status === "number" && result.status !== 0) {
-  process.exit(result.status);
+if (typeof result.status === 'number' && result.status !== 0) {
+  process.exit(result.status)
 }

@@ -1,4 +1,4 @@
-import './abort-polyfill'
+import './abort/install'
 import './process-handlers'
 import 'bare-buffer'
 import 'bare-crypto'

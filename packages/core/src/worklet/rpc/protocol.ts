@@ -32,6 +32,7 @@ export interface DownloadFileRequest {
   size?: number
   targetDir?: string
   targetPath?: string
+  overwrite?: boolean
 }
 
 export interface HostReply {
@@ -103,6 +104,11 @@ export interface InviteResponseReply {
   delivered: boolean
 }
 
+export interface RenamePeerInput {
+  remoteDevicePubkey: string
+  displayName: string
+}
+
 export interface InitDeviceSecretReply {
   secretKey: string | null
 }
@@ -155,6 +161,7 @@ export interface TransferRPC {
   shareFiles(files: ShareFileRequest[]): Promise<ShareFilesReply>
 
   downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply>
+  pauseDownload(fileId: string): Promise<void>
   disconnect(): Promise<DisconnectReply>
   closePeers(): Promise<void>
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply>
@@ -162,6 +169,7 @@ export interface TransferRPC {
   inviteDevice(input: InviteDeviceInput): Promise<InviteDeviceReply>
   respondToInvite(input: InviteResponseInput): Promise<InviteResponseReply>
   forgetPeer(pubkey: string): Promise<void>
+  renamePeer(input: RenamePeerInput): Promise<RememberedPeer | null>
   initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply>
   hostPairing(): Promise<HostReply>
   joinPairing(topic: string): Promise<JoinReply>

@@ -180,11 +180,13 @@ export const styles = css.create({
   dotOnline: { backgroundColor: tokens.colorInfo },
   dotDownloading: { backgroundColor: tokens.colorInfo },
   dotDownloaded: { backgroundColor: tokens.colorSuccess },
+  dotPaused: { backgroundColor: tokens.colorTextMuted },
   dotFailed: { backgroundColor: tokens.colorDanger },
   dotDisconnected: { backgroundColor: tokens.colorTextMuted },
   textOnline: { color: tokens.colorInfo },
   textDownloading: { color: tokens.colorInfo },
   textDownloaded: { color: tokens.colorSuccess },
+  textPaused: { color: tokens.colorTextMuted },
   textFailed: { color: tokens.colorDanger },
   textDisconnected: { color: tokens.colorTextMuted }
 })

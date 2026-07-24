@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { Button } from '@altersend/components'
 import { InfoIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
@@ -11,34 +10,26 @@ import { ReceiveJoinView } from './ReceiveJoinView'
 
 import {
   clearSession,
-  getDownloadTotals,
   getReceivePageCopy,
   getReceiveStep,
   isConnectedStep,
+  useReceiveDownloads,
   useTransferStore
 } from '@altersend/domain'
 
 export default function ReceivePage() {
   const { t } = useTranslation(['receive', 'common'])
   const role = useTransferStore((s) => s.role)
-  const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
-  const receiveDownloadStates = useTransferStore((s) => s.receiveDownloadStates)
   const peerCount = useTransferStore((s) => s.peerCount)
   const connectionType = useTransferStore((s) => s.connectionType)
 
-  const hasIncomingFiles = incomingFileOffers.length > 0
-  const totals = useMemo(
-    () => getDownloadTotals(incomingFileOffers, receiveDownloadStates),
-    [incomingFileOffers, receiveDownloadStates]
-  )
-  const fileCount = incomingFileOffers.filter((f) => f.kind === 'file').length
-  const textCount = incomingFileOffers.length - fileCount
-  const hasDownloadableFiles = fileCount > 0
-  const allDownloadsCompleted = hasDownloadableFiles && totals.completedCount === fileCount
+  const { totals, fileOffers, textOffers, allDownloaded } = useReceiveDownloads()
+  const fileCount = fileOffers.length
+  const textCount = textOffers.length
 
   const step = getReceiveStep({
-    hasIncomingFiles,
-    allDownloadsCompleted,
+    hasIncomingFiles: fileCount + textCount > 0,
+    allDownloadsCompleted: allDownloaded,
     role,
     peerCount
   })

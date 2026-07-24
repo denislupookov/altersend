@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   Animated,
+  Dimensions,
   Easing,
   KeyboardAvoidingView,
   Modal,
@@ -8,6 +9,7 @@ import {
   Pressable,
   StyleSheet,
   View,
+  type LayoutChangeEvent,
   type StyleProp,
   type ViewStyle
 } from 'react-native'
@@ -26,9 +28,9 @@ interface BottomSheetProps {
   children: ReactNode
 }
 
-const ENTER_DURATION = 240
-const EXIT_DURATION = 180
-const SHEET_RISE = 24
+const BACKDROP_DURATION = 220
+const EXIT_DURATION = 200
+const OFFSCREEN_FALLBACK = Dimensions.get('window').height
 
 export function BottomSheet({
   open,
@@ -44,10 +46,15 @@ export function BottomSheet({
   const { theme } = useTheme()
   const c = theme.colors
   const [mounted, setMounted] = useState(open)
+  const [sheetHeight, setSheetHeight] = useState(0)
   const backdropOpacity = useRef(new Animated.Value(0)).current
-  const sheetTranslate = useRef(new Animated.Value(SHEET_RISE)).current
-  const sheetOpacity = useRef(new Animated.Value(0)).current
+  const sheetTranslate = useRef(new Animated.Value(OFFSCREEN_FALLBACK)).current
   const hasOpenedRef = useRef(open)
+
+  const onSheetLayout = useCallback((e: LayoutChangeEvent) => {
+    const h = e.nativeEvent.layout.height
+    if (h > 0) setSheetHeight((prev) => (prev === h ? prev : h))
+  }, [])
 
   useEffect(() => {
     if (open) hasOpenedRef.current = true
@@ -55,28 +62,30 @@ export function BottomSheet({
 
     if (open) setMounted(true)
 
-    const duration = open ? ENTER_DURATION : EXIT_DURATION
-    const easing = open ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic)
+    const distance = sheetHeight || OFFSCREEN_FALLBACK
 
     const animation = Animated.parallel([
       Animated.timing(backdropOpacity, {
         toValue: open ? 1 : 0,
-        duration,
-        easing,
+        duration: open ? BACKDROP_DURATION : EXIT_DURATION,
+        easing: open ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
         useNativeDriver: true
       }),
-      Animated.timing(sheetTranslate, {
-        toValue: open ? 0 : SHEET_RISE,
-        duration,
-        easing,
-        useNativeDriver: true
-      }),
-      Animated.timing(sheetOpacity, {
-        toValue: open ? 1 : 0,
-        duration,
-        easing,
-        useNativeDriver: true
-      })
+      open
+        ? Animated.spring(sheetTranslate, {
+            toValue: 0,
+            damping: 24,
+            stiffness: 260,
+            mass: 1,
+            overshootClamping: true,
+            useNativeDriver: true
+          })
+        : Animated.timing(sheetTranslate, {
+            toValue: distance,
+            duration: EXIT_DURATION,
+            easing: Easing.in(Easing.cubic),
+            useNativeDriver: true
+          })
     ])
     animation.start(({ finished }) => {
       if (finished && !open) {
@@ -85,17 +94,18 @@ export function BottomSheet({
       }
     })
     return () => animation.stop()
-  }, [open, backdropOpacity, sheetTranslate, sheetOpacity, onDismiss])
+  }, [open, sheetHeight, backdropOpacity, sheetTranslate, onDismiss])
 
   if (!mounted) return null
 
   const sheet = (
     <Animated.View
+      onLayout={onSheetLayout}
       style={[
         styles.sheet,
         !keyboardAvoiding && styles.sheetAnchored,
         { backgroundColor: c.colorBackground, borderColor: c.colorBorderPrimary },
-        { opacity: sheetOpacity, transform: [{ translateY: sheetTranslate }] },
+        { transform: [{ translateY: sheetTranslate }] },
         sheetStyle
       ]}
     >

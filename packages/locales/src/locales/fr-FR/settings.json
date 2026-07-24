@@ -18,11 +18,13 @@
     "fairUse": "Le relais impose des limites sur la taille des transferts et sur le nombre de transferts simultanés."
   },
   "rows": {
-    "security": "Sécurité",
     "feedback": "Commentaires",
     "feedbackHint": "Signaler un problème ou suggérer une fonctionnalité",
     "discord": "Discord",
+    "x": "X",
     "discordHint": "Rejoignez la communauté",
+    "github": "GitHub",
+    "sponsor": "Soutenir AlterSend",
     "contact": "Contactez-nous",
     "privacyPolicy": "Politique de confidentialité",
     "privacyPolicyHint": "Comment AlterSend gère vos données",
@@ -32,11 +34,6 @@
     "noDevices": "Aucun appareil pour l’instant",
     "pairedCount": "{{count}} associé(s)",
     "connection": "Relais"
-  },
-  "legal": {
-    "terms": "Conditions d'utilisation",
-    "privacy": "Déclaration de confidentialité",
-    "sentence": "<terms>Conditions d’utilisation</terms> et <privacy>Déclaration de confidentialité</privacy>."
   },
   "pairing": {
     "pairNewDevice": "Associer un nouvel appareil",
@@ -56,6 +53,9 @@
     "generating": "Génération…",
     "discard": "Annuler",
     "removeDevice": "Supprimer l’appareil",
+    "renameDevice": "Renommer l’appareil",
+    "nameLabel": "Nom de l’appareil",
+    "namePlaceholder": "Saisissez le nom de l’appareil",
     "pairANewDevice": "Associer un nouvel appareil",
     "couldNotJoin": "Impossible de rejoindre l’appareil",
     "couldNotJoinHint": "Assurez-vous que le code d’invitation est toujours actif.",
@@ -73,6 +73,8 @@
     "pairFailed": "Échec de l’association — réessayez",
     "deviceRemoved": "Appareil associé supprimé",
     "removeFailed": "Impossible de supprimer l’appareil associé",
+    "deviceRenamed": "Appareil renommé",
+    "renameFailed": "Impossible de renommer l’appareil",
     "deviceActions": "Actions de l’appareil",
     "pairingDevice": "Association de l’appareil",
     "couldNotReadImage": "Impossible de lire l’image",
@@ -85,5 +87,21 @@
     "body": "Associez un appareil que vous utilisez souvent et envoyez-lui instantanément, sans scanner ni saisir de code à chaque fois.",
     "pairButton": "Associer un appareil",
     "skip": "Ignorer pour l’instant"
+  },
+  "downloads": {
+    "title": "Téléchargements",
+    "autoSaveLabel": "Enregistrer les fichiers dans un dossier",
+    "autoSaveDescription": "Si désactivé, un emplacement vous sera demandé à chaque transfert.",
+    "change": "Modifier…",
+    "chooseFolder": "Choisir un dossier…",
+    "changeFailed": "Impossible d'enregistrer le dossier de téléchargement",
+    "mediaToPhotosLabel": "Enregistrer photos et vidéos dans Photos",
+    "mediaToGalleryLabel": "Enregistrer photos et vidéos dans la Galerie",
+    "destinationPhotos": "Photos et vidéos vers Photos",
+    "destinationFiles": "Photos et vidéos vers Fichiers",
+    "mediaToPhotosDescription": "Si désactivé, elles sont enregistrées dans le dossier AlterSend de Fichiers.",
+    "mediaToGalleryDescription": "Si désactivé, elles sont enregistrées dans votre dossier Téléchargements.",
+    "destinationGallery": "Photos et vidéos vers la Galerie",
+    "destinationDownloads": "Photos et vidéos vers Téléchargements"
   }
 }

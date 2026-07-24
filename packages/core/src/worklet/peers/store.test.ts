@@ -66,6 +66,14 @@ describe('RememberedPeerStore (hyperdb)', () => {
     await store.close()
   })
 
+  it('drops a peer from list() when renamed past the display-name bound', async () => {
+    const store = tmpStore()
+    await store.remember(makePeer())
+    await store.rename(KEY_A, 'x'.repeat(257))
+    expect(await store.list()).toHaveLength(0)
+    await store.close()
+  })
+
   it('forgets one peer and clears all', async () => {
     const store = tmpStore()
     await store.remember(makePeer({ remoteDevicePubkey: KEY_A }))

@@ -1,7 +1,6 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "Transferência de arquivos ponto a ponto",
     "welcome": "Bem-vindo ao AlterSend",
     "loadingTagline": "Seus arquivos vão direto de um dispositivo para o outro.\nSem servidores. Sem cópias. Sem intermediários."
   },
@@ -17,6 +16,7 @@
     "connect": "Conectar",
     "connecting": "Conectando…",
     "done": "Concluído",
+    "save": "Salvar",
     "endSession": "Encerrar sessão",
     "restart": "Reiniciar",
     "tryAgain": "Tentar novamente",

@@ -1,7 +1,6 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "Peer-to-peer file transfer",
     "welcome": "Welcome to AlterSend",
     "loadingTagline": "Files travel directly between your devices.\nNo servers, no copies, no middlemen."
   },
@@ -17,6 +16,7 @@
     "connect": "Connect",
     "connecting": "Connecting…",
     "done": "Done",
+    "save": "Save",
     "endSession": "End session",
     "restart": "Restart",
     "tryAgain": "Try again",

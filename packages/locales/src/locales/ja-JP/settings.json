@@ -18,11 +18,13 @@
     "fairUse": "リレーには、転送サイズと同時に実行できる転送数に制限があります。"
   },
   "rows": {
-    "security": "セキュリティ",
     "feedback": "フィードバック",
     "feedbackHint": "問題を報告または機能を提案",
     "discord": "Discord",
+    "x": "X",
     "discordHint": "コミュニティに参加",
+    "github": "GitHub",
+    "sponsor": "AlterSendを支援する",
     "contact": "お問い合わせ",
     "privacyPolicy": "プライバシーポリシー",
     "privacyPolicyHint": "AlterSend のデータの扱い",
@@ -32,11 +34,6 @@
     "noDevices": "デバイスはまだありません",
     "pairedCount": "{{count}} 台ペアリング済み",
     "connection": "リレー"
-  },
-  "legal": {
-    "terms": "利用規約",
-    "privacy": "プライバシー声明",
-    "sentence": "<terms>利用規約</terms> と <privacy>プライバシーステートメント</privacy>。"
   },
   "pairing": {
     "pairNewDevice": "新しいデバイスをペアリング",
@@ -56,6 +53,9 @@
     "generating": "生成中...",
     "discard": "破棄",
     "removeDevice": "デバイスを削除",
+    "renameDevice": "デバイス名を変更",
+    "nameLabel": "デバイス名",
+    "namePlaceholder": "デバイス名を入力",
     "pairANewDevice": "新しいデバイスをペアリング",
     "couldNotJoin": "デバイスに接続できませんでした",
     "couldNotJoinHint": "招待コードがまだ有効か確認してください。",
@@ -73,6 +73,8 @@
     "pairFailed": "ペアリングできませんでした — もう一度お試しください",
     "deviceRemoved": "ペアリング済みデバイスを削除しました",
     "removeFailed": "ペアリング済みデバイスを削除できませんでした",
+    "deviceRenamed": "デバイス名を変更しました",
+    "renameFailed": "デバイス名を変更できませんでした",
     "deviceActions": "デバイスの操作",
     "pairingDevice": "デバイスをペアリング中",
     "couldNotReadImage": "画像を読み取れませんでした",
@@ -85,5 +87,21 @@
     "body": "よく使うデバイスをペアリングすれば、毎回コードをスキャンしたり入力したりせずにすぐ送れます。",
     "pairButton": "デバイスをペアリング",
     "skip": "今はスキップ"
+  },
+  "downloads": {
+    "title": "ダウンロード",
+    "autoSaveLabel": "フォルダに保存する",
+    "autoSaveDescription": "オフの場合、転送ごとに保存先を確認します。",
+    "change": "変更…",
+    "chooseFolder": "フォルダを選択…",
+    "changeFailed": "ダウンロードフォルダを保存できませんでした",
+    "mediaToPhotosLabel": "写真とビデオを「写真」に保存",
+    "mediaToGalleryLabel": "写真と動画をギャラリーに保存",
+    "destinationPhotos": "写真とビデオを「写真」へ",
+    "destinationFiles": "写真とビデオを「ファイル」へ",
+    "mediaToPhotosDescription": "オフの場合、「ファイル」の AlterSend フォルダに保存されます。",
+    "mediaToGalleryDescription": "オフの場合、ダウンロードフォルダに保存されます。",
+    "destinationGallery": "写真と動画をギャラリーへ",
+    "destinationDownloads": "写真と動画をダウンロードへ"
   }
 }

@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native'
 import { ListItem } from '@altersend/components'
-import { TrashIcon } from '@altersend/components/icons'
+import { PencilIcon, TrashIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { BottomSheet } from '../BottomSheet'
 
@@ -8,9 +8,10 @@ interface DeviceActionsSheetProps {
   open: boolean
   onClose: () => void
   onRemove: () => void
+  onRename: () => void
 }
 
-export function DeviceActionsSheet({ open, onClose, onRemove }: DeviceActionsSheetProps) {
+export function DeviceActionsSheet({ open, onClose, onRemove, onRename }: DeviceActionsSheetProps) {
   const { t } = useTranslation(['settings'])
 
   return (
@@ -21,6 +22,13 @@ export function DeviceActionsSheet({ open, onClose, onRemove }: DeviceActionsShe
       sheetStyle={styles.sheet}
     >
       <View style={styles.actionList}>
+        <ListItem
+          size='large'
+          square
+          icon={<PencilIcon size={16} />}
+          label={t('settings:pairing.renameDevice')}
+          onClick={onRename}
+        />
         <ListItem
           tone='danger'
           size='large'

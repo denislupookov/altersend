@@ -230,6 +230,57 @@ describe('transferSessionReducer — receive flow', () => {
     expect(next).toBe(state)
   })
 
+  it('a paused download does not put the page into an error state', () => {
+    const ready = apply(make({ role: 'receiver' }), {
+      type: 'transfer_ready',
+      files: [offer('a', 'a.txt')]
+    })
+
+    const next = apply(ready, {
+      type: 'receive_download_event',
+      event: {
+        type: 'status',
+        state: 'download-failed',
+        transferId: 'tx-1',
+        fileId: 'a',
+        file: 'a.txt',
+        path: '/files/a.txt',
+        totalBytes: 1024,
+        bytesTransferred: 256,
+        message: 'Transfer cancelled',
+        resumable: true
+      }
+    })
+
+    expect(next.errorCode).toBeNull()
+    expect(next.receiveDownloadStates.a.status).toBe('failed')
+    expect(next.receiveDownloadStates.a.resumable).toBe(true)
+  })
+
+  it('a genuine download failure still errors the page', () => {
+    const ready = apply(make({ role: 'receiver' }), {
+      type: 'transfer_ready',
+      files: [offer('a', 'a.txt')]
+    })
+
+    const next = apply(ready, {
+      type: 'receive_download_event',
+      event: {
+        type: 'status',
+        state: 'download-failed',
+        transferId: 'tx-1',
+        fileId: 'a',
+        file: 'a.txt',
+        path: '/files/a.txt',
+        totalBytes: 1024,
+        bytesTransferred: 0,
+        message: 'Full-file hash mismatch'
+      }
+    })
+
+    expect(next.errorCode).toBe(TRANSFER_ERROR_CODES.downloadFailed)
+  })
+
   it('receive_download_event preserves an existing transfer error on non-failed updates', () => {
     const state = apply(make({ role: 'receiver' }), {
       type: 'transfer_ready',
@@ -404,6 +455,44 @@ describe('transferSessionReducer — misc', () => {
       }
     })
   })
+
+  it('rename_peer updates the peer and the session display-name cache', () => {
+    const peerKey = 'a'.repeat(64)
+    const otherPeerKey = 'b'.repeat(64)
+    const state = make({
+      peers: [rememberedPeer(peerKey), rememberedPeer(otherPeerKey)],
+      remember: {
+        ...initialTransferSessionState.remember,
+        peerDisplayNames: { [peerKey]: 'Phone', [otherPeerKey]: 'Tablet' }
+      }
+    })
+
+    const next = apply(state, { type: 'rename_peer', peerKey, displayName: 'Work Phone' })
+
+    expect(next.peers.find((p) => p.remoteDevicePubkey === peerKey)?.displayName).toBe('Work Phone')
+    expect(next.peers.find((p) => p.remoteDevicePubkey === otherPeerKey)?.displayName).toBe(
+      'My Laptop'
+    )
+    expect(next.remember.peerDisplayNames).toEqual({
+      [peerKey]: 'Work Phone',
+      [otherPeerKey]: 'Tablet'
+    })
+  })
+
+  it('rename_peer matches the display-name cache case-insensitively', () => {
+    const peerKey = 'a'.repeat(64)
+    const state = make({
+      peers: [rememberedPeer(peerKey)],
+      remember: {
+        ...initialTransferSessionState.remember,
+        peerDisplayNames: { [peerKey.toUpperCase()]: 'Phone' }
+      }
+    })
+
+    const next = apply(state, { type: 'rename_peer', peerKey, displayName: 'Work Phone' })
+
+    expect(next.remember.peerDisplayNames).toEqual({ [peerKey.toUpperCase()]: 'Work Phone' })
+  })
 })
 
 describe('transferSessionReducer — connection type (per-peer)', () => {
@@ -457,5 +546,30 @@ describe('transferSessionReducer — connection type (per-peer)', () => {
     expect(state.connectionType).toBeNull()
     expect(state.transferPeerKey).toBeNull()
     expect(state.connectionTypes).toEqual({})
+  })
+
+  it('a cancelled download does not put the page into an error state', () => {
+    const ready = apply(make({ role: 'receiver' }), {
+      type: 'transfer_ready',
+      files: [offer('a', 'a.txt')]
+    })
+
+    const next = apply(ready, {
+      type: 'receive_download_event',
+      event: {
+        type: 'status',
+        state: 'download-failed',
+        transferId: 'tx-1',
+        fileId: 'a',
+        file: 'a.txt',
+        path: '/files/a.txt',
+        totalBytes: 1024,
+        bytesTransferred: 256,
+        message: 'Cancelled',
+        cancelled: true
+      }
+    })
+
+    expect(next.errorCode).toBeNull()
   })
 })

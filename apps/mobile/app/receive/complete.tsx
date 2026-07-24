@@ -6,6 +6,7 @@ import { clearSession } from '@altersend/domain'
 import { mobileApi } from '@/src/api/mobileApi'
 import { Layout } from '@/src/components'
 import { ReceiveCompleteView } from '@/src/transfer/receive'
+import { exitToReceiveTab } from '@/src/transfer/receive/utils/exitToReceiveTab'
 export default function ReceiveCompleteScreen() {
   const { t } = useTranslation(['receive', 'common'])
   const router = useRouter()
@@ -18,7 +19,7 @@ export default function ReceiveCompleteScreen() {
 
   const handleDone = () => {
     clearSession()
-    if (router.canDismiss()) router.dismissAll()
+    exitToReceiveTab(router)
   }
 
   return (

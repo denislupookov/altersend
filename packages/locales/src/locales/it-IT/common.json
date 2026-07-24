@@ -1,7 +1,6 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "Trasferimento diretto di file",
     "welcome": "Benvenuto in AlterSend",
     "loadingTagline": "I file viaggiano direttamente tra i tuoi dispositivi.\nNessun server, nessuna copia, nessun intermediario."
   },
@@ -17,6 +16,7 @@
     "connect": "Connetti",
     "connecting": "Connessione…",
     "done": "Fine",
+    "save": "Salva",
     "endSession": "Termina sessione",
     "restart": "Riavvia",
     "tryAgain": "Riprova",

@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import Constants from 'expo-constants'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { LOCALE_OPTIONS, useTranslation, type LocalePreference } from '@altersend/locales'
 import { loadPeers, useTransferStore } from '@altersend/domain'
-import { LinkRow, useTheme } from '@altersend/components'
+import { LinkCard, LinkRow, useTheme } from '@altersend/components'
 import {
   AlertCircleIcon,
   GlobeIcon,
   InfoIcon,
-  ShieldIcon,
+  SlidersHorizontalIcon,
   SmartphoneIcon,
   WaypointsIcon
 } from '@altersend/components/icons'
@@ -26,7 +25,6 @@ export default function SettingsScreen() {
   const { theme } = useTheme()
   const c = theme.colors
   const router = useRouter()
-  const version = Constants.expoConfig?.version ?? '0.0.0'
   const [localePreference, setLocalePreference] = useState<LocalePreference>(
     getLocalePreferenceSnapshot
   )
@@ -65,9 +63,8 @@ export default function SettingsScreen() {
           <Text style={[styles.sectionTitle, { color: c.colorTextMuted }]}>
             {t('settings:sections.general')}
           </Text>
-          <View style={styles.list}>
+          <LinkCard>
             <LinkRow
-              standalone
               label={t('settings:pairing.pairedDevices')}
               subtitle={
                 peers.length === 0
@@ -78,49 +75,42 @@ export default function SettingsScreen() {
               onPress={() => router.push('/devices')}
             />
             <LinkRow
-              standalone
+              label={t('settings:sections.general')}
+              icon={<SlidersHorizontalIcon size={16} color={c.colorTextSecondary} />}
+              onPress={() => router.push('/general')}
+            />
+            <LinkRow
               label={t('common:labels.language')}
               subtitle={languageLabel}
               icon={<GlobeIcon size={16} color={c.colorTextSecondary} />}
               onPress={() => router.push('/language')}
             />
             <LinkRow
-              standalone
+              isLast
               label={t('settings:rows.connection')}
-              subtitle={t('settings:relay.label')}
               icon={<WaypointsIcon size={16} color={c.colorTextSecondary} />}
               onPress={() => router.push('/connection')}
             />
-            <LinkRow
-              standalone
-              label={t('settings:rows.security')}
-              subtitle={t('settings:crashReports.label')}
-              icon={<ShieldIcon size={16} color={c.colorTextSecondary} />}
-              onPress={() => router.push('/security')}
-            />
-          </View>
+          </LinkCard>
         </View>
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: c.colorTextMuted }]}>
             {t('settings:sections.support')}
           </Text>
-          <View style={styles.list}>
+          <LinkCard>
             <LinkRow
-              standalone
               label={t('settings:rows.feedback')}
-              subtitle={t('settings:rows.feedbackHint')}
               icon={<AlertCircleIcon size={16} color={c.colorTextSecondary} />}
               onPress={() => router.push('/report')}
             />
             <LinkRow
-              standalone
+              isLast
               label={t('settings:sections.about')}
-              subtitle={`v${version}`}
               icon={<InfoIcon size={16} color={c.colorTextSecondary} />}
               onPress={() => router.push('/about')}
             />
-          </View>
+          </LinkCard>
         </View>
       </View>
     </Layout>
@@ -140,8 +130,5 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     paddingHorizontal: 4
-  },
-  list: {
-    gap: 10
   }
 })

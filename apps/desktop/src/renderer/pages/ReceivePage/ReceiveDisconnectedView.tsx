@@ -15,7 +15,7 @@ export function ReceiveDisconnectedView() {
   return (
     <div className='flex h-full min-h-0 w-full flex-col gap-4'>
       {total > 0 ? (
-        <div className='flex min-h-0 flex-1 flex-col overflow-hidden rounded-[12px] border border-border-primary'>
+        <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
           <div className='flex shrink-0 items-center justify-between border-b border-border-primary pl-[14px] pr-3 py-3'>
             <p className='m-0 text-[14px] font-semibold text-text-primary'>
               {t('common:files.files')}
@@ -45,7 +45,7 @@ export function ReceiveDisconnectedView() {
             })}
           </div>
 
-          <div className='flex shrink-0 items-center justify-end gap-2.5 border-t border-border-primary px-6 py-4'>
+          <div className='flex shrink-0 items-center justify-end gap-2.5 px-6 py-4'>
             <Button onClick={clearSession} size='sm' variant='primary'>
               {t('common:actions.done')}
             </Button>

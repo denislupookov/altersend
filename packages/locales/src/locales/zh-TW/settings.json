@@ -18,11 +18,13 @@
     "fairUse": "中繼對傳輸大小和同時進行的傳輸數量有限制。"
   },
   "rows": {
-    "security": "安全",
     "feedback": "意見回饋",
     "feedbackHint": "報告問題或建議功能",
     "discord": "Discord",
+    "x": "X",
     "discordHint": "加入社區",
+    "github": "GitHub",
+    "sponsor": "支持 AlterSend",
     "contact": "聯絡我們",
     "privacyPolicy": "隱私權政策",
     "privacyPolicyHint": "AlterSend 如何處理您的數據",
@@ -32,11 +34,6 @@
     "noDevices": "尚無裝置",
     "pairedCount": "已配對 {{count}} 台",
     "connection": "中繼"
-  },
-  "legal": {
-    "terms": "使用條款",
-    "privacy": "隱私權聲明",
-    "sentence": "<terms>使用條款</terms>與<privacy>隱私權聲明</privacy>。"
   },
   "pairing": {
     "pairNewDevice": "配對新裝置",
@@ -56,6 +53,9 @@
     "generating": "正在產生...",
     "discard": "捨棄",
     "removeDevice": "移除裝置",
+    "renameDevice": "重新命名裝置",
+    "nameLabel": "裝置名稱",
+    "namePlaceholder": "輸入裝置名稱",
     "pairANewDevice": "配對新裝置",
     "couldNotJoin": "無法連線到裝置",
     "couldNotJoinHint": "請確認邀請碼仍然有效。",
@@ -73,6 +73,8 @@
     "pairFailed": "配對失敗 — 請重試",
     "deviceRemoved": "已移除配對裝置",
     "removeFailed": "無法移除配對裝置",
+    "deviceRenamed": "已重新命名裝置",
+    "renameFailed": "無法重新命名裝置",
     "deviceActions": "裝置操作",
     "pairingDevice": "正在配對裝置",
     "couldNotReadImage": "無法讀取圖片",
@@ -85,5 +87,21 @@
     "body": "配對常用裝置即可即時傳送 — 無需每次掃描或輸入代碼。",
     "pairButton": "配對裝置",
     "skip": "暫時跳過"
+  },
+  "downloads": {
+    "title": "下載",
+    "autoSaveLabel": "儲存至資料夾",
+    "autoSaveDescription": "關閉後，每次傳輸都會詢問儲存位置。",
+    "change": "變更…",
+    "chooseFolder": "選擇資料夾…",
+    "changeFailed": "無法儲存下載資料夾",
+    "mediaToPhotosLabel": "將照片和影片儲存到「照片」",
+    "mediaToGalleryLabel": "將照片和影片儲存到相簿",
+    "destinationPhotos": "照片和影片儲存到「照片」",
+    "destinationFiles": "照片和影片儲存到「檔案」",
+    "mediaToPhotosDescription": "關閉後，將儲存到「檔案」中的 AlterSend 資料夾。",
+    "mediaToGalleryDescription": "關閉後，將儲存到下載資料夾。",
+    "destinationGallery": "照片和影片儲存到相簿",
+    "destinationDownloads": "照片和影片儲存到下載"
   }
 }

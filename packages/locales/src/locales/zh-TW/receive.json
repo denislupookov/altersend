@@ -66,7 +66,10 @@
     "scanOrImportQrHintDesktop": "使用網路攝影機，或匯入已儲存的 QR 圖片",
     "scanOrImportQrHintMobile": "使用相機，或匯入已儲存的圖片",
     "importImage": "匯入圖片",
-    "importFromImage": "從圖片匯入"
+    "importFromImage": "從圖片匯入",
+    "resume": "繼續",
+    "stop": "停止",
+    "resumeAll": "全部繼續"
   },
   "errors": {
     "invalidCode": "輸入有效的 64 字元十六進位代碼。",
@@ -114,6 +117,9 @@
     "ready": "準備好了",
     "saved": "已儲存",
     "failed": "失敗",
+    "paused": "已暫停",
+    "resuming": "正在繼續…",
+    "waiting": "等待中…",
     "downloadingPercent": "正在下載 {{percent}}%",
     "percent": "{{percent}}%",
     "waitingForFiles": "正在等待傳送者的檔案…"

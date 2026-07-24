@@ -1,0 +1,92 @@
+{
+  "app": {
+    "name": "AlterSend",
+    "welcome": "Добро пожаловать в AlterSend",
+    "loadingTagline": "Файлы передаются напрямую между вашими устройствами.\nБез серверов, без копий, без посредников."
+  },
+  "actions": {
+    "back": "Назад",
+    "continue": "Продолжить",
+    "getStarted": "Начать",
+    "cancel": "Отмена",
+    "clear": "Очистить",
+    "close": "Закрыть",
+    "copy": "Копировать",
+    "copied": "Скопировано",
+    "connect": "Подключиться",
+    "connecting": "Подключение…",
+    "done": "Готово",
+    "save": "Сохранить",
+    "endSession": "Завершить сеанс",
+    "restart": "Перезапустить",
+    "tryAgain": "Повторить",
+    "dismiss": "Закрыть",
+    "openSettings": "Открыть настройки",
+    "update": "Обновить",
+    "downloadAll": "Скачать всё",
+    "skip": "Пропустить",
+    "paste": "Вставить",
+    "openLink": "Открыть ссылку",
+    "copyText": "Скопировать текст",
+    "add": "Добавить",
+    "showMore": "Показать ещё",
+    "showLess": "Свернуть",
+    "learnMore": "Подробнее"
+  },
+  "labels": {
+    "settings": "Настройки",
+    "collapseSidebar": "Свернуть боковую панель",
+    "expandSidebar": "Развернуть боковую панель",
+    "language": "Язык",
+    "systemDefault": "Системный язык",
+    "camera": "Камера",
+    "statusBar": "Строка состояния",
+    "transferMode": "Режим передачи",
+    "version": "Версия",
+    "platform": "Платформа",
+    "desktop": "Компьютер",
+    "mobile": "Телефон",
+    "send": "Отправить",
+    "receive": "Получить",
+    "connectionCode": "Код подключения"
+  },
+  "files": {
+    "folder": "Папка",
+    "count_one": "{{count}} файл",
+    "count_other": "{{count}} файла",
+    "photos": "Фото",
+    "files": "Файлы",
+    "downloads": "Файлы › Загрузки",
+    "photosAndAlterSend": "Фото + папка AlterSend",
+    "alterSendFolder": "Папка AlterSend",
+    "text": "Текст",
+    "items_one": "{{count}} элемент",
+    "items_other": "{{count}} элемента",
+    "texts_one": "{{count}} текст",
+    "texts_other": "{{count}} текста",
+    "filesGeneric": "файлы"
+  },
+  "update": {
+    "ready": "Обновление готово",
+    "available": "Доступно обновление",
+    "restart": "Перезапустить",
+    "update": "Обновить",
+    "restartFailed": "Не удалось перезапустить — закройте и откройте приложение вручную",
+    "description": "Доступна новая версия с последними исправлениями и улучшениями.",
+    "updateNow": "Обновить сейчас",
+    "notNow": "Не сейчас"
+  },
+  "status": {
+    "connected": "Подключено",
+    "wantsToSend": "хочет отправить вам {{label}}{{size}}",
+    "connectedViaRelay": "Подключено через ретранслятор"
+  },
+  "confirm": {
+    "leaveShareSession": "Выход завершит активный сеанс отправки. Продолжить?",
+    "leaveReceiveSession": "Выход завершит активный сеанс получения. Продолжить?"
+  },
+  "units": {
+    "chars_one": "{{count}} символ",
+    "chars_other": "{{count}} символа"
+  }
+}

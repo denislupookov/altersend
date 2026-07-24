@@ -24,6 +24,7 @@ import type {
   JoinReply,
   RememberVoteInput,
   RememberVoteReply,
+  RenamePeerInput,
   SetRelayConfigInput,
   SetRelayConfigReply,
   ShareFileRequest,
@@ -53,17 +54,19 @@ import {
   type PeerDownloadStatus
 } from './download-events'
 import type { DownloadLifecycleEvent, DownloaderCallbacks } from './download-events'
+import type { DriveChannel } from '@altersend/drive'
+import type { PeerDrive } from './drive'
 import { PeerIdentityStore } from './peer-identity-store'
 import { TransferStorage } from './storage'
 import { TransferSwarm, type PeerSession } from './swarm'
-import { isValidHexKey } from './utils'
+import { AbortError, isValidHexKey } from './utils'
 import {
   DeviceIdentityStore,
   type DeviceIdentityDefaults,
   type DeviceSecretInit
 } from '../identity/device-identity-store'
 import { RememberedPeerStore } from '../peers/store'
-import type { RememberedPeer } from '../peers/remembered-peer'
+import { MAX_DISPLAY_NAME_LEN, type RememberedPeer } from '../peers/remembered-peer'
 import { RememberCoordinator } from '../peers/remember-coordinator'
 import { RecognitionCoordinator } from '../peers/recognition-coordinator'
 import { DiscoveryCoordinator } from '../peers/discovery'
@@ -82,23 +85,10 @@ async function tryAsync(label: string, op: () => Promise<unknown>): Promise<void
   }
 }
 
-/**
- * TransferOrchestrator is the top-level orchestrator for the AlterSend P2P file transfer engine.
- *
- * It composes focused subsystems:
- *   - TransferSwarm   — Hyperswarm peer connectivity and control channels
- *   - TransferStorage — ephemeral Corestore/Hyperdrive plus the file sender/receiver
- *   - Discovery/Remember/Pairing coordinators — remembered devices and pairing
- *
- * TransferOrchestrator itself is responsible for:
- *   - Lifecycle (initialisation, destroy)
- *   - Active transfer state (replayed to peers that join mid-transfer)
- *   - IPC event emission to the renderer
- *   - The public command surface consumed by TransferWorkerRPCServer
- */
 export class TransferOrchestrator implements TransferRPC {
   private readonly emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void
   private readonly storage: TransferStorage
+  private readonly offerPeers = new Map<string, string>()
 
   private readonly swarm: TransferSwarm
 
@@ -107,7 +97,8 @@ export class TransferOrchestrator implements TransferRPC {
   private role: TransferRole | null = null
   private currentTopic: string | null = null
   private suspended: boolean = false
-  private inflightAbort: AbortController | null = null
+  private readonly inflight = new Set<AbortController>()
+  private stagingAbort: AbortController | null = null
 
   private readonly deviceIdentityStore: DeviceIdentityStore
   private readonly rememberedStore: RememberedPeerStore
@@ -152,7 +143,7 @@ export class TransferOrchestrator implements TransferRPC {
           this.sendStatus('connection-type', { peer: peerKey, connectionType })
         }
       },
-      { identityStore }
+      { identityStore, drive: true }
     )
     this.discovery = new DiscoveryCoordinator({
       deviceIdentityStore: this.deviceIdentityStore,
@@ -201,7 +192,7 @@ export class TransferOrchestrator implements TransferRPC {
   private onPeerConnected(session: PeerSession): void {
     this.sendStatus('peer-connected', { peer: session.peerKey, peers: this.swarm.peerCount })
     if (this.activeTransfer) session.controlChannel.send(this.activeTransfer)
-    if (this.activeTransferReady) session.controlChannel.send(this.activeTransferReady)
+    this.offerTo(session)
     this.recognition.onPeerConnected(session.peerKey)
   }
 
@@ -216,6 +207,20 @@ export class TransferOrchestrator implements TransferRPC {
   async forgetPeer(pubkey: string): Promise<void> {
     await this.rememberedStore.forget(pubkey)
     this.discovery.forget(pubkey)
+  }
+
+  renamePeer(input: RenamePeerInput): Promise<RememberedPeer | null> {
+    if (!input || typeof input !== 'object') throw new BadRequestError('Missing rename input')
+    if (!isValidHexKey(input.remoteDevicePubkey)) {
+      throw new BadRequestError('Invalid remoteDevicePubkey')
+    }
+    if (typeof input.displayName !== 'string') throw new BadRequestError('Missing displayName')
+    const displayName = input.displayName.trim()
+    if (displayName.length === 0) throw new BadRequestError('Missing displayName')
+    if (displayName.length > MAX_DISPLAY_NAME_LEN) {
+      throw new BadRequestError('displayName is too long')
+    }
+    return this.rememberedStore.rename(input.remoteDevicePubkey, displayName)
   }
 
   async initDeviceSecret(init: DeviceSecretInit): Promise<InitDeviceSecretReply> {
@@ -265,6 +270,9 @@ export class TransferOrchestrator implements TransferRPC {
         console.warn(`TransferOrchestrator: dropping inbound ${message.type} in role=${this.role}`)
         return
       }
+      if (message.type === 'transfer-ready') {
+        this.offerPeers.set(message.transferId, session.peerKey)
+      }
       this.emitIPC(
         message.type === 'transfer-ready' ? { ...message, peer: session.peerKey } : message
       )
@@ -279,6 +287,7 @@ export class TransferOrchestrator implements TransferRPC {
     switch (message.type) {
       case 'download-request':
         this.forwardPeerDownloadStatus('peer-download-started', message, session)
+        this.serve(message, session)
         return
       case 'download-progress':
         this.forwardPeerDownloadStatus('peer-download-progress', message, session)
@@ -292,6 +301,30 @@ export class TransferOrchestrator implements TransferRPC {
       default:
         return
     }
+  }
+
+  private serve(message: DownloadRequest, session: PeerSession): void {
+    if (!session.drive) return
+    session.drive
+      .serve(message.fileId, message.fileName, this.storage.sender.localPath(message.fileId))
+      .catch((err) =>
+        console.warn(
+          'TransferOrchestrator: drive send stopped',
+          message.fileName,
+          err instanceof Error ? err.message : String(err)
+        )
+      )
+  }
+
+  private async driveChannelFor(file: DownloadFileRequest): Promise<DriveChannel | null> {
+    const peerKey = this.offerPeers.get(file.transferId)
+    const drive = peerKey ? this.swarm.getSession(peerKey)?.drive : null
+    if (!drive || !(await this.speaksDrive(drive))) return null
+    return drive.session(file.fileId)
+  }
+
+  private speaksDrive(drive: PeerDrive | null | undefined): Promise<boolean> {
+    return drive ? drive.supported.catch(() => false) : Promise.resolve(false)
   }
 
   private setRole(role: TransferRole | null): void {
@@ -342,7 +375,9 @@ export class TransferOrchestrator implements TransferRPC {
       message
     })
     this.swarm.broadcast(createDownloadFailedMessage({ ...event, message }))
-    this.sendError(message, TRANSFER_ERROR_CODES.downloadFailed)
+    if (!event.resumable && !event.cancelled) {
+      this.sendError(message, TRANSFER_ERROR_CODES.downloadFailed)
+    }
   }
 
   private getDownloaderCallbacks(): DownloaderCallbacks {
@@ -406,6 +441,9 @@ export class TransferOrchestrator implements TransferRPC {
     }
 
     await this.storage.ready()
+    this.stagingAbort?.abort()
+    this.stagingAbort = null
+    await this.storage.sender.reset()
 
     try {
       const fileRequests = requests.filter((r) => r.kind !== 'text')
@@ -432,45 +470,59 @@ export class TransferOrchestrator implements TransferRPC {
       this.swarm.broadcast(this.activeTransfer)
       this.sendStatus('sharing', { transferId })
 
-      const controller = new AbortController()
-      this.inflightAbort = controller
+      const offers: TransferOffer[] = this.storage.sender.buildOffers(files, transferId)
 
-      try {
-        const offers: TransferOffer[] = await this.storage.sender.stageFiles(
-          files,
+      for (const req of textRequests) {
+        if (!req.content || req.content.trim() === '') continue
+        const textOffer: TextOffer = {
+          id: createTransferId(),
           transferId,
-          (file) => {
-            this.sendStatus('sharing', { file: file.fileName, path: file.inputPath, transferId })
-          },
-          controller.signal
-        )
-
-        for (const req of textRequests) {
-          if (!req.content || req.content.trim() === '') continue
-          const textOffer: TextOffer = {
-            id: createTransferId(),
-            transferId,
-            kind: 'text',
-            content: req.content
-          }
-          offers.push(textOffer)
+          kind: 'text',
+          content: req.content
         }
-
-        this.activeTransferReady = { type: 'transfer-ready', transferId, files: offers }
-        this.swarm.broadcast(this.activeTransferReady)
-
-        return { acceptedFiles: offers.length }
-      } catch (err) {
-        this.activeTransfer = null
-        this.activeTransferReady = null
-        this.setRole(null)
-        throw err
-      } finally {
-        this.inflightAbort = null
+        offers.push(textOffer)
       }
-    } finally {
-      await this.storage.sender.closeSourceDrives()
+
+      this.activeTransferReady = { type: 'transfer-ready', transferId, files: offers }
+      for (const session of this.swarm.sessions) this.offerTo(session)
+
+      return { acceptedFiles: offers.length }
+    } catch (err) {
+      this.activeTransfer = null
+      this.activeTransferReady = null
+      this.setRole(null)
+      throw err
     }
+  }
+
+  private offerTo(session: PeerSession): void {
+    const ready = this.activeTransferReady
+    if (!ready) return
+
+    this.stageForLegacyPeer(session)
+      .then(() => {
+        if (this.activeTransferReady !== ready) return
+        session.controlChannel.send(ready)
+      })
+      .catch((err) => {
+        if (err instanceof AbortError) return
+        console.warn('TransferOrchestrator: staging for peer failed', err)
+        this.sendError(err instanceof Error ? err.message : String(err))
+      })
+  }
+
+  private async stageForLegacyPeer(session: PeerSession): Promise<void> {
+    if (await this.speaksDrive(session.drive)) return
+
+    const transferId = this.activeTransferReady?.transferId
+    const controller = this.stagingAbort ?? new AbortController()
+    this.stagingAbort = controller
+
+    await this.storage.sender.stageForLegacyPeers(
+      (file) =>
+        this.sendStatus('sharing', { file: file.fileName, path: file.inputPath, transferId }),
+      controller.signal
+    )
   }
 
   async downloadFiles(files: DownloadFileRequest[]): Promise<DownloadFilesReply> {
@@ -482,25 +534,38 @@ export class TransferOrchestrator implements TransferRPC {
     }
 
     const controller = new AbortController()
-    this.inflightAbort = controller
+    this.inflight.add(controller)
     try {
       const results = await this.storage.receiver.downloadFiles(
         files,
         this.getDownloaderCallbacks(),
-        controller.signal
+        controller.signal,
+        (file) => this.driveChannelFor(file)
       )
       return { files: results }
     } finally {
-      this.inflightAbort = null
+      this.inflight.delete(controller)
+    }
+  }
+
+  async pauseDownload(fileId: string): Promise<void> {
+    if (typeof fileId !== 'string' || fileId.length === 0) {
+      throw new BadRequestError('Missing fileId')
+    }
+    const active = this.storage.receiver.activeDownloadIds()
+    if (!this.storage.receiver.pause(fileId)) {
+      throw new BadRequestError(
+        `pauseDownload: no active download for "${fileId}". Active: [${active.join(', ')}]`
+      )
     }
   }
 
   abortInFlight(): void {
-    const controller = this.inflightAbort
-    if (!controller) return
+    for (const session of this.swarm.sessions) session.drive?.cancel()
+    this.stagingAbort?.abort()
+    this.stagingAbort = null
 
-    this.inflightAbort = null
-    controller.abort()
+    for (const controller of this.inflight) controller.abort()
   }
 
   async disconnect(): Promise<DisconnectReply> {
@@ -512,8 +577,10 @@ export class TransferOrchestrator implements TransferRPC {
       this.activeTransfer = null
       this.activeTransferReady = null
       this.currentTopic = null
+      this.offerPeers.clear()
 
       await this.swarm.endSession()
+      await this.storage.sender.reset()
       await this.storage.receiver.reset()
       await this.storage.wipeAndReinit()
 
@@ -530,7 +597,9 @@ export class TransferOrchestrator implements TransferRPC {
     this.recognition.reset()
     this.remember.reset()
     this.currentTopic = null
+    this.offerPeers.clear()
     await this.swarm.endSession()
+    await this.storage.receiver.discardPartials()
   }
 
   async setRelayConfig(input: SetRelayConfigInput): Promise<SetRelayConfigReply> {

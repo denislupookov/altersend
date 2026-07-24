@@ -1,0 +1,109 @@
+{
+  "page": {
+    "selecting": {
+      "title": "Отправить файлы",
+      "description": "Выберите один или несколько файлов и создайте одноразовый код для прямой зашифрованной передачи."
+    },
+    "preparing": {
+      "title": "Настройка подключения",
+      "description": "Подготовка выбранных файлов перед отображением кода передачи."
+    },
+    "waitingForReceiver": {
+      "title": "Поделитесь кодом",
+      "description": "Отправьте код или QR-код получателю, чтобы начать передачу."
+    },
+    "receiverConnected": {
+      "title": "Поделитесь кодом",
+      "description": "Отправьте код или QR-код получателю, чтобы начать передачу."
+    }
+  },
+  "actions": {
+    "sendFiles_one": "Отправить {{count}} файл",
+    "sendFiles_other": "Отправить {{count}} файла",
+    "addFiles": "Добавить файлы",
+    "addMoreFiles": "Добавить ещё файлы",
+    "dragAndDrop": "Перетащите файлы сюда",
+    "clear": "Очистить",
+    "endSession": "Завершить сеанс",
+    "pickFilesTitle": "Добавить файлы",
+    "pickPhotos": "Фото",
+    "pickFiles": "Файлы",
+    "typeSnippet": "Введите или вставьте текст…",
+    "sendTexts_one": "Отправить {{count}} текст",
+    "sendTexts_other": "Отправить {{count}} текста",
+    "sendItems_one": "Отправить {{count}} элемент",
+    "sendItems_other": "Отправить {{count}} элемента"
+  },
+  "status": {
+    "waitingForPeer": "Ожидание собеседника",
+    "peerConnected": "Собеседник подключён",
+    "uploaded": "Загружено",
+    "uploading": "Загрузка…",
+    "waiting": "Ожидание",
+    "failed": "Ошибка",
+    "paused": "Приостановлено",
+    "downloaded": "Скачано",
+    "disconnected": "Отключено",
+    "online": "В сети",
+    "downloading": "Загрузка",
+    "downloadingPercent": "Загрузка {{percent}}%",
+    "waitingForJoin": "Ожидание подключения",
+    "pairedToast": "Сопряжено с {{name}}",
+    "inviteFailedToast": "Не удалось связаться с {{name}}",
+    "inviteFailedHint": "Убедитесь, что устройство в сети, и попробуйте снова",
+    "deviceConnected": "{{name}} подключён"
+  },
+  "connection": {
+    "placeholder": "Генерация защищённого ключа…",
+    "copyLabel": "Скопировать код подключения",
+    "showQrLabel": "Показать QR-код",
+    "qrCodeLabel": "QR-код для ключа подключения",
+    "qrModalDescription": "Откройте AlterSend на другом устройстве и отсканируйте этот код",
+    "copiedToast": "Скопировано в буфер обмена",
+    "scanToConnect": "Сканируйте для подключения",
+    "orScan": "или сканируйте",
+    "generating": "Генерация…",
+    "waitingForConnection": "Ожидание подключения…",
+    "copyCode": "Скопировать код",
+    "qrCode": "QR-код"
+  },
+  "errors": {
+    "folderUnsupported": "Папки пока не поддерживаются. Пожалуйста, выбирайте только файлы.",
+    "failedPickFiles": "Не удалось выбрать файлы",
+    "failedPickPhotos": "Не удалось выбрать фото"
+  },
+  "hints": {
+    "keepOpen": "Закрытие приложения отменяет передачу."
+  },
+  "preparing": {
+    "uploadedCount_one": "Загружено {{completed}} из {{count}} файла",
+    "uploadedCount_other": "Загружено {{completed}} из {{count}} файла"
+  },
+  "peer": {
+    "completedDone_one": "{{count}} готово",
+    "completedDone_other": "{{count}} готово",
+    "devices": "Устройства",
+    "connectedCount_one": "{{count}} подключено",
+    "connectedCount_other": "{{count}} подключено",
+    "pair": "Сопряжение",
+    "requested": "Запрошено…",
+    "invite": "Пригласить",
+    "inviting": "Приглашение…",
+    "sent": "Отправлено",
+    "deviceOffline": "Устройство не в сети — попробуйте снова"
+  },
+  "dropzone": {
+    "addTitle": "Что вы хотите добавить?",
+    "filesHint": "Выберите один или несколько файлов",
+    "folderHint": "Отправить целую папку",
+    "browseDescription": "или <link>выберите</link> на вашем компьютере",
+    "tapTo": "Нажмите, чтобы",
+    "addMoreLink": "добавить ещё",
+    "browseLink": "выбрать"
+  },
+  "files": {
+    "addedFiles": "Добавленные файлы",
+    "removeLabel": "Удалить {{name}}",
+    "addedText": "Добавленный текст"
+  }
+}

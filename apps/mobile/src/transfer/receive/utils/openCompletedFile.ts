@@ -9,6 +9,26 @@ function openPhotos(): void {
   void Linking.openURL(url).catch(() => {})
 }
 
+function toFileUri(savedTo: string): string {
+  const path = savedTo.replace(/^file:\/\//, '')
+  let decoded = path
+  try {
+    decoded = decodeURI(path)
+  } catch {}
+  return `file://${encodeURI(decoded)}`
+}
+
+function shareFile(savedTo: string): void {
+  void Sharing.isAvailableAsync()
+    .then((available) => (available ? Sharing.shareAsync(toFileUri(savedTo)) : undefined))
+    .catch((err) => console.error('openCompletedFile: shareAsync failed', err))
+}
+
+function openInFiles(savedTo: string): void {
+  const url = toFileUri(savedTo).replace(/^file:\/\//, 'shareddocuments://')
+  void Linking.openURL(url).catch(() => shareFile(savedTo))
+}
+
 export function openCompletedFile(offerKey: string): void {
   const state = transferStore.getState()
   const item = state.receiveDownloadStates[offerKey]
@@ -28,11 +48,10 @@ export function openCompletedFile(offerKey: string): void {
     return
   }
 
-  const uri = item.savedTo.startsWith('file://') ? item.savedTo : `file://${item.savedTo}`
-  void Sharing.isAvailableAsync()
-    .then((available) => {
-      if (!available) return
-      return Sharing.shareAsync(uri)
-    })
-    .catch((err) => console.error('openCompletedFile: shareAsync failed', err))
+  if (Platform.OS === 'ios') {
+    openInFiles(item.savedTo)
+    return
+  }
+
+  shareFile(item.savedTo)
 }

@@ -26,11 +26,13 @@ export type {
   RememberVoteReply,
   InviteResponseInput,
   InviteResponseReply,
+  RenamePeerInput,
   InitDeviceSecretReply,
   DeviceSecretInit
 } from './worklet/rpc/protocol'
 
 export { TRANSFER_ERROR_CODES } from './worklet/rpc/events'
 export type { TransferStatus, TransferErrorCode } from './worklet/rpc/events'
+export { MAX_DISPLAY_NAME_LEN } from './worklet/peers/remembered-peer'
 export type { RememberedPeer } from './worklet/peers/remembered-peer'
 export type { DeviceType } from './worklet/identity/device-type'

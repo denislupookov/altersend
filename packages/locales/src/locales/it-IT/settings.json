@@ -18,11 +18,13 @@
     "fairUse": "Il relay ha limiti sulla dimensione dei trasferimenti e su quanti possono essere eseguiti contemporaneamente."
   },
   "rows": {
-    "security": "Sicurezza",
     "feedback": "Segnalazioni",
     "feedbackHint": "Segnala un problema o suggerisci una funzionalità",
     "discord": "Discord",
+    "x": "X",
     "discordHint": "Unisciti alla comunità",
+    "github": "GitHub",
+    "sponsor": "Sostieni AlterSend",
     "contact": "Contattaci",
     "privacyPolicy": "Informativa sulla privacy",
     "privacyPolicyHint": "Come AlterSend gestisce i tuoi dati",
@@ -32,11 +34,6 @@
     "noDevices": "Ancora nessun dispositivo",
     "pairedCount": "{{count}} accoppiati",
     "connection": "Relay"
-  },
-  "legal": {
-    "terms": "Condizioni d'uso",
-    "privacy": "Informativa sulla privacy",
-    "sentence": "<terms>Termini di utilizzo</terms> e <privacy>Informativa sulla privacy</privacy>."
   },
   "pairing": {
     "pairNewDevice": "Accoppia nuovo dispositivo",
@@ -56,6 +53,9 @@
     "generating": "Generazione...",
     "discard": "Annulla",
     "removeDevice": "Rimuovi dispositivo",
+    "renameDevice": "Rinomina dispositivo",
+    "nameLabel": "Nome dispositivo",
+    "namePlaceholder": "Inserisci il nome del dispositivo",
     "pairANewDevice": "Accoppia un nuovo dispositivo",
     "couldNotJoin": "Impossibile connettersi al dispositivo",
     "couldNotJoinHint": "Assicurati che il codice di invito sia ancora attivo.",
@@ -73,6 +73,8 @@
     "pairFailed": "Accoppiamento non riuscito — riprova",
     "deviceRemoved": "Dispositivo accoppiato rimosso",
     "removeFailed": "Impossibile rimuovere il dispositivo accoppiato",
+    "deviceRenamed": "Dispositivo rinominato",
+    "renameFailed": "Impossibile rinominare il dispositivo",
     "deviceActions": "Azioni dispositivo",
     "pairingDevice": "Accoppiamento dispositivo",
     "couldNotReadImage": "Impossibile leggere l’immagine",
@@ -85,5 +87,21 @@
     "body": "Accoppia un dispositivo che usi spesso e invia all’istante, senza scansionare o digitare un codice ogni volta.",
     "pairButton": "Accoppia un dispositivo",
     "skip": "Salta per ora"
+  },
+  "downloads": {
+    "title": "Download",
+    "autoSaveLabel": "Salva i file in una cartella",
+    "autoSaveDescription": "Se disattivato, ti verrà chiesto dove salvare ogni trasferimento.",
+    "change": "Cambia…",
+    "chooseFolder": "Scegli una cartella…",
+    "changeFailed": "Impossibile salvare la cartella dei download",
+    "mediaToPhotosLabel": "Salva foto e video in Foto",
+    "mediaToGalleryLabel": "Salva foto e video nella Galleria",
+    "destinationPhotos": "Foto e video in Foto",
+    "destinationFiles": "Foto e video in File",
+    "mediaToPhotosDescription": "Se disattivato, vengono salvati nella cartella AlterSend in File.",
+    "mediaToGalleryDescription": "Se disattivato, vengono salvati nella cartella Download.",
+    "destinationGallery": "Foto e video nella Galleria",
+    "destinationDownloads": "Foto e video in Download"
   }
 }

@@ -1,7 +1,6 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "Direkte Dateiübertragung",
     "welcome": "Willkommen bei AlterSend",
     "loadingTagline": "Dateien werden direkt zwischen deinen Geräten übertragen.\nKeine Server, keine Kopien, keine Vermittler."
   },
@@ -17,6 +16,7 @@
     "connect": "Verbinden",
     "connecting": "Verbinden…",
     "done": "Fertig",
+    "save": "Speichern",
     "endSession": "Sitzung beenden",
     "restart": "Neu starten",
     "tryAgain": "Erneut versuchen",

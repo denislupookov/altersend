@@ -23,7 +23,8 @@ describe('locale registry', () => {
       'ja-JP',
       'ko-KR',
       'zh-CN',
-      'zh-TW'
+      'zh-TW',
+      'ru-RU'
     ])
   })
 
@@ -81,7 +82,7 @@ describe('resolveLocalePreference', () => {
   })
 
   it('falls back to en-US for unsupported or empty inputs', () => {
-    expect(resolveLocalePreference('system', ['ru-RU'])).toBe(DEFAULT_LOCALE)
+    expect(resolveLocalePreference('system', ['ar-SA'])).toBe(DEFAULT_LOCALE)
     expect(resolveLocalePreference('system', [])).toBe(DEFAULT_LOCALE)
     expect(resolveLocalePreference('not-a-locale', ['ja-JP'])).toBe(DEFAULT_LOCALE)
   })

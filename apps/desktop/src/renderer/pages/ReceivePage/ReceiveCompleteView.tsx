@@ -11,6 +11,9 @@ import {
   useTransferStore
 } from '@altersend/domain'
 import { bridgeApi } from '../../api/bridgeApi'
+import type { IncomingFileOffer } from '@altersend/core'
+
+type FileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
 
 function openFileWithLogging(filePath: string): void {
   void bridgeApi.openFile(filePath).then((err) => {
@@ -29,18 +32,15 @@ export function ReceiveCompleteView() {
     })
   }, [])
 
-  const totalBytes = incomingFileOffers.reduce(
-    (sum, f) => sum + (f.kind === 'file' ? f.size : 0),
-    0
-  )
-  const fileCount = incomingFileOffers.length
+  const receivedFiles = incomingFileOffers.filter((f): f is FileOffer => f.kind === 'file')
+  const totalBytes = receivedFiles.reduce((sum, f) => sum + f.size, 0)
+  const fileCount = receivedFiles.length
 
   const firstSavedTo = Object.values(downloadStates).find((s) => s.savedTo)?.savedTo
   const saveDir = firstSavedTo ? getParentDir(firstSavedTo) : null
   const displayDir = saveDir ? shortenHomePath(saveDir) : null
 
   const successSubtitle = [
-    t('common:files.count', { count: fileCount }),
     formatFileSize(totalBytes),
     displayDir
       ? t('receive:summary.savedToLocation', { location: displayDir })
@@ -48,25 +48,23 @@ export function ReceiveCompleteView() {
   ].join(' · ')
 
   return (
-    <div className='flex h-full min-h-0 w-full flex-col gap-4'>
-      <div className='flex shrink-0 items-center justify-between gap-4 rounded-[12px] border border-success/22 bg-success/8 px-4 py-3.5'>
-        <div className='flex items-center gap-3'>
-          <div className='flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-[8px] bg-success/28 text-success'>
-            <CheckIcon size={16} />
-          </div>
-          <div>
-            <p className='m-0 text-[14px] font-bold text-success'>
-              {t('receive:page.completed.title', { count: fileCount })}
-            </p>
-            <p className='m-0 mt-0.5 text-[12px] leading-5 text-text-secondary'>
-              {successSubtitle}
-            </p>
-          </div>
-        </div>
+    <div className='flex h-full min-h-0 w-full flex-col gap-3.5'>
+      <div className='flex shrink-0 items-center gap-2 px-0.5'>
+        <span className='flex shrink-0 items-center text-success'>
+          <CheckIcon size={17} />
+        </span>
+        <p className='m-0 shrink-0 text-[14px] font-semibold tracking-[-0.2px] text-text-primary'>
+          {t('receive:page.completed.title', { count: fileCount })}
+        </p>
+        <p className='m-0 min-w-0 flex-1 truncate text-[13px] text-text-muted'>{successSubtitle}</p>
         {saveDir ? (
           <Button
             icon={<FolderIcon size={13} />}
-            onClick={() => void bridgeApi.showInFolder(saveDir)}
+            onClick={() =>
+              bridgeApi.showInFolder(saveDir).catch((err) => {
+                console.error('Failed to show in folder', saveDir, err)
+              })
+            }
             size='sm'
             variant='secondary'
           >
@@ -75,19 +73,9 @@ export function ReceiveCompleteView() {
         ) : null}
       </div>
 
-      <div className='flex min-h-0 flex-1 flex-col overflow-hidden rounded-[12px] border border-border-primary bg-surface-primary'>
-        <div className='flex shrink-0 items-center justify-between border-b border-border-primary pl-[14px] pr-3 py-3'>
-          <p className='m-0 text-[14px] font-semibold text-text-primary'>
-            {t('receive:panel.receivedFiles')}
-          </p>
-          <p className='m-0 text-[13px] text-text-muted'>
-            {t('common:files.count', { count: fileCount })}
-          </p>
-        </div>
-
+      <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
         <div className='min-h-0 flex-1 overflow-y-auto'>
-          {incomingFileOffers.map((file) => {
-            if (file.kind !== 'file') return null
+          {receivedFiles.map((file, index) => {
             const state = downloadStates[getOfferKey(file)]
             const savedTo = state?.savedTo
             const shortPath = savedTo ? shortenHomePath(getParentDir(savedTo)) : null
@@ -99,6 +87,7 @@ export function ReceiveCompleteView() {
                 file
                 bare
                 compact
+                isFirst={index === 0}
                 label={file.name}
                 description={description}
                 trailing={
@@ -117,7 +106,7 @@ export function ReceiveCompleteView() {
           })}
         </div>
 
-        <div className='flex shrink-0 items-center justify-end gap-2.5 border-t border-border-primary px-6 py-4'>
+        <div className='flex shrink-0 items-center justify-end gap-2.5 px-6 py-4'>
           <Button onClick={clearSession} size='sm' variant='primary'>
             {t('common:actions.done')}
           </Button>

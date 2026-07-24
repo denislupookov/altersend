@@ -21,6 +21,7 @@ const packages = [
   'packages/locales/package.json',
   'packages/domain/package.json',
   'packages/components/package.json',
+  'packages/drive/package.json',
 ]
 
 const internalPackages = [
@@ -28,6 +29,7 @@ const internalPackages = [
   '@altersend/locales',
   '@altersend/domain',
   '@altersend/components',
+  '@altersend/drive',
 ]
 
 for (const rel of packages) {

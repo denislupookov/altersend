@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExternalLink, ToggleSwitch } from '@altersend/components'
+import { ExternalLink, LinkRow, ToggleSwitch } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import { websiteUrl } from '@altersend/domain'
 import { bridgeApi } from '../../../api/bridgeApi'
@@ -21,11 +21,17 @@ export function ConnectionSection() {
 
   return (
     <SectionShell title={t('settings:rows.connection')}>
-      <ToggleSwitch
-        checked={relay}
-        onChange={handleRelayToggle}
+      <LinkRow
+        standalone
+        compact
         label={t('settings:relay.label')}
-        description={t('settings:relay.description')}
+        trailing={
+          <ToggleSwitch
+            checked={relay}
+            onChange={handleRelayToggle}
+            aria-label={t('settings:relay.label')}
+          />
+        }
       />
       <p className='m-0 mt-5 text-[12px] leading-5 text-text-muted'>
         {t('settings:relay.fairUse')} {t('settings:relay.contact')}{' '}

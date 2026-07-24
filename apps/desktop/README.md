@@ -14,8 +14,6 @@ To run a second peer locally (for testing transfers between two instances):
 
 ```sh
 npm run desktop:dev:peer2
-# or
-npm run desktop:dev:peer3
 ```
 
 ## Architecture
@@ -26,11 +24,11 @@ The desktop app has two processes:
 
 **Renderer process** (`src/renderer/`) — React + Vite. The UI. Communicates with main via a typed IPC bridge (`preload.cjs`).
 
-**Bare worklet** (`packages/core/src/worklet/`) — a separate Bare (lightweight JS runtime) process that owns all P2P networking: Hyperswarm discovery, Hyperdrive transfers, RPC protocol. Main talks to it over IPC; the worklet pushes events back.
+**Bare worklet** (`packages/core/src/worklet/`) — a separate Bare (lightweight JS runtime) process that owns all P2P networking: Hyperswarm discovery, chunked file transfer, RPC protocol. Main talks to it over IPC; the worklet pushes events back.
 
-```
+```text
 Renderer ─── IPC (preload) ─── Main ─── IPC ─── Bare worklet
-                                              (Hyperswarm / Hyperdrive)
+                                               (Hyperswarm / drive)
 ```
 
 ## Building installers
@@ -54,5 +52,5 @@ Installers land in `apps/desktop/out/`. For macOS local dev builds (no notarizat
 ## Code signing
 
 - **macOS:** notarization is wired via `scripts/notarize.cjs` — requires `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID` env vars, and a keychain profile named `notary`. See [Apple's notary tool docs](https://developer.apple.com/documentation/security/customizing-the-notarization-workflow).
-- **Windows:** uses SignPath.io (free for verified OSS projects) via GitHub Actions. See [docs/SIGNING.md](../../docs/SIGNING.md).
+- **Windows:** uses SignPath.io (free for verified OSS projects) via GitHub Actions — see the signing steps in `.github/workflows/release-desktop.yml`.
 - **Linux:** AppImage doesn't require signing.

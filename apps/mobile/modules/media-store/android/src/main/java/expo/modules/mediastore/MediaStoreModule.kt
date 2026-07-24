@@ -1,5 +1,6 @@
 package expo.modules.mediastore
 
+import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
@@ -69,9 +70,19 @@ class MediaStoreModule : Module() {
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       }
-      context.startActivity(Intent.createChooser(intent, null).apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-      })
+      try {
+        context.startActivity(intent)
+      } catch (err: ActivityNotFoundException) {
+        try {
+          context.startActivity(
+            Intent(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS).apply {
+              addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+          )
+        } catch (fallbackErr: ActivityNotFoundException) {
+          throw err
+        }
+      }
     }
 
     // Opens the system Downloads UI.

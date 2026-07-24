@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router'
-import { forgetPeer, usePairingSession } from '@altersend/domain'
+import {
+  forgetPeer,
+  renamePeer,
+  usePairingSession,
+  type DeviceRenameTarget
+} from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { useToast } from '@/src/components/Toast'
-
-const SHEET_TRANSITION_MS = 250
-
-interface DeviceActionTarget {
-  peerKey: string
-  name: string
-}
+import { SHEET_TRANSITION_MS, useDeviceRename } from './useDeviceRename'
 
 export function usePairingFlow() {
   const { t } = useTranslation(['settings'])
   const toast = useToast()
   const params = useLocalSearchParams<{ pairCode?: string }>()
 
-  const [actionsTarget, setActionsTarget] = useState<DeviceActionTarget | null>(null)
+  const [actionsTarget, setActionsTarget] = useState<DeviceRenameTarget | null>(null)
+  const { openRename, renameSheet } = useDeviceRename(renamePeer)
   const [addSheetOpen, setAddSheetOpen] = useState(false)
   const [qrSheetOpen, setQrSheetOpen] = useState(false)
   const [scanSheetOpen, setScanSheetOpen] = useState(false)
@@ -62,6 +62,12 @@ export function usePairingFlow() {
     })
   }
 
+  const openRenameSheet = () => {
+    const target = actionsTarget
+    setActionsTarget(null)
+    if (target) openRename(target)
+  }
+
   return {
     peers,
     openAddSheet: () => setAddSheetOpen(true),
@@ -70,8 +76,10 @@ export function usePairingFlow() {
     deviceActionsSheet: {
       open: actionsTarget !== null,
       onClose: () => setActionsTarget(null),
-      onRemove: removeDevice
+      onRemove: removeDevice,
+      onRename: openRenameSheet
     },
+    renameSheet,
     addSheet: {
       open: addSheetOpen,
       onClose: () => setAddSheetOpen(false),

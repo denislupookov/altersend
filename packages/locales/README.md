@@ -6,8 +6,7 @@ Shared internationalization infrastructure for AlterSend desktop and mobile.
 
 - Locale codes are concrete BCP 47-style codes such as `en-US`, `pt-BR`, and `ja-JP`.
 - Saved locale state is app-owned and uses `LocalePreference = 'system' | SupportedLocaleCode`.
-- `resolveActiveLocalePreference(preference, systemLocales)` converts saved preference plus system locales into the active concrete locale.
-- When `isMultiLangEnabled` is false, the active locale resolves to `en-US` and language picker UI stays hidden.
+- `resolveLocalePreference(preference, systemLocales)` converts saved preference plus system locales into the active concrete locale, falling back to `en-US` when nothing matches.
 - `packages/domain` stays runtime-agnostic and does not import i18next.
 
 ## Catalogs
@@ -39,9 +38,9 @@ function Header() {
 Outside React, use `i18nextInstance` or the package helpers:
 
 ```ts
-import { changeI18nLanguage, initI18n, resolveActiveLocalePreference } from '@altersend/locales'
+import { changeI18nLanguage, initI18n, resolveLocalePreference } from '@altersend/locales'
 
-await initI18n(resolveActiveLocalePreference(savedPreference, systemLocales))
+await initI18n(resolveLocalePreference(savedPreference, systemLocales))
 await changeI18nLanguage('en-US')
 ```
 

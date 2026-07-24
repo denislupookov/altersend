@@ -16,7 +16,7 @@ The desktop renderer is React + Vite, the mobile app is React Native / Expo. Wit
 | `Input`                                          | Form text input with optional label, secure mode, trailing slot                                                                                                     |
 | `Badge`                                          | Inline status pill                                                                                                                                                  |
 | `ListItem`                                       | List / nav / menu row (icon + label + optional subtitle); `active`, `collapsed`, `showDot`, `chevron`, `tone='danger'`, `variant='plain'`, `size='large'`, `square` |
-| `LinkRow`, `LinkCard`                            | Tappable rows grouped in a bordered card — settings & device lists                                                                                                  |
+| `LinkRow`                                        | Tappable row grouped in a bordered card — settings & device lists                                                                                                   |
 | `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` | Tab pattern with keyboard support                                                                                                                                   |
 | `Disclosure`                                     | Collapsible section with header + body                                                                                                                              |
 | `ToggleSwitch`                                   | On / off switch                                                                                                                                                     |
@@ -49,8 +49,9 @@ import { LockIcon } from '@altersend/components/icons'
 
 ### Utilities
 
-- `formatFileSize(bytes)` — single source of truth for "0 B" / "1.5 KB" / "2.3 MB" formatting; matches the version exported from `@altersend/domain`.
 - `usePressState` — hook for unified press / hover state.
+
+`formatFileSize(bytes)` is not exported here — it lives in `@altersend/domain` and this package consumes it from there.
 
 ## Install
 
@@ -79,11 +80,11 @@ import { ThemeProvider, ThemeType } from '@altersend/components'
 Use components like any React component:
 
 ```tsx
-import { Button, Card, Input } from '@altersend/components'
-;<Card>
+import { Button, Input } from '@altersend/components'
+;<>
   <Input label='Connection code' value={code} onChange={setCode} />
   <Button onClick={join}>Connect</Button>
-</Card>
+</>
 ```
 
 ## Design rules (for contributors)

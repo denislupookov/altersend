@@ -2,7 +2,7 @@
   "expo": {
     "name": "AlterSend",
     "slug": "altersend",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "newArchEnabled": true,
     "orientation": "portrait",
     "scheme": "altersend",
@@ -140,7 +140,8 @@
               "it-IT",
               "pt-BR",
               "es-419",
-              "es-ES"
+              "es-ES",
+              "ru-RU"
             ],
             "android": [
               "en-US",
@@ -154,7 +155,8 @@
               "it-IT",
               "pt-BR",
               "es-419",
-              "es-ES"
+              "es-ES",
+              "ru-RU"
             ]
           }
         }
@@ -250,7 +252,8 @@
       "it-IT": "./locales/it-IT.json",
       "pt-BR": "./locales/pt-BR.json",
       "es-419": "./locales/es-419.json",
-      "es-ES": "./locales/es-ES.json"
+      "es-ES": "./locales/es-ES.json",
+      "ru-RU": "./locales/ru-RU.json"
     }
   }
 }

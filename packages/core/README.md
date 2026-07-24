@@ -1,6 +1,8 @@
 # @altersend/core
 
-The peer-to-peer protocol and transfer orchestration for AlterSend. Hosts a [Bare](https://bare.pears.com/) worklet that owns Hyperswarm peer discovery, Hyperdrive replication, and the wire protocol — isolated from Electron and React Native renderers.
+The peer-to-peer protocol and transfer orchestration for AlterSend. Hosts a [Bare](https://bare.pears.com/) worklet that owns Hyperswarm peer discovery, file transfer, and the wire protocol — isolated from Electron and React Native renderers.
+
+Bytes move over `@altersend/drive`: the sender reads chunks from the original file and the receiver writes them straight to the destination. Hyperdrive remains wired up as a fallback for peers on older builds that don't offer a drive channel — `worklet/transfer/receiver.ts` picks per file.
 
 ## Architecture
 
@@ -27,6 +29,7 @@ This package has two halves:
 │   - DeviceIdentityStore     │
 │   - RememberedPeerStore     │
 │   - PeerControlChannel      │
+│   - RelayConfig             │
 └─────────────────────────────┘
 ```
 
@@ -39,7 +42,6 @@ import { createTransferWorkerClient } from '@altersend/core';
 
 const client = createTransferWorkerClient(workerProcess, {
   onEvent: (event) => {
-    // Receives RendererTransferEvent — status, role, error, peer-control messages
   },
 });
 
@@ -59,6 +61,7 @@ await client.peersList();                    // list remembered devices
 await client.inviteDevice({ ... });          // invite a remembered device (no code)
 await client.respondToInvite({ ... });       // accept / decline an incoming invite
 await client.forgetPeer(devicePubkeyHex);    // remove a remembered device
+await client.setRelayConfig({ ... });        // enable / disable the relay fallback
 ```
 
 ### Wire protocol
@@ -82,7 +85,6 @@ Anything not re-exported from `@altersend/core` (the wire-format codecs, command
 Built output of `src/worklet/index.ts` is what the host spawns:
 
 ```js
-// from the host
 const worker = pear.run('packages/core/dist/worklet/index.js', [`--storage=${storageRoot}`])
 ```
 
@@ -90,7 +92,7 @@ The worklet exports nothing — it sets up RPC over IPC and handles `SIGTERM`, `
 
 ## Storage
 
-The transfer corestore (the Hyperdrive working copy) is wiped on every disconnect — transfers do not resume across sessions, by design. What **does** persist: the device keypair (secret sealed in the OS keychain and injected via `initDeviceSecret`; only the public key + metadata hit disk) and the remembered-peer list (`RememberedPeerStore`, on HyperDB). Resumable transfers remain out of scope.
+The transfer corestore is wiped on every disconnect — transfers do not resume across sessions, by design. What **does** persist: the device keypair (secret sealed in the OS keychain and injected via `initDeviceSecret`; only the public key + metadata hit disk) and the remembered-peer list (`RememberedPeerStore`, on HyperDB). Resumable transfers remain out of scope.
 
 ## Security
 
@@ -98,8 +100,9 @@ Input that comes from peers (control messages) and from the renderer (download r
 
 - 64-hex-char check on every Hyperdrive key and Hyperswarm topic
 - File-name traversal check (no `/`, `\`, `..`, NUL byte, length > 255)
-- Per-file size cap (50 GB) and per-download timeout (30 min)
+- Bounded lengths on every wire field: ids 128, paths 4096, text 65536, display names 256, and 10,000 files per transfer. File size itself is not capped — only required to be a non-negative integer
 - Hyperdrive entry signature check against wire-claimed size — sender can't lie about file size
+- On drive transfers the same guarantee comes from the offer: the receiver rejects a `start` whose size differs, and every chunk is checked against its BLAKE2b hash before it is written
 
 **Out of scope:** no rate limit on inbound peer control messages. A connected peer already shares our transfer topic, so a flood of `download-progress` events is treated as a connectivity nuisance, not a security boundary. If your threat model includes hostile paired peers, gate or throttle in the host before forwarding to the renderer.
 

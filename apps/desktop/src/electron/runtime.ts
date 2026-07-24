@@ -10,6 +10,7 @@ import {
   type TransferMethod,
   type WorkerClient
 } from '@altersend/core'
+import { writeFileViaTemp } from './writeFileViaTemp.js'
 import { isMac, isLinux, isWindows } from 'which-runtime'
 import { command, flag, sloppy } from 'paparam'
 import { createRequire } from 'module'
@@ -135,10 +136,7 @@ async function initDeviceKeychain(client: WorkerClient, identityRoot: string): P
       available ? { mode: 'managed', secret: sealed } : { mode: 'legacy' }
     )
     if (available && reply.secretKey && reply.secretKey !== sealed) {
-      fs.mkdirSync(identityRoot, { recursive: true })
-      const tmp = keyPath + '.tmp'
-      fs.writeFileSync(tmp, safeStorage.encryptString(reply.secretKey))
-      fs.renameSync(tmp, keyPath)
+      await writeFileViaTemp(keyPath, safeStorage.encryptString(reply.secretKey))
     }
   } catch (err) {
     console.warn('[runtime] device key init failed:', err)

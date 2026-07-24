@@ -23,6 +23,14 @@ export const styles = css.create({
     marginLeft: tokens.space2,
     alignItems: 'center'
   },
+  left: {
+    right: '100%',
+    top: 0,
+    bottom: 0,
+    marginRight: tokens.space2,
+    alignItems: 'center',
+    justifyContent: 'flex-end'
+  },
   top: {
     bottom: '100%',
     left: 0,

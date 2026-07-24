@@ -66,7 +66,10 @@
     "scanOrImportQrHintDesktop": "Use the webcam, or import a saved QR image",
     "scanOrImportQrHintMobile": "Use the camera, or import a saved image",
     "importImage": "Import image",
-    "importFromImage": "Import from image"
+    "importFromImage": "Import from image",
+    "resume": "Resume",
+    "stop": "Stop",
+    "resumeAll": "Resume all"
   },
   "errors": {
     "invalidCode": "Enter a valid 64-character hex code.",
@@ -114,6 +117,9 @@
     "ready": "Ready",
     "saved": "Saved",
     "failed": "Failed",
+    "paused": "Paused",
+    "resuming": "Resuming…",
+    "waiting": "Waiting…",
     "downloadingPercent": "Downloading {{percent}}%",
     "percent": "{{percent}}%",
     "waitingForFiles": "Waiting for files from sender…"

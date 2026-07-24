@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { rememberVote, usePairingSessionStore, useTransferStore } from '@altersend/domain'
 import { Button } from '@altersend/components'
 import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
+import { zLayer } from '../../zLayer'
 
 export function PairRequestBanner() {
   const request = useTransferStore((s) => s.remember.incomingRequest)
@@ -28,8 +29,9 @@ export function PairRequestBanner() {
 
   return (
     <div
-      className='fixed inset-0 z-50 flex justify-center pt-4'
+      className='fixed inset-0 flex justify-center pt-4'
       style={{
+        zIndex: zLayer.interrupt,
         backgroundColor: 'color-mix(in oklab, var(--as-color-scrim) 25%, transparent)',
         backdropFilter: 'blur(2px)',
         WebkitBackdropFilter: 'blur(2px)',

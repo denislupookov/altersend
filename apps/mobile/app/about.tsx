@@ -5,21 +5,28 @@ import {
   ArrowUpRightIcon,
   DiscordIcon,
   FileTextIcon,
+  GithubIcon,
   GlobeIcon,
+  HeartIcon,
   LockIcon,
-  MailIcon
+  XIcon
 } from '@altersend/components/icons'
-import {
-  discordUrl,
-  privacyPolicyUrl,
-  supportEmail,
-  termsOfServiceUrl,
-  websiteUrl
-} from '@altersend/domain'
+import type { IconComponent } from '@altersend/components/icons'
+import { aboutLinkGroups, type AboutLinkKey } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Layout } from '@/src/components'
 import { Text } from '@/src/components/ThemedText'
 import brandLogo from '@/assets/images/brand-logo.png'
+
+const linkIcons: Record<AboutLinkKey, IconComponent> = {
+  website: GlobeIcon,
+  github: GithubIcon,
+  discord: DiscordIcon,
+  x: XIcon,
+  sponsor: HeartIcon,
+  privacy: LockIcon,
+  terms: FileTextIcon
+}
 
 export default function AboutScreen() {
   const { t } = useTranslation(['settings', 'common'])
@@ -28,26 +35,10 @@ export default function AboutScreen() {
   const version = Constants.expoConfig?.version ?? '0.0.0'
 
   const openUrl = (url: string) => {
-    void Linking.openURL(url).catch(() => {})
+    Linking.openURL(url).catch((error: unknown) => {
+      console.error('Failed to open external url', error)
+    })
   }
-
-  const resources = [
-    { key: 'website', label: t('settings:rows.website'), Icon: GlobeIcon, url: websiteUrl },
-    {
-      key: 'privacy',
-      label: t('settings:rows.privacyPolicy'),
-      Icon: LockIcon,
-      url: privacyPolicyUrl
-    },
-    { key: 'terms', label: t('settings:rows.terms'), Icon: FileTextIcon, url: termsOfServiceUrl },
-    { key: 'discord', label: t('settings:rows.discord'), Icon: DiscordIcon, url: discordUrl },
-    {
-      key: 'contact',
-      label: t('settings:rows.contact'),
-      Icon: MailIcon,
-      url: `mailto:${supportEmail}`
-    }
-  ]
 
   return (
     <Layout title={t('settings:sections.about')} description='' hasNativeHeader>
@@ -55,9 +46,6 @@ export default function AboutScreen() {
         <View style={styles.brand}>
           <Image source={brandLogo} style={styles.brandLogo} resizeMode='contain' />
           <Text style={[styles.brandName, { color: c.colorTextPrimary }]}>AlterSend</Text>
-          <Text style={[styles.brandTagline, { color: c.colorTextMuted }]}>
-            {t('common:app.tagline')}
-          </Text>
         </View>
 
         <View
@@ -74,18 +62,23 @@ export default function AboutScreen() {
           </View>
         </View>
 
-        <LinkCard>
-          {resources.map(({ key, label, Icon, url }, index) => (
-            <LinkRow
-              key={key}
-              label={label}
-              icon={<Icon size={16} color={c.colorTextSecondary} />}
-              trailing={<ArrowUpRightIcon size={15} color={c.colorTextMuted} />}
-              onPress={() => openUrl(url)}
-              isLast={index === resources.length - 1}
-            />
-          ))}
-        </LinkCard>
+        {aboutLinkGroups.map((group) => (
+          <LinkCard key={group[0].key}>
+            {group.map(({ key, labelKey, url }, index) => {
+              const Icon = linkIcons[key]
+              return (
+                <LinkRow
+                  key={key}
+                  label={t(labelKey)}
+                  icon={<Icon size={16} color={c.colorTextSecondary} />}
+                  trailing={<ArrowUpRightIcon size={15} color={c.colorTextMuted} />}
+                  onPress={() => openUrl(url)}
+                  isLast={index === group.length - 1}
+                />
+              )
+            })}
+          </LinkCard>
+        ))}
 
         <Text style={[styles.footer, { color: c.colorTextFaint }]}>
           © {new Date().getFullYear()} AlterSend
@@ -114,12 +107,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 26,
     fontWeight: '700'
-  },
-  brandTagline: {
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: 'center',
-    maxWidth: 300
   },
   card: {
     borderRadius: 16,

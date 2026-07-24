@@ -18,11 +18,13 @@
     "fairUse": "Das Relay hat Grenzen für die Übertragungsgröße und dafür, wie viele Übertragungen gleichzeitig laufen können."
   },
   "rows": {
-    "security": "Sicherheit",
     "feedback": "Rückmeldung",
     "feedbackHint": "Melden Sie ein Problem oder schlagen Sie eine Funktion vor",
     "discord": "Discord",
+    "x": "X",
     "discordHint": "Treten Sie der Community bei",
+    "github": "GitHub",
+    "sponsor": "AlterSend unterstützen",
     "contact": "Kontaktieren Sie uns",
     "privacyPolicy": "Datenschutzrichtlinie",
     "privacyPolicyHint": "Wie AlterSend mit Ihren Daten umgeht",
@@ -32,11 +34,6 @@
     "noDevices": "Noch keine Geräte",
     "pairedCount": "{{count}} gekoppelt",
     "connection": "Relay"
-  },
-  "legal": {
-    "terms": "Nutzungsbedingungen",
-    "privacy": "Datenschutzerklärung",
-    "sentence": "<terms>Nutzungsbedingungen</terms> und <privacy>Datenschutzerklärung</privacy>."
   },
   "pairing": {
     "pairNewDevice": "Neues Gerät koppeln",
@@ -56,6 +53,9 @@
     "generating": "Wird generiert …",
     "discard": "Verwerfen",
     "removeDevice": "Gerät entfernen",
+    "renameDevice": "Gerät umbenennen",
+    "nameLabel": "Gerätename",
+    "namePlaceholder": "Gerätenamen eingeben",
     "pairANewDevice": "Ein neues Gerät koppeln",
     "couldNotJoin": "Verbindung zum Gerät fehlgeschlagen",
     "couldNotJoinHint": "Stellen Sie sicher, dass der Einladungscode noch aktiv ist.",
@@ -73,6 +73,8 @@
     "pairFailed": "Kopplung fehlgeschlagen – erneut versuchen",
     "deviceRemoved": "Gekoppeltes Gerät entfernt",
     "removeFailed": "Gekoppeltes Gerät konnte nicht entfernt werden",
+    "deviceRenamed": "Gerät umbenannt",
+    "renameFailed": "Gerät konnte nicht umbenannt werden",
     "deviceActions": "Geräteaktionen",
     "pairingDevice": "Gerät wird gekoppelt",
     "couldNotReadImage": "Bild konnte nicht gelesen werden",
@@ -85,5 +87,21 @@
     "body": "Koppeln Sie ein häufig genutztes Gerät und senden Sie sofort – ohne jedes Mal einen Code zu scannen oder einzugeben.",
     "pairButton": "Gerät koppeln",
     "skip": "Vorerst überspringen"
+  },
+  "downloads": {
+    "title": "Downloads",
+    "autoSaveLabel": "Dateien in einem Ordner speichern",
+    "autoSaveDescription": "Wenn deaktiviert, wirst du bei jeder Übertragung nach dem Speicherort gefragt.",
+    "change": "Ändern…",
+    "chooseFolder": "Ordner auswählen…",
+    "changeFailed": "Download-Ordner konnte nicht gespeichert werden",
+    "mediaToPhotosLabel": "Fotos & Videos in Fotos speichern",
+    "mediaToGalleryLabel": "Fotos & Videos in der Galerie speichern",
+    "destinationPhotos": "Fotos & Videos in Fotos",
+    "destinationFiles": "Fotos & Videos in Dateien",
+    "mediaToPhotosDescription": "Wenn deaktiviert, werden sie im AlterSend-Ordner in Dateien gespeichert.",
+    "mediaToGalleryDescription": "Wenn deaktiviert, werden sie im Download-Ordner gespeichert.",
+    "destinationGallery": "Fotos & Videos in die Galerie",
+    "destinationDownloads": "Fotos & Videos in Downloads"
   }
 }

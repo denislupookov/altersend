@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "declaration": true,
+    "outDir": "./dist",
+    "lib": ["ESNext"],
+    "types": ["node"]
+  },
+  "include": ["src/**/*", "test/**/*"]
+}

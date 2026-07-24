@@ -11,6 +11,7 @@ import { isMac } from 'which-runtime'
 import { readdir, stat } from 'fs/promises'
 import path from 'path'
 import { isPathSafe, type TransferMethod } from '@altersend/core'
+import { getDownloadFolder, setDownloadFolder } from './downloadLocation.js'
 import type { DesktopRuntime } from './runtime.js'
 import { setReportingEnabled } from './sentry.js'
 
@@ -21,14 +22,30 @@ function recordPickedPath(senderId: number, p: string) {
   pickedPaths.get(senderId)!.add(p)
 }
 
-function isAllowedPath(senderId: number, filePath: string): boolean {
-  const allowed = pickedPaths.get(senderId)
-  if (!allowed) return false
-  if (allowed.has(filePath)) return true
-  for (const p of allowed) {
-    if (filePath.startsWith(p + path.sep) || filePath.startsWith(p + '/')) return true
+function isUnder(filePath: string, dir: string): boolean {
+  const rel = path.relative(dir, filePath)
+  if (rel === '') return true
+  if (path.isAbsolute(rel)) return false
+  return rel !== '..' && !rel.startsWith(`..${path.sep}`)
+}
+
+async function isAllowedPath(senderId: number, filePath: string): Promise<boolean> {
+  for (const p of pickedPaths.get(senderId) ?? []) {
+    if (isUnder(filePath, p)) return true
   }
-  return false
+
+  const folder = await getDownloadFolder()
+  return folder ? isUnder(filePath, folder) : false
+}
+
+async function assertAllowedPath(
+  evt: Electron.IpcMainInvokeEvent,
+  filePath: string
+): Promise<void> {
+  if (!isPathSafe(filePath)) throw new Error('Refused: path failed safety check')
+  if (!(await isAllowedPath(evt.sender.id, filePath))) {
+    throw new Error('Refused: path not from a user-approved dialog')
+  }
 }
 
 interface PickedFile {
@@ -93,6 +110,27 @@ const PICK_PROPERTIES: Record<PickMode, OpenDialogOptions['properties']> = {
   combined: ['openFile', 'openDirectory', 'multiSelections']
 }
 
+async function pickFolder(evt: Electron.IpcMainInvokeEvent): Promise<string | null> {
+  const parentWindow = BrowserWindow.fromWebContents(evt.sender) ?? undefined
+  const startDir = await getDownloadFolder()
+  const dialogOptions: OpenDialogOptions = {
+    title: 'Choose a folder for downloaded files',
+    properties: ['openDirectory', 'createDirectory'],
+    ...(startDir ? { defaultPath: startDir } : {})
+  }
+  const result = parentWindow
+    ? await dialog.showOpenDialog(parentWindow, dialogOptions)
+    : await dialog.showOpenDialog(dialogOptions)
+
+  if (result.canceled || result.filePaths.length === 0) {
+    return null
+  }
+
+  const folder = result.filePaths[0]
+  recordPickedPath(evt.sender.id, folder)
+  return folder
+}
+
 export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.on('pkg', (evt) => {
     evt.returnValue = runtime.metadata.pkg
@@ -141,11 +179,15 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     return picked
   })
 
-  ipcMain.handle('app:pickSaveFile', async (evt, defaultName) => {
+  ipcMain.handle('app:pickSaveFile', async (evt, defaultName: string) => {
+    if (!isPathSafe(defaultName) || path.basename(defaultName) !== defaultName) {
+      throw new Error('Refused: defaultName must be a bare file name')
+    }
     const parentWindow = BrowserWindow.fromWebContents(evt.sender) ?? undefined
+    const startDir = await getDownloadFolder()
     const dialogOptions = {
       title: 'Save received file',
-      defaultPath: defaultName
+      defaultPath: startDir ? path.join(startDir, defaultName) : defaultName
     }
     const result = parentWindow
       ? await dialog.showSaveDialog(parentWindow, dialogOptions)
@@ -162,27 +204,14 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     }
   })
 
-  ipcMain.handle('app:pickDirectory', async (evt) => {
-    const parentWindow = BrowserWindow.fromWebContents(evt.sender) ?? undefined
-    const dialogOptions: OpenDialogOptions = {
-      title: 'Choose a folder for downloaded files',
-      properties: ['openDirectory', 'createDirectory']
-    }
-    const result = parentWindow
-      ? await dialog.showOpenDialog(parentWindow, dialogOptions)
-      : await dialog.showOpenDialog(dialogOptions)
+  ipcMain.handle('app:pickDirectory', (evt) => pickFolder(evt))
 
-    if (result.canceled || result.filePaths.length === 0) {
-      return null
-    }
+  ipcMain.handle('app:getDownloadFolder', () => getDownloadFolder())
 
-    const directoryPath = result.filePaths[0]
-
-    recordPickedPath(evt.sender.id, directoryPath)
-    return {
-      path: directoryPath,
-      name: path.basename(directoryPath)
-    }
+  ipcMain.handle('app:chooseDownloadFolder', async (evt) => {
+    const folder = await pickFolder(evt)
+    if (folder) await setDownloadFolder(folder)
+    return folder
   })
 
   ipcMain.handle('app:restart', () => {
@@ -191,17 +220,13 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
 
   ipcMain.handle('app:clipboardReadText', () => clipboard.readText())
 
-  ipcMain.handle('app:showInFolder', (evt, filePath: string) => {
-    if (!isPathSafe(filePath)) throw new Error('Refused: path failed safety check')
-    if (!isAllowedPath(evt.sender.id, filePath))
-      throw new Error('Refused: path not from a user-approved dialog')
+  ipcMain.handle('app:showInFolder', async (evt, filePath: string) => {
+    await assertAllowedPath(evt, filePath)
     shell.showItemInFolder(filePath)
   })
 
   ipcMain.handle('app:openFile', async (evt, filePath: string) => {
-    if (!isPathSafe(filePath)) throw new Error('Refused: path failed safety check')
-    if (!isAllowedPath(evt.sender.id, filePath))
-      throw new Error('Refused: path not from a user-approved dialog')
+    await assertAllowedPath(evt, filePath)
     return shell.openPath(filePath)
   })
 

@@ -1,5 +1,5 @@
 import { dispatchToTransferStore, transferStore } from './store'
-import { getTransferApi, reportError } from './binding'
+import { discardPendingProgress, getTransferApi, loadPeers, reportError } from './binding'
 import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES, type TransferErrorCode } from './types'
 import { createInitialUploadItems, getPhaseFromSelection } from '../send/draftModel'
@@ -23,6 +23,7 @@ const setError = (code: TransferErrorCode, error: unknown): void => {
 }
 
 export const clearSession = async (): Promise<void> => {
+  discardPendingProgress()
   dispatchToTransferStore({ type: 'clear_session' })
   try {
     await getTransferApi().worker.disconnect()
@@ -90,13 +91,26 @@ export const shareFiles = async (files: ShareFileRequest[]): Promise<ShareFilesR
   }
 }
 
+export const pauseDownload = async (fileId: string): Promise<void> => {
+  try {
+    await getTransferApi().worker.pauseDownload(fileId)
+  } catch (error) {
+    reportError('pauseDownload', error)
+    throw error
+  }
+}
+
 export const downloadFiles = async (files: DownloadFileRequest[]): Promise<DownloadFilesReply> => {
+  const offerKeys = files.map((f) => f.fileId)
+  dispatchToTransferStore({ type: 'downloads_queued', offerKeys, queued: true })
   try {
     return await getTransferApi().worker.downloadFiles(files)
   } catch (error) {
     reportError('downloadFiles', error)
     setError(TRANSFER_ERROR_CODES.downloadFailed, error)
     throw error
+  } finally {
+    dispatchToTransferStore({ type: 'downloads_queued', offerKeys, queued: false })
   }
 }
 
@@ -130,15 +144,6 @@ export function subscribeToPairingPeerConnected(cb: (peerKey: string) => void): 
   })
 }
 
-export const loadPeers = async (): Promise<void> => {
-  try {
-    const peers = await getTransferApi().worker.peersList()
-    dispatchToTransferStore({ type: 'set_peers', peers })
-  } catch (error) {
-    reportError('loadPeers', error)
-  }
-}
-
 export const forgetPeer = async (pubkey: string): Promise<boolean> => {
   dispatchToTransferStore({ type: 'forget_peer', peerKey: pubkey })
 
@@ -151,6 +156,49 @@ export const forgetPeer = async (pubkey: string): Promise<boolean> => {
     await loadPeers()
     return false
   }
+}
+
+const findPeerDisplayName = (pubkey: string): string | undefined => {
+  const key = pubkey.toLowerCase()
+  const { peers, remember } = transferStore.getState()
+  const match = peers.find((peer) => peer.remoteDevicePubkey.toLowerCase() === key)
+  if (match) return match.displayName
+
+  const cached = Object.entries(remember.peerDisplayNames).find(
+    ([cachedKey]) => cachedKey.toLowerCase() === key
+  )
+  return cached?.[1]
+}
+
+const undoRename = async (pubkey: string, previousName: string | undefined): Promise<void> => {
+  if (previousName !== undefined) {
+    dispatchToTransferStore({ type: 'rename_peer', peerKey: pubkey, displayName: previousName })
+  }
+  await loadPeers()
+}
+
+export const renamePeer = async (pubkey: string, displayName: string): Promise<boolean> => {
+  const trimmed = displayName.trim()
+  if (trimmed.length === 0) return false
+
+  const previousName = findPeerDisplayName(pubkey)
+  dispatchToTransferStore({ type: 'rename_peer', peerKey: pubkey, displayName: trimmed })
+
+  try {
+    const updated = await getTransferApi().worker.renamePeer({
+      remoteDevicePubkey: pubkey,
+      displayName: trimmed
+    })
+    if (updated) {
+      await loadPeers()
+      return true
+    }
+  } catch (error) {
+    reportError('renamePeer', error)
+  }
+
+  await undoRename(pubkey, previousName)
+  return false
 }
 
 export const requestPair = (transferId: string, peerKey: string): void => {

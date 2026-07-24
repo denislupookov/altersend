@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-  <img src="assets/altersend-logo.png" alt="AlterSend" width="340" />
+  <img src="assets/altersend-logo.png" alt="AlterSend" width="280" />
   <br />
   <br />
 
@@ -11,13 +11,11 @@ Files go directly between your devices — end-to-end encrypted, no accounts, no
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20iOS%20%7C%20Android-lightgrey)](#download)
 
-[Website](https://altersend.com) · [Download](https://altersend.com/download) · [Discord](https://discord.gg/R6tmrk85Vx)
+[Website](https://altersend.com) · [Download](https://altersend.com/download) · [Discord](https://discord.gg/R6tmrk85Vx) · [X](https://x.com/altersend_app)
 
   <br/>
 
-  <img src="assets/desktop-example.png" alt="AlterSend desktop" width="520" align="middle" />
-  &nbsp;
-  <img src="assets/mobile-example.png" alt="AlterSend mobile" width="240" align="middle" />
+  <img src="assets/altersend-1.6.webp" alt="Sending a file from desktop to mobile with AlterSend" width="600" />
 
 </div>
 
@@ -29,6 +27,7 @@ Files go directly between your devices — end-to-end encrypted, no accounts, no
 - [Features](#features)
 - [Download](#download)
   - [macOS Homebrew](#macos-homebrew)
+  - [Linux Flatpak](#linux-flatpak)
 - [How it works](#how-it-works)
   - [Under the hood](#under-the-hood)
 - [For developers](#for-developers)
@@ -60,7 +59,7 @@ Why use WeTransfer, Dropbox, or Google Drive when you can send files directly �
 - **Pair your devices** — pair a device once, then send to it without scanning or typing a code each time
 - **Cross-platform** — macOS, Windows, Linux, iOS, Android
 - **Works everywhere** — local network or across continents, same code path
-- **Multi-language** — fully translated UI, available in 12 languages
+- **Multi-language** — fully translated UI, available in 13 languages
 - **Open source** — Apache-2.0, audit every line yourself
 
 ## Download
@@ -71,11 +70,9 @@ Get the latest release from [altersend.com/download](https://altersend.com/downl
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Windows** | [Microsoft Store](https://apps.microsoft.com/detail/9NHLK9GLVDLW) (signed) · [EXE installer](https://github.com/denislupookov/altersend/releases/latest)                                    |
 | **macOS**   | [DMG — Apple Silicon](https://github.com/denislupookov/altersend/releases/latest) · [DMG — Intel](https://github.com/denislupookov/altersend/releases/latest) · [Homebrew](#macos-homebrew) |
-| **Linux**   | [AppImage](https://github.com/denislupookov/altersend/releases/latest)                                                                                                                      |
+| **Linux**   | [AppImage](https://github.com/denislupookov/altersend/releases/latest) · [Flatpak](#linux-flatpak)                                                                                          |
 | **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.altersend.mobile) · [APK](https://github.com/denislupookov/altersend/releases/latest)                                       |
 | **iOS**     | [App Store](https://apps.apple.com/us/app/altersend-file-transfer/id6772496271)                                                                                                             |
-
-> **Windows `.exe`** — not yet signed, so Windows will show "Windows protected your PC" on first run. Click **More info → Run anyway** to install. The Microsoft Store version is signed and avoids this warning.
 
 ### macOS Homebrew
 
@@ -83,6 +80,15 @@ You can also install AlterSend on macOS using [Homebrew](https://brew.sh):
 
 ```sh
 brew install --cask altersend
+```
+
+### Linux Flatpak
+
+You can build and install the included Flatpak manifest yourself (needs `flatpak-builder`):
+
+```sh
+git clone https://github.com/denislupookov/altersend.git && cd altersend
+flatpak-builder --user --install --install-deps-from=flathub --force-clean build-dir flatpak/com.altersend.AlterSend.yaml
 ```
 
 ## How it works
@@ -93,14 +99,18 @@ brew install --cask altersend
 4. Files transfer directly — peer to peer
 
 ```
-   ┌─────────┐          encrypted P2P          ┌─────────┐
-   │ Device  │ ◄──────────────────────────────► │ Device  │
-   │   A     │      direct & encrypted          │   B     │
-   └─────────┘                                  └─────────┘
-        ▲                                            ▲
-        │       peer discovery via Hyperswarm        │
-        └────────────────────────────────────────────┘
-                   (DHT, no central server)
+   ┌──────────┐                                  ┌──────────┐
+   │ Device A │ ◄─── direct, E2E encrypted ────► │ Device B │
+   └──────────┘                                  └──────────┘
+      │    ▲                                        ▲    │
+      │    └───── discovery via Hyperswarm DHT ─────┘    │
+      │             (hash of join code only)             │
+      │                                                  │
+      │            ┌───────────────────────┐             │
+      └──────────► │ Relay (fallback only) │ ◄───────────┘
+                   │ forwards encrypted    │
+                   │ bytes it can't read   │
+                   └───────────────────────┘
 ```
 
 ### Under the hood
@@ -110,7 +120,7 @@ AlterSend is built on [Hyperswarm](https://github.com/holepunchto/hyperswarm), a
 1. **A random 32-byte key is generated** for each transfer (`crypto.randomBytes(32)`). That 64-char hex string _is_ the join code you share.
 2. **Peers rendezvous on a hash of that key, not the key itself.** Both sides compute the same discovery key — a BLAKE2b hash derived from the join code — and join the DHT on that. The raw key never leaves your device, only its hash is published.
 3. **Public bootstrap nodes are the only entry point.** A handful of them get peers onto the DHT. After that, no central server is involved in discovery. Most transfers are direct peer-to-peer; when a direct connection can't be established — usually because both peers are behind symmetric NAT (for example both on a VPN) — the transfer falls back to a **relay** that forwards the already-encrypted stream between them without ever seeing file contents. It's on by default and can be turned off in Settings → Relay.
-4. **The connection is end-to-end encrypted.** Peers connect over a Noise-encrypted socket, and the sender shares its [Hyperdrive](https://github.com/holepunchto/hyperdrive) key over that channel. Files are imported into the sender's local Hyperdrive, replicated to the receiver's, then written out to disk — so in v1 each side needs roughly **2× the transfer size** in free space while a transfer runs. _(Working to improve this.)_
+4. **The connection is end-to-end encrypted.** Peers connect over a Noise-encrypted socket. The sender reads each file straight off disk in chunks and hashes every one with BLAKE2b; the receiver checks the hash and writes the chunk at its offset in the destination file.
 
 **Pair once, skip the code.** You can pair devices you own so future transfers go straight through — no code to scan or type. Pairing only stores a public device key, the secret stays in your OS keychain, and a paired device is recognized without exposing your identity to anyone else. See [docs/architecture.md](docs/architecture.md#remembered-devices--pairing) for the full design.
 
@@ -138,14 +148,14 @@ cp apps/mobile/.env.example apps/mobile/.env
 ### Run
 
 ```sh
-npm run dev           
-npm run mobile:start  
+npm run dev
+npm run mobile:start
 ```
 
 ### Build
 
 ```sh
-npm run desktop:build  
+npm run desktop:build
 ```
 
 Platform installers (`.dmg`, `.exe`, `.AppImage`) are produced by the release CI workflow — trigger manually from the Actions tab.
@@ -157,7 +167,8 @@ apps/
   desktop/    Electron app — main + renderer + Bare worklet
   mobile/     React Native / Expo app
 packages/
-  core/       P2P protocol — Hyperswarm, Hyperdrive, RPC
+  core/       P2P protocol — Hyperswarm, transfer orchestration, RPC
+  drive/      Chunked file transfer — reads and writes files in place
   domain/     State management — Zustand store, business logic
   components/ Cross-platform UI — React Strict DOM + Tailwind
   locales/   Shared locale metadata, i18next setup, and catalogs
@@ -170,11 +181,11 @@ See [docs/architecture.md](docs/architecture.md) for data flow and inter-process
 
 ### Internationalization
 
-Desktop and mobile share translation catalogs through `@altersend/locales`, currently covering 12 locales. See [docs/i18n.md](docs/i18n.md) for the translation workflow.
+Desktop and mobile share translation catalogs through `@altersend/locales`, currently covering 13 locales. See [docs/i18n.md](docs/i18n.md) for the translation workflow.
 
 ### Tech stack
 
-[Electron](https://electronjs.org) · [React Native](https://reactnative.dev) · [Expo](https://expo.dev) · [Bare](https://bare.pears.com) · [Hyperswarm](https://github.com/holepunchto/hyperswarm) · [Hyperdrive](https://github.com/holepunchto/hyperdrive) · [React Strict DOM](https://github.com/facebook/react-strict-dom) · [Tailwind](https://tailwindcss.com) · [Zustand](https://github.com/pmndrs/zustand)
+[Electron](https://electronjs.org) · [React Native](https://reactnative.dev) · [Expo](https://expo.dev) · [Bare](https://bare.pears.com) · [Hyperswarm](https://github.com/holepunchto/hyperswarm) · [Protomux](https://github.com/holepunchto/protomux) · [Hyperdrive](https://github.com/holepunchto/hyperdrive) · [React Strict DOM](https://github.com/facebook/react-strict-dom) · [Tailwind](https://tailwindcss.com) · [Zustand](https://github.com/pmndrs/zustand)
 
 ### Crash reporting
 

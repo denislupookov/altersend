@@ -18,11 +18,13 @@
     "fairUse": "The relay has limits on transfer size and how many transfers can run at once."
   },
   "rows": {
-    "security": "Security",
     "feedback": "Feedback",
     "feedbackHint": "Report a problem or suggest a feature",
     "discord": "Discord",
+    "x": "X",
     "discordHint": "Join the community",
+    "github": "GitHub",
+    "sponsor": "Support AlterSend",
     "contact": "Contact us",
     "privacyPolicy": "Privacy policy",
     "privacyPolicyHint": "How AlterSend handles your data",
@@ -32,11 +34,6 @@
     "noDevices": "No devices yet",
     "pairedCount": "{{count}} paired",
     "connection": "Relay"
-  },
-  "legal": {
-    "terms": "Terms of Use",
-    "privacy": "Privacy Statement",
-    "sentence": "<terms>Terms of Use</terms> and <privacy>Privacy Statement</privacy>."
   },
   "pairing": {
     "pairNewDevice": "Pair new device",
@@ -56,6 +53,9 @@
     "generating": "Generating...",
     "discard": "Discard",
     "removeDevice": "Remove device",
+    "renameDevice": "Rename device",
+    "nameLabel": "Device name",
+    "namePlaceholder": "Enter device name",
     "pairANewDevice": "Pair a new device",
     "couldNotJoin": "Could not join device",
     "couldNotJoinHint": "Make sure the invite code is still active.",
@@ -73,6 +73,8 @@
     "pairFailed": "Couldn’t pair — try again",
     "deviceRemoved": "Paired device removed",
     "removeFailed": "Could not remove paired device",
+    "deviceRenamed": "Device renamed",
+    "renameFailed": "Could not rename device",
     "deviceActions": "Device actions",
     "pairingDevice": "Pairing Device",
     "couldNotReadImage": "Could not read image",
@@ -85,5 +87,21 @@
     "body": "Pair a device you use often and send to it instantly — no code to scan or type each time.",
     "pairButton": "Pair a Device",
     "skip": "Skip for now"
+  },
+  "downloads": {
+    "title": "Downloads",
+    "autoSaveLabel": "Save files to a folder",
+    "autoSaveDescription": "When off, you'll be asked where to save each transfer.",
+    "change": "Change…",
+    "chooseFolder": "Choose a folder…",
+    "changeFailed": "Couldn't save the download folder",
+    "mediaToPhotosLabel": "Save photos & videos to Photos",
+    "mediaToGalleryLabel": "Save photos & videos to Gallery",
+    "destinationPhotos": "Photos & videos to Photos",
+    "destinationFiles": "Photos & videos to Files",
+    "mediaToPhotosDescription": "When off, they're saved to the AlterSend folder in Files.",
+    "mediaToGalleryDescription": "When off, they're saved to your Downloads folder.",
+    "destinationGallery": "Photos & videos to Gallery",
+    "destinationDownloads": "Photos & videos to Downloads"
   }
 }

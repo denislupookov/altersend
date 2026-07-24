@@ -142,6 +142,11 @@ export const styles = css.create({
     fontSize: tokens.fontSizeSm,
     lineHeight: tokens.lineHeightNormal
   },
+  subtitleWrap: {
+    overflow: 'visible',
+    textOverflow: 'clip',
+    whiteSpace: 'normal'
+  },
   subtitleCompact: {
     fontSize: tokens.fontSizeSm
   },

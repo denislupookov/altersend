@@ -13,7 +13,7 @@ export interface RememberedPeer {
   lastSeenAt: number
 }
 
-const MAX_DISPLAY_NAME_LEN = 256
+export const MAX_DISPLAY_NAME_LEN = 256
 
 function isBoundedString(x: unknown, maxLen: number): x is string {
   return typeof x === 'string' && x.length > 0 && x.length <= maxLen

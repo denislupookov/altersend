@@ -1,7 +1,6 @@
 {
   "app": {
     "name": "AlterSend",
-    "tagline": "기기 간 직접 파일 전송",
     "welcome": "AlterSend에 오신 것을 환영합니다",
     "loadingTagline": "파일은 기기 간에 직접 이동합니다.\n서버도 복사본도 중간자도 없습니다."
   },
@@ -17,6 +16,7 @@
     "connect": "연결",
     "connecting": "연결 중…",
     "done": "완료",
+    "save": "저장",
     "endSession": "세션 종료",
     "restart": "다시 시작",
     "tryAgain": "다시 시도",

@@ -2,7 +2,13 @@ import { html } from 'react-strict-dom'
 import { Button } from '../Button'
 import { styles } from './styles'
 
-export type PeerListCardStatus = 'online' | 'downloading' | 'downloaded' | 'failed' | 'disconnected'
+export type PeerListCardStatus =
+  | 'online'
+  | 'downloading'
+  | 'downloaded'
+  | 'paused'
+  | 'failed'
+  | 'disconnected'
 export type PeerPairState = 'pairable' | 'requested' | 'paired'
 
 export interface PeerListCardEntry {
@@ -25,6 +31,7 @@ const DOT_TONE = {
   online: styles.dotOnline,
   downloading: styles.dotDownloading,
   downloaded: styles.dotDownloaded,
+  paused: styles.dotPaused,
   failed: styles.dotFailed,
   disconnected: styles.dotDisconnected
 } as const
@@ -33,6 +40,7 @@ const TEXT_TONE = {
   online: styles.textOnline,
   downloading: styles.textDownloading,
   downloaded: styles.textDownloaded,
+  paused: styles.textPaused,
   failed: styles.textFailed,
   disconnected: styles.textDisconnected
 } as const
@@ -72,7 +80,7 @@ function PairControl({ entry, onPair }: PeerRowProps) {
   switch (entry.pairState) {
     case 'pairable':
       return (
-        <Button size='sm' variant='secondary' onClick={() => onPair?.(entry.peerKey)}>
+        <Button size='sm' variant='outline' onClick={() => onPair?.(entry.peerKey)}>
           Pair
         </Button>
       )

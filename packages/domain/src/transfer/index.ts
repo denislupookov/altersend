@@ -5,6 +5,7 @@ export * from './store'
 export * from './commands'
 export {
   bindTransferApi,
+  loadPeers,
   type TransferApi,
   type BindTransferApiOptions,
   type ErrorHandler

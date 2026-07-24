@@ -1,0 +1,142 @@
+{
+  "page": {
+    "tabTitle": "Получить",
+    "join": {
+      "title": "Получить файлы",
+      "description": "Введите 64-символьный код подключения от отправителя, чтобы получить файлы.",
+      "mobileDescription": "Отсканируйте или импортируйте QR-код отправителя, или вставьте его 64-символьный код, чтобы начать передачу."
+    },
+    "connecting": {
+      "title": "Подключение",
+      "description": "Установка безопасного сеанса с отправителем."
+    },
+    "incomingTransfer": {
+      "title": "Файлы доступны",
+      "description": "{{count}} {{fileLabel}} · {{size}}",
+      "description_one": "{{count}} файл · {{size}}",
+      "description_other": "{{count}} файла · {{size}}"
+    },
+    "completed": {
+      "title_one": "Файл получен",
+      "title_other": "Файла получено",
+      "downloadsComplete": "Загрузки завершены"
+    },
+    "reconnecting": {
+      "title": "Переподключение",
+      "description": "Переподключаемся к сеансу. Файлы снова станут доступны, как только соединение восстановится.",
+      "panelDescription": "Соединение разорвано. Повторное подключение к сеансу…"
+    },
+    "interrupted": {
+      "title": "Передача не завершена",
+      "description": "Отправитель вышел до того, как все файлы были доставлены."
+    },
+    "handshake": {
+      "title": "Установка соединения",
+      "description": "Завершение безопасного рукопожатия с отправителем."
+    },
+    "sessionEnded": {
+      "title": "Сеанс завершён",
+      "description": "Вернитесь назад, чтобы начать новую передачу."
+    }
+  },
+  "panel": {
+    "filesReadyTitle": "Файлы готовы",
+    "filesReadyDescription": "Отправитель поделился файлами. Просмотрите их и начните загрузку, когда будете готовы.",
+    "receivedFiles": "Полученные файлы"
+  },
+  "form": {
+    "codeLabel": "Код подключения",
+    "codePlaceholder": "Вставьте код…",
+    "orPasteCode": "или вставьте код подключения"
+  },
+  "actions": {
+    "scanQr": "Сканировать QR-код",
+    "allowCamera": "Разрешить камеру",
+    "downloadAll": "Скачать всё",
+    "view": "Просмотр",
+    "play": "Воспроизвести",
+    "open": "Открыть",
+    "scanQrHint": "Используйте веб-камеру для сканирования QR отправителя",
+    "downloadingPercent": "Загрузка {{percent}}%",
+    "downloadAllWithSize": "Скачать всё ({{size}})",
+    "showInFinder": "Показать в Finder",
+    "backToHome": "На главную",
+    "viewPhotos": "Открыть фото",
+    "scanOrImportQr": "Сканировать или импортировать QR",
+    "scanOrImportQrHintDesktop": "Используйте веб-камеру или импортируйте сохранённое QR-изображение",
+    "scanOrImportQrHintMobile": "Используйте камеру или импортируйте сохранённое изображение",
+    "importImage": "Импортировать изображение",
+    "importFromImage": "Импортировать из изображения",
+    "resume": "Возобновить",
+    "stop": "Остановить",
+    "resumeAll": "Возобновить все"
+  },
+  "errors": {
+    "invalidCode": "Введите корректный 64-символьный шестнадцатеричный код.",
+    "invalidKey": "Введите корректный 64-символьный шестнадцатеричный ключ.",
+    "joinFailed": "Не удалось присоединиться к сеансу.",
+    "unreachable": "Не удалось связаться с отправителем. Проверьте код и попробуйте снова.",
+    "unsupportedQrTitle": "Неподдерживаемый QR-код",
+    "unsupportedQrHint": "Отсканируйте код подключения AlterSend.",
+    "mobileJoinFailedTitle": "Не удалось присоединиться",
+    "mobileJoinFailedHint": "Попробуйте отсканировать снова или вставьте код вручную.",
+    "cameraUnavailable": "Камера недоступна.",
+    "cameraCouldNotStart": "Не удалось запустить камеру. Вставьте код подключения вручную.",
+    "downloadFailed": "Ошибка",
+    "didntArrive": "Не доставлен",
+    "transferIssue": "Проблема передачи",
+    "imageNoQrTitle": "QR-код не найден",
+    "imageNoQrHint": "Выберите изображение с QR-кодом AlterSend.",
+    "imageUnsupportedQrHint": "Это изображение не является кодом подключения AlterSend.",
+    "imageReadFailedTitle": "Не удалось прочитать изображение"
+  },
+  "camera": {
+    "preparingTitle": "Подготовка камеры",
+    "preparingDescription": "Проверка доступа к камере для сканирования QR-кода отправителя.",
+    "accessNeededTitle": "Требуется доступ к камере",
+    "accessNeededDescription": "Разрешите доступ к камере для сканирования QR-кода подключения отправителя.",
+    "scanTitle": "Сканировать QR-код",
+    "scanDescription": "Поместите QR-код отправителя в рамку. AlterSend подключится автоматически.",
+    "desktopHint": "Направьте QR-код отправителя на веб-камеру — AlterSend подключится автоматически.",
+    "blockedTitle": "Доступ к камере заблокирован",
+    "blockedHint": "Разрешите доступ к камере для AlterSend в системных настройках, затем попробуйте снова. Вы также можете вставить код вручную.",
+    "noneTitle": "Камера не найдена",
+    "noneHint": "Подключите веб-камеру для сканирования или вставьте код подключения вручную.",
+    "unavailableTitle": "Камера недоступна",
+    "starting": "Запуск камеры…",
+    "enableTitle": "Включите доступ к камере",
+    "enableDescription": "Камера нужна только для сканирования QR-кода отправителя. Вы можете вернуться и вставить код вручную.",
+    "usePastedCode": "Использовать вставленный код",
+    "joiningDescription": "Подключение к сеансу отправителя.",
+    "scanImportTitle": "Сканировать или импортировать QR",
+    "scanImportDescription": "Поместите QR-код отправителя в рамку или импортируйте сохранённое изображение. AlterSend подключится автоматически.",
+    "desktopImportHint": "Поместите QR-код отправителя в рамку или импортируйте сохранённое изображение. AlterSend подключится автоматически.",
+    "enableImportDescription": "Камера нужна только для сканирования QR-кода. Вы также можете импортировать сохранённое изображение или вставить код вручную."
+  },
+  "status": {
+    "ready": "Готово",
+    "saved": "Сохранено",
+    "failed": "Ошибка",
+    "paused": "Приостановлено",
+    "resuming": "Возобновление…",
+    "waiting": "Ожидание…",
+    "downloadingPercent": "Загрузка {{percent}}%",
+    "percent": "{{percent}}%",
+    "waitingForFiles": "Ожидание файлов от отправителя…"
+  },
+  "summary": {
+    "receivedCount_one": "Получено {{completed}} из {{count}} файла",
+    "receivedCount_other": "Получено {{completed}} из {{count}} файла",
+    "savedToPhotos_one": "Сохранено в фото",
+    "savedToPhotos_other": "{{count}} сохранено в фото",
+    "savedInFiles_one": "Сохранено в файлах",
+    "savedInFiles_other": "{{count}} сохранено в файлах",
+    "tapToView": "Нажмите для просмотра",
+    "saved": "сохранено",
+    "savedToLocation": "сохранено в {{location}}",
+    "receivedProgress": "{{completed}} из {{count}} получено",
+    "senderLeftBeforeFinishing": "Отправитель вышел до завершения.",
+    "filesSaved_one": "{{count}} файл сохранён",
+    "filesSaved_other": "{{count}} файла сохранено"
+  }
+}

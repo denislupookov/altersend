@@ -18,11 +18,13 @@
     "fairUse": "中继对传输大小和同时进行的传输数量有限制。"
   },
   "rows": {
-    "security": "安全",
     "feedback": "反馈",
     "feedbackHint": "报告问题或建议功能",
     "discord": "Discord",
+    "x": "X",
     "discordHint": "加入社区",
+    "github": "GitHub",
+    "sponsor": "支持 AlterSend",
     "contact": "联系我们",
     "privacyPolicy": "隐私政策",
     "privacyPolicyHint": "AlterSend 如何处理您的数据",
@@ -32,11 +34,6 @@
     "noDevices": "暂无设备",
     "pairedCount": "已配对 {{count}} 台",
     "connection": "中继"
-  },
-  "legal": {
-    "terms": "使用条款",
-    "privacy": "隐私声明",
-    "sentence": "<terms>使用条款</terms>和<privacy>隐私声明</privacy>。"
   },
   "pairing": {
     "pairNewDevice": "配对新设备",
@@ -56,6 +53,9 @@
     "generating": "正在生成...",
     "discard": "放弃",
     "removeDevice": "移除设备",
+    "renameDevice": "重命名设备",
+    "nameLabel": "设备名称",
+    "namePlaceholder": "输入设备名称",
     "pairANewDevice": "配对新设备",
     "couldNotJoin": "无法连接设备",
     "couldNotJoinHint": "请确认邀请码仍然有效。",
@@ -73,6 +73,8 @@
     "pairFailed": "配对失败 — 请重试",
     "deviceRemoved": "已移除配对设备",
     "removeFailed": "无法移除配对设备",
+    "deviceRenamed": "已重命名设备",
+    "renameFailed": "无法重命名设备",
     "deviceActions": "设备操作",
     "pairingDevice": "正在配对设备",
     "couldNotReadImage": "无法读取图片",
@@ -85,5 +87,21 @@
     "body": "配对常用设备，即可即时发送 — 无需每次扫描或输入代码。",
     "pairButton": "配对设备",
     "skip": "暂时跳过"
+  },
+  "downloads": {
+    "title": "下载",
+    "autoSaveLabel": "保存到文件夹",
+    "autoSaveDescription": "关闭后，每次传输都会询问保存位置。",
+    "change": "更改…",
+    "chooseFolder": "选择文件夹…",
+    "changeFailed": "无法保存下载文件夹",
+    "mediaToPhotosLabel": "将照片和视频保存到“照片”",
+    "mediaToGalleryLabel": "将照片和视频保存到相册",
+    "destinationPhotos": "照片和视频保存到“照片”",
+    "destinationFiles": "照片和视频保存到“文件”",
+    "mediaToPhotosDescription": "关闭后，将保存到“文件”中的 AlterSend 文件夹。",
+    "mediaToGalleryDescription": "关闭后，将保存到下载文件夹。",
+    "destinationGallery": "照片和视频保存到相册",
+    "destinationDownloads": "照片和视频保存到下载"
   }
 }
