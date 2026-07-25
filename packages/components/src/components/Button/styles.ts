@@ -50,6 +50,15 @@ export const styles = css.create({
     gap: tokens.space2,
     fontSize: tokens.fontSizeLg
   },
+  stack: {
+    flexDirection: 'column',
+    gap: tokens.space2,
+    paddingLeft: tokens.space2,
+    paddingRight: tokens.space2
+  },
+  stackText: {
+    whiteSpace: 'normal'
+  },
   full: {
     width: '100%'
   },

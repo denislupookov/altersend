@@ -30,6 +30,8 @@ export const initialTransferSessionState: TransferSessionState = {
   connectionState: 'disconnected',
   connectionType: null,
   connectionTypes: {},
+  webPeers: {},
+  outdatedPeers: {},
   transferPeerKey: null,
   role: null,
   peerCount: 0,
@@ -67,6 +69,15 @@ function clearError(state: TransferSessionState): TransferSessionState {
     : { ...state, errorCode: null, errorMessage: null }
 }
 
+function flagPeer(
+  state: TransferSessionState,
+  field: 'webPeers' | 'outdatedPeers',
+  peer: string
+): TransferSessionState {
+  if (state.role !== 'sender' || state[field][peer]) return state
+  return { ...state, [field]: { ...state[field], [peer]: true } }
+}
+
 function mergeIncomingFileOffers(
   current: TransferSessionState['incomingFileOffers'],
   nextFiles: TransferSessionState['incomingFileOffers']
@@ -91,6 +102,8 @@ function endSession(state: TransferSessionState): TransferSessionState {
     connectionState: 'disconnected',
     connectionType: null,
     connectionTypes: {},
+    webPeers: {},
+    outdatedPeers: {},
     transferPeerKey: null,
     peerCount: 0,
     topic: '',
@@ -161,6 +174,10 @@ export function transferSessionReducer(
         connectionType: deriveConnectionType(connectionTypes, state.transferPeerKey)
       }
     }
+    case 'peer_client_changed':
+      return flagPeer(state, 'webPeers', action.peer)
+    case 'peer_outdated':
+      return flagPeer(state, 'outdatedPeers', action.peer)
     case 'reconnecting':
       return { ...state, isReconnecting: true }
     case 'clear_session':
@@ -280,6 +297,8 @@ export function transferSessionReducer(
         connectionState: 'joining',
         connectionType: null,
         connectionTypes: {},
+        webPeers: {},
+        outdatedPeers: {},
         transferPeerKey: null,
         peerCount: 0,
         errorCode: null,

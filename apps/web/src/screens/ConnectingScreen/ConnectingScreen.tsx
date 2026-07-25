@@ -1,7 +1,7 @@
-import { LinkRow, RowGroup, Spinner, useTheme } from '@altersend/components'
+import { Badge, LinkRow, RowGroup, Spinner, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
-import { Card, CardFooter, CardStatusRow, ScreenIntro, StatusPill } from '../../components'
-import type { ConnectStage } from '../../transfer/webReceiver'
+import { Card, CardFooter, CardStatusRow, ScreenIntro } from '../../components'
+import type { ConnectStage } from '../../transfer'
 
 const SKELETON_ROWS = [
   { label: '70%', meta: '30%' },
@@ -23,9 +23,13 @@ export function ConnectingScreen({ stage }: { stage: ConnectStage | null }) {
       <Card>
         <CardStatusRow
           status={
-            <StatusPill icon={<Spinner size={14} color={theme.colors.colorTextMuted} />}>
+            <Badge
+              pill
+              tone='muted'
+              icon={<Spinner size={14} color={theme.colors.colorTextMuted} />}
+            >
               {t('common:actions.connecting')}
-            </StatusPill>
+            </Badge>
           }
           meta={<div className='h-4 w-[110px] rounded-full bg-surface-secondary' />}
         />

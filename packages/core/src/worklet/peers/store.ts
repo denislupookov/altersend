@@ -1,14 +1,13 @@
 import HyperDB, { type HyperDBInstance } from 'hyperdb'
 import definition from '../../../schema/spec/hyperdb/index.js'
 import { type RememberedPeer, mergeRememberedPeer, isValidRememberedPeer } from './remembered-peer'
+import { normalizeKey } from './normalize-key'
 
 const COLLECTION = '@altersend/remembered-peers'
 
 const OPEN_TIMEOUT_MS = 4000
 
 type PeerPatch = Partial<Omit<RememberedPeer, 'remoteDevicePubkey'>>
-
-const normalizeKey = (pubkeyHex: string): string => pubkeyHex.toLowerCase()
 
 function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
   return new Promise<T>((resolve, reject) => {

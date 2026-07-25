@@ -54,12 +54,12 @@ export function getMetaLabel(t: Translate, summary: DownloadSummary): string {
   return t('receive:page.incomingTransfer.description', { count: summary.count, size })
 }
 
-export function getHintLabel(t: Translate, summary: DownloadSummary): string {
+export function getHintLabel(t: Translate, summary: DownloadSummary): string | null {
   if (summary.allDownloaded) {
     return t('web:download.savedToDownloads', {
       files: t('common:files.count', { count: summary.count })
     })
   }
   if (summary.isDownloading) return t('web:download.keepTabOpen')
-  return t('web:download.saveHint')
+  return null
 }

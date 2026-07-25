@@ -1,11 +1,11 @@
 import { ExternalLink } from '@altersend/components'
 import {
   discordUrl,
+  downloadUrl,
   githubUrl,
   privacyPolicyUrl,
   supportEmail,
   termsOfServiceUrl,
-  websiteUrl,
   xUrl
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
@@ -39,10 +39,12 @@ export function Footer() {
   const { t } = useTranslation(['web'])
 
   return (
-    <footer className={`mt-auto flex ${BLOCK_WIDTH} items-center justify-between gap-4 pt-14`}>
+    <footer
+      className={`mt-auto flex ${BLOCK_WIDTH} flex-col items-center gap-4 pt-10 sm:flex-row sm:justify-between sm:pt-14`}
+    >
       <div className='flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-faint'>
         <span>© {new Date().getFullYear()} AlterSend</span>
-        <ExternalLink href={websiteUrl}>{t('web:footer.getApp')}</ExternalLink>
+        <ExternalLink href={downloadUrl}>{t('web:footer.getApp')}</ExternalLink>
         <ExternalLink href={privacyPolicyUrl}>{t('web:footer.privacy')}</ExternalLink>
         <ExternalLink href={termsOfServiceUrl}>{t('web:footer.terms')}</ExternalLink>
         <ExternalLink href={`mailto:${supportEmail}`}>{t('web:footer.help')}</ExternalLink>

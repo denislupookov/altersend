@@ -1,10 +1,8 @@
 import Protomux from 'protomux'
 import c from 'compact-encoding'
 import { DRIVE_PROTOCOL, chunkEncoding } from '@altersend/drive/transport'
+import { CONTROL_PROTOCOL, PROTOCOL_VERSION } from '@altersend/core/protocol'
 import type { ChunkHeader, ControlMessage as DriveMessage, DriveChannel } from '@altersend/drive'
-
-const PROTOCOL_VERSION = 1
-const CONTROL_PROTOCOL = 'altersend/control'
 
 export type { FileOffer, TextOffer } from '@altersend/core'
 import type { TransferOffer } from '@altersend/core'

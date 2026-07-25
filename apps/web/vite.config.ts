@@ -5,9 +5,6 @@ import viteBabel from 'vite-plugin-babel'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { join, resolve } from 'path'
 
-// Mirrors apps/desktop's renderer build (react-strict-dom + stylex + tailwind v4)
-// and adds node polyfills for the holepunch client stack (dht-relay / protomux /
-// sodium). @altersend/core is stubbed — the web build never runs Bare code.
 export default defineConfig(async ({ mode }) => {
   const workspaceRoot = resolve(__dirname, '../..')
   const dev = mode !== 'production'
@@ -60,7 +57,6 @@ export default defineConfig(async ({ mode }) => {
       tailwindcss()
     ],
     root: join(__dirname, 'src'),
-    // root is src/, so point publicDir at the app's own public/ folder.
     publicDir: join(__dirname, 'public'),
     envDir: __dirname,
     base: './',
@@ -86,6 +82,14 @@ export default defineConfig(async ({ mode }) => {
         {
           find: /^react-dom\/client$/,
           replacement: resolve(workspaceRoot, 'node_modules/react-dom/client.js')
+        },
+        {
+          find: /^@altersend\/core\/protocol$/,
+          replacement: resolve(__dirname, '../../packages/core/src/worklet/transfer/protocol.ts')
+        },
+        {
+          find: /^@altersend\/core\/topic-auth$/,
+          replacement: resolve(__dirname, '../../packages/core/src/worklet/transfer/topic-auth.ts')
         },
         {
           find: /^@altersend\/core$/,

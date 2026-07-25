@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
-import { buildPairUrl } from '@altersend/domain'
+import { Modal } from '@altersend/components'
+import { buildPairUrl, useCopiedFlag } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
-import { Modal } from '../Modal'
 import { QRCode } from '../QRCode'
 import { TopicCopyButton } from '../../pages/SendPage/TopicCopyButton'
 
@@ -12,26 +11,25 @@ interface PairingQrModalProps {
 }
 
 export function PairingQrModal({ open, topic, onClose }: PairingQrModalProps) {
-  const { t } = useTranslation(['settings'])
-  const [copied, setCopied] = useState(false)
+  const { t } = useTranslation(['settings', 'common'])
+  const { copiedId, flashCopied } = useCopiedFlag()
+  const copied = copiedId === 'topic'
   const pairUrl = topic ? buildPairUrl(topic) : ''
-
-  useEffect(() => {
-    if (!open) {
-      setCopied(false)
-    }
-  }, [open])
 
   const handleCopy = async () => {
     if (!topic) return
     await navigator.clipboard.writeText(topic)
-    setCopied(true)
-
-    setTimeout(() => setCopied(false), 2000)
+    flashCopied('topic')
   }
 
   return (
-    <Modal open={open} title={t('settings:pairing.showQrCode')} width={636} onClose={onClose}>
+    <Modal
+      closeLabel={t('common:actions.close')}
+      open={open}
+      title={t('settings:pairing.showQrCode')}
+      width={636}
+      onClose={onClose}
+    >
       <div className='flex justify-center px-4 pb-2 pt-1'>
         <QRCode
           value={pairUrl}

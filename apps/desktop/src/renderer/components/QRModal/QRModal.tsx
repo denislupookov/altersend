@@ -1,6 +1,6 @@
 import { buildJoinUrl } from '@altersend/domain'
+import { Modal } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
-import { Modal } from '../Modal'
 import { QRCode } from '../QRCode'
 
 interface QRModalProps {
@@ -16,6 +16,7 @@ export function QRModal({ topic, open, onClose }: QRModalProps) {
 
   return (
     <Modal
+      closeLabel={t('common:actions.close')}
       open={open}
       title={t('send:connection.scanToConnect')}
       subtitle={t('send:connection.qrModalDescription')}

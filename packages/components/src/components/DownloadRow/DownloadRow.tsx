@@ -32,6 +32,7 @@ export interface DownloadRowProps {
   transferActive: boolean
   isFirst?: boolean
   compact?: boolean
+  standalone?: boolean
   onResume: (offer: FileOffer, targetPath: string) => void
   onPause: (offer: FileOffer) => void
   onOpen: (offer: FileOffer, savedTo: string) => void
@@ -48,6 +49,7 @@ interface FileRowProps extends RowHandlers {
   transferActive: boolean
   isFirst?: boolean
   compact?: boolean
+  standalone?: boolean
 }
 
 function runRowAction(
@@ -80,6 +82,7 @@ function FileRow({
   transferActive,
   isFirst = false,
   compact = false,
+  standalone = false,
   onResume,
   onPause,
   onOpen
@@ -92,7 +95,8 @@ function FileRow({
   return (
     <LinkRow
       file
-      bare
+      bare={!standalone}
+      standalone={standalone}
       compact={compact}
       isFirst={isFirst}
       label={offer.name}
@@ -119,6 +123,8 @@ function FolderRow({
   labelsFor,
   transferActive,
   isFirst = false,
+  compact = false,
+  standalone = false,
   onResume,
   onPause,
   onOpen,
@@ -135,8 +141,9 @@ function FolderRow({
     <>
       <LinkRow
         icon={<FolderIcon size={16} />}
-        bare
-        compact
+        bare={!standalone}
+        standalone={standalone}
+        compact={compact}
         isFirst={isFirst}
         label={folder.name}
         size={folder.totalSize}

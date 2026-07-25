@@ -56,6 +56,12 @@ export function shortKey(hex: string | null | undefined): string {
 }
 
 const HEX_KEY_RE = /^[0-9a-f]{64}$/i
+export const MAX_DISPLAY_NAME_LEN = 256
+
+export function isBoundedString(x: unknown, maxLen: number): x is string {
+  return typeof x === 'string' && x.length > 0 && x.length <= maxLen
+}
+
 export function isValidHexKey(value: unknown): value is string {
   return typeof value === 'string' && HEX_KEY_RE.test(value)
 }

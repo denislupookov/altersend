@@ -3,7 +3,6 @@
     "title": "Télécharger les fichiers partagés",
     "description": "Collez le code de transfert que l’expéditeur vous a donné pour vous connecter.",
     "codeLabel": "Code de transfert",
-    "linkHint": "Vous avez ouvert un lien complet ? La connexion se fait automatiquement.",
     "invalidCode": "Cela ne ressemble pas à un code de transfert valide."
   },
   "connecting": {
@@ -24,7 +23,6 @@
     "complete": "{{size}} · terminé",
     "savedToDownloads": "{{files}} enregistrés dans Téléchargements",
     "keepTabOpen": "Téléchargement en cours — gardez cet onglet ouvert",
-    "saveHint": "Les téléchargements sont enregistrés dans le dossier Téléchargements de votre navigateur",
     "enterAnother": "Saisir un autre code"
   },
   "errors": {
@@ -37,5 +35,29 @@
     "privacy": "Confidentialité",
     "terms": "Conditions",
     "help": "Aide"
+  },
+  "promo": {
+    "title": "Envoyé avec AlterSend",
+    "subtitle": "Téléchargez l’app pour envoyer vos propres fichiers",
+    "getFor": "Obtenir pour {{os}}",
+    "getApp": "Télécharger l’app"
+  },
+  "disconnected": {
+    "title": "L’expéditeur s’est déconnecté",
+    "description": "Les transferts AlterSend sont pair-à-pair : les deux côtés doivent être en ligne. Demandez à l’expéditeur de rouvrir le transfert, puis reconnectez-vous.",
+    "summary_complete": "Les {{total}} fichiers ont été téléchargés avant la coupure du lien.",
+    "allReceived": "Tous les fichiers reçus",
+    "completeTitle": "Transfert terminé",
+    "completeDescription": "L’expéditeur s’est déconnecté, mais tous les fichiers sont bien arrivés — tout est prêt.",
+    "waitingTitle": "En attente de la reconnexion de l’expéditeur",
+    "waitingBody": "La connexion a été interrompue. Dès qu’il rouvre le transfert, reprenez où vous en étiez.",
+    "alreadySaved": "{{completed}} fichiers sur {{total}} déjà enregistrés",
+    "tryNow": "Réessayer",
+    "anotherCode": "Autre code"
+  },
+  "sendBack": {
+    "title": "Envoyer des fichiers en retour ?",
+    "description": "Téléchargez l’app AlterSend pour envoyer des fichiers de toute taille — chiffrés de bout en bout, sans compte.",
+    "maybeLater": "Plus tard"
   }
 }

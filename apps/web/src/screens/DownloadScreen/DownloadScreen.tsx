@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   DownloadRow,
   ReceivedTextRow,
@@ -8,11 +9,13 @@ import {
 } from '@altersend/components'
 import { ArrowLeftIcon, CheckIcon, DownloadIcon, PlayIcon } from '@altersend/components/icons'
 import { getDownloadRowLabels, getPrimaryDownloadLabel, useCopiedFlag } from '@altersend/domain'
+import { useEffect, useState } from 'react'
 import { useTranslation } from '@altersend/locales'
-import { Card, CardFooter, CardStatusRow, ScreenIntro, StatusPill } from '../../components'
+import { Card, CardFooter, CardStatusRow, ScreenIntro, SendBackModal } from '../../components'
 import type { TextOffer } from '../../transfer/peerProtocol'
 import type { TransferFile } from '../../types'
 import { getHintLabel, getMetaLabel, getStatusLabel, getTitleLabel } from './downloadView'
+import { useIsCompact } from '../../useIsCompact'
 import { useDownloadSummary } from './useDownloadSummary'
 
 export interface DownloadScreenProps {
@@ -42,6 +45,18 @@ export function DownloadScreen({
   const { theme } = useTheme()
   const { copiedId, flashCopied } = useCopiedFlag()
   const summary = useDownloadSummary(files, texts)
+  const [promptDismissed, setPromptDismissed] = useState(false)
+  const [promptReady, setPromptReady] = useState(false)
+  const isPhone = useIsCompact()
+
+  useEffect(() => {
+    if (!summary.allDownloaded) {
+      setPromptReady(false)
+      return
+    }
+    const timer = setTimeout(() => setPromptReady(true), 1000)
+    return () => clearTimeout(timer)
+  }, [summary.allDownloaded])
 
   const copyText = (offer: TextOffer) => {
     navigator.clipboard
@@ -50,6 +65,24 @@ export function DownloadScreen({
       .catch((err) => console.warn('Failed to copy text', err))
   }
 
+  const renderRow = (row: (typeof summary.rows)[number], index: number) => (
+    <DownloadRow
+      key={rowKey(row)}
+      row={row}
+      states={summary.states}
+      labelsFor={(display) => getDownloadRowLabels(t, display)}
+      transferActive={summary.isDownloading}
+      isFirst={index === 0}
+      compact
+      standalone={isPhone}
+      onResume={(offer) => onDownload([offer.id])}
+      onPause={(offer) => onPause([offer.id])}
+      onOpen={noop}
+      onPauseFolder={(offers) => onPause(offers.map((offer) => offer.id))}
+      onResumeFolder={(offers) => onDownload(offers.map((offer) => offer.id))}
+    />
+  )
+
   return (
     <>
       <ScreenIntro
@@ -57,49 +90,39 @@ export function DownloadScreen({
         description={t('web:download.description')}
       />
 
-      <Card>
+      <Card bare={isPhone}>
         <CardStatusRow
           status={
-            <StatusPill
+            <Badge
+              pill
               tone='success'
+              dot={!summary.allDownloaded}
               icon={
                 summary.allDownloaded ? (
                   <CheckIcon size={14} color={theme.colors.colorSuccess} />
-                ) : (
-                  <span className='h-[7px] w-[7px] rounded-full bg-success' />
-                )
+                ) : undefined
               }
             >
               {getStatusLabel(t, summary)}
-            </StatusPill>
+            </Badge>
           }
           meta={
-            <span className='text-sm tabular-nums text-text-muted'>{getMetaLabel(t, summary)}</span>
+            <span className='text-[16px] tabular-nums text-text-muted sm:text-[15px]'>
+              {getMetaLabel(t, summary)}
+            </span>
           }
         />
 
-        {summary.rows.length > 0 && (
-          <RowGroup title={t('common:files.files')}>
-            <div className='max-h-[min(46vh,380px)] overflow-y-auto'>
-              {summary.rows.map((row, index) => (
-                <DownloadRow
-                  key={rowKey(row)}
-                  row={row}
-                  states={summary.states}
-                  labelsFor={(display) => getDownloadRowLabels(t, display)}
-                  transferActive={summary.isDownloading}
-                  isFirst={index === 0}
-                  compact
-                  onResume={(offer) => onDownload([offer.id])}
-                  onPause={(offer) => onPause([offer.id])}
-                  onOpen={noop}
-                  onPauseFolder={(offers) => onPause(offers.map((offer) => offer.id))}
-                  onResumeFolder={(offers) => onDownload(offers.map((offer) => offer.id))}
-                />
-              ))}
-            </div>
-          </RowGroup>
-        )}
+        {summary.rows.length > 0 &&
+          (isPhone ? (
+            <div className='mt-4 flex flex-col gap-2'>{summary.rows.map(renderRow)}</div>
+          ) : (
+            <RowGroup title={t('common:files.files')}>
+              <div className='max-h-[min(46vh,380px)] overflow-y-auto'>
+                {summary.rows.map(renderRow)}
+              </div>
+            </RowGroup>
+          ))}
 
         {texts.length > 0 && (
           <div className={summary.rows.length > 0 ? 'mt-5' : undefined}>
@@ -144,7 +167,8 @@ export function DownloadScreen({
               onClick={() =>
                 summary.primaryAction === 'resume-all' ? onResumeAll() : onDownloadAll()
               }
-              size='sm'
+              size={isPhone ? 'lg' : 'sm'}
+              width={isPhone ? 'full' : 'auto'}
               variant={summary.primaryAction === 'downloading' ? 'secondary' : 'primary'}
             >
               {getPrimaryDownloadLabel(t, summary.primaryAction, {
@@ -153,18 +177,30 @@ export function DownloadScreen({
               })}
             </Button>
           ) : (
-            <Button size='sm' variant='secondary' onClick={onReset}>
+            <Button
+              size={isPhone ? 'lg' : 'sm'}
+              width={isPhone ? 'full' : 'auto'}
+              variant='primary'
+              onClick={onReset}
+            >
               {t('common:actions.done')}
             </Button>
           )}
         </CardFooter>
       </Card>
 
-      <div className='mt-6'>
-        <Button variant='ghost' size='sm' icon={<ArrowLeftIcon size={16} />} onClick={onReset}>
-          {t('web:download.enterAnother')}
-        </Button>
-      </div>
+      {!summary.allDownloaded && (
+        <div className='mt-6 flex w-full justify-start sm:w-auto sm:justify-center'>
+          <Button variant='ghost' size='sm' icon={<ArrowLeftIcon size={16} />} onClick={onReset}>
+            {t('web:download.enterAnother')}
+          </Button>
+        </div>
+      )}
+
+      <SendBackModal
+        open={promptReady && !promptDismissed}
+        onClose={() => setPromptDismissed(true)}
+      />
     </>
   )
 }

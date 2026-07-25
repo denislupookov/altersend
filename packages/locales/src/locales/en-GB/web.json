@@ -3,7 +3,6 @@
     "title": "Download shared files",
     "description": "Paste the transfer code your sender gave you to connect.",
     "codeLabel": "Transfer code",
-    "linkHint": "Opened a full link instead? It connects automatically.",
     "invalidCode": "That doesn’t look like a valid transfer code."
   },
   "connecting": {
@@ -24,7 +23,6 @@
     "complete": "{{size}} · complete",
     "savedToDownloads": "{{files}} saved to Downloads",
     "keepTabOpen": "Downloading — keep this tab open",
-    "saveHint": "Downloads save to your browser’s Downloads folder",
     "enterAnother": "Enter another code"
   },
   "errors": {
@@ -37,5 +35,29 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "help": "Help"
+  },
+  "promo": {
+    "title": "Sent with AlterSend",
+    "subtitle": "Get the app to send files of your own",
+    "getFor": "Get for {{os}}",
+    "getApp": "Download the app"
+  },
+  "disconnected": {
+    "title": "The sender disconnected",
+    "description": "AlterSend transfers are peer-to-peer, so the connection needs both sides online. Ask the sender to reopen the transfer, then reconnect.",
+    "summary_complete": "All {{total}} files were downloaded before the link dropped.",
+    "allReceived": "All files received",
+    "completeTitle": "Transfer complete",
+    "completeDescription": "The sender went offline, but every file arrived — you’re all set.",
+    "waitingTitle": "Waiting for the sender to reconnect",
+    "waitingBody": "The connection dropped. Once they reopen the transfer, pick up where you left off.",
+    "alreadySaved": "{{completed}} of {{total}} files already saved",
+    "tryNow": "Try now",
+    "anotherCode": "Another code"
+  },
+  "sendBack": {
+    "title": "Want to send files back?",
+    "description": "Get the AlterSend app to send files of any size — end-to-end encrypted, no account needed.",
+    "maybeLater": "Maybe later"
   }
 }

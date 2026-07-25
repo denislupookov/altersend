@@ -16,6 +16,7 @@ import {
 } from '../rpc/events'
 import { BadRequestError, type InviteDeviceReply, type InviteResponseReply } from '../rpc/protocol'
 import { relayThrough } from '../relay/config'
+import { normalizeKey } from './normalize-key'
 
 export const INVITE_WAIT_MS = 30_000
 
@@ -51,8 +52,6 @@ interface SessionWaiter {
   resolve: (session: DiscoverySession | null) => void
   timer: ReturnType<typeof setTimeout>
 }
-
-const normalizeKey = (hex: string): string => hex.toLowerCase()
 
 export class DiscoveryCoordinator {
   private readonly deps: DiscoveryDeps

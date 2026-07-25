@@ -3,7 +3,6 @@
     "title": "공유된 파일 다운로드",
     "description": "보낸 사람에게 받은 전송 코드를 붙여넣어 연결하세요.",
     "codeLabel": "전송 코드",
-    "linkHint": "전체 링크를 열었나요? 자동으로 연결됩니다.",
     "invalidCode": "올바른 전송 코드가 아닌 것 같습니다."
   },
   "connecting": {
@@ -24,7 +23,6 @@
     "complete": "{{size}} · 완료",
     "savedToDownloads": "{{files}}을(를) 다운로드에 저장했습니다",
     "keepTabOpen": "다운로드 중 — 이 탭을 열어 두세요",
-    "saveHint": "다운로드는 브라우저의 다운로드 폴더에 저장됩니다",
     "enterAnother": "다른 코드 입력"
   },
   "errors": {
@@ -37,5 +35,29 @@
     "privacy": "개인정보",
     "terms": "약관",
     "help": "도움말"
+  },
+  "promo": {
+    "title": "AlterSend로 전송됨",
+    "subtitle": "앱을 받아 직접 파일을 보내세요",
+    "getFor": "{{os}}용 받기",
+    "getApp": "앱 다운로드"
+  },
+  "disconnected": {
+    "title": "보낸 사람의 연결이 끊어졌습니다",
+    "description": "AlterSend 전송은 P2P 방식이라 양쪽 모두 온라인이어야 합니다. 보낸 사람에게 전송을 다시 열어 달라고 요청한 뒤 다시 연결하세요.",
+    "summary_complete": "연결이 끊기기 전에 {{total}}개 파일을 모두 다운로드했습니다.",
+    "allReceived": "모든 파일 수신됨",
+    "completeTitle": "전송 완료",
+    "completeDescription": "보낸 사람이 오프라인이 되었지만 모든 파일이 도착했습니다. 모두 준비되었습니다.",
+    "waitingTitle": "보낸 사람의 재연결을 기다리는 중",
+    "waitingBody": "연결이 끊겼습니다. 보낸 사람이 전송을 다시 열면 이어서 받을 수 있습니다.",
+    "alreadySaved": "{{total}}개 중 {{completed}}개 저장됨",
+    "tryNow": "지금 시도",
+    "anotherCode": "다른 코드"
+  },
+  "sendBack": {
+    "title": "파일을 되보내시겠어요?",
+    "description": "AlterSend 앱을 받으면 크기 제한 없이 파일을 보낼 수 있습니다. 종단 간 암호화, 계정 불필요.",
+    "maybeLater": "나중에"
   }
 }

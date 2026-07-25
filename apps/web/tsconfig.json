@@ -11,6 +11,8 @@
     "moduleSuffixes": [".web", ""],
     "paths": {
       "@altersend/core": ["./src/stubs/altersend-core.ts"],
+      "@altersend/core/topic-auth": ["../../packages/core/src/worklet/transfer/topic-auth.ts"],
+      "@altersend/core/protocol": ["../../packages/core/src/worklet/transfer/protocol.ts"],
       "@altersend/drive": ["../../packages/drive/src/index.ts"],
       "@altersend/drive/transport": ["../../packages/drive/src/transport.ts"],
       "@altersend/domain": ["../../packages/domain/src"],

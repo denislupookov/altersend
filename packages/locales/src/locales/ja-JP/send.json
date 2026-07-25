@@ -51,7 +51,8 @@
     "pairedToast": "{{name}} とペアリングしました",
     "inviteFailedToast": "{{name}} に接続できませんでした",
     "inviteFailedHint": "オンラインであることを確認してもう一度お試しください",
-    "deviceConnected": "{{name}} が接続しました"
+    "deviceConnected": "{{name}} が接続しました",
+    "peerOutdated": "このデバイスで受信するには AlterSend の更新が必要です。"
   },
   "connection": {
     "placeholder": "安全なキーを生成中…",
@@ -65,7 +66,10 @@
     "generating": "生成中…",
     "waitingForConnection": "接続を待機中…",
     "copyCode": "コードをコピー",
-    "qrCode": "QRコード"
+    "qrCode": "QRコード",
+    "copyLink": "リンクをコピー",
+    "shareLink": "リンクを共有",
+    "shareMessage": "{{items}} が共有されました。リンクを開くとダウンロードできます（アプリもアカウントも不要）。\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "フォルダはまだ対応していません。ファイルのみ選択してください。",

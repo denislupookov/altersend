@@ -3,7 +3,6 @@
     "title": "共有されたファイルをダウンロード",
     "description": "送信側から受け取った転送コードを貼り付けて接続します。",
     "codeLabel": "転送コード",
-    "linkHint": "リンクを直接開いた場合は、自動的に接続されます。",
     "invalidCode": "有効な転送コードではないようです。"
   },
   "connecting": {
@@ -24,7 +23,6 @@
     "complete": "{{size}} · 完了",
     "savedToDownloads": "{{files}}をダウンロードに保存しました",
     "keepTabOpen": "ダウンロード中 — このタブを開いたままにしてください",
-    "saveHint": "ダウンロードはブラウザのダウンロードフォルダに保存されます",
     "enterAnother": "別のコードを入力"
   },
   "errors": {
@@ -37,5 +35,29 @@
     "privacy": "プライバシー",
     "terms": "利用規約",
     "help": "ヘルプ"
+  },
+  "promo": {
+    "title": "AlterSend で送信",
+    "subtitle": "アプリを入手して自分でもファイルを送ろう",
+    "getFor": "{{os}} 版を入手",
+    "getApp": "アプリをダウンロード"
+  },
+  "disconnected": {
+    "title": "送信側の接続が切断されました",
+    "description": "AlterSend の転送はピアツーピアのため、両方がオンラインである必要があります。送信側に転送を再度開いてもらい、再接続してください。",
+    "summary_complete": "リンクが切れる前に {{total}} 個すべてのファイルをダウンロードしました。",
+    "allReceived": "すべてのファイルを受信しました",
+    "completeTitle": "転送が完了しました",
+    "completeDescription": "送信側はオフラインになりましたが、すべてのファイルが届きました。準備完了です。",
+    "waitingTitle": "送信側の再接続を待っています",
+    "waitingBody": "接続が切れました。送信側が転送を再度開くと、続きから再開できます。",
+    "alreadySaved": "{{total}} 個中 {{completed}} 個を保存済み",
+    "tryNow": "今すぐ試す",
+    "anotherCode": "別のコード"
+  },
+  "sendBack": {
+    "title": "ファイルを送り返しますか？",
+    "description": "AlterSend アプリを入手すれば、サイズ制限なしでファイルを送れます。エンドツーエンド暗号化、アカウント不要。",
+    "maybeLater": "後で"
   }
 }

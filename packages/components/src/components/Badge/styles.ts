@@ -17,6 +17,20 @@ export const styles = css.create({
     fontWeight: tokens.fontWeightMedium,
     lineHeight: tokens.lineHeightTight
   },
+  pill: {
+    borderRadius: tokens.radiusFull,
+    borderWidth: 0,
+    gap: tokens.space2,
+    paddingBlock: tokens.space15,
+    paddingInline: tokens.space3,
+    fontSize: tokens.fontSizeBase,
+    fontWeight: tokens.fontWeightSemibold
+  },
+  muted: {
+    backgroundColor: tokens.colorSurfaceSecondary,
+    borderColor: 'transparent',
+    color: tokens.colorTextMuted
+  },
   neutral: {
     backgroundColor: tokens.colorBackgroundSubtle,
     borderColor: tokens.colorBorderPrimary,

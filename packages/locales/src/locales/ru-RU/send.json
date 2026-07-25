@@ -51,7 +51,8 @@
     "pairedToast": "Сопряжено с {{name}}",
     "inviteFailedToast": "Не удалось связаться с {{name}}",
     "inviteFailedHint": "Убедитесь, что устройство в сети, и попробуйте снова",
-    "deviceConnected": "{{name}} подключён"
+    "deviceConnected": "{{name}} подключён",
+    "peerOutdated": "Этому устройству нужно обновить AlterSend, чтобы получать файлы."
   },
   "connection": {
     "placeholder": "Генерация защищённого ключа…",
@@ -65,7 +66,10 @@
     "generating": "Генерация…",
     "waitingForConnection": "Ожидание подключения…",
     "copyCode": "Скопировать код",
-    "qrCode": "QR-код"
+    "qrCode": "QR-код",
+    "copyLink": "Скопировать ссылку",
+    "shareLink": "Поделиться ссылкой",
+    "shareMessage": "Для вас — {{items}}. Откройте ссылку, чтобы скачать: без приложения и аккаунта.\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "Папки пока не поддерживаются. Пожалуйста, выбирайте только файлы.",

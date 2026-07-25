@@ -10,8 +10,7 @@ import {
 } from '@altersend/components/icons'
 import { loadPeers } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
-import { Modal } from '../Modal'
-import { ListItem } from '@altersend/components'
+import { ListItem, Modal } from '@altersend/components'
 import { DevicesSection } from './sections/DevicesSection'
 import { GeneralSection } from './sections/GeneralSection'
 import { LanguageSection } from './sections/LanguageSection'
@@ -50,7 +49,13 @@ export function Settings({ version }: { version: string }) {
   )
 
   return (
-    <Modal open={open} title={t('settings:title')} width={820} onClose={() => setOpen(false)}>
+    <Modal
+      closeLabel={t('common:actions.close')}
+      open={open}
+      title={t('settings:title')}
+      width={820}
+      onClose={() => setOpen(false)}
+    >
       <div className='flex h-[560px] border-t border-border-primary'>
         <nav className='w-[210px] shrink-0 space-y-1 overflow-y-auto border-r border-border-primary px-2.5 pb-2.5 pt-5'>
           {NAV.map(({ id, icon: Icon, labelKey }) => (

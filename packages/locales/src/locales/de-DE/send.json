@@ -51,7 +51,8 @@
     "pairedToast": "Mit {{name}} gekoppelt",
     "inviteFailedToast": "{{name}} nicht erreichbar",
     "inviteFailedHint": "Stellen Sie sicher, dass es online ist, und versuchen Sie es erneut",
-    "deviceConnected": "{{name}} verbunden"
+    "deviceConnected": "{{name}} verbunden",
+    "peerOutdated": "Dieses Gerät muss AlterSend aktualisieren, um zu empfangen."
   },
   "connection": {
     "placeholder": "Sicherer Schlüssel wird generiert…",
@@ -65,7 +66,10 @@
     "generating": "Wird erstellt…",
     "waitingForConnection": "Warte auf Verbindung…",
     "copyCode": "Code kopieren",
-    "qrCode": "QR-Code"
+    "qrCode": "QR-Code",
+    "copyLink": "Link kopieren",
+    "shareLink": "Link teilen",
+    "shareMessage": "{{items}} für dich freigegeben — zum Herunterladen öffnen, ohne App und ohne Konto:\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "Ordner werden noch nicht unterstützt. Bitte wählen Sie nur Dateien aus.",

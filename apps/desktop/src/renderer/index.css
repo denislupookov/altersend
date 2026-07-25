@@ -1,7 +1,9 @@
 @layer theme, base, components, utilities;
-@import "../../../../packages/components/src/theme/tailwind-theme.css";
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import '../../../../packages/components/src/theme/tailwind-theme.css';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@source "../../../../packages/components/src";
 
 @theme inline {
   --font-sans: var(--as-font-family-sans);
@@ -159,5 +161,4 @@
       transform: translateY(0);
     }
   }
-
 }

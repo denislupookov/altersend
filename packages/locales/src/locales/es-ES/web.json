@@ -3,7 +3,6 @@
     "title": "Descargar archivos compartidos",
     "description": "Pegue el código de transferencia que le dio el remitente para conectarse.",
     "codeLabel": "Código de transferencia",
-    "linkHint": "¿Abrió un enlace completo? La conexión se establece automáticamente.",
     "invalidCode": "Eso no parece un código de transferencia válido."
   },
   "connecting": {
@@ -24,7 +23,6 @@
     "complete": "{{size}} · completado",
     "savedToDownloads": "{{files}} guardados en Descargas",
     "keepTabOpen": "Descargando: mantenga esta pestaña abierta",
-    "saveHint": "Las descargas se guardan en la carpeta Descargas de su navegador",
     "enterAnother": "Introducir otro código"
   },
   "errors": {
@@ -37,5 +35,29 @@
     "privacy": "Privacidad",
     "terms": "Términos",
     "help": "Ayuda"
+  },
+  "promo": {
+    "title": "Enviado con AlterSend",
+    "subtitle": "Descarga la app para enviar tus propios archivos",
+    "getFor": "Descargar para {{os}}",
+    "getApp": "Descargar la app"
+  },
+  "disconnected": {
+    "title": "El remitente se desconectó",
+    "description": "Las transferencias de AlterSend son entre pares, así que ambos lados deben estar en línea. Pídele al remitente que vuelva a abrir la transferencia y luego reconéctate.",
+    "summary_complete": "Se descargaron los {{total}} archivos antes de que se cortara el enlace.",
+    "allReceived": "Todos los archivos recibidos",
+    "completeTitle": "Transferencia completada",
+    "completeDescription": "El remitente se desconectó, pero todos los archivos llegaron: ya está todo listo.",
+    "waitingTitle": "Esperando a que el remitente vuelva a conectarse",
+    "waitingBody": "Se perdió la conexión. En cuanto vuelva a abrir la transferencia, podrás continuar donde lo dejaste.",
+    "alreadySaved": "{{completed}} de {{total}} archivos ya guardados",
+    "tryNow": "Reintentar",
+    "anotherCode": "Otro código"
+  },
+  "sendBack": {
+    "title": "¿Quieres enviar archivos de vuelta?",
+    "description": "Descarga la app de AlterSend para enviar archivos de cualquier tamaño: cifrado de extremo a extremo, sin cuenta.",
+    "maybeLater": "Quizá más tarde"
   }
 }

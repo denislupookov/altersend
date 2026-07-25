@@ -255,4 +255,28 @@ describe('isValidControlMessage', () => {
       expect(isValidControlMessage({ ...valid, transferId: '' })).toBe(false)
     })
   })
+
+  describe('hello', () => {
+    it('accepts a web client hello', () => {
+      expect(isValidControlMessage({ ...base, type: 'hello', client: 'web' })).toBe(true)
+    })
+    it('rejects an unknown client', () => {
+      expect(isValidControlMessage({ ...base, type: 'hello', client: 'native' })).toBe(false)
+      expect(isValidControlMessage({ ...base, type: 'hello' })).toBe(false)
+    })
+  })
+
+  describe('challenge / auth', () => {
+    const nonce = 'ab'.repeat(32)
+    const proof = 'cd'.repeat(32)
+    it('accepts a hex nonce and proof', () => {
+      expect(isValidControlMessage({ ...base, type: 'challenge', nonce })).toBe(true)
+      expect(isValidControlMessage({ ...base, type: 'auth', proof })).toBe(true)
+    })
+    it('rejects non-hex or empty values', () => {
+      expect(isValidControlMessage({ ...base, type: 'challenge', nonce: 'not hex!' })).toBe(false)
+      expect(isValidControlMessage({ ...base, type: 'challenge', nonce: '' })).toBe(false)
+      expect(isValidControlMessage({ ...base, type: 'auth', proof: 42 })).toBe(false)
+    })
+  })
 })

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Button, Input } from '@altersend/components'
+import { Button, Input, Modal } from '@altersend/components'
 import { ClipboardIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
-import { Modal } from '../Modal'
 
 interface PairingJoinModalProps {
   open: boolean
@@ -37,7 +36,13 @@ export function PairingJoinModal({ open, isLoading, onClose, onJoin }: PairingJo
   }
 
   return (
-    <Modal open={open} title={t('settings:pairing.enterCode')} width={636} onClose={onClose}>
+    <Modal
+      closeLabel={t('common:actions.close')}
+      open={open}
+      title={t('settings:pairing.enterCode')}
+      width={636}
+      onClose={onClose}
+    >
       <div className='px-4 pb-2'>
         <Input
           label={t('settings:pairing.codeLabel')}

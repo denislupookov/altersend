@@ -107,7 +107,7 @@ export default function SendPage() {
       headerRight={headerTabs}
       title={copy.title}
     >
-      <div className='h-full overflow-y-auto'>{renderView()}</div>
+      <div className='h-full overflow-y-auto overflow-x-hidden'>{renderView()}</div>
     </TransferCardFrame>
   )
 }

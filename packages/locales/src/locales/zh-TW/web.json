@@ -3,7 +3,6 @@
     "title": "下載共享的檔案",
     "description": "貼上寄件者提供的傳輸代碼即可連線。",
     "codeLabel": "傳輸代碼",
-    "linkHint": "直接開啟了完整連結？系統會自動連線。",
     "invalidCode": "這看起來不是有效的傳輸代碼。"
   },
   "connecting": {
@@ -24,7 +23,6 @@
     "complete": "{{size}} · 已完成",
     "savedToDownloads": "{{files}}已儲存至下載",
     "keepTabOpen": "正在下載 — 請保持此分頁開啟",
-    "saveHint": "下載內容會儲存至瀏覽器的下載資料夾",
     "enterAnother": "輸入其他代碼"
   },
   "errors": {
@@ -37,5 +35,29 @@
     "privacy": "隱私權",
     "terms": "條款",
     "help": "說明"
+  },
+  "promo": {
+    "title": "透過 AlterSend 傳送",
+    "subtitle": "取得應用程式，傳送你自己的檔案",
+    "getFor": "取得 {{os}} 版",
+    "getApp": "下載應用程式"
+  },
+  "disconnected": {
+    "title": "寄件者已中斷連線",
+    "description": "AlterSend 傳輸是點對點的，雙方都需要在線。請寄件者重新開啟傳輸，然後重新連線。",
+    "summary_complete": "連線中斷前所有 {{total}} 個檔案皆已下載。",
+    "allReceived": "已接收所有檔案",
+    "completeTitle": "傳輸完成",
+    "completeDescription": "傳送方已離線，但所有檔案都已送達——一切就緒。",
+    "waitingTitle": "等待傳送方重新連線",
+    "waitingBody": "連線已中斷。對方重新開啟傳輸後，即可從中斷處繼續。",
+    "alreadySaved": "已儲存 {{total}} 個檔案中的 {{completed}} 個",
+    "tryNow": "立即重試",
+    "anotherCode": "其他代碼"
+  },
+  "sendBack": {
+    "title": "想回傳檔案嗎？",
+    "description": "取得 AlterSend 應用程式，傳送任意大小的檔案——端對端加密，無需帳戶。",
+    "maybeLater": "稍後再說"
   }
 }

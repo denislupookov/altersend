@@ -51,7 +51,8 @@
     "pairedToast": "Paired with {{name}}",
     "inviteFailedToast": "Couldn't reach {{name}}",
     "inviteFailedHint": "Make sure it's online and try again",
-    "deviceConnected": "{{name}} connected"
+    "deviceConnected": "{{name}} connected",
+    "peerOutdated": "This device needs to update AlterSend to receive."
   },
   "connection": {
     "placeholder": "Generating secure key…",
@@ -65,7 +66,10 @@
     "generating": "Generating…",
     "waitingForConnection": "Waiting for a connection…",
     "copyCode": "Copy code",
-    "qrCode": "QR code"
+    "qrCode": "QR code",
+    "copyLink": "Copy link",
+    "shareLink": "Share link",
+    "shareMessage": "{{items}} shared with you — open to download, no app or account needed:\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "Folders aren't supported yet. Please select files only.",

@@ -17,7 +17,7 @@ import {
   setSavedLocalePreference
 } from '../../localePreference'
 
-export function LanguageSelect() {
+export function LanguageSelect({ compact = false }: { compact?: boolean } = {}) {
   const { t, i18n } = useTranslation(['common'])
   const { theme } = useTheme()
   const [preference, setPreference] = useState<LocalePreference>(getSavedLocalePreference)
@@ -32,12 +32,13 @@ export function LanguageSelect() {
   }
 
   const active = getLocaleByCode(i18n.language) ?? getLocaleByCode(DEFAULT_LOCALE)
+  const label = compact ? (active?.code.split('-')[0] ?? '').toUpperCase() : active?.nativeName
 
   return (
-    <div className='relative inline-flex items-center gap-2 rounded-xl bg-surface-secondary px-3 py-2 transition-colors hover:bg-surface-tertiary focus-within:ring-2 focus-within:ring-focus-ring'>
+    <div className='relative inline-flex items-center gap-2 rounded-xl border border-border-primary bg-background-subtle px-3 py-2 transition-colors hover:bg-surface-secondary focus-within:ring-2 focus-within:ring-focus-ring'>
       <GlobeIcon size={16} color={theme.colors.colorTextMuted} />
-      <span className='text-sm font-medium text-text-primary'>{active?.nativeName}</span>
-      <ChevronDownIcon size={14} color={theme.colors.colorTextMuted} />
+      <span className='text-sm font-medium text-text-primary'>{label}</span>
+      {!compact && <ChevronDownIcon size={14} color={theme.colors.colorTextMuted} />}
 
       <select
         aria-label={t('common:labels.language')}

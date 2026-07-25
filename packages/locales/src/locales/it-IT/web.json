@@ -3,7 +3,6 @@
     "title": "Scarica i file condivisi",
     "description": "Incolla il codice di trasferimento che ti ha dato il mittente per connetterti.",
     "codeLabel": "Codice di trasferimento",
-    "linkHint": "Hai aperto un link completo? La connessione avviene automaticamente.",
     "invalidCode": "Non sembra un codice di trasferimento valido."
   },
   "connecting": {
@@ -24,7 +23,6 @@
     "complete": "{{size}} · completato",
     "savedToDownloads": "{{files}} salvati in Download",
     "keepTabOpen": "Download in corso — tieni aperta questa scheda",
-    "saveHint": "I download vengono salvati nella cartella Download del browser",
     "enterAnother": "Inserisci un altro codice"
   },
   "errors": {
@@ -37,5 +35,29 @@
     "privacy": "Privacy",
     "terms": "Termini",
     "help": "Aiuto"
+  },
+  "promo": {
+    "title": "Inviato con AlterSend",
+    "subtitle": "Scarica l’app per inviare i tuoi file",
+    "getFor": "Scarica per {{os}}",
+    "getApp": "Scarica l’app"
+  },
+  "disconnected": {
+    "title": "Il mittente si è disconnesso",
+    "description": "I trasferimenti AlterSend sono peer-to-peer: entrambe le parti devono essere online. Chiedi al mittente di riaprire il trasferimento, poi riconnettiti.",
+    "summary_complete": "Tutti i {{total}} file sono stati scaricati prima che il collegamento cadesse.",
+    "allReceived": "Tutti i file ricevuti",
+    "completeTitle": "Trasferimento completato",
+    "completeDescription": "Il mittente si è disconnesso, ma tutti i file sono arrivati: è tutto pronto.",
+    "waitingTitle": "In attesa che il mittente si riconnetta",
+    "waitingBody": "La connessione è caduta. Appena riapre il trasferimento, puoi riprendere da dove eri.",
+    "alreadySaved": "{{completed}} di {{total}} file già salvati",
+    "tryNow": "Riprova ora",
+    "anotherCode": "Altro codice"
+  },
+  "sendBack": {
+    "title": "Vuoi inviare file a tua volta?",
+    "description": "Scarica l’app AlterSend per inviare file di qualsiasi dimensione: crittografia end-to-end, nessun account.",
+    "maybeLater": "Forse più tardi"
   }
 }

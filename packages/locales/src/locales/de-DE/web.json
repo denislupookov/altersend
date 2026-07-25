@@ -3,7 +3,6 @@
     "title": "Geteilte Dateien herunterladen",
     "description": "Fügen Sie den Übertragungscode des Absenders ein, um sich zu verbinden.",
     "codeLabel": "Übertragungscode",
-    "linkHint": "Stattdessen einen vollständigen Link geöffnet? Die Verbindung wird automatisch hergestellt.",
     "invalidCode": "Das sieht nicht nach einem gültigen Übertragungscode aus."
   },
   "connecting": {
@@ -24,7 +23,6 @@
     "complete": "{{size}} · abgeschlossen",
     "savedToDownloads": "{{files}} in „Downloads“ gespeichert",
     "keepTabOpen": "Wird heruntergeladen – lassen Sie diesen Tab geöffnet",
-    "saveHint": "Downloads werden im Download-Ordner Ihres Browsers gespeichert",
     "enterAnother": "Anderen Code eingeben"
   },
   "errors": {
@@ -37,5 +35,29 @@
     "privacy": "Datenschutz",
     "terms": "Nutzungsbedingungen",
     "help": "Hilfe"
+  },
+  "promo": {
+    "title": "Mit AlterSend gesendet",
+    "subtitle": "Hol dir die App, um selbst Dateien zu senden",
+    "getFor": "Für {{os}} holen",
+    "getApp": "App herunterladen"
+  },
+  "disconnected": {
+    "title": "Der Absender hat die Verbindung getrennt",
+    "description": "AlterSend-Übertragungen sind Peer-to-Peer – beide Seiten müssen online sein. Bitte den Absender, die Übertragung erneut zu öffnen, und verbinde dich dann neu.",
+    "summary_complete": "Alle {{total}} Dateien wurden heruntergeladen, bevor die Verbindung abbrach.",
+    "allReceived": "Alle Dateien empfangen",
+    "completeTitle": "Übertragung abgeschlossen",
+    "completeDescription": "Der Absender ist offline gegangen, aber alle Dateien sind angekommen – du bist startklar.",
+    "waitingTitle": "Warten auf die erneute Verbindung",
+    "waitingBody": "Die Verbindung wurde unterbrochen. Sobald der Absender die Übertragung erneut öffnet, kannst du dort weitermachen.",
+    "alreadySaved": "{{completed}} von {{total}} Dateien bereits gespeichert",
+    "tryNow": "Jetzt versuchen",
+    "anotherCode": "Anderer Code"
+  },
+  "sendBack": {
+    "title": "Dateien zurücksenden?",
+    "description": "Hol dir die AlterSend-App, um Dateien beliebiger Größe zu senden – Ende-zu-Ende-verschlüsselt, ohne Konto.",
+    "maybeLater": "Vielleicht später"
   }
 }

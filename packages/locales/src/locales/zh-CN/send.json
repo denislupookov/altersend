@@ -51,7 +51,8 @@
     "pairedToast": "已与 {{name}} 配对",
     "inviteFailedToast": "无法连接 {{name}}",
     "inviteFailedHint": "请确认其在线后重试",
-    "deviceConnected": "{{name}} 已连接"
+    "deviceConnected": "{{name}} 已连接",
+    "peerOutdated": "此设备需要更新 AlterSend 才能接收。"
   },
   "connection": {
     "placeholder": "正在生成安全密钥...",
@@ -65,7 +66,10 @@
     "generating": "正在生成…",
     "waitingForConnection": "正在等待连接…",
     "copyCode": "复制代码",
-    "qrCode": "二维码"
+    "qrCode": "二维码",
+    "copyLink": "复制链接",
+    "shareLink": "分享链接",
+    "shareMessage": "共享了 {{items}}——打开链接即可下载，无需应用或账户：\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "尚不支持文件夹。请仅选择文件。",

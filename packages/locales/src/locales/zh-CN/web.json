@@ -3,7 +3,6 @@
     "title": "下载共享的文件",
     "description": "粘贴发件人提供的传输代码即可连接。",
     "codeLabel": "传输代码",
-    "linkHint": "直接打开了完整链接？将自动连接。",
     "invalidCode": "这看起来不是有效的传输代码。"
   },
   "connecting": {
@@ -24,7 +23,6 @@
     "complete": "{{size}} · 已完成",
     "savedToDownloads": "{{files}}已保存到下载",
     "keepTabOpen": "正在下载 — 请保持此标签页打开",
-    "saveHint": "下载内容将保存到浏览器的下载文件夹",
     "enterAnother": "输入其他代码"
   },
   "errors": {
@@ -37,5 +35,29 @@
     "privacy": "隐私",
     "terms": "条款",
     "help": "帮助"
+  },
+  "promo": {
+    "title": "通过 AlterSend 发送",
+    "subtitle": "获取应用，发送你自己的文件",
+    "getFor": "获取 {{os}} 版",
+    "getApp": "下载应用"
+  },
+  "disconnected": {
+    "title": "发件人已断开连接",
+    "description": "AlterSend 传输是点对点的，双方都需要在线。请发件人重新打开传输，然后重新连接。",
+    "summary_complete": "连接断开前所有 {{total}} 个文件均已下载。",
+    "allReceived": "已接收所有文件",
+    "completeTitle": "传输完成",
+    "completeDescription": "发送方已离线，但所有文件都已送达——一切就绪。",
+    "waitingTitle": "等待发送方重新连接",
+    "waitingBody": "连接已断开。对方重新打开传输后，即可从中断处继续。",
+    "alreadySaved": "已保存 {{total}} 个文件中的 {{completed}} 个",
+    "tryNow": "立即重试",
+    "anotherCode": "其他代码"
+  },
+  "sendBack": {
+    "title": "想回传文件吗？",
+    "description": "获取 AlterSend 应用，发送任意大小的文件——端到端加密，无需账户。",
+    "maybeLater": "以后再说"
   }
 }

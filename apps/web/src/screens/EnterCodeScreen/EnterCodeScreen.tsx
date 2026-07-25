@@ -2,7 +2,7 @@ import type { ChangeEvent } from 'react'
 import { Button, Input } from '@altersend/components'
 import { ClipboardIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { Card, ScreenIntro } from '../../components'
+import { Card, ScreenIntro, SentWithBanner } from '../../components'
 
 export interface EnterCodeScreenProps {
   code: string
@@ -56,11 +56,9 @@ export function EnterCodeScreen({
             {t('common:actions.connect')}
           </Button>
         </div>
-
-        <p className='mt-3.5 text-center text-[12.5px] leading-normal text-text-faint'>
-          {t('web:join.linkHint')}
-        </p>
       </Card>
+
+      <SentWithBanner />
     </>
   )
 }

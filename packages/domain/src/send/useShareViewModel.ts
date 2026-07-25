@@ -12,6 +12,9 @@ import { useTransferStore } from '../transfer/store'
 import { applyPairState, getPeerListEntries } from './peerListUi'
 import type { PairState, PeerListEntryWithPair } from './peerListUi'
 import type { Translate } from '../i18n'
+import { useCopiedFlag } from '../useCopiedFlag'
+
+const COPY_TOPIC_ID = 'topic'
 
 const PEER_JOIN_TOAST_DELAY_MS = 600
 
@@ -32,7 +35,7 @@ export interface ConnectedDeviceRow {
   subtitle: string
   subtitleTone: SubtitleTone
   progressPercent?: number
-  action: 'pair' | 'pair-requested' | 'pair-done'
+  action: 'pair' | 'pair-requested' | 'pair-done' | 'none'
 }
 
 export interface OfflineDeviceRow {
@@ -144,6 +147,15 @@ function toPairAction(pairState: PairState | undefined): ConnectedDeviceRow['act
   return 'pair'
 }
 
+function connectedAction(
+  entry: PeerListEntryWithPair,
+  isWeb: boolean
+): ConnectedDeviceRow['action'] {
+  if (isWeb) return 'none'
+  if (!entry.isConnected) return 'pair-done'
+  return toPairAction(entry.pairState)
+}
+
 function toInviteAction(st: InviteStatus | undefined): OfflineDeviceRow['action'] {
   if (st === 'inviting') return 'inviting'
   if (st === 'sent') return 'invite-sent'
@@ -155,6 +167,7 @@ export interface ShareViewModelCallbacks {
   onPeerJoined?: (peer: ConnectedDeviceRow) => void
   onPeerPaired?: (peer: ConnectedDeviceRow) => void
   onInviteFailed?: (peer: OfflineDeviceRow) => void
+  onPeerOutdated?: () => void
 }
 
 export function useShareViewModel(
@@ -168,20 +181,16 @@ export function useShareViewModel(
   const topic = useTransferStore((s) => s.topic) ?? ''
   const peerDownloads = useTransferStore((s) => s.peerDownloads)
   const connectedPeers = useTransferStore((s) => s.connectedPeers)
+  const webPeers = useTransferStore((s) => s.webPeers)
+  const outdatedPeers = useTransferStore((s) => s.outdatedPeers)
   const transferId = useTransferStore((s) => s.transferId)
   const pairStatus = useTransferStore((s) => s.remember.pairStatus)
   const peerDisplayNames = useTransferStore((s) => s.remember.peerDisplayNames)
   const inviteResponses = useTransferStore((s) => s.remember.inviteResponses)
   const rememberedPeers = useTransferStore((s) => s.peers)
 
-  const [isCopied, setIsCopied] = useState(false)
+  const { copiedId, flashCopied } = useCopiedFlag()
   const [inviteStatuses, setInviteStatuses] = useState<Record<string, InviteStatusState>>({})
-
-  useEffect(() => {
-    if (!isCopied) return
-    const id = setTimeout(() => setIsCopied(false), 2000)
-    return () => clearTimeout(id)
-  }, [isCopied])
 
   useEffect(() => {
     setInviteStatuses((current) => {
@@ -251,7 +260,7 @@ export function useShareViewModel(
       subtitle,
       subtitleTone,
       progressPercent: entry.status === 'downloading' ? entry.progressPercent : undefined,
-      action: !entry.isConnected ? 'pair-done' : toPairAction(entry.pairState)
+      action: connectedAction(entry, Boolean(webPeers[entry.peerKey]))
     }
   })
 
@@ -280,6 +289,14 @@ export function useShareViewModel(
   const prevPairActionsRef = useRef<Map<string, ConnectedDeviceRow['action']>>(new Map())
   const joinTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   useEffect(() => () => joinTimersRef.current.forEach(clearTimeout), [])
+  const outdatedKeysRef = useRef(new Set<string>())
+  useEffect(() => {
+    for (const peerKey of Object.keys(outdatedPeers)) {
+      if (outdatedKeysRef.current.has(peerKey)) continue
+      outdatedKeysRef.current.add(peerKey)
+      callbacksRef.current.onPeerOutdated?.()
+    }
+  }, [outdatedPeers])
   useEffect(() => {
     const currentKeys = new Set(connectedRows.map((row) => row.peerKey))
     const previousKeys = connectedPeerKeysRef.current
@@ -346,8 +363,8 @@ export function useShareViewModel(
     devices,
     connectedCount: connectedRows.length,
     hasDevices: devices.length > 0,
-    isCopied,
-    markCopied: () => setIsCopied(true),
+    isCopied: copiedId === COPY_TOPIC_ID,
+    markCopied: () => flashCopied(COPY_TOPIC_ID),
     pair,
     invite,
     forget: forgetPeer,
