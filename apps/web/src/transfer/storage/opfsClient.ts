@@ -56,6 +56,11 @@ function opfsPossible(): boolean {
   )
 }
 
+export function sweepOpfs(): void {
+  if (!opfsPossible()) return
+  request({ type: 'sweep' }).catch((error) => console.warn('OPFS sweep failed', error))
+}
+
 let probed: Promise<boolean> | null = null
 
 export function isOpfsSupported(): Promise<boolean> {

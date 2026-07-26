@@ -4,10 +4,13 @@ import { ThemeProvider, ThemeType } from '@altersend/components'
 import { initI18n, resolveLocalePreference } from '@altersend/locales'
 import App from './App'
 import { getBrowserLocales, getSavedLocalePreference } from './localePreference'
+import { sweepOpfs } from './transfer/storage'
 import './strict.css'
 import './index.css'
 
 async function bootstrap() {
+  sweepOpfs()
+
   try {
     await initI18n(resolveLocalePreference(getSavedLocalePreference(), getBrowserLocales()))
   } catch (error) {

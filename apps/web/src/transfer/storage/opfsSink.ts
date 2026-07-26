@@ -1,5 +1,6 @@
 import type { ChunkWriter } from '@altersend/drive'
 import { request } from './opfsClient'
+import { DL_PREFIX } from './opfsProtocol'
 import { triggerDownload } from './saveFile'
 
 export interface WebSink extends ChunkWriter {
@@ -8,7 +9,7 @@ export interface WebSink extends ChunkWriter {
 }
 
 function safeName(transferId: string): string {
-  return `dl-${transferId.replace(/[^a-zA-Z0-9_-]/g, '')}`
+  return `${DL_PREFIX}${transferId.replace(/[^a-zA-Z0-9_-]/g, '')}`
 }
 
 export class OpfsSink implements WebSink {
@@ -49,8 +50,5 @@ export class OpfsSink implements WebSink {
     const handle = await root.getFileHandle(this.name)
     const file = await handle.getFile()
     triggerDownload(file, fileName)
-    setTimeout(() => {
-      root.removeEntry(this.name).catch((error) => console.warn('Failed to clear OPFS file', error))
-    }, 20000)
   }
 }

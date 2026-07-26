@@ -24,7 +24,14 @@ interface ProbeMsg {
   id: number
 }
 
-export type OpfsMsg = OpenMsg | WriteMsg | CloseMsg | ProbeMsg
+interface SweepMsg {
+  type: 'sweep'
+  id: number
+}
+
+export type OpfsMsg = OpenMsg | WriteMsg | CloseMsg | ProbeMsg | SweepMsg
+
+export const DL_PREFIX = 'dl-'
 
 export interface OpfsReply {
   id: number

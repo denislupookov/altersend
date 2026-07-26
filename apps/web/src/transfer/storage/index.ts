@@ -2,6 +2,8 @@ import { isOpfsSupported } from './opfsClient'
 import { OpfsSink, type WebSink } from './opfsSink'
 import { triggerDownload } from './saveFile'
 
+export { sweepOpfs } from './opfsClient'
+
 class MemorySink implements WebSink {
   bytes = new Uint8Array(0)
   async allocate(size: number): Promise<void> {

@@ -1,4 +1,4 @@
-import type { CloseMsg, OpenMsg, OpfsMsg, WriteMsg } from './opfsProtocol'
+import { DL_PREFIX, type CloseMsg, type OpenMsg, type OpfsMsg, type WriteMsg } from './opfsProtocol'
 
 const handles = new Map<string, FileSystemSyncAccessHandle>()
 
@@ -42,6 +42,17 @@ async function discard({ name }: CloseMsg): Promise<void> {
   await root.removeEntry(name).catch((error) => console.warn('OPFS discard failed', error))
 }
 
+async function sweep(): Promise<void> {
+  const root = await directory()
+  const stale: string[] = []
+  for await (const name of (root as unknown as { keys(): AsyncIterable<string> }).keys()) {
+    if (name.startsWith(DL_PREFIX) && !handles.has(name)) stale.push(name)
+  }
+  for (const name of stale) {
+    await root.removeEntry(name).catch((error) => console.warn('OPFS sweep failed', error))
+  }
+}
+
 async function probe(): Promise<boolean> {
   try {
     const root = await directory()
@@ -61,7 +72,8 @@ self.onmessage = (event: MessageEvent<OpfsMsg>) => {
   const msg = event.data
   const run = async (): Promise<Record<string, unknown>> => {
     if (msg.type === 'probe') return { supported: await probe() }
-    if (msg.type === 'open') await open(msg)
+    if (msg.type === 'sweep') await sweep()
+    else if (msg.type === 'open') await open(msg)
     else if (msg.type === 'write') write(msg)
     else if (msg.type === 'finalize') finalize(msg)
     else if (msg.type === 'abort') abort(msg)
