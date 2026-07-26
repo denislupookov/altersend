@@ -71,12 +71,6 @@ export function waitForOffers(
           offers,
           texts,
           download: (offer, dh) => downloadOffer(proto, transfers, offer, dh),
-          pause: (offerId) => {
-            const state = transfers.get(offerId)
-            if (!state?.receiver) return
-            state.paused = true
-            state.receiver.cancel('Paused')
-          },
           close: () => {
             for (const state of transfers.values()) {
               state.paused = true

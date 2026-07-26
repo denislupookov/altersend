@@ -5,7 +5,6 @@ import type { DownloadHandlers } from './types'
 
 export interface FileTransfer {
   sink: WebSink
-  bits?: Uint8Array
   receiver?: { cancel: (reason?: string) => void }
   paused: boolean
 }
@@ -22,11 +21,12 @@ export async function downloadOffer(
   offer: FileOffer,
   handlers: DownloadHandlers
 ): Promise<void> {
-  const existing = transfers.get(offer.id)
-  const state: FileTransfer = existing ?? { sink: await createSink(offer.id), paused: false }
+  const state: FileTransfer = {
+    sink: await createSink({ id: offer.id, name: offer.name }),
+    paused: false
+  }
 
   return new Promise<void>((resolve, reject) => {
-    state.paused = false
     transfers.set(offer.id, state)
 
     const channel = proto.driveSession(offer.id)
@@ -34,10 +34,6 @@ export async function downloadOffer(
     const receiver = new ReceiverSession(state.sink, channel, {
       transferId: offer.id,
       expectedSize: offer.size,
-      resumeBits: state.bits,
-      onChunkWritten: (bitmap) => {
-        state.bits = bitmap.serialize()
-      },
       onProgress: (received, total) => {
         handlers.onProgress?.(received, total)
         proto.sendControl({

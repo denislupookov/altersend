@@ -1,8 +1,16 @@
 import { isOpfsSupported } from './opfsClient'
 import { OpfsSink, type WebSink } from './opfsSink'
 import { triggerDownload } from './saveFile'
+import { streamReady } from './streamClient'
+import { StreamSink } from './streamSink'
 
 export { sweepOpfs } from './opfsClient'
+export { registerStreamWorker } from './streamClient'
+
+export interface SinkTarget {
+  id: string
+  name: string
+}
 
 class MemorySink implements WebSink {
   bytes = new Uint8Array(0)
@@ -29,7 +37,8 @@ class MemorySink implements WebSink {
 
 export type { WebSink } from './opfsSink'
 
-export async function createSink(transferId: string): Promise<WebSink> {
-  if (await isOpfsSupported()) return new OpfsSink(transferId)
+export async function createSink(target: SinkTarget): Promise<WebSink> {
+  if (await streamReady()) return new StreamSink(target.name)
+  if (await isOpfsSupported()) return new OpfsSink(target.id)
   return new MemorySink()
 }

@@ -23,7 +23,6 @@ export interface DownloadScreenProps {
   texts: TextOffer[]
   error?: string
   onDownload: (ids: string[]) => void
-  onPause: (ids: string[]) => void
   onDownloadAll: () => void
   onResumeAll: () => void
   onReset: () => void
@@ -36,7 +35,6 @@ export function DownloadScreen({
   texts,
   error,
   onDownload,
-  onPause,
   onDownloadAll,
   onResumeAll,
   onReset
@@ -76,9 +74,7 @@ export function DownloadScreen({
       compact
       standalone={isPhone}
       onResume={(offer) => onDownload([offer.id])}
-      onPause={(offer) => onPause([offer.id])}
       onOpen={noop}
-      onPauseFolder={(offers) => onPause(offers.map((offer) => offer.id))}
       onResumeFolder={(offers) => onDownload(offers.map((offer) => offer.id))}
     />
   )

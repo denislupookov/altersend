@@ -19,7 +19,6 @@ export default function App() {
           texts={vm.texts}
           error={vm.error || undefined}
           onDownload={vm.download}
-          onPause={vm.pause}
           onDownloadAll={vm.downloadAll}
           onResumeAll={vm.downloadAll}
           onReset={vm.reset}

@@ -28,6 +28,7 @@ export function EnterCodeScreen({
       <Card>
         <Input
           label={t('web:join.codeLabel')}
+          filled
           mono
           autoCapitalize='none'
           autoComplete='off'

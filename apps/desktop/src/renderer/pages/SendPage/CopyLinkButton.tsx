@@ -1,6 +1,6 @@
 import { useTranslation } from '@altersend/locales'
 import { Button, useTheme } from '@altersend/components'
-import { CheckIcon, ShareIcon } from '@altersend/components/icons'
+import { CheckIcon, LinkIcon } from '@altersend/components/icons'
 
 interface CopyLinkButtonProps {
   topic: string
@@ -27,7 +27,7 @@ export function CopyLinkButton({ topic, copied, onCopy }: CopyLinkButtonProps) {
           copied ? (
             <CheckIcon size={18} color={theme.colors.colorSuccess} />
           ) : (
-            <ShareIcon size={18} />
+            <LinkIcon size={18} />
           )
         }
         onClick={onCopy}

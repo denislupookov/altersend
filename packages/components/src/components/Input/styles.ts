@@ -54,6 +54,9 @@ export const styles = css.create({
       color: tokens.colorTextMuted
     }
   },
+  filled: {
+    backgroundColor: tokens.colorSurfaceSecondary
+  },
   mono: {
     fontFamily: tokens.fontFamilyMono,
     fontSize: tokens.fontSizeBase

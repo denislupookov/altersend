@@ -27,6 +27,7 @@ import {
   Image,
   Info,
   Laptop,
+  Link,
   Lock,
   Mail,
   Menu,
@@ -123,3 +124,4 @@ export const RotateCwIcon = adaptLucide(RotateCw)
 export const WifiOffIcon = adaptLucide(WifiOff)
 export const XCircleIcon = adaptLucide(XCircle)
 export const UnlinkIcon = adaptLucide(Unlink)
+export const LinkIcon = adaptLucide(Link)

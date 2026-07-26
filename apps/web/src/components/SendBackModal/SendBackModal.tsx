@@ -33,7 +33,7 @@ export function SendBackModal({ open, onClose }: SendBackModalProps) {
           {t('web:sendBack.description')}
         </p>
 
-        <div className='mt-5 w-full gap-2'>
+        <div className='mt-5 flex w-full flex-col gap-2'>
           <Button
             variant='primary'
             size='lg'

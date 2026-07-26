@@ -17,6 +17,7 @@ import {
   deviceIcon,
   FolderIcon,
   QrCodeIcon,
+  LinkIcon,
   ShareIcon
 } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
@@ -125,7 +126,7 @@ export function ShareView() {
                 variant='secondary'
                 width='full'
                 disabled={!vm.topic}
-                icon={<ShareIcon size={20} />}
+                icon={<LinkIcon size={20} />}
                 onClick={() => void shareLink()}
               >
                 {t('send:connection.shareLink')}
@@ -178,7 +179,7 @@ export function ShareView() {
                   iconOnly
                   aria-label={t('send:connection.shareLink')}
                   disabled={!vm.topic}
-                  icon={<ShareIcon size={18} />}
+                  icon={<LinkIcon size={18} />}
                   onClick={() => void shareLink()}
                 />
               </View>

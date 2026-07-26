@@ -21,7 +21,6 @@ export interface Connection {
   offers: FileOffer[]
   texts: TextOffer[]
   download: (offer: FileOffer, handlers: DownloadHandlers) => Promise<void>
-  pause: (offerId: string) => void
   close: () => void
 }
 

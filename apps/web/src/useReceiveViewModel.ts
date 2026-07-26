@@ -26,7 +26,6 @@ export interface ReceiveViewModel {
   start: () => void
   download: (offerIds: string[]) => void
   downloadAll: () => void
-  pause: (offerIds: string[]) => void
   paste: () => void
   reset: () => void
 }
@@ -178,15 +177,6 @@ export function useReceiveViewModel(): ReceiveViewModel {
 
   const downloadAll = () => download(connectionRef.current?.offers.map((offer) => offer.id) ?? [])
 
-  const pause = (offerIds: string[]) => {
-    for (const offerId of offerIds) {
-      if (statusOf(offerId) === 'completed') continue
-      queue.current = queue.current.filter((id) => id !== offerId)
-      connectionRef.current?.pause(offerId)
-      patchFile(offerId, { status: 'paused' })
-    }
-  }
-
   const setCode = (value: string) => {
     setCodeState(value)
     setError('')
@@ -230,7 +220,6 @@ export function useReceiveViewModel(): ReceiveViewModel {
     start: () => runConnect(code),
     download,
     downloadAll,
-    pause,
     paste,
     reset
   }

@@ -14,7 +14,7 @@ function toState({ offer, received, status }: TransferFile): DownloadItemState {
         destination: 'downloads'
       }
     case 'downloading':
-      return { ...base, status: 'downloading', pausable: true }
+      return { ...base, status: 'downloading' }
     case 'paused':
     case 'failed':
       return { ...base, status: 'failed', resumable: true, savedTo: offer.name }
