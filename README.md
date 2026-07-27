@@ -91,6 +91,15 @@ git clone https://github.com/denislupookov/altersend.git && cd altersend
 flatpak-builder --user --install --install-deps-from=flathub --force-clean build-dir flatpak/com.altersend.AlterSend.yaml
 ```
 
+### Arch Linux
+
+AlterSend is available in the AUR as two packages: `altersend-bin` for official release binaries and `altersend-git` for the latest Git changes compiled from source.
+
+```sh
+yay -S altersend-bin
+yay -S altersend-git
+```
+
 ## How it works
 
 1. Open AlterSend on both devices
