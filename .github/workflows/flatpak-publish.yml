@@ -2,6 +2,8 @@ name: Flatpak Publish
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'flatpak/**'
       - '.github/workflows/flatpak-publish.yml'
@@ -18,6 +20,8 @@ jobs:
       image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
       options: --privileged
     timeout-minutes: 60
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout repository
@@ -41,7 +45,7 @@ jobs:
           fi
 
       - name: Build Flatpak
-        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        uses: flatpak/flatpak-github-actions/flatpak-builder@401fe28a8384095fc1531b9d320b292f0ee45adb # v6
         with:
           bundle: altersend.flatpak
           manifest-path: flatpak/com.altersend.AlterSend.yaml
