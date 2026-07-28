@@ -44,6 +44,10 @@ jobs:
             rm -rf repo
           fi
 
+      - name: Import GPG signing key
+        run: |
+          echo "${{ secrets.FLATPAK_GPG_PRIVATE_KEY }}" | base64 --decode | gpg --import
+
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@401fe28a8384095fc1531b9d320b292f0ee45adb # v6
         with:
@@ -53,6 +57,7 @@ jobs:
           build-bundle: true
           repository-name: flathub
           repository-url: https://flathub.org/repo/flathub.flatpakrepo
+          gpg-sign: ${{ secrets.FLATPAK_GPG_KEY_ID }}
       
       - name: Deploy to Flatpak Repo (GitHub Pages)
         uses: peaceiris/actions-gh-pages@v4
