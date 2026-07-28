@@ -59,5 +59,10 @@
     "title": "Envoyer des fichiers en retour ?",
     "description": "Téléchargez l’app AlterSend pour envoyer des fichiers de toute taille — chiffrés de bout en bout, sans compte.",
     "maybeLater": "Plus tard"
+  },
+  "tooLarge": {
+    "title": "Trop volumineux pour le navigateur",
+    "description": "Ce transfert nécessite l’app.",
+    "body": "Ce transfert de {{size}} dépasse la limite de {{limit}} du navigateur. Ouvrez-le dans l’app AlterSend pour le recevoir — sans compte."
   }
 }

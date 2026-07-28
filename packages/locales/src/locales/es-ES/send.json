@@ -69,7 +69,7 @@
     "qrCode": "Código QR",
     "copyLink": "Copiar enlace",
     "shareLink": "Compartir enlace",
-    "shareMessage": "{{items}} compartidos contigo: ábrelo para descargar, sin app ni cuenta:\n\n{{link}}"
+    "shareMessage": "{{items}} compartidos contigo con AlterSend: ábrelo para descargar:\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "Las carpetas aún no son compatibles. Seleccione solo archivos.",

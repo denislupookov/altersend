@@ -69,7 +69,7 @@
     "qrCode": "QR code",
     "copyLink": "Copy link",
     "shareLink": "Share link",
-    "shareMessage": "{{items}} shared with you — open to download, no app or account needed:\n\n{{link}}"
+    "shareMessage": "{{items}} shared with you via AlterSend — open to download:\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "Folders aren't supported yet. Please select files only.",

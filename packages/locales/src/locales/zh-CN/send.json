@@ -69,7 +69,7 @@
     "qrCode": "二维码",
     "copyLink": "复制链接",
     "shareLink": "分享链接",
-    "shareMessage": "共享了 {{items}}——打开链接即可下载，无需应用或账户：\n\n{{link}}"
+    "shareMessage": "通过 AlterSend 共享了 {{items}}——打开链接即可下载：\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "尚不支持文件夹。请仅选择文件。",

@@ -59,5 +59,10 @@
     "title": "파일을 되보내시겠어요?",
     "description": "AlterSend 앱을 받으면 크기 제한 없이 파일을 보낼 수 있습니다. 종단 간 암호화, 계정 불필요.",
     "maybeLater": "나중에"
+  },
+  "tooLarge": {
+    "title": "브라우저에서 받기엔 너무 큼",
+    "description": "이 전송에는 앱이 필요합니다.",
+    "body": "이 {{size}} 전송은 브라우저 한도 {{limit}}을(를) 초과합니다. AlterSend 앱에서 열면 받을 수 있습니다. 계정이 필요 없습니다."
   }
 }

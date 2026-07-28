@@ -59,5 +59,10 @@
     "title": "Want to send files back?",
     "description": "Get the AlterSend app to send files of any size — end-to-end encrypted, no account needed.",
     "maybeLater": "Maybe later"
+  },
+  "tooLarge": {
+    "title": "Too large for the browser",
+    "description": "This transfer needs the app.",
+    "body": "This {{size}} transfer is over the {{limit}} browser limit. Open it in the AlterSend app to receive it — no account needed."
   }
 }

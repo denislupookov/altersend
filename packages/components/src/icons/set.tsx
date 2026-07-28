@@ -47,7 +47,7 @@ import {
   RotateCw,
   Send,
   Settings,
-  Share,
+  Share2,
   Shield,
   SlidersHorizontal,
   Smartphone,
@@ -111,7 +111,7 @@ export const PlusIcon = adaptLucide(Plus)
 export const QrCodeIcon = adaptLucide(QrCode)
 export const SendIcon = adaptLucide(Send)
 export const SettingsIcon = adaptLucide(Settings)
-export const ShareIcon = adaptLucide(Share)
+export const ShareIcon = adaptLucide(Share2)
 export const ShieldIcon = adaptLucide(Shield)
 export const SlidersHorizontalIcon = adaptLucide(SlidersHorizontal)
 export const SmartphoneIcon = adaptLucide(Smartphone)

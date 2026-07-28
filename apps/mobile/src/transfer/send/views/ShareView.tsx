@@ -4,6 +4,7 @@ import * as Clipboard from 'expo-clipboard'
 import {
   buildShareInvite,
   buildWebReceiveUrl,
+  exceedsWebLinkLimit,
   formatFileSize,
   formatItemsCount,
   useShareViewModel,
@@ -68,9 +69,12 @@ export function ShareView() {
     }
   }
 
+  const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize)
+
   const shareLink = async () => {
     if (!vm.topic) return
     try {
+      await Clipboard.setStringAsync(vm.topic)
       const link = buildWebReceiveUrl(vm.topic, process.env.EXPO_PUBLIC_WEB_URL)
       await Share.share({
         message: buildShareInvite(t, {
@@ -112,32 +116,37 @@ export function ShareView() {
             <View style={styles.tile}>
               <Button
                 stack
+                size='sm'
                 variant='secondary'
                 width='full'
-                icon={vm.isCopied ? <CheckIcon size={20} /> : <CopyIcon size={20} />}
+                icon={vm.isCopied ? <CheckIcon size={18} /> : <CopyIcon size={18} />}
                 onClick={() => void copyTopic()}
               >
                 {vm.isCopied ? t('common:actions.copied') : t('send:connection.copyCode')}
               </Button>
             </View>
+            {!webLinkTooLarge && (
+              <View style={styles.tile}>
+                <Button
+                  stack
+                  size='sm'
+                  variant='secondary'
+                  width='full'
+                  disabled={!vm.topic}
+                  icon={<LinkIcon size={18} />}
+                  onClick={() => void shareLink()}
+                >
+                  {t('send:connection.shareLink')}
+                </Button>
+              </View>
+            )}
             <View style={styles.tile}>
               <Button
                 stack
+                size='sm'
                 variant='secondary'
                 width='full'
-                disabled={!vm.topic}
-                icon={<LinkIcon size={20} />}
-                onClick={() => void shareLink()}
-              >
-                {t('send:connection.shareLink')}
-              </Button>
-            </View>
-            <View style={styles.tile}>
-              <Button
-                stack
-                variant='secondary'
-                width='full'
-                icon={<QrCodeIcon size={20} />}
+                icon={<QrCodeIcon size={18} />}
                 onClick={() => setIsQrOpen(true)}
               >
                 {t('send:connection.qrCode')}
@@ -172,17 +181,19 @@ export function ShareView() {
                   value={vm.topic}
                 />
               </View>
-              <View style={styles.keyAction}>
-                <Button
-                  variant='secondary'
-                  width='full'
-                  iconOnly
-                  aria-label={t('send:connection.shareLink')}
-                  disabled={!vm.topic}
-                  icon={<LinkIcon size={18} />}
-                  onClick={() => void shareLink()}
-                />
-              </View>
+              {!webLinkTooLarge && (
+                <View style={styles.keyAction}>
+                  <Button
+                    variant='secondary'
+                    width='full'
+                    iconOnly
+                    aria-label={t('send:connection.shareLink')}
+                    disabled={!vm.topic}
+                    icon={<LinkIcon size={18} />}
+                    onClick={() => void shareLink()}
+                  />
+                </View>
+              )}
             </View>
           </View>
         )}
@@ -353,7 +364,7 @@ const styles = StyleSheet.create({
   filesWrap: { marginBottom: 24 },
   actions: { gap: 12, marginBottom: 24 },
   tiles: { flexDirection: 'row', alignItems: 'stretch', gap: 12, marginBottom: 24 },
-  tile: { flex: 1, minWidth: 0 },
+  tile: { flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0 },
   invitePanel: {
     marginBottom: 20
   },

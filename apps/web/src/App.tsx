@@ -1,15 +1,25 @@
 import { Footer, PageHeader } from './components'
-import { ConnectingScreen, DisconnectedScreen, DownloadScreen, EnterCodeScreen } from './screens'
+import {
+  ConnectingScreen,
+  DisconnectedScreen,
+  DownloadScreen,
+  EnterCodeScreen,
+  TooLargeScreen
+} from './screens'
 import { useReceiveViewModel } from './useReceiveViewModel'
 
 export default function App() {
   const vm = useReceiveViewModel()
 
   const renderScreen = () => {
-    if (vm.phase === 'connecting') return <ConnectingScreen stage={vm.stage} />
+    if (vm.phase === 'connecting') return <ConnectingScreen stage={vm.stage} onCancel={vm.cancel} />
 
     if (vm.phase === 'disconnected') {
       return <DisconnectedScreen files={vm.files} onReconnect={vm.start} onReset={vm.reset} />
+    }
+
+    if (vm.tooLarge) {
+      return <TooLargeScreen totalBytes={vm.offeredBytes} onReset={vm.reset} />
     }
 
     if (!vm.isAwaitingCode) {

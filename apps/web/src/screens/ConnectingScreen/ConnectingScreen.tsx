@@ -1,4 +1,4 @@
-import { Badge, LinkRow, RowGroup, Spinner, useTheme } from '@altersend/components'
+import { Badge, Button, LinkRow, RowGroup, Spinner, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import { Card, CardFooter, CardStatusRow, ScreenIntro } from '../../components'
 import type { ConnectStage } from '../../transfer'
@@ -9,7 +9,13 @@ const SKELETON_ROWS = [
   { label: '64%', meta: '28%' }
 ]
 
-export function ConnectingScreen({ stage }: { stage: ConnectStage | null }) {
+export function ConnectingScreen({
+  stage,
+  onCancel
+}: {
+  stage: ConnectStage | null
+  onCancel: () => void
+}) {
   const { t } = useTranslation(['web', 'common'])
   const { theme } = useTheme()
 
@@ -67,6 +73,9 @@ export function ConnectingScreen({ stage }: { stage: ConnectStage | null }) {
             <span className='h-1.5 w-1.5 shrink-0 rounded-full bg-warning' />
             {t(`web:connecting.stage.${stage ?? 'idle'}`)}
           </span>
+          <Button variant='ghost' size='sm' onClick={onCancel}>
+            {t('common:actions.cancel')}
+          </Button>
         </CardFooter>
       </Card>
     </>

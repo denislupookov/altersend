@@ -59,5 +59,10 @@
     "title": "Vuoi inviare file a tua volta?",
     "description": "Scarica l’app AlterSend per inviare file di qualsiasi dimensione: crittografia end-to-end, nessun account.",
     "maybeLater": "Forse più tardi"
+  },
+  "tooLarge": {
+    "title": "Troppo grande per il browser",
+    "description": "Questo trasferimento richiede l’app.",
+    "body": "Questo trasferimento da {{size}} supera il limite di {{limit}} del browser. Aprilo nell’app AlterSend per riceverlo, senza account."
   }
 }

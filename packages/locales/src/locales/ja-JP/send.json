@@ -69,7 +69,7 @@
     "qrCode": "QRコード",
     "copyLink": "リンクをコピー",
     "shareLink": "リンクを共有",
-    "shareMessage": "{{items}} が共有されました。リンクを開くとダウンロードできます（アプリもアカウントも不要）。\n\n{{link}}"
+    "shareMessage": "{{items}} が AlterSend で共有されました。リンクを開くとダウンロードできます。\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "フォルダはまだ対応していません。ファイルのみ選択してください。",

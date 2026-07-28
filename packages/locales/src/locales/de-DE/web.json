@@ -59,5 +59,10 @@
     "title": "Dateien zurücksenden?",
     "description": "Hol dir die AlterSend-App, um Dateien beliebiger Größe zu senden – Ende-zu-Ende-verschlüsselt, ohne Konto.",
     "maybeLater": "Vielleicht später"
+  },
+  "tooLarge": {
+    "title": "Zu groß für den Browser",
+    "description": "Diese Übertragung benötigt die App.",
+    "body": "Diese Übertragung mit {{size}} überschreitet das Browser-Limit von {{limit}}. Öffne sie in der AlterSend-App, um sie zu empfangen – kein Konto nötig."
   }
 }

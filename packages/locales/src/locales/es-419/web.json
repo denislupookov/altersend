@@ -59,5 +59,10 @@
     "title": "¿Quieres enviar archivos de vuelta?",
     "description": "Descarga la app de AlterSend para enviar archivos de cualquier tamaño: cifrado de extremo a extremo, sin cuenta.",
     "maybeLater": "Quizá más tarde"
+  },
+  "tooLarge": {
+    "title": "Demasiado grande para el navegador",
+    "description": "Esta transferencia necesita la app.",
+    "body": "Esta transferencia de {{size}} supera el límite de {{limit}} del navegador. Ábrela en la app de AlterSend para recibirla, sin cuenta."
   }
 }

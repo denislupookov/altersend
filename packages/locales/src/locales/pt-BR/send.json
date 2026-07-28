@@ -69,7 +69,7 @@
     "qrCode": "Código QR",
     "copyLink": "Copiar link",
     "shareLink": "Compartilhar link",
-    "shareMessage": "{{items}} compartilhados com você — abra para baixar, sem app nem conta:\n\n{{link}}"
+    "shareMessage": "{{items}} compartilhados com você via AlterSend — abra para baixar:\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "As pastas ainda não são suportadas. Selecione apenas arquivos.",

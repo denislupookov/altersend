@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { isValidJoinCode } from '@altersend/domain'
+import { exceedsWebLinkLimit, isValidJoinCode } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { connect, connectErrorCode, type ConnectStage, type Connection } from './transfer'
 import type { FileOffer, TextOffer } from './transfer/peerProtocol'
@@ -22,8 +22,11 @@ export interface ReceiveViewModel {
   stage: ConnectStage | null
   error: string
   isAwaitingCode: boolean
+  tooLarge: boolean
+  offeredBytes: number
   setCode: (value: string) => void
   start: () => void
+  cancel: () => void
   download: (offerIds: string[]) => void
   downloadAll: () => void
   paste: () => void
@@ -41,6 +44,7 @@ export function useReceiveViewModel(): ReceiveViewModel {
   const [error, setError] = useState('')
 
   const connectionRef = useRef<Connection | null>(null)
+  const connectAbort = useRef<AbortController | null>(null)
   const filesRef = useRef<TransferFile[]>([])
   const queue = useRef<string[]>([])
   const draining = useRef(false)
@@ -89,13 +93,19 @@ export function useReceiveViewModel(): ReceiveViewModel {
 
     closeConnection()
     scrubUrl()
+    const controller = new AbortController()
+    connectAbort.current = controller
     setPhase('connecting')
     setError('')
     putFiles([])
     setTexts([])
 
-    connect(trimmed, { onStatus: setStage, onClosed: handlePeerClosed })
+    connect(trimmed, { onStatus: setStage, onClosed: handlePeerClosed }, controller.signal)
       .then((connection) => {
+        if (controller.signal.aborted) {
+          connection.close()
+          return
+        }
         connectionRef.current = connection
         putFiles(
           connection.offers.map((offer) => {
@@ -107,9 +117,20 @@ export function useReceiveViewModel(): ReceiveViewModel {
         setPhase('connected')
       })
       .catch((cause: unknown) => {
+        if (controller.signal.aborted) return
         setPhase('idle')
         setError(describeError(cause))
       })
+  }
+
+  const cancelConnect = () => {
+    connectAbort.current?.abort()
+    connectAbort.current = null
+    closeConnection()
+    scrubUrl()
+    setStage(null)
+    setError('')
+    setPhase('idle')
   }
 
   const reset = () => {
@@ -157,6 +178,7 @@ export function useReceiveViewModel(): ReceiveViewModel {
   const download = (offerIds: string[]) => {
     const connection = connectionRef.current
     if (!connection) return
+    if (exceedsWebLinkLimit(connection.offers.reduce((sum, o) => sum + (o.size || 0), 0))) return
 
     for (const offer of connection.offers) {
       if (!offerIds.includes(offer.id)) continue
@@ -208,6 +230,9 @@ export function useReceiveViewModel(): ReceiveViewModel {
   const isAwaitingCode =
     phase !== 'connecting' && phase !== 'disconnected' && files.length === 0 && texts.length === 0
 
+  const offeredBytes = files.reduce((sum, f) => sum + (f.offer.size || 0), 0)
+  const tooLarge = files.length > 0 && exceedsWebLinkLimit(offeredBytes)
+
   return {
     code,
     phase,
@@ -216,8 +241,11 @@ export function useReceiveViewModel(): ReceiveViewModel {
     stage,
     error,
     isAwaitingCode,
+    tooLarge,
+    offeredBytes,
     setCode,
     start: () => runConnect(code),
+    cancel: cancelConnect,
     download,
     downloadAll,
     paste,

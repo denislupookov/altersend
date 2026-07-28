@@ -69,7 +69,7 @@
     "qrCode": "QR-Code",
     "copyLink": "Link kopieren",
     "shareLink": "Link teilen",
-    "shareMessage": "{{items}} für dich freigegeben — zum Herunterladen öffnen, ohne App und ohne Konto:\n\n{{link}}"
+    "shareMessage": "{{items}} für dich über AlterSend freigegeben — zum Herunterladen öffnen:\n\n{{link}}"
   },
   "errors": {
     "folderUnsupported": "Ordner werden noch nicht unterstützt. Bitte wählen Sie nur Dateien aus.",

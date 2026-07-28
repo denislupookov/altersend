@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   buildJoinUrl,
   buildWebReceiveUrl,
+  exceedsWebLinkLimit,
   formatFileSize,
   formatItemsCount,
   formatTextSnippetPreview,
@@ -51,6 +52,7 @@ export function ShareView() {
   const [isQrOpen, setIsQrOpen] = useState(false)
   const { copiedId, flashCopied } = useCopiedFlag()
   const hasConnectedDevices = vm.connectedCount > 0
+  const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize)
   const fileRows = groupSelectedFiles(vm.files)
   const singleFolder = fileRows.length === 1 && fileRows[0].kind === 'folder' ? fileRows[0] : null
 
@@ -144,11 +146,13 @@ export function ShareView() {
               onCopy={() => void copyTopic()}
               placeholder={t('send:connection.placeholder')}
             />
-            <CopyLinkButton
-              topic={vm.topic}
-              copied={copiedId === 'link'}
-              onCopy={() => void copyLink()}
-            />
+            {!webLinkTooLarge && (
+              <CopyLinkButton
+                topic={vm.topic}
+                copied={copiedId === 'link'}
+                onCopy={() => void copyLink()}
+              />
+            )}
             <div className='flex h-12 w-12 shrink-0'>
               <Button
                 variant='secondary'
@@ -211,11 +215,13 @@ export function ShareView() {
                     onCopy={() => void copyTopic()}
                     placeholder={t('send:connection.placeholder')}
                   />
-                  <CopyLinkButton
-                    topic={vm.topic}
-                    copied={copiedId === 'link'}
-                    onCopy={() => void copyLink()}
-                  />
+                  {!webLinkTooLarge && (
+                    <CopyLinkButton
+                      topic={vm.topic}
+                      copied={copiedId === 'link'}
+                      onCopy={() => void copyLink()}
+                    />
+                  )}
                 </div>
                 {vm.hasDevices && filesCard}
               </div>
