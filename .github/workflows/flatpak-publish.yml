@@ -18,7 +18,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     container:
-      image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
+      image: bilelmoussaoui/flatpak-github-actions@sha256:d534700a8a0090dfa5e23ed3ae09106a1beafde54e66b6b1327b27dbd3f0c7c2 # freedesktop-24.08
       options: --privileged
     timeout-minutes: 60
     permissions:
@@ -26,10 +26,10 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Checkout existing OSTree repo for delta updates
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: denislupookov/altersend-flatpak
           ref: main
@@ -58,7 +58,7 @@ jobs:
           repository-url: https://flathub.org/repo/flathub.flatpakrepo
       
       - name: Deploy to Flatpak Repo (GitHub Pages)
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           personal_token: ${{ secrets.FLATPAK_PUBLISH_TOKEN }}
           external_repository: denislupookov/altersend-flatpak
