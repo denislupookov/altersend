@@ -74,8 +74,8 @@ export function ShareView() {
   const shareLink = async () => {
     if (!vm.topic) return
     try {
-      await Clipboard.setStringAsync(vm.topic)
       const link = buildWebReceiveUrl(vm.topic, process.env.EXPO_PUBLIC_WEB_URL)
+      await Clipboard.setStringAsync(link)
       await Share.share({
         message: buildShareInvite(t, {
           link,
@@ -362,7 +362,6 @@ const styles = StyleSheet.create({
   sectionCount: { fontSize: 11.5, fontWeight: '500' },
   section: { marginBottom: 16 },
   filesWrap: { marginBottom: 24 },
-  actions: { gap: 12, marginBottom: 24 },
   tiles: { flexDirection: 'row', alignItems: 'stretch', gap: 12, marginBottom: 24 },
   tile: { flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0 },
   invitePanel: {

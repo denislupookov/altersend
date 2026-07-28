@@ -28,7 +28,8 @@
   "errors": {
     "relayUnreachable": "Cannot reach the AlterSend relay. Check your connection and try again.",
     "senderNotFound": "Sender not found — make sure the sender is sharing.",
-    "nothingShared": "Connected, but the sender did not share anything."
+    "nothingShared": "Connected, but the sender did not share anything.",
+    "connectionFailed": "Connection lost — the sender may have stopped sharing. Try again."
   },
   "footer": {
     "getApp": "Download",
@@ -63,6 +64,7 @@
   "tooLarge": {
     "title": "Too large for the browser",
     "description": "This transfer needs the app.",
-    "body": "This {{size}} transfer is over the {{limit}} browser limit. Open it in the AlterSend app to receive it — no account needed."
+    "body": "This {{size}} transfer is over the {{limit}} browser limit. Receive it in the AlterSend app — no account needed.",
+    "openInApp": "Open in the app"
   }
 }

@@ -4,7 +4,7 @@ export const CONNECT_ERROR_CODES = ['relayUnreachable', 'senderNotFound', 'nothi
 
 export type ConnectErrorCode = (typeof CONNECT_ERROR_CODES)[number]
 
-export type ConnectStage = 'relay' | 'finding' | 'waiting' | 'preparing'
+type ConnectStage = 'relay' | 'finding' | 'waiting' | 'preparing'
 
 export interface ConnectHandlers {
   onStatus?: (stage: ConnectStage) => void

@@ -28,7 +28,8 @@
   "errors": {
     "relayUnreachable": "Impossibile raggiungere il relay di AlterSend. Controlla la connessione e riprova.",
     "senderNotFound": "Mittente non trovato — assicurati che stia condividendo.",
-    "nothingShared": "Connesso, ma il mittente non ha condiviso nulla."
+    "nothingShared": "Connesso, ma il mittente non ha condiviso nulla.",
+    "connectionFailed": "Connessione persa: il mittente potrebbe aver interrotto la condivisione. Riprova."
   },
   "footer": {
     "getApp": "Scarica l’app",
@@ -63,6 +64,7 @@
   "tooLarge": {
     "title": "Troppo grande per il browser",
     "description": "Questo trasferimento richiede l’app.",
-    "body": "Questo trasferimento da {{size}} supera il limite di {{limit}} del browser. Aprilo nell’app AlterSend per riceverlo, senza account."
+    "body": "Questo trasferimento da {{size}} supera il limite di {{limit}} del browser. Ricevilo nell’app AlterSend, senza account.",
+    "openInApp": "Apri nell’app"
   }
 }

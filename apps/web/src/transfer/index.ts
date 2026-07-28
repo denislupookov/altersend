@@ -6,7 +6,7 @@ import { waitForOffers } from './session'
 import type { ConnectHandlers, Connection } from './types'
 
 export { connectErrorCode } from './relay'
-export type { ConnectHandlers, ConnectStage, Connection } from './types'
+export type { ConnectHandlers, Connection } from './types'
 
 export async function connect(
   code: string,

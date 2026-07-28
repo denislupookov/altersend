@@ -30,9 +30,12 @@ function withTimeout<T>(promise: Promise<T>, ms: number, code: ConnectErrorCode)
 export function openRelay(): { dht: RelayDHT; teardown: () => void } {
   const ws = new WebSocket(relayUrl())
   const dht = new DHT(new Stream(true, ws), { custodial: false }) as unknown as RelayDHT
+  let torn = false
   return {
     dht,
     teardown: () => {
+      if (torn) return
+      torn = true
       dht.destroy?.().catch((err) => console.warn('Failed to destroy relay DHT', err))
       ws.close()
     }

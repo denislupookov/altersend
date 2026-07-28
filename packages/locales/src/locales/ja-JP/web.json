@@ -28,7 +28,8 @@
   "errors": {
     "relayUnreachable": "AlterSend リレーに接続できません。接続を確認してもう一度お試しください。",
     "senderNotFound": "送信側が見つかりません — 共有中かどうか確認してください。",
-    "nothingShared": "接続しましたが、送信側は何も共有していません。"
+    "nothingShared": "接続しましたが、送信側は何も共有していません。",
+    "connectionFailed": "接続が切れました。送信者が共有を停止した可能性があります。もう一度お試しください。"
   },
   "footer": {
     "getApp": "アプリを入手",
@@ -63,6 +64,7 @@
   "tooLarge": {
     "title": "ブラウザーには大きすぎます",
     "description": "この転送にはアプリが必要です。",
-    "body": "この {{size}} の転送はブラウザーの上限 {{limit}} を超えています。AlterSend アプリで開くと受信できます（アカウント不要）。"
+    "body": "この {{size}} の転送はブラウザーの上限 {{limit}} を超えています。AlterSend アプリで受信できます（アカウント不要）。",
+    "openInApp": "アプリで開く"
   }
 }

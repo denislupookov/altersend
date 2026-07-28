@@ -28,7 +28,8 @@
   "errors": {
     "relayUnreachable": "Não foi possível acessar o retransmissor do AlterSend. Verifique sua conexão e tente novamente.",
     "senderNotFound": "Remetente não encontrado — verifique se ele está compartilhando.",
-    "nothingShared": "Conectado, mas o remetente não compartilhou nada."
+    "nothingShared": "Conectado, mas o remetente não compartilhou nada.",
+    "connectionFailed": "Conexão perdida — o remetente pode ter parado de compartilhar. Tente novamente."
   },
   "footer": {
     "getApp": "Baixar o app",
@@ -63,6 +64,7 @@
   "tooLarge": {
     "title": "Muito grande para o navegador",
     "description": "Esta transferência precisa do app.",
-    "body": "Esta transferência de {{size}} excede o limite de {{limit}} do navegador. Abra no app AlterSend para recebê-la — sem conta."
+    "body": "Esta transferência de {{size}} excede o limite de {{limit}} do navegador. Receba-a no app AlterSend — sem conta.",
+    "openInApp": "Abrir no app"
   }
 }

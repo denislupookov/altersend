@@ -17,6 +17,7 @@ self.addEventListener('message', (event) => {
   for (const [id, entry] of pending) {
     if (Date.now() - entry.at > PENDING_TTL_MS) pending.delete(id)
   }
+  if (data.port) data.port.postMessage('registered')
 })
 
 self.addEventListener('fetch', (event) => {

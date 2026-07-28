@@ -65,6 +65,7 @@ export async function downloadOffer(
       })
       .catch((err: Error) => {
         channel.close()
+        transfers.delete(offer.id)
         if (state.paused) {
           resolve()
           return

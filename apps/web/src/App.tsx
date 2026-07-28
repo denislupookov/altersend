@@ -12,14 +12,14 @@ export default function App() {
   const vm = useReceiveViewModel()
 
   const renderScreen = () => {
-    if (vm.phase === 'connecting') return <ConnectingScreen stage={vm.stage} onCancel={vm.cancel} />
+    if (vm.phase === 'connecting') return <ConnectingScreen onCancel={vm.cancel} />
 
     if (vm.phase === 'disconnected') {
       return <DisconnectedScreen files={vm.files} onReconnect={vm.start} onReset={vm.reset} />
     }
 
     if (vm.tooLarge) {
-      return <TooLargeScreen totalBytes={vm.offeredBytes} onReset={vm.reset} />
+      return <TooLargeScreen code={vm.code} totalBytes={vm.offeredBytes} onReset={vm.reset} />
     }
 
     if (!vm.isAwaitingCode) {
@@ -49,7 +49,7 @@ export default function App() {
 
   return (
     <div className='flex min-h-screen w-full flex-col bg-background'>
-      <div className='relative flex w-full flex-1 flex-col items-center px-4 pb-8 pt-4 sm:px-6 sm:pb-11 sm:pt-13'>
+      <div className='relative flex w-full flex-1 flex-col items-center px-4 pb-6 pt-4 sm:px-6 sm:pb-11 sm:pt-13'>
         <PageHeader />
 
         {renderScreen()}

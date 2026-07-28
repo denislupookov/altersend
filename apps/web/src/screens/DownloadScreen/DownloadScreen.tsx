@@ -11,7 +11,14 @@ import { ArrowLeftIcon, CheckIcon, DownloadIcon, PlayIcon } from '@altersend/com
 import { getDownloadRowLabels, getPrimaryDownloadLabel, useCopiedFlag } from '@altersend/domain'
 import { useEffect, useState } from 'react'
 import { useTranslation } from '@altersend/locales'
-import { Card, CardFooter, CardStatusRow, ScreenIntro, SendBackModal } from '../../components'
+import {
+  BLOCK_WIDTH,
+  Card,
+  CardFooter,
+  CardStatusRow,
+  ScreenIntro,
+  SendBackModal
+} from '../../components'
 import type { TextOffer } from '../../transfer/peerProtocol'
 import type { TransferFile } from '../../types'
 import { getHintLabel, getMetaLabel, getStatusLabel, getTitleLabel } from './downloadView'
@@ -46,6 +53,7 @@ export function DownloadScreen({
   const [promptDismissed, setPromptDismissed] = useState(false)
   const [promptReady, setPromptReady] = useState(false)
   const isPhone = useIsCompact()
+  const hint = summary.count > 0 ? getHintLabel(t, summary) : null
 
   useEffect(() => {
     if (!summary.allDownloaded) {
@@ -144,10 +152,8 @@ export function DownloadScreen({
 
         {error && <p className='mt-4 text-sm text-danger'>{error}</p>}
 
-        <CardFooter>
-          <span className='text-sm text-text-muted'>
-            {summary.count > 0 ? getHintLabel(t, summary) : null}
-          </span>
+        <CardFooter align={hint ? 'between' : 'end'}>
+          {hint ? <span className='text-sm text-text-muted'>{hint}</span> : null}
 
           {summary.primaryAction ? (
             <Button
@@ -186,8 +192,14 @@ export function DownloadScreen({
       </Card>
 
       {!summary.allDownloaded && (
-        <div className='mt-6 flex w-full justify-start sm:w-auto sm:justify-center'>
-          <Button variant='ghost' size='sm' icon={<ArrowLeftIcon size={16} />} onClick={onReset}>
+        <div className={isPhone ? `mt-2 ${BLOCK_WIDTH}` : 'mt-4 flex justify-center'}>
+          <Button
+            variant={isPhone ? 'secondary' : 'ghost'}
+            size={isPhone ? 'lg' : 'sm'}
+            width={isPhone ? 'full' : 'auto'}
+            icon={<ArrowLeftIcon size={16} />}
+            onClick={onReset}
+          >
             {t('web:download.enterAnother')}
           </Button>
         </div>

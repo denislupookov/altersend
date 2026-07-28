@@ -28,7 +28,8 @@
   "errors": {
     "relayUnreachable": "Impossible de joindre le relais AlterSend. Vérifiez votre connexion et réessayez.",
     "senderNotFound": "Expéditeur introuvable — vérifiez qu’il est bien en train de partager.",
-    "nothingShared": "Connecté, mais l’expéditeur n’a rien partagé."
+    "nothingShared": "Connecté, mais l’expéditeur n’a rien partagé.",
+    "connectionFailed": "Connexion perdue — l’expéditeur a peut-être arrêté le partage. Réessayez."
   },
   "footer": {
     "getApp": "Obtenir l’app",
@@ -63,6 +64,7 @@
   "tooLarge": {
     "title": "Trop volumineux pour le navigateur",
     "description": "Ce transfert nécessite l’app.",
-    "body": "Ce transfert de {{size}} dépasse la limite de {{limit}} du navigateur. Ouvrez-le dans l’app AlterSend pour le recevoir — sans compte."
+    "body": "Ce transfert de {{size}} dépasse la limite de {{limit}} du navigateur. Recevez-le dans l’app AlterSend — sans compte.",
+    "openInApp": "Ouvrir dans l’app"
   }
 }

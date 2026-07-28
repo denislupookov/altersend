@@ -28,7 +28,8 @@
   "errors": {
     "relayUnreachable": "Das AlterSend-Relay ist nicht erreichbar. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     "senderNotFound": "Absender nicht gefunden – stellen Sie sicher, dass der Absender gerade teilt.",
-    "nothingShared": "Verbunden, aber der Absender hat nichts geteilt."
+    "nothingShared": "Verbunden, aber der Absender hat nichts geteilt.",
+    "connectionFailed": "Verbindung verloren – der Absender teilt möglicherweise nicht mehr. Versuche es erneut."
   },
   "footer": {
     "getApp": "App herunterladen",
@@ -63,6 +64,7 @@
   "tooLarge": {
     "title": "Zu groß für den Browser",
     "description": "Diese Übertragung benötigt die App.",
-    "body": "Diese Übertragung mit {{size}} überschreitet das Browser-Limit von {{limit}}. Öffne sie in der AlterSend-App, um sie zu empfangen – kein Konto nötig."
+    "body": "Diese Übertragung mit {{size}} überschreitet das Browser-Limit von {{limit}}. Empfange sie in der AlterSend-App – kein Konto nötig.",
+    "openInApp": "In der App öffnen"
   }
 }

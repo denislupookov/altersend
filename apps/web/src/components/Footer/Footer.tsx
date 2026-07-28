@@ -40,7 +40,7 @@ export function Footer() {
 
   return (
     <footer
-      className={`mt-auto flex ${BLOCK_WIDTH} flex-col items-center gap-4 pt-10 sm:flex-row sm:justify-between sm:pt-14`}
+      className={`mt-auto flex ${BLOCK_WIDTH} flex-col items-start gap-5 pt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:pt-14`}
     >
       <div className='flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-faint'>
         <span>© {new Date().getFullYear()} AlterSend</span>
@@ -50,7 +50,7 @@ export function Footer() {
         <ExternalLink href={`mailto:${supportEmail}`}>{t('web:footer.help')}</ExternalLink>
       </div>
 
-      <div className='flex shrink-0 items-center gap-4 text-text-faint'>
+      <div className='flex shrink-0 items-center gap-4 self-end text-text-faint sm:self-auto'>
         {SOCIALS.map((social) => (
           <a
             key={social.label}

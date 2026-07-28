@@ -1,7 +1,7 @@
 import { Badge, Button, LinkRow, RowGroup, Spinner, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import { Card, CardFooter, CardStatusRow, ScreenIntro } from '../../components'
-import type { ConnectStage } from '../../transfer'
+import { useIsCompact } from '../../useIsCompact'
 
 const SKELETON_ROWS = [
   { label: '70%', meta: '30%' },
@@ -9,15 +9,10 @@ const SKELETON_ROWS = [
   { label: '64%', meta: '28%' }
 ]
 
-export function ConnectingScreen({
-  stage,
-  onCancel
-}: {
-  stage: ConnectStage | null
-  onCancel: () => void
-}) {
+export function ConnectingScreen({ onCancel }: { onCancel: () => void }) {
   const { t } = useTranslation(['web', 'common'])
   const { theme } = useTheme()
+  const isPhone = useIsCompact()
 
   return (
     <>
@@ -26,7 +21,7 @@ export function ConnectingScreen({
         description={t('web:connecting.description')}
       />
 
-      <Card>
+      <Card bare={isPhone}>
         <CardStatusRow
           status={
             <Badge
@@ -68,12 +63,13 @@ export function ConnectingScreen({
           </RowGroup>
         </div>
 
-        <CardFooter>
-          <span className='flex items-center gap-2 text-sm text-text-muted'>
-            <span className='h-1.5 w-1.5 shrink-0 rounded-full bg-warning' />
-            {t(`web:connecting.stage.${stage ?? 'idle'}`)}
-          </span>
-          <Button variant='ghost' size='sm' onClick={onCancel}>
+        <CardFooter align='end'>
+          <Button
+            variant='secondary'
+            size={isPhone ? 'lg' : 'sm'}
+            width={isPhone ? 'full' : 'auto'}
+            onClick={onCancel}
+          >
             {t('common:actions.cancel')}
           </Button>
         </CardFooter>

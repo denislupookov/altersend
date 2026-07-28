@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { exceedsWebLinkLimit, isValidJoinCode } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
-import { connect, connectErrorCode, type ConnectStage, type Connection } from './transfer'
+import { connect, connectErrorCode, type Connection } from './transfer'
 import type { FileOffer, TextOffer } from './transfer/peerProtocol'
 import type { ConnectionPhase, TransferFile } from './types'
 
@@ -19,7 +19,6 @@ export interface ReceiveViewModel {
   phase: ConnectionPhase
   files: TransferFile[]
   texts: TextOffer[]
-  stage: ConnectStage | null
   error: string
   isAwaitingCode: boolean
   tooLarge: boolean
@@ -40,7 +39,6 @@ export function useReceiveViewModel(): ReceiveViewModel {
   const [phase, setPhase] = useState<ConnectionPhase>('idle')
   const [files, setFiles] = useState<TransferFile[]>([])
   const [texts, setTexts] = useState<TextOffer[]>([])
-  const [stage, setStage] = useState<ConnectStage | null>(null)
   const [error, setError] = useState('')
 
   const connectionRef = useRef<Connection | null>(null)
@@ -61,7 +59,8 @@ export function useReceiveViewModel(): ReceiveViewModel {
   const describeError = (cause: unknown): string => {
     const errorCode = connectErrorCode(cause)
     if (errorCode) return t(`web:errors.${errorCode}`)
-    return cause instanceof Error ? cause.message : String(cause)
+    console.warn('Connect failed:', cause)
+    return t('web:errors.connectionFailed')
   }
 
   const closeConnection = () => {
@@ -72,7 +71,6 @@ export function useReceiveViewModel(): ReceiveViewModel {
 
   const handlePeerClosed = () => {
     queue.current = []
-    draining.current = false
     if (filesRef.current.length === 0) return
     putFiles(
       filesRef.current.map((f) => (f.status === 'downloading' ? { ...f, status: 'failed' } : f))
@@ -100,7 +98,7 @@ export function useReceiveViewModel(): ReceiveViewModel {
     putFiles([])
     setTexts([])
 
-    connect(trimmed, { onStatus: setStage, onClosed: handlePeerClosed }, controller.signal)
+    connect(trimmed, { onClosed: handlePeerClosed }, controller.signal)
       .then((connection) => {
         if (controller.signal.aborted) {
           connection.close()
@@ -128,7 +126,6 @@ export function useReceiveViewModel(): ReceiveViewModel {
     connectAbort.current = null
     closeConnection()
     scrubUrl()
-    setStage(null)
     setError('')
     setPhase('idle')
   }
@@ -140,7 +137,6 @@ export function useReceiveViewModel(): ReceiveViewModel {
     setCodeState('')
     putFiles([])
     setTexts([])
-    setStage(null)
     setError('')
   }
 
@@ -238,7 +234,6 @@ export function useReceiveViewModel(): ReceiveViewModel {
     phase,
     files,
     texts,
-    stage,
     error,
     isAwaitingCode,
     tooLarge,

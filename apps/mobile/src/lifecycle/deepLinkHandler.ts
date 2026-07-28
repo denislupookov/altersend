@@ -1,6 +1,12 @@
 import * as Linking from 'expo-linking'
 import { router } from 'expo-router'
-import { canJoinFromDeepLink, extractJoinCode, isPairUrl, joinSession } from '@altersend/domain'
+import {
+  canJoinFromDeepLink,
+  extractJoinCode,
+  isPairUrl,
+  joinSession,
+  websiteUrl
+} from '@altersend/domain'
 
 let started = false
 let subscription: { remove(): void } | null = null
@@ -19,9 +25,14 @@ export function startDeepLinkHandler(): () => void {
 }
 
 const ALLOWED_SCHEMES = ['altersend://', 'com.altersend.mobile://']
+const RECEIVE_LINK_PREFIX = `${websiteUrl}/r`
+
+function isAllowedUrl(url: string): boolean {
+  return ALLOWED_SCHEMES.some((s) => url.startsWith(s)) || url.startsWith(RECEIVE_LINK_PREFIX)
+}
 
 function handleUrl(url: string): void {
-  if (!ALLOWED_SCHEMES.some((s) => url.startsWith(s))) return
+  if (!isAllowedUrl(url)) return
   const code = extractJoinCode(url)
   if (!code) return
 

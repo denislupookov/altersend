@@ -28,7 +28,8 @@
   "errors": {
     "relayUnreachable": "No se puede conectar con el relé de AlterSend. Revise su conexión e inténtelo de nuevo.",
     "senderNotFound": "No se encontró al remitente: asegúrese de que esté compartiendo.",
-    "nothingShared": "Conectado, pero el remitente no compartió nada."
+    "nothingShared": "Conectado, pero el remitente no compartió nada.",
+    "connectionFailed": "Conexión perdida: puede que el remitente haya dejado de compartir. Inténtalo de nuevo."
   },
   "footer": {
     "getApp": "Obtener la app",
@@ -63,6 +64,7 @@
   "tooLarge": {
     "title": "Demasiado grande para el navegador",
     "description": "Esta transferencia necesita la app.",
-    "body": "Esta transferencia de {{size}} supera el límite de {{limit}} del navegador. Ábrela en la app de AlterSend para recibirla, sin necesidad de cuenta."
+    "body": "Esta transferencia de {{size}} supera el límite de {{limit}} del navegador. Recíbela en la app de AlterSend, sin necesidad de cuenta.",
+    "openInApp": "Abrir en la app"
   }
 }

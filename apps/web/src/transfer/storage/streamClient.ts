@@ -78,24 +78,42 @@ export async function streamReady(): Promise<boolean> {
   }
 }
 
-export async function startStreamDownload(
-  fileName: string,
-  size: number
-): Promise<WritableStreamDefaultWriter<Uint8Array>> {
+function registerStream(
+  worker: ServiceWorker,
+  payload: { id: string; filename: string; size: number; readable: ReadableStream<Uint8Array> }
+): Promise<void> {
+  return new Promise((resolve) => {
+    const channel = new MessageChannel()
+    const done = () => {
+      channel.port1.onmessage = null
+      channel.port1.close()
+      resolve()
+    }
+    channel.port1.onmessage = done
+    setTimeout(done, 1000)
+    worker.postMessage({ type: 'stream', ...payload, port: channel.port2 }, [
+      payload.readable as unknown as Transferable,
+      channel.port2
+    ])
+  })
+}
+
+export interface StreamDownload {
+  writer: WritableStreamDefaultWriter<Uint8Array>
+  removeFrame: () => void
+}
+
+export async function startStreamDownload(fileName: string, size: number): Promise<StreamDownload> {
   const worker = await activeWorker()
   const id = crypto.randomUUID()
   const transform = new TransformStream<Uint8Array, Uint8Array>()
 
-  worker.postMessage(
-    { type: 'stream', id, filename: fileName, size, readable: transform.readable },
-    [transform.readable as unknown as Transferable]
-  )
+  await registerStream(worker, { id, filename: fileName, size, readable: transform.readable })
 
   const iframe = document.createElement('iframe')
   iframe.hidden = true
   iframe.src = `/_stream/${id}`
   document.body.appendChild(iframe)
-  setTimeout(() => iframe.remove(), 10_000)
 
-  return transform.writable.getWriter()
+  return { writer: transform.writable.getWriter(), removeFrame: () => iframe.remove() }
 }

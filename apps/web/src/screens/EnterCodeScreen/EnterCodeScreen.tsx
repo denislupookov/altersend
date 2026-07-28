@@ -3,6 +3,7 @@ import { Button, Input } from '@altersend/components'
 import { ClipboardIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { Card, ScreenIntro, SentWithBanner } from '../../components'
+import { useIsCompact } from '../../useIsCompact'
 
 export interface EnterCodeScreenProps {
   code: string
@@ -20,12 +21,13 @@ export function EnterCodeScreen({
   onConnect
 }: EnterCodeScreenProps) {
   const { t } = useTranslation(['web', 'receive', 'common'])
+  const isPhone = useIsCompact()
 
   return (
     <>
       <ScreenIntro title={t('web:join.title')} description={t('web:join.description')} />
 
-      <Card>
+      <Card bare={isPhone}>
         <Input
           label={t('web:join.codeLabel')}
           filled

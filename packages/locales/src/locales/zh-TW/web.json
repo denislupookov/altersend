@@ -28,7 +28,8 @@
   "errors": {
     "relayUnreachable": "無法連線至 AlterSend 中繼。請檢查網路連線後重試。",
     "senderNotFound": "找不到寄件者 — 請確認對方正在共享。",
-    "nothingShared": "已連線，但寄件者未共享任何內容。"
+    "nothingShared": "已連線，但寄件者未共享任何內容。",
+    "connectionFailed": "連線已中斷——傳送方可能已停止共享。請重試。"
   },
   "footer": {
     "getApp": "取得應用程式",
@@ -63,6 +64,7 @@
   "tooLarge": {
     "title": "檔案太大，瀏覽器無法接收",
     "description": "此傳輸需要使用應用程式。",
-    "body": "此 {{size}} 的傳輸超過瀏覽器 {{limit}} 的上限。在 AlterSend 應用程式中開啟即可接收，無需帳戶。"
+    "body": "此 {{size}} 的傳輸超過瀏覽器 {{limit}} 的上限。在 AlterSend 應用程式中接收，無需帳戶。",
+    "openInApp": "在應用程式中開啟"
   }
 }
