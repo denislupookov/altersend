@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   build-flatpak:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
