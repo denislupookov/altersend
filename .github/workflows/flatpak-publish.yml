@@ -30,7 +30,6 @@ jobs:
 
       - name: Checkout existing OSTree repo for delta updates
         uses: actions/checkout@v4
-        continue-on-error: true
         with:
           repository: denislupookov/altersend-flatpak
           ref: main
@@ -39,9 +38,12 @@ jobs:
 
       - name: Clean and verify OSTree repo
         run: |
-          rm -rf repo/.git
-          if [ ! -f "repo/config" ]; then
-            echo "Not a valid OSTree repository (likely a fresh GitHub repo). Cleaning up so flatpak-builder can initialize it."
+          if [ -f repo/config ]; then
+            echo "Validating existing OSTree repository..."
+            ostree fsck --repo=repo
+            rm -rf repo/.git
+          else
+            echo "Repository exists but is not an OSTree repository (yet). Cleaning up so flatpak-builder can initialize it."
             rm -rf repo
           fi
 
