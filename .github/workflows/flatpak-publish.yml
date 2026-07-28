@@ -15,7 +15,7 @@ jobs:
   build-flatpak:
     runs-on: ubuntu-latest
     container:
-      image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-25.08
       options: --privileged
     timeout-minutes: 60
     
@@ -32,15 +32,20 @@ jobs:
           path: repo
           token: ${{ secrets.FLATPAK_PUBLISH_TOKEN }}
 
-      - name: Clean git metadata from OSTree repo
-        run: rm -rf repo/.git
+      - name: Clean and verify OSTree repo
+        run: |
+          rm -rf repo/.git
+          if [ ! -f "repo/config" ]; then
+            echo "Not a valid OSTree repository (likely a fresh GitHub repo). Cleaning up so flatpak-builder can initialize it."
+            rm -rf repo
+          fi
 
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: altersend.flatpak
           manifest-path: flatpak/com.altersend.AlterSend.yaml
-          cache-key: flatpak-builder-${{ hashFiles('flatpak/com.altersend.AlterSend.yaml') }}
+          cache-key: flatpak-builder-${{ hashFiles('flatpak/com.altersend.AlterSend.yaml', 'flatpak/node-modules.json') }}
           build-bundle: true
           repository-name: flathub
           repository-url: https://flathub.org/repo/flathub.flatpakrepo
