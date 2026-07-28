@@ -84,7 +84,14 @@ brew install --cask altersend
 
 ### Linux Flatpak
 
-You can build and install the included Flatpak manifest yourself (needs `flatpak-builder`):
+You can install AlterSend directly from our official Flatpak repository:
+
+```sh
+flatpak remote-add --user --no-gpg-verify altersend https://denislupookov.github.io/altersend-flatpak/
+flatpak install --user altersend com.altersend.AlterSend
+```
+
+Or, you can build and install the included Flatpak manifest yourself (needs `flatpak-builder`):
 
 ```sh
 git clone https://github.com/denislupookov/altersend.git && cd altersend
