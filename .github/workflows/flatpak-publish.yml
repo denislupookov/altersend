@@ -1,0 +1,56 @@
+name: Flatpak Publish
+
+on:
+  push:
+    paths:
+      - 'flatpak/**'
+      - '.github/workflows/flatpak-publish.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: "flatpak-publish"
+  cancel-in-progress: true
+
+jobs:
+  build-flatpak:
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+    timeout-minutes: 60
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout existing OSTree repo for delta updates
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          repository: riftrogue/altersend-flatpak
+          ref: main
+          path: repo
+          token: ${{ secrets.FLATPAK_PUBLISH_TOKEN }}
+
+      - name: Clean git metadata from OSTree repo
+        run: rm -rf repo/.git
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: altersend.flatpak
+          manifest-path: flatpak/com.altersend.AlterSend.yaml
+          cache-key: flatpak-builder-${{ hashFiles('flatpak/com.altersend.AlterSend.yaml') }}
+          build-bundle: true
+          repository-name: flathub
+          repository-url: https://flathub.org/repo/flathub.flatpakrepo
+      
+      - name: Deploy to Flatpak Repo (GitHub Pages)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.FLATPAK_PUBLISH_TOKEN }}
+          external_repository: riftrogue/altersend-flatpak
+          publish_branch: main
+          publish_dir: repo
+          keep_files: true
+          force_orphan: false
