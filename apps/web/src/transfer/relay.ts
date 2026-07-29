@@ -63,18 +63,32 @@ function withTimeout<T>(promise: Promise<T>, ms: number, code: ConnectErrorCode)
   })
 }
 
-export async function openRelay(): Promise<{ dht: RelayDHT; teardown: () => void }> {
+export async function openRelay(): Promise<{ dht: RelayDHT; teardown: () => void; url: string }> {
   const ws = await fastestRelay(relayUrls())
   const dht = new DHT(new Stream(true, ws), { custodial: false }) as unknown as RelayDHT
   let torn = false
   return {
     dht,
+    url: ws.url,
     teardown: () => {
       if (torn) return
       torn = true
       dht.destroy?.().catch((err) => console.warn('Failed to destroy relay DHT', err))
       ws.close()
     }
+  }
+}
+
+export async function fetchRelayLimit(wsUrl: string): Promise<number | null> {
+  try {
+    const base = wsUrl.replace(/^ws/, 'http')
+    const res = await fetch(new URL('/limits.json', base), { signal: AbortSignal.timeout(3000) })
+    if (!res.ok) return null
+    const data = (await res.json()) as { maxTransferBytes?: unknown }
+    const bytes = Number(data.maxTransferBytes)
+    return Number.isFinite(bytes) && bytes > 0 ? bytes : null
+  } catch {
+    return null
   }
 }
 

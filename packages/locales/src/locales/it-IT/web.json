@@ -63,8 +63,8 @@
   },
   "tooLarge": {
     "title": "Troppo grande per il browser",
-    "description": "Questo trasferimento richiede l’app.",
-    "body": "Questo trasferimento da {{size}} supera il limite di {{limit}} del browser. Ricevilo nell’app AlterSend, senza account.",
+    "description": "Alcuni trasferimenti è meglio riceverli nell’app.",
+    "body": "Aprilo nell’app AlterSend per riceverlo, senza account.",
     "openInApp": "Apri nell’app"
   }
 }

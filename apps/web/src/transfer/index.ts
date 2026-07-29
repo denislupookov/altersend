@@ -1,7 +1,7 @@
 import './sodium-patch'
 import b4a from 'b4a'
 import crypto from 'hypercore-crypto'
-import { findPeer, openRelay, relayReady } from './relay'
+import { fetchRelayLimit, findPeer, openRelay, relayReady } from './relay'
 import { waitForOffers } from './session'
 import type { ConnectHandlers, Connection } from './types'
 
@@ -20,12 +20,13 @@ export async function connect(
   }
   throwIfAborted()
 
-  const { dht, teardown } = await openRelay()
+  const { dht, teardown, url } = await openRelay()
   const onAbort = () => teardown()
   signal?.addEventListener('abort', onAbort, { once: true })
 
   try {
     throwIfAborted()
+    const limit = fetchRelayLimit(url)
     await relayReady(dht)
     throwIfAborted()
 
@@ -37,7 +38,9 @@ export async function connect(
     throwIfAborted()
     if (!peer) throw new Error('senderNotFound')
 
-    return await waitForOffers(dht, peer, topicHex, teardown, handlers)
+    const connection = await waitForOffers(dht, peer, topicHex, teardown, handlers)
+    connection.maxTransferBytes = await limit
+    return connection
   } catch (err) {
     teardown()
     throw err

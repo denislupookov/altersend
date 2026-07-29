@@ -62,9 +62,9 @@
     "maybeLater": "Maybe later"
   },
   "tooLarge": {
-    "title": "Too large for the browser",
-    "description": "This transfer needs the app.",
-    "body": "This {{size}} transfer is over the {{limit}} browser limit. Receive it in the AlterSend app — no account needed.",
+    "title": "Too big for the browser",
+    "description": "Some transfers are better received in the app.",
+    "body": "Open it in the AlterSend app to receive it — no account needed.",
     "openInApp": "Open in the app"
   }
 }

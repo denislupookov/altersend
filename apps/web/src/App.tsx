@@ -19,7 +19,7 @@ export default function App() {
     }
 
     if (vm.tooLarge) {
-      return <TooLargeScreen code={vm.code} totalBytes={vm.offeredBytes} onReset={vm.reset} />
+      return <TooLargeScreen code={vm.code} onReset={vm.reset} />
     }
 
     if (!vm.isAwaitingCode) {

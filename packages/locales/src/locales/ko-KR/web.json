@@ -63,8 +63,8 @@
   },
   "tooLarge": {
     "title": "브라우저에서 받기엔 너무 큼",
-    "description": "이 전송에는 앱이 필요합니다.",
-    "body": "이 {{size}} 전송은 브라우저 한도 {{limit}}을(를) 초과합니다. AlterSend 앱에서 받으세요. 계정이 필요 없습니다.",
+    "description": "일부 전송은 앱에서 받는 것이 좋습니다.",
+    "body": "AlterSend 앱에서 열어 받으세요. 계정이 필요 없습니다.",
     "openInApp": "앱에서 열기"
   }
 }

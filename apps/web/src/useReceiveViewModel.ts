@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { exceedsWebLinkLimit, isValidJoinCode } from '@altersend/domain'
+import { isValidJoinCode } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { connect, connectErrorCode, type Connection } from './transfer'
 import type { FileOffer, TextOffer } from './transfer/peerProtocol'
@@ -22,7 +22,6 @@ export interface ReceiveViewModel {
   error: string
   isAwaitingCode: boolean
   tooLarge: boolean
-  offeredBytes: number
   setCode: (value: string) => void
   start: () => void
   cancel: () => void
@@ -40,6 +39,7 @@ export function useReceiveViewModel(): ReceiveViewModel {
   const [files, setFiles] = useState<TransferFile[]>([])
   const [texts, setTexts] = useState<TextOffer[]>([])
   const [error, setError] = useState('')
+  const [maxTransferBytes, setMaxTransferBytes] = useState<number | null>(null)
 
   const connectionRef = useRef<Connection | null>(null)
   const connectAbort = useRef<AbortController | null>(null)
@@ -105,6 +105,7 @@ export function useReceiveViewModel(): ReceiveViewModel {
           return
         }
         connectionRef.current = connection
+        setMaxTransferBytes(connection.maxTransferBytes ?? null)
         putFiles(
           connection.offers.map((offer) => {
             const saved = alreadySaved.get(offer.id)
@@ -174,7 +175,9 @@ export function useReceiveViewModel(): ReceiveViewModel {
   const download = (offerIds: string[]) => {
     const connection = connectionRef.current
     if (!connection) return
-    if (exceedsWebLinkLimit(connection.offers.reduce((sum, o) => sum + (o.size || 0), 0))) return
+    const total = connection.offers.reduce((sum, o) => sum + (o.size || 0), 0)
+    const limit = connection.maxTransferBytes
+    if (limit != null && total > limit) return
 
     for (const offer of connection.offers) {
       if (!offerIds.includes(offer.id)) continue
@@ -227,7 +230,7 @@ export function useReceiveViewModel(): ReceiveViewModel {
     phase !== 'connecting' && phase !== 'disconnected' && files.length === 0 && texts.length === 0
 
   const offeredBytes = files.reduce((sum, f) => sum + (f.offer.size || 0), 0)
-  const tooLarge = files.length > 0 && exceedsWebLinkLimit(offeredBytes)
+  const tooLarge = files.length > 0 && maxTransferBytes != null && offeredBytes > maxTransferBytes
 
   return {
     code,
@@ -237,7 +240,6 @@ export function useReceiveViewModel(): ReceiveViewModel {
     error,
     isAwaitingCode,
     tooLarge,
-    offeredBytes,
     setCode,
     start: () => runConnect(code),
     cancel: cancelConnect,

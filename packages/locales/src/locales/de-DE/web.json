@@ -63,8 +63,8 @@
   },
   "tooLarge": {
     "title": "Zu groß für den Browser",
-    "description": "Diese Übertragung benötigt die App.",
-    "body": "Diese Übertragung mit {{size}} überschreitet das Browser-Limit von {{limit}}. Empfange sie in der AlterSend-App – kein Konto nötig.",
+    "description": "Manche Übertragungen empfängt man besser in der App.",
+    "body": "Öffne sie in der AlterSend-App, um sie zu empfangen – kein Konto nötig.",
     "openInApp": "In der App öffnen"
   }
 }

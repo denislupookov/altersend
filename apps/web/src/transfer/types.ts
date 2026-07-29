@@ -20,6 +20,7 @@ export interface DownloadHandlers {
 export interface Connection {
   offers: FileOffer[]
   texts: TextOffer[]
+  maxTransferBytes?: number | null
   download: (offer: FileOffer, handlers: DownloadHandlers) => Promise<void>
   close: () => void
 }

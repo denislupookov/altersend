@@ -63,8 +63,8 @@
   },
   "tooLarge": {
     "title": "对浏览器来说太大了",
-    "description": "此传输需要使用应用。",
-    "body": "此 {{size}} 的传输超过了浏览器 {{limit}} 的上限。在 AlterSend 应用中接收，无需账户。",
+    "description": "有些传输更适合在应用中接收。",
+    "body": "在 AlterSend 应用中打开即可接收，无需账户。",
     "openInApp": "在应用中打开"
   }
 }
