@@ -15,12 +15,14 @@ export async function connect(
 ): Promise<Connection> {
   handlers.onStatus?.('relay')
 
-  const { dht, teardown } = openRelay()
-  const onAbort = () => teardown()
-  signal?.addEventListener('abort', onAbort, { once: true })
   const throwIfAborted = () => {
     if (signal?.aborted) throw new DOMException('Connect cancelled', 'AbortError')
   }
+  throwIfAborted()
+
+  const { dht, teardown } = await openRelay()
+  const onAbort = () => teardown()
+  signal?.addEventListener('abort', onAbort, { once: true })
 
   try {
     throwIfAborted()

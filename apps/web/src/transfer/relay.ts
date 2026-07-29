@@ -11,11 +11,47 @@ export function connectErrorCode(error: unknown): ConnectErrorCode | null {
   return CONNECT_ERROR_CODES.find((code) => code === message) ?? null
 }
 
-function relayUrl(): string {
+const DEFAULT_RELAYS = ['wss://relay.altersend.com', 'wss://relay-sg.altersend.com']
+
+function relayUrls(): string[] {
   const configured = import.meta.env.VITE_RELAY_URL as string | undefined
-  if (configured) return configured
-  const scheme = location.protocol === 'https:' ? 'wss' : 'ws'
-  return `${scheme}://${location.hostname}:8080`
+  if (configured)
+    return configured
+      .split(',')
+      .map((url) => url.trim())
+      .filter(Boolean)
+  return DEFAULT_RELAYS
+}
+
+function fastestRelay(urls: string[]): Promise<WebSocket> {
+  return new Promise((resolve, reject) => {
+    const sockets = urls.map((url) => new WebSocket(url))
+    if (sockets.length === 0) {
+      reject(new Error('relayUnreachable'))
+      return
+    }
+
+    let failed = 0
+    const timer = setTimeout(() => settle(null), RELAY_TIMEOUT_MS)
+
+    function settle(winner: WebSocket | null) {
+      clearTimeout(timer)
+      for (const socket of sockets) {
+        socket.onopen = socket.onerror = null
+        if (socket !== winner) socket.close()
+      }
+      if (winner) resolve(winner)
+      else reject(new Error('relayUnreachable'))
+    }
+
+    for (const socket of sockets) {
+      socket.onopen = () => settle(socket)
+      socket.onerror = () => {
+        failed += 1
+        if (failed === sockets.length) settle(null)
+      }
+    }
+  })
 }
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
@@ -27,8 +63,8 @@ function withTimeout<T>(promise: Promise<T>, ms: number, code: ConnectErrorCode)
   })
 }
 
-export function openRelay(): { dht: RelayDHT; teardown: () => void } {
-  const ws = new WebSocket(relayUrl())
+export async function openRelay(): Promise<{ dht: RelayDHT; teardown: () => void }> {
+  const ws = await fastestRelay(relayUrls())
   const dht = new DHT(new Stream(true, ws), { custodial: false }) as unknown as RelayDHT
   let torn = false
   return {
