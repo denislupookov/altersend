@@ -69,7 +69,8 @@
     "qrCode": "QR-код",
     "copyLink": "Скопировать ссылку",
     "shareLink": "Поделиться ссылкой",
-    "shareMessage": "Для вас — {{items}} через AlterSend. Откройте ссылку, чтобы скачать.\n\n{{link}}"
+    "shareMessage": "Для вас — {{items}} через AlterSend. Откройте ссылку, чтобы скачать.\n\n{{link}}",
+    "linkHint": "До {{limit}} за передачу"
   },
   "errors": {
     "folderUnsupported": "Папки пока не поддерживаются. Пожалуйста, выбирайте только файлы.",

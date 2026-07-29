@@ -69,7 +69,8 @@
     "qrCode": "Code QR",
     "copyLink": "Copier le lien",
     "shareLink": "Partager le lien",
-    "shareMessage": "{{items}} partagés avec vous via AlterSend — ouvrez pour télécharger :\n\n{{link}}"
+    "shareMessage": "{{items}} partagés avec vous via AlterSend — ouvrez pour télécharger :\n\n{{link}}",
+    "linkHint": "Jusqu’à {{limit}} par transfert"
   },
   "errors": {
     "folderUnsupported": "Les dossiers ne sont pas encore pris en charge. Veuillez sélectionner uniquement les fichiers.",

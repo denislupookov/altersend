@@ -27,6 +27,7 @@ export interface ButtonProps extends Omit<ButtonElementProps, 'children' | 'styl
   stack?: boolean
   size?: ButtonSize
   tooltip?: string
+  tooltipDescription?: string
   tooltipSide?: TooltipSide
   variant?: ButtonVariant
   width?: 'auto' | 'full'
@@ -99,6 +100,7 @@ export function Button({
   stack = false,
   size = 'md',
   tooltip,
+  tooltipDescription,
   tooltipSide = 'top',
   type = 'button',
   variant = 'primary',
@@ -162,7 +164,14 @@ export function Button({
       ) : (
         children
       )}
-      {tooltip ? <Tooltip label={tooltip} visible={showHover} side={tooltipSide} /> : null}
+      {tooltip ? (
+        <Tooltip
+          label={tooltip}
+          description={tooltipDescription}
+          visible={showHover}
+          side={tooltipSide}
+        />
+      ) : null}
     </html.button>
   )
 }

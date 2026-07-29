@@ -8,6 +8,7 @@ import {
   formatFileSize,
   formatItemsCount,
   useShareViewModel,
+  WEB_LINK_MAX_LABEL,
   type DeviceRenameTarget
 } from '@altersend/domain'
 import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
@@ -83,6 +84,10 @@ export function ShareView() {
           textCount: vm.texts.length,
           totalSize: vm.totalSize
         })
+      })
+      toast.show({
+        title: t('send:connection.copiedToast'),
+        hint: t('send:connection.linkHint', { limit: WEB_LINK_MAX_LABEL })
       })
     } catch (error) {
       console.error(error)
