@@ -21,9 +21,11 @@
     "connected": "보낸 사람에 연결됨",
     "allDownloaded": "모든 파일 다운로드 완료",
     "complete": "{{size}} · 완료",
-    "savedToDownloads": "{{files}}을(를) 다운로드에 저장했습니다",
     "keepTabOpen": "다운로드 중 — 이 탭을 열어 두세요",
-    "enterAnother": "다른 코드 입력"
+    "enterAnother": "다른 코드 입력",
+    "downloadedHint": "다운로드됨 — 브라우저의 파일을 확인하세요.",
+    "asZip": "ZIP으로 다운로드",
+    "inAppWarning": "이 브라우저에서는 다운로드를 저장할 수 없습니다. Safari 또는 Chrome에서 링크를 열어 파일을 받으세요."
   },
   "errors": {
     "relayUnreachable": "AlterSend 릴레이에 연결할 수 없습니다. 연결 상태를 확인한 후 다시 시도하세요.",

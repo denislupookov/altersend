@@ -21,9 +21,11 @@
     "connected": "Conectado ao remetente",
     "allDownloaded": "Todos os arquivos baixados",
     "complete": "{{size}} · concluído",
-    "savedToDownloads": "{{files}} salvos em Downloads",
     "keepTabOpen": "Baixando — mantenha esta aba aberta",
-    "enterAnother": "Inserir outro código"
+    "enterAnother": "Inserir outro código",
+    "downloadedHint": "Baixado — verifique os arquivos do seu navegador.",
+    "asZip": "Baixar como ZIP",
+    "inAppWarning": "Este navegador não consegue salvar downloads. Abra o link no Safari ou Chrome para receber seus arquivos."
   },
   "errors": {
     "relayUnreachable": "Não foi possível acessar o retransmissor do AlterSend. Verifique sua conexão e tente novamente.",

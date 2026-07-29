@@ -21,9 +21,11 @@
     "connected": "Connecté à l’expéditeur",
     "allDownloaded": "Tous les fichiers téléchargés",
     "complete": "{{size}} · terminé",
-    "savedToDownloads": "{{files}} enregistrés dans Téléchargements",
     "keepTabOpen": "Téléchargement en cours — gardez cet onglet ouvert",
-    "enterAnother": "Saisir un autre code"
+    "enterAnother": "Saisir un autre code",
+    "downloadedHint": "Téléchargé — vérifiez les fichiers de votre navigateur.",
+    "asZip": "Télécharger en ZIP",
+    "inAppWarning": "Ce navigateur ne peut pas enregistrer les téléchargements. Ouvrez le lien dans Safari ou Chrome pour recevoir vos fichiers."
   },
   "errors": {
     "relayUnreachable": "Impossible de joindre le relais AlterSend. Vérifiez votre connexion et réessayez.",

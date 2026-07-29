@@ -21,9 +21,11 @@
     "connected": "Conectado al remitente",
     "allDownloaded": "Todos los archivos descargados",
     "complete": "{{size}} · completado",
-    "savedToDownloads": "{{files}} guardados en Descargas",
     "keepTabOpen": "Descargando: mantenga esta pestaña abierta",
-    "enterAnother": "Ingresar otro código"
+    "enterAnother": "Ingresar otro código",
+    "downloadedHint": "Descargado: revisa los archivos de tu navegador.",
+    "asZip": "Descargar como ZIP",
+    "inAppWarning": "Este navegador no puede guardar descargas. Abre el enlace en Safari o Chrome para recibir tus archivos."
   },
   "errors": {
     "relayUnreachable": "No se puede conectar con el relé de AlterSend. Revise su conexión e inténtelo de nuevo.",

@@ -21,9 +21,11 @@
     "connected": "Connesso al mittente",
     "allDownloaded": "Tutti i file scaricati",
     "complete": "{{size}} · completato",
-    "savedToDownloads": "{{files}} salvati in Download",
     "keepTabOpen": "Download in corso — tieni aperta questa scheda",
-    "enterAnother": "Inserisci un altro codice"
+    "enterAnother": "Inserisci un altro codice",
+    "downloadedHint": "Scaricato: controlla i file del tuo browser.",
+    "asZip": "Scarica come ZIP",
+    "inAppWarning": "Questo browser non può salvare i download. Apri il link in Safari o Chrome per ricevere i tuoi file."
   },
   "errors": {
     "relayUnreachable": "Impossibile raggiungere il relay di AlterSend. Controlla la connessione e riprova.",

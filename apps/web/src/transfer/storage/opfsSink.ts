@@ -5,6 +5,7 @@ import { triggerDownload } from './saveFile'
 
 export interface WebSink extends ChunkWriter {
   save(fileName: string): Promise<void>
+  getFile(fileName: string): Promise<File | null>
   discard(): Promise<void>
 }
 
@@ -45,10 +46,19 @@ export class OpfsSink implements WebSink {
     await request({ type: 'discard', name: this.name })
   }
 
+  async getFile(fileName: string): Promise<File | null> {
+    try {
+      const root = await navigator.storage.getDirectory()
+      const handle = await root.getFileHandle(this.name)
+      const stored = await handle.getFile()
+      return new File([stored], fileName, { type: stored.type })
+    } catch {
+      return null
+    }
+  }
+
   async save(fileName: string): Promise<void> {
-    const root = await navigator.storage.getDirectory()
-    const handle = await root.getFileHandle(this.name)
-    const file = await handle.getFile()
-    triggerDownload(file, fileName)
+    const file = await this.getFile(fileName)
+    if (file) triggerDownload(file, fileName)
   }
 }

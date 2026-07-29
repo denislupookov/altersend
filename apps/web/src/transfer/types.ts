@@ -13,7 +13,7 @@ export interface ConnectHandlers {
 
 export interface DownloadHandlers {
   onProgress?: (received: number, total: number) => void
-  onDone?: (savedAs: string, size: number) => void
+  onDone?: (savedAs: string, size: number, file: File | null) => void
   onError?: (message: string) => void
 }
 
@@ -21,7 +21,7 @@ export interface Connection {
   offers: FileOffer[]
   texts: TextOffer[]
   maxTransferBytes?: number | null
-  download: (offer: FileOffer, handlers: DownloadHandlers) => Promise<void>
+  download: (offer: FileOffer, handlers: DownloadHandlers, toOpfs: boolean) => Promise<void>
   close: () => void
 }
 

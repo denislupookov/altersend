@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { isValidJoinCode } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { connect, connectErrorCode, type Connection } from './transfer'
+import { shouldZip, isInAppBrowser, ZipDownload } from './transfer/storage'
 import type { FileOffer, TextOffer } from './transfer/peerProtocol'
 import type { ConnectionPhase, TransferFile } from './types'
 
@@ -22,6 +23,9 @@ export interface ReceiveViewModel {
   error: string
   isAwaitingCode: boolean
   tooLarge: boolean
+  inApp: boolean
+  forceZip: boolean
+  setForceZip: (value: boolean) => void
   setCode: (value: string) => void
   start: () => void
   cancel: () => void
@@ -40,6 +44,7 @@ export function useReceiveViewModel(): ReceiveViewModel {
   const [texts, setTexts] = useState<TextOffer[]>([])
   const [error, setError] = useState('')
   const [maxTransferBytes, setMaxTransferBytes] = useState<number | null>(null)
+  const [forceZip, setForceZip] = useState(true)
 
   const connectionRef = useRef<Connection | null>(null)
   const connectAbort = useRef<AbortController | null>(null)
@@ -141,22 +146,36 @@ export function useReceiveViewModel(): ReceiveViewModel {
     setError('')
   }
 
-  const downloadOne = async (offer: FileOffer): Promise<void> => {
+  const downloadOne = async (offer: FileOffer, toOpfs: boolean): Promise<File | null> => {
     const connection = connectionRef.current
-    if (!connection) return
+    if (!connection) return null
     patchFile(offer.id, { status: 'downloading' })
+    let received: File | null = null
     try {
-      await connection.download(offer, {
-        onProgress: (received) => patchFile(offer.id, { received }),
-        onDone: (_name, size) => patchFile(offer.id, { status: 'completed', received: size })
-      })
+      await connection.download(
+        offer,
+        {
+          onProgress: (bytes) => patchFile(offer.id, { received: bytes }),
+          onDone: (_name, size, file) => {
+            patchFile(offer.id, { status: 'completed', received: size })
+            received = file
+          }
+        },
+        toOpfs
+      )
     } catch (cause) {
       patchFile(offer.id, { status: 'failed' })
       throw cause
     }
+    return received
   }
 
-  const drainQueue = async (): Promise<void> => {
+  const drainQueue = async (zip: boolean): Promise<void> => {
+    let zipDl: ZipDownload | null = null
+    if (zip) {
+      const count = connectionRef.current?.offers.length ?? 0
+      zipDl = await ZipDownload.open(`altersend-${count}-files.zip`)
+    }
     while (queue.current.length > 0) {
       const id = queue.current.shift()
       if (!id) continue
@@ -165,11 +184,17 @@ export function useReceiveViewModel(): ReceiveViewModel {
       const status = statusOf(id)
       if (status === 'completed' || status === 'paused') continue
       try {
-        await downloadOne(offer)
+        const file = await downloadOne(offer, zip)
+        if (zipDl && file) await zipDl.addFile(offer.name, file)
       } catch (cause) {
         setError(describeError(cause))
+        if (zipDl) {
+          await zipDl.abort(cause)
+          return
+        }
       }
     }
+    if (zipDl) await zipDl.finish()
   }
 
   const download = (offerIds: string[]) => {
@@ -191,9 +216,11 @@ export function useReceiveViewModel(): ReceiveViewModel {
     if (draining.current || queue.current.length === 0) return
 
     draining.current = true
-    drainQueue().finally(() => {
-      draining.current = false
-    })
+    drainQueue(shouldZip(offerIds.length, forceZip))
+      .catch((cause) => setError(describeError(cause)))
+      .finally(() => {
+        draining.current = false
+      })
   }
 
   const downloadAll = () => download(connectionRef.current?.offers.map((offer) => offer.id) ?? [])
@@ -240,6 +267,9 @@ export function useReceiveViewModel(): ReceiveViewModel {
     error,
     isAwaitingCode,
     tooLarge,
+    inApp: isInAppBrowser(),
+    forceZip,
+    setForceZip,
     setCode,
     start: () => runConnect(code),
     cancel: cancelConnect,

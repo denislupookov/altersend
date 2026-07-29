@@ -1,3 +1,5 @@
+export const FLUSH_GRACE_MS = 5000
+
 let registration: Promise<ServiceWorkerRegistration> | null = null
 let transferable: boolean | null = null
 

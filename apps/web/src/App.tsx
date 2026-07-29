@@ -28,6 +28,9 @@ export default function App() {
           files={vm.files}
           texts={vm.texts}
           error={vm.error || undefined}
+          inApp={vm.inApp}
+          forceZip={vm.forceZip}
+          onForceZipChange={vm.setForceZip}
           onDownload={vm.download}
           onDownloadAll={vm.downloadAll}
           onResumeAll={vm.downloadAll}

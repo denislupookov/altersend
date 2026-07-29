@@ -21,6 +21,7 @@
     "@noble/curves": "^2.2.0",
     "b4a": "^1.8.1",
     "compact-encoding": "^2.19.0",
+    "fflate": "^0.8.3",
     "hypercore-crypto": "^3.7.0",
     "lucide-react": "^1.8.0",
     "protomux": "^3.11.0",

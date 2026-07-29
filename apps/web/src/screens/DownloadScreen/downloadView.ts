@@ -56,9 +56,7 @@ export function getMetaLabel(t: Translate, summary: DownloadSummary): string {
 
 export function getHintLabel(t: Translate, summary: DownloadSummary): string | null {
   if (summary.allDownloaded) {
-    return t('web:download.savedToDownloads', {
-      files: t('common:files.count', { count: summary.count })
-    })
+    return t('web:download.downloadedHint')
   }
   if (summary.isDownloading) return t('web:download.keepTabOpen')
   return null

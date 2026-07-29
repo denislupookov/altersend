@@ -1,7 +1,5 @@
-import { startStreamDownload } from './streamClient'
+import { FLUSH_GRACE_MS, startStreamDownload } from './streamClient'
 import type { WebSink } from './opfsSink'
-
-const FLUSH_GRACE_MS = 5000
 
 export class StreamSink implements WebSink {
   private writer: WritableStreamDefaultWriter<Uint8Array> | null = null
@@ -35,6 +33,10 @@ export class StreamSink implements WebSink {
     this.removeFrame = null
     if (remove) setTimeout(remove, FLUSH_GRACE_MS)
     return 'stream'
+  }
+
+  async getFile(): Promise<File | null> {
+    return null
   }
 
   async abort(): Promise<void> {

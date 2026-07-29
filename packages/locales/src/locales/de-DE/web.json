@@ -21,9 +21,11 @@
     "connected": "Mit Absender verbunden",
     "allDownloaded": "Alle Dateien heruntergeladen",
     "complete": "{{size}} · abgeschlossen",
-    "savedToDownloads": "{{files}} in „Downloads“ gespeichert",
     "keepTabOpen": "Wird heruntergeladen – lassen Sie diesen Tab geöffnet",
-    "enterAnother": "Anderen Code eingeben"
+    "enterAnother": "Anderen Code eingeben",
+    "downloadedHint": "Heruntergeladen – sieh in den Dateien deines Browsers nach.",
+    "asZip": "Als ZIP herunterladen",
+    "inAppWarning": "Dieser Browser kann keine Downloads speichern. Öffne den Link in Safari oder Chrome, um deine Dateien zu empfangen."
   },
   "errors": {
     "relayUnreachable": "Das AlterSend-Relay ist nicht erreichbar. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",

@@ -21,9 +21,11 @@
     "connected": "送信側に接続済み",
     "allDownloaded": "すべてのファイルをダウンロードしました",
     "complete": "{{size}} · 完了",
-    "savedToDownloads": "{{files}}をダウンロードに保存しました",
     "keepTabOpen": "ダウンロード中 — このタブを開いたままにしてください",
-    "enterAnother": "別のコードを入力"
+    "enterAnother": "別のコードを入力",
+    "downloadedHint": "ダウンロード済み — ブラウザーのファイルを確認してください。",
+    "asZip": "ZIP でダウンロード",
+    "inAppWarning": "このブラウザーではダウンロードを保存できません。Safari または Chrome でリンクを開いてファイルを受け取ってください。"
   },
   "errors": {
     "relayUnreachable": "AlterSend リレーに接続できません。接続を確認してもう一度お試しください。",

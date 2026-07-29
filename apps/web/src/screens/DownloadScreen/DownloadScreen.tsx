@@ -5,6 +5,7 @@ import {
   ReceivedTextRow,
   RowGroup,
   rowKey,
+  ToggleSwitch,
   useTheme
 } from '@altersend/components'
 import { ArrowLeftIcon, CheckIcon, DownloadIcon, PlayIcon } from '@altersend/components/icons'
@@ -29,6 +30,9 @@ export interface DownloadScreenProps {
   files: TransferFile[]
   texts: TextOffer[]
   error?: string
+  inApp: boolean
+  forceZip: boolean
+  onForceZipChange: (value: boolean) => void
   onDownload: (ids: string[]) => void
   onDownloadAll: () => void
   onResumeAll: () => void
@@ -41,6 +45,9 @@ export function DownloadScreen({
   files,
   texts,
   error,
+  inApp,
+  forceZip,
+  onForceZipChange,
   onDownload,
   onDownloadAll,
   onResumeAll,
@@ -54,15 +61,16 @@ export function DownloadScreen({
   const [promptReady, setPromptReady] = useState(false)
   const isPhone = useIsCompact()
   const hint = summary.count > 0 ? getHintLabel(t, summary) : null
+  const showZipToggle = !isPhone && summary.count > 1 && summary.primaryAction === 'download-all'
 
   useEffect(() => {
-    if (!summary.allDownloaded) {
+    if (isPhone || !summary.allDownloaded) {
       setPromptReady(false)
       return
     }
     const timer = setTimeout(() => setPromptReady(true), 1000)
     return () => clearTimeout(timer)
-  }, [summary.allDownloaded])
+  }, [isPhone, summary.allDownloaded])
 
   const copyText = (offer: TextOffer) => {
     navigator.clipboard
@@ -87,12 +95,35 @@ export function DownloadScreen({
     />
   )
 
+  const footerInfo = () => {
+    if (showZipToggle) {
+      return (
+        <ToggleSwitch
+          checked={forceZip}
+          onChange={onForceZipChange}
+          disabled={summary.isDownloading}
+          label={t('web:download.asZip')}
+        />
+      )
+    }
+    if (hint) return <span className='text-sm text-text-muted'>{hint}</span>
+    return null
+  }
+
   return (
     <>
       <ScreenIntro
         title={t('web:download.title', { files: getTitleLabel(t, summary) })}
         description={t('web:download.description')}
       />
+
+      {inApp && (
+        <div
+          className={`${isPhone ? BLOCK_WIDTH : 'w-full max-w-[520px]'} mb-4 rounded-xl bg-warning-subtle px-4 py-3 text-sm leading-relaxed text-warning`}
+        >
+          {t('web:download.inAppWarning')}
+        </div>
+      )}
 
       <Card bare={isPhone}>
         <CardStatusRow
@@ -152,8 +183,8 @@ export function DownloadScreen({
 
         {error && <p className='mt-4 text-sm text-danger'>{error}</p>}
 
-        <CardFooter align={hint ? 'between' : 'end'}>
-          {hint ? <span className='text-sm text-text-muted'>{hint}</span> : null}
+        <CardFooter align={showZipToggle || hint ? 'between' : 'end'}>
+          {footerInfo()}
 
           {summary.primaryAction ? (
             <Button

@@ -21,9 +21,11 @@
     "connected": "已連線至寄件者",
     "allDownloaded": "所有檔案已下載",
     "complete": "{{size}} · 已完成",
-    "savedToDownloads": "{{files}}已儲存至下載",
     "keepTabOpen": "正在下載 — 請保持此分頁開啟",
-    "enterAnother": "輸入其他代碼"
+    "enterAnother": "輸入其他代碼",
+    "downloadedHint": "已下載 — 請在瀏覽器的檔案中查看。",
+    "asZip": "下載為 ZIP",
+    "inAppWarning": "此瀏覽器無法儲存下載內容。請在 Safari 或 Chrome 中開啟連結以接收檔案。"
   },
   "errors": {
     "relayUnreachable": "無法連線至 AlterSend 中繼。請檢查網路連線後重試。",

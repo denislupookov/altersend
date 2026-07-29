@@ -19,10 +19,11 @@ export async function downloadOffer(
   proto: PeerProtocol,
   transfers: Map<string, FileTransfer>,
   offer: FileOffer,
-  handlers: DownloadHandlers
+  handlers: DownloadHandlers,
+  toOpfs: boolean
 ): Promise<void> {
   const state: FileTransfer = {
-    sink: await createSink({ id: offer.id, name: offer.name }),
+    sink: await createSink({ id: offer.id, name: offer.name }, toOpfs),
     paused: false
   }
 
@@ -56,9 +57,11 @@ export async function downloadOffer(
     receiver
       .receive()
       .then(async () => {
-        await state.sink.save(offer.name)
+        let file: File | null = null
+        if (toOpfs) file = await state.sink.getFile(offer.name)
+        else await state.sink.save(offer.name)
         proto.sendControl({ type: 'download-complete', ...fileRef(offer), savedTo: offer.name })
-        handlers.onDone?.(offer.name, offer.size)
+        handlers.onDone?.(offer.name, offer.size, file)
         transfers.delete(offer.id)
         channel.close()
         resolve()

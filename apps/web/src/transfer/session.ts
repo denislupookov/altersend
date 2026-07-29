@@ -70,7 +70,7 @@ export function waitForOffers(
         resolve({
           offers,
           texts,
-          download: (offer, dh) => downloadOffer(proto, transfers, offer, dh),
+          download: (offer, dh, toOpfs) => downloadOffer(proto, transfers, offer, dh, toOpfs),
           close: () => {
             for (const state of transfers.values()) {
               state.paused = true

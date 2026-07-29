@@ -3,9 +3,10 @@ import { OpfsSink, type WebSink } from './opfsSink'
 import { triggerDownload } from './saveFile'
 import { streamReady } from './streamClient'
 import { StreamSink } from './streamSink'
-
 export { sweepOpfs } from './opfsClient'
 export { registerStreamWorker } from './streamClient'
+export { shouldZip, isInAppBrowser } from './inAppBrowser'
+export { ZipDownload } from './zipDownload'
 
 export interface SinkTarget {
   id: string
@@ -26,6 +27,9 @@ class MemorySink implements WebSink {
   async finalize(): Promise<string> {
     return 'memory'
   }
+  async getFile(fileName: string): Promise<File | null> {
+    return new File([this.bytes], fileName)
+  }
   async abort(): Promise<void> {}
   async discard(): Promise<void> {
     this.bytes = new Uint8Array(0)
@@ -37,8 +41,8 @@ class MemorySink implements WebSink {
 
 export type { WebSink } from './opfsSink'
 
-export async function createSink(target: SinkTarget): Promise<WebSink> {
-  if (await streamReady()) return new StreamSink(target.name)
+export async function createSink(target: SinkTarget, toOpfs: boolean): Promise<WebSink> {
+  if (!toOpfs && (await streamReady())) return new StreamSink(target.name)
   if (await isOpfsSupported()) return new OpfsSink(target.id)
   return new MemorySink()
 }
