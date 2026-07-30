@@ -1,4 +1,4 @@
-import { websiteUrl } from '../constants/links'
+import { webAppUrl } from '../constants/links'
 import { formatFileSize, formatItemsCount } from '../format'
 import type { Translate } from '../i18n'
 
@@ -10,8 +10,8 @@ export function buildJoinUrl(topic: string): string {
   return `${JOIN_URL_SCHEME}://join/${topic}`
 }
 
-export function buildWebReceiveUrl(topic: string, baseUrl: string = websiteUrl): string {
-  const base = (baseUrl || websiteUrl).replace(/\/+$/, '')
+export function buildWebReceiveUrl(topic: string, baseUrl: string = webAppUrl): string {
+  const base = (baseUrl || webAppUrl).replace(/\/+$/, '')
   return `${base}/r#${topic}`
 }
 

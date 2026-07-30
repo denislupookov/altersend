@@ -5,7 +5,7 @@ import {
   extractJoinCode,
   isPairUrl,
   joinSession,
-  websiteUrl
+  webAppUrl
 } from '@altersend/domain'
 
 let started = false
@@ -25,7 +25,7 @@ export function startDeepLinkHandler(): () => void {
 }
 
 const ALLOWED_SCHEMES = ['altersend://', 'com.altersend.mobile://']
-const RECEIVE_LINK_PREFIX = `${websiteUrl}/r`
+const RECEIVE_LINK_PREFIX = `${webAppUrl}/r`
 
 function isAllowedUrl(url: string): boolean {
   return ALLOWED_SCHEMES.some((s) => url.startsWith(s)) || url.startsWith(RECEIVE_LINK_PREFIX)
