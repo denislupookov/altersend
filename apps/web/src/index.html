@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' wss: ws://localhost:*; frame-src 'self'; object-src 'none'; base-uri 'self'"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' wss: ws://localhost:* https://cloudflareinsights.com; frame-src 'self'; object-src 'none'; base-uri 'self'"
     />
     <link rel="icon" href="./favicon.ico" sizes="any" />
     <meta name="apple-itunes-app" content="app-id=6772496271" />
@@ -42,5 +42,10 @@
   >
     <div id="root" class="min-h-full w-full"></div>
     <script type="module" src="/main.tsx"></script>
+    <script
+      type="module"
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "45895faec9c64a25a9a0955bdd8ddb40"}'
+    ></script>
   </body>
 </html>
