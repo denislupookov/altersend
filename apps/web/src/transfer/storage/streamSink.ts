@@ -36,7 +36,9 @@ export class StreamSink implements WebSink {
   }
 
   async abort(): Promise<void> {
-    await this.writer?.abort(new Error('Transfer aborted')).catch(() => {})
+    await this.writer
+      ?.abort(new Error('Transfer aborted'))
+      .catch((error) => console.warn('Failed to abort stream writer', error))
     this.removeFrame?.()
     this.removeFrame = null
   }

@@ -35,7 +35,6 @@ export interface DownloadScreenProps {
   onForceZipChange: (value: boolean) => void
   onDownload: (ids: string[]) => void
   onDownloadAll: () => void
-  onResumeAll: () => void
   onReset: () => void
 }
 
@@ -50,7 +49,6 @@ export function DownloadScreen({
   onForceZipChange,
   onDownload,
   onDownloadAll,
-  onResumeAll,
   onReset
 }: DownloadScreenProps) {
   const { t } = useTranslation(['web', 'receive', 'common', 'errors'])
@@ -197,9 +195,7 @@ export function DownloadScreen({
                   <DownloadIcon size={14} />
                 )
               }
-              onClick={() =>
-                summary.primaryAction === 'resume-all' ? onResumeAll() : onDownloadAll()
-              }
+              onClick={onDownloadAll}
               size={isPhone ? 'lg' : 'sm'}
               width={isPhone ? 'full' : 'auto'}
               variant={summary.primaryAction === 'downloading' ? 'secondary' : 'primary'}

@@ -23,7 +23,6 @@ export interface DownloadSummary {
   textCount: number
   isDownloading: boolean
   allDownloaded: boolean
-  canResumeAll: boolean
   primaryAction: PrimaryDownloadAction
 }
 
@@ -48,7 +47,6 @@ export function useDownloadSummary(files: TransferFile[], texts: TextOffer[]): D
       textCount: texts.length,
       isDownloading,
       allDownloaded,
-      canResumeAll,
       primaryAction: getPrimaryDownloadAction({
         hasFiles,
         allDownloaded,

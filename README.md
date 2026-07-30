@@ -167,7 +167,7 @@ Platform installers (`.dmg`, `.exe`, `.AppImage`) are produced by the release CI
 apps/
   desktop/    Electron app — main + renderer + Bare worklet
   mobile/     React Native / Expo app
-  web/        Browser receiver — receive-only, no install (app.altersend.com)
+  web/        Browser receiver
 packages/
   core/       P2P protocol — Hyperswarm, transfer orchestration, RPC
   drive/      Chunked file transfer — reads and writes files in place

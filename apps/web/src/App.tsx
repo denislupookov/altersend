@@ -33,7 +33,6 @@ export default function App() {
           onForceZipChange={vm.setForceZip}
           onDownload={vm.download}
           onDownloadAll={vm.downloadAll}
-          onResumeAll={vm.downloadAll}
           onReset={vm.reset}
         />
       )

@@ -26,6 +26,7 @@ export function waitForOffers(
       state.paused = true
       state.receiver?.cancel('Sender disconnected')
     }
+    teardown()
     handlers.onClosed?.()
   }
 
@@ -60,8 +61,9 @@ export function waitForOffers(
         if (message.type !== 'transfer-ready' || settled) return
 
         const shared = (message as TransferReady).files
-        const offers = shared.filter((f): f is FileOffer => f.kind === 'file')
-        const texts = shared.filter((f): f is TextOffer => f.kind === 'text')
+        if (!Array.isArray(shared)) return
+        const offers = shared.filter((f): f is FileOffer => f?.kind === 'file')
+        const texts = shared.filter((f): f is TextOffer => f?.kind === 'text')
         if (offers.length === 0 && texts.length === 0) return
 
         settled = true

@@ -19,9 +19,8 @@ function safeEntryName(name: string): string {
   const cleaned = name
     .replace(/\\/g, '/')
     .split('/')
-    .filter((segment) => segment && segment !== '.' && segment !== '..')
     .map(stripControlChars)
-    .filter(Boolean)
+    .filter((segment) => segment && segment !== '.' && segment !== '..')
     .join('/')
   return cleaned || 'file'
 }
@@ -84,7 +83,7 @@ export class ZipDownload {
     if (!this.stream) return
     await this.stream.writer
       .abort(err instanceof Error ? err : new Error(String(err)))
-      .catch(() => {})
+      .catch((error) => console.warn('Failed to abort zip stream', error))
     this.stream.removeFrame()
   }
 }
