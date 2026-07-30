@@ -1,0 +1,16 @@
+reviews:
+  path_filters:
+    - "!packages/locales/src/locales/**"
+    - "!**/*.png"
+    - "!**/*.ico"
+    - "!**/*.webp"
+    - "!**/*.jpg"
+    - "!**/*.jpeg"
+    - "!**/*.gif"
+    - "!**/*.woff"
+    - "!**/*.woff2"
+    - "!**/*.ttf"
+    - "!**/vendor.d.ts"
+    - "!package-lock.json"
+    - "!**/*.md"
+    - "!.coderabbit.yaml"
