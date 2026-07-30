@@ -2,7 +2,6 @@ import fs from '#fs'
 import path from '#path'
 import type { FileHandle } from 'node:fs/promises'
 import type { ChunkWriter } from '../engine/types'
-import { readRange } from './read-range'
 import { firstFreePath } from '../engine/paths'
 
 export interface DiskWriterOptions {
@@ -38,11 +37,6 @@ export class DiskWriter implements ChunkWriter {
     if (bytesWritten !== data.length) {
       throw new Error(`Short write at ${offset}: ${bytesWritten} of ${data.length} bytes`)
     }
-  }
-
-  async readBack(offset: number, length: number): Promise<Uint8Array | null> {
-    if (!this.handle) return null
-    return readRange(this.handle, offset, length)
   }
 
   async finalize(): Promise<string> {

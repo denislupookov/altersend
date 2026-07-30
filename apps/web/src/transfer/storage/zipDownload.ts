@@ -9,6 +9,23 @@ import { triggerDownload } from './saveFile'
 
 const EMPTY = new Uint8Array(0)
 
+function stripControlChars(segment: string): string {
+  return Array.from(segment)
+    .filter((ch) => ch.charCodeAt(0) >= 0x20)
+    .join('')
+}
+
+function safeEntryName(name: string): string {
+  const cleaned = name
+    .replace(/\\/g, '/')
+    .split('/')
+    .filter((segment) => segment && segment !== '.' && segment !== '..')
+    .map(stripControlChars)
+    .filter(Boolean)
+    .join('/')
+  return cleaned || 'file'
+}
+
 export class ZipDownload {
   private queue: Promise<void> = Promise.resolve()
   private failure: unknown = null
@@ -39,7 +56,7 @@ export class ZipDownload {
   }
 
   async addFile(name: string, file: File): Promise<void> {
-    const entry = new ZipPassThrough(name)
+    const entry = new ZipPassThrough(safeEntryName(name))
     this.zip.add(entry)
     const reader = file.stream().getReader()
     for (;;) {

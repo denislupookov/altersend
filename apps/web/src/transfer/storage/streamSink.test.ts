@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { startStreamDownload, type StreamDownload } from './streamClient'
 import { StreamSink } from './streamSink'
 
-vi.mock('./streamClient', () => ({ startStreamDownload: vi.fn() }))
+vi.mock('./streamClient', () => ({ startStreamDownload: vi.fn(), FLUSH_GRACE_MS: 5000 }))
 
 const mockedStart = vi.mocked(startStreamDownload)
 

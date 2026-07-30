@@ -23,10 +23,6 @@ export class StreamSink implements WebSink {
     this.written += data.length
   }
 
-  async readBack(): Promise<Uint8Array | null> {
-    return null
-  }
-
   async finalize(): Promise<string> {
     await this.writer?.close()
     const remove = this.removeFrame

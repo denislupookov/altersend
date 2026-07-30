@@ -29,10 +29,6 @@ export class OpfsSink implements WebSink {
     await request({ type: 'write', name: this.name, offset, buffer }, [buffer])
   }
 
-  async readBack(): Promise<Uint8Array | null> {
-    return null
-  }
-
   async finalize(): Promise<string> {
     await request({ type: 'finalize', name: this.name })
     return 'opfs'
