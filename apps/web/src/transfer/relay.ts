@@ -13,7 +13,7 @@ export function connectErrorCode(error: unknown): ConnectErrorCode | null {
 
 const DEFAULT_RELAYS = ['wss://relay.altersend.com', 'wss://relay-sg.altersend.com']
 
-function relayUrls(): string[] {
+export function relayUrls(): string[] {
   const configured = import.meta.env.VITE_RELAY_URL as string | undefined
   if (configured)
     return configured
@@ -23,10 +23,15 @@ function relayUrls(): string[] {
   return DEFAULT_RELAYS
 }
 
-function fastestRelay(urls: string[]): Promise<WebSocket> {
+interface RelayEntry {
+  url: string
+  socket: WebSocket
+}
+
+function fastestRelay(urls: string[]): Promise<RelayEntry> {
   return new Promise((resolve, reject) => {
-    const sockets = urls.map((url) => new WebSocket(url))
-    if (sockets.length === 0) {
+    const entries = urls.map((url) => ({ url, socket: new WebSocket(url) }))
+    if (entries.length === 0) {
       reject(new Error('relayUnreachable'))
       return
     }
@@ -34,21 +39,21 @@ function fastestRelay(urls: string[]): Promise<WebSocket> {
     let failed = 0
     const timer = setTimeout(() => settle(null), RELAY_TIMEOUT_MS)
 
-    function settle(winner: WebSocket | null) {
+    function settle(winner: RelayEntry | null) {
       clearTimeout(timer)
-      for (const socket of sockets) {
-        socket.onopen = socket.onerror = null
-        if (socket !== winner) socket.close()
+      for (const entry of entries) {
+        entry.socket.onopen = entry.socket.onerror = null
+        if (entry !== winner) entry.socket.close()
       }
       if (winner) resolve(winner)
       else reject(new Error('relayUnreachable'))
     }
 
-    for (const socket of sockets) {
-      socket.onopen = () => settle(socket)
-      socket.onerror = () => {
+    for (const entry of entries) {
+      entry.socket.onopen = () => settle(entry)
+      entry.socket.onerror = () => {
         failed += 1
-        if (failed === sockets.length) settle(null)
+        if (failed === entries.length) settle(null)
       }
     }
   })
@@ -63,18 +68,20 @@ function withTimeout<T>(promise: Promise<T>, ms: number, code: ConnectErrorCode)
   })
 }
 
-export async function openRelay(): Promise<{ dht: RelayDHT; teardown: () => void; url: string }> {
-  const ws = await fastestRelay(relayUrls())
-  const dht = new DHT(new Stream(true, ws), { custodial: false }) as unknown as RelayDHT
+export async function openRelay(
+  urls: string[]
+): Promise<{ dht: RelayDHT; teardown: () => void; url: string }> {
+  const { socket, url } = await fastestRelay(urls)
+  const dht = new DHT(new Stream(true, socket), { custodial: false }) as unknown as RelayDHT
   let torn = false
   return {
     dht,
-    url: ws.url,
+    url,
     teardown: () => {
       if (torn) return
       torn = true
       dht.destroy?.().catch((err) => console.warn('Failed to destroy relay DHT', err))
-      ws.close()
+      socket.close()
     }
   }
 }
