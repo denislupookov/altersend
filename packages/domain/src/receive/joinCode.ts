@@ -11,7 +11,8 @@ export function buildJoinUrl(topic: string): string {
 }
 
 export function buildWebReceiveUrl(topic: string, baseUrl: string = webAppUrl): string {
-  const base = (baseUrl || webAppUrl).replace(/\/+$/, '')
+  let base = baseUrl || webAppUrl
+  while (base.endsWith('/')) base = base.slice(0, -1)
   return `${base}/r#${topic}`
 }
 
