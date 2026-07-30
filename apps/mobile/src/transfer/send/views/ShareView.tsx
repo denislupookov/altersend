@@ -31,6 +31,8 @@ import { ShareQrSheet } from './ShareQrSheet'
 import { ShareFilesSheet } from './ShareFilesSheet'
 import { Text } from '@/src/components/ThemedText'
 
+const TILE_GAP = 12
+
 export function ShareView() {
   const { t } = useTranslation(['send', 'common', 'settings'])
   const { theme } = useTheme()
@@ -56,6 +58,7 @@ export function ShareView() {
   })
   const [isFilesSheetOpen, setIsFilesSheetOpen] = useState(false)
   const [isQrOpen, setIsQrOpen] = useState(false)
+  const [contentWidth, setContentWidth] = useState(0)
   const [actionsTarget, setActionsTarget] = useState<DeviceRenameTarget | null>(null)
   const { openRename, renameSheet } = useDeviceRename(vm.rename)
 
@@ -71,6 +74,9 @@ export function ShareView() {
   }
 
   const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize)
+  const tileCount = webLinkTooLarge ? 2 : 3
+  const tileWidth =
+    contentWidth > 0 ? (contentWidth - TILE_GAP * (tileCount - 1)) / tileCount : undefined
 
   const shareLink = async () => {
     if (!vm.topic) return
@@ -96,7 +102,11 @@ export function ShareView() {
 
   return (
     <>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
+      >
         {vm.phase === 'waiting' && (
           <View style={styles.statusStrip}>
             <WaitingRadar
@@ -118,7 +128,7 @@ export function ShareView() {
 
         {vm.hasDevices ? (
           <View style={styles.tiles}>
-            <View style={styles.tile}>
+            <View style={[styles.tile, { width: tileWidth }]}>
               <Button
                 stack
                 size='sm'
@@ -131,7 +141,7 @@ export function ShareView() {
               </Button>
             </View>
             {!webLinkTooLarge && (
-              <View style={styles.tile}>
+              <View style={[styles.tile, { width: tileWidth }]}>
                 <Button
                   stack
                   size='sm'
@@ -145,7 +155,7 @@ export function ShareView() {
                 </Button>
               </View>
             )}
-            <View style={styles.tile}>
+            <View style={[styles.tile, { width: tileWidth }]}>
               <Button
                 stack
                 size='sm'
@@ -367,8 +377,14 @@ const styles = StyleSheet.create({
   sectionCount: { fontSize: 11.5, fontWeight: '500' },
   section: { marginBottom: 16 },
   filesWrap: { marginBottom: 24 },
-  tiles: { flexDirection: 'row', alignItems: 'stretch', width: '100%', gap: 12, marginBottom: 24 },
-  tile: { flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0 },
+  tiles: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    width: '100%',
+    gap: TILE_GAP,
+    marginBottom: 24
+  },
+  tile: { flexGrow: 1, flexShrink: 1, minWidth: 0 },
   invitePanel: {
     marginBottom: 20
   },
