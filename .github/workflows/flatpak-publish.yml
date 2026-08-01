@@ -16,6 +16,9 @@ concurrency:
 
 jobs:
   build-flatpak:
+    # Guard against accidental workflow_dispatch runs from non-main branches.
+    # The push trigger above already restricts to main, but workflow_dispatch
+    # can be triggered manually from any branch via the GitHub UI.
     # TODO: revert before upstream PR
     # if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -25,7 +28,7 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: read
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -61,10 +64,13 @@ jobs:
           bundle: altersend.flatpak
           manifest-path: flatpak/com.altersend.AlterSend.yaml
           cache-key: flatpak-builder-${{ hashFiles('flatpak/com.altersend.AlterSend.yaml', 'flatpak/node-modules.json') }}
-          build-bundle: true
+          # build-bundle produces a standalone .flatpak file for the GitHub Actions
+          # artifact. Not needed for the repo-based install path; set to false to
+          # skip the slow compression step and save ~2-3 minutes of CI time.
+          build-bundle: false
           repository-name: flathub
           repository-url: https://flathub.org/repo/flathub.flatpakrepo
-      
+
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v6
@@ -74,29 +80,34 @@ jobs:
           # passphrase: ${{ secrets.FLATPAK_GPG_PASSPHRASE }}
 
       - name: Sign OSTree Repository & Generate .flatpakrepo
+        # Use an env var for the fingerprint instead of direct template injection
+        # into the shell script, following GitHub's security hardening guidelines.
+        env:
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
         run: |
-          # Sign the repo and generate delta updates
-          flatpak build-update-repo --generate-static-deltas --gpg-sign=${{ steps.import_gpg.outputs.fingerprint }} repo
-          
+          # Sign the repo and generate static delta updates
+          flatpak build-update-repo --generate-static-deltas --gpg-sign="$GPG_FINGERPRINT" repo
+
           # Export public key to repo for manual downloading
-          gpg --armor --export ${{ steps.import_gpg.outputs.fingerprint }} > repo/altersend.gpg
-          
+          gpg --armor --export "$GPG_FINGERPRINT" > repo/altersend.gpg
+
           # Convert GPG key to base64 without newlines for the .flatpakrepo file
-          GPG_B64=$(gpg --export ${{ steps.import_gpg.outputs.fingerprint }} | base64 | tr -d '\n')
-          
-          # Generate altersend.flatpakrepo
-          cat <<EOF > repo/altersend.flatpakrepo
-          [Flatpak Repo]
-          Title=AlterSend
-          # TODO: revert before upstream PR
-          Url=https://riftrogue.github.io/altersend-flatpak/
-          Homepage=https://altersend.com/
-          Comment=AlterSend Official Flatpak Repository
-          Description=Peer-to-peer file transfer
-          Icon=https://raw.githubusercontent.com/denislupookov/altersend/main/assets/01-logo-icon-logo-icon-512x512.png
-          GPGKey=${GPG_B64}
-          EOF
-      
+          GPG_B64=$(gpg --export "$GPG_FINGERPRINT" | base64 | tr -d '\n')
+
+          # Generate altersend.flatpakrepo — heredoc must be at column 0 so that
+          # no leading whitespace is written into the INI-format file.
+          cat > repo/altersend.flatpakrepo <<EOF
+[Flatpak Repo]
+Title=AlterSend
+# TODO: revert before upstream PR
+Url=https://riftrogue.github.io/altersend-flatpak/
+Homepage=https://altersend.com/
+Comment=AlterSend Official Flatpak Repository
+Description=Peer-to-peer file transfer
+Icon=https://raw.githubusercontent.com/denislupookov/altersend/main/assets/01-logo-icon-logo-icon-512x512.png
+GPGKey=${GPG_B64}
+EOF
+
       - name: Deploy to Flatpak Repo (GitHub Pages)
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
@@ -107,3 +118,4 @@ jobs:
           publish_dir: repo
           keep_files: true
           force_orphan: false
+          commit_message: "deploy: update from ${{ github.repository }}@${{ github.sha }}"
