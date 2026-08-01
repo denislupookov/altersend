@@ -46,6 +46,8 @@ jobs:
         run: |
           if [ -f repo/config ]; then
             echo "Validating existing OSTree repository..."
+            # Git drops empty directories, but OSTree needs them to exist
+            mkdir -p repo/refs/remotes repo/refs/mirrors repo/objects
             ostree fsck --repo=repo
             rm -rf repo/.git
           else
