@@ -65,6 +65,38 @@ jobs:
           repository-name: flathub
           repository-url: https://flathub.org/repo/flathub.flatpakrepo
       
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v6
+        with:
+          gpg_private_key: ${{ secrets.FLATPAK_GPG_PRIVATE_KEY }}
+          # Uncomment and add secret if your key has a passphrase:
+          # passphrase: ${{ secrets.FLATPAK_GPG_PASSPHRASE }}
+
+      - name: Sign OSTree Repository & Generate .flatpakrepo
+        run: |
+          # Sign the repo and generate delta updates
+          flatpak build-update-repo --generate-static-deltas --gpg-sign=${{ steps.import_gpg.outputs.fingerprint }} repo
+          
+          # Export public key to repo for manual downloading
+          gpg --armor --export ${{ steps.import_gpg.outputs.fingerprint }} > repo/altersend.gpg
+          
+          # Convert GPG key to base64 without newlines for the .flatpakrepo file
+          GPG_B64=$(gpg --export ${{ steps.import_gpg.outputs.fingerprint }} | base64 | tr -d '\n')
+          
+          # Generate altersend.flatpakrepo
+          cat <<EOF > repo/altersend.flatpakrepo
+          [Flatpak Repo]
+          Title=AlterSend
+          # TODO: revert before upstream PR
+          Url=https://riftrogue.github.io/altersend-flatpak/
+          Homepage=https://altersend.com/
+          Comment=AlterSend Official Flatpak Repository
+          Description=Peer-to-peer file transfer
+          Icon=https://raw.githubusercontent.com/denislupookov/altersend/main/assets/01-logo-icon-logo-icon-512x512.png
+          GPGKey=${GPG_B64}
+          EOF
+      
       - name: Deploy to Flatpak Repo (GitHub Pages)
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
