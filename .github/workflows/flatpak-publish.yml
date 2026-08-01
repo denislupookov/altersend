@@ -16,14 +16,14 @@ concurrency:
 
 jobs:
   build-flatpak:
-    # Guard against accidental workflow_dispatch runs from non-main branches.
-    # The push trigger above already restricts to main, but workflow_dispatch
-    # can be triggered manually from any branch via the GitHub UI.
     # TODO: revert before upstream PR
     # if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions@sha256:d534700a8a0090dfa5e23ed3ae09106a1beafde54e66b6b1327b27dbd3f0c7c2 # freedesktop-24.08
+      # --privileged is required by flatpak-builder to create user namespace
+      # sandboxes for the offline build. This is the standard configuration
+      # for all flatpak CI pipelines.
       options: --privileged
     timeout-minutes: 60
     permissions:
@@ -46,16 +46,16 @@ jobs:
           token: ${{ secrets.FLATPAK_PUBLISH_TOKEN }}
 
       - name: Clean and verify OSTree repo
+        shell: bash
         run: |
           if [ -f repo/config ]; then
             echo "Validating existing OSTree repository..."
-            # Git drops empty directories, but OSTree needs them to exist
             mkdir -p repo/refs/remotes repo/refs/mirrors repo/objects
-            ostree fsck --repo=repo
+            ostree fsck --repo=repo || { echo "OSTree fsck failed — repo is corrupt. Reinitializing from scratch."; rm -rf repo; }
             rm -rf repo/.git
           else
             echo "Repository exists but is not an OSTree repository (yet). Cleaning up so flatpak-builder can initialize it."
-            rm -rf repo
+            rm -rf repo && echo "Cleaned up non-OSTree directory."
           fi
 
       - name: Import GPG key
@@ -72,34 +72,22 @@ jobs:
           bundle: altersend.flatpak
           manifest-path: flatpak/com.altersend.AlterSend.yaml
           cache-key: flatpak-builder-${{ hashFiles('flatpak/com.altersend.AlterSend.yaml', 'flatpak/node-modules.json') }}
-          # build-bundle produces a standalone .flatpak file for the GitHub Actions
-          # artifact. Not needed for the repo-based install path; set to false to
-          # skip the slow compression step and save ~2-3 minutes of CI time.
-          build-bundle: false
+          build-bundle: true
           repository-name: flathub
           repository-url: https://flathub.org/repo/flathub.flatpakrepo
-          # Sign each OSTree commit at build time so flatpak can verify individual
-          # commits — build-update-repo only signs the summary file, not commits.
           gpg-sign: ${{ steps.import_gpg.outputs.fingerprint }}
 
       - name: Sign OSTree Repository & Generate .flatpakrepo
         # Use an env var for the fingerprint instead of direct template injection
         # into the shell script, following GitHub's security hardening guidelines.
+        shell: bash
         env:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
         run: |
-          # Sign the repo and generate static delta updates
           flatpak build-update-repo --generate-static-deltas --gpg-sign="$GPG_FINGERPRINT" repo
-
-          # Export public key to repo for manual downloading
           gpg --armor --export "$GPG_FINGERPRINT" > repo/altersend.gpg
-
-          # Convert GPG key to base64 without newlines for the .flatpakrepo file
           GPG_B64=$(gpg --export "$GPG_FINGERPRINT" | base64 | tr -d '\n')
 
-          # Generate altersend.flatpakrepo using grouped echo to avoid YAML
-          # parser conflicts (YAML treats unindented '[' as a flow sequence).
-          # The grouped block writes each line without any leading whitespace.
           {
             echo '[Flatpak Repo]'
             echo 'Title=AlterSend'
