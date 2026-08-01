@@ -58,6 +58,14 @@ jobs:
             rm -rf repo
           fi
 
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v6
+        with:
+          gpg_private_key: ${{ secrets.FLATPAK_GPG_PRIVATE_KEY }}
+          # Uncomment and add secret if your key has a passphrase:
+          # passphrase: ${{ secrets.FLATPAK_GPG_PASSPHRASE }}
+
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@401fe28a8384095fc1531b9d320b292f0ee45adb # v6
         with:
@@ -70,14 +78,9 @@ jobs:
           build-bundle: false
           repository-name: flathub
           repository-url: https://flathub.org/repo/flathub.flatpakrepo
-
-      - name: Import GPG key
-        id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v6
-        with:
-          gpg_private_key: ${{ secrets.FLATPAK_GPG_PRIVATE_KEY }}
-          # Uncomment and add secret if your key has a passphrase:
-          # passphrase: ${{ secrets.FLATPAK_GPG_PASSPHRASE }}
+          # Sign each OSTree commit at build time so flatpak can verify individual
+          # commits — build-update-repo only signs the summary file, not commits.
+          gpg-sign: ${{ steps.import_gpg.outputs.fingerprint }}
 
       - name: Sign OSTree Repository & Generate .flatpakrepo
         # Use an env var for the fingerprint instead of direct template injection
