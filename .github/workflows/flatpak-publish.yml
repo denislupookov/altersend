@@ -2,8 +2,9 @@ name: Flatpak Publish
 
 on:
   push:
-    branches:
-      - main
+    # TODO: revert before upstream PR
+    # branches:
+    #   - main
     paths:
       - 'flatpak/**'
       - '.github/workflows/flatpak-publish.yml'
@@ -15,7 +16,8 @@ concurrency:
 
 jobs:
   build-flatpak:
-    if: github.ref == 'refs/heads/main'
+    # TODO: revert before upstream PR
+    # if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions@sha256:d534700a8a0090dfa5e23ed3ae09106a1beafde54e66b6b1327b27dbd3f0c7c2 # freedesktop-24.08
@@ -34,7 +36,8 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-          repository: denislupookov/altersend-flatpak
+          # TODO: revert before upstream PR
+          repository: riftrogue/altersend-flatpak
           ref: main
           path: repo
           token: ${{ secrets.FLATPAK_PUBLISH_TOKEN }}
@@ -64,7 +67,8 @@ jobs:
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           personal_token: ${{ secrets.FLATPAK_PUBLISH_TOKEN }}
-          external_repository: denislupookov/altersend-flatpak
+          # TODO: revert before upstream PR
+          external_repository: riftrogue/altersend-flatpak
           publish_branch: main
           publish_dir: repo
           keep_files: true
