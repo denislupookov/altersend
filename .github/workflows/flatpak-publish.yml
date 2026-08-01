@@ -94,19 +94,20 @@ jobs:
           # Convert GPG key to base64 without newlines for the .flatpakrepo file
           GPG_B64=$(gpg --export "$GPG_FINGERPRINT" | base64 | tr -d '\n')
 
-          # Generate altersend.flatpakrepo — heredoc must be at column 0 so that
-          # no leading whitespace is written into the INI-format file.
-          cat > repo/altersend.flatpakrepo <<EOF
-[Flatpak Repo]
-Title=AlterSend
-# TODO: revert before upstream PR
-Url=https://riftrogue.github.io/altersend-flatpak/
-Homepage=https://altersend.com/
-Comment=AlterSend Official Flatpak Repository
-Description=Peer-to-peer file transfer
-Icon=https://raw.githubusercontent.com/denislupookov/altersend/main/assets/01-logo-icon-logo-icon-512x512.png
-GPGKey=${GPG_B64}
-EOF
+          # Generate altersend.flatpakrepo using grouped echo to avoid YAML
+          # parser conflicts (YAML treats unindented '[' as a flow sequence).
+          # The grouped block writes each line without any leading whitespace.
+          {
+            echo '[Flatpak Repo]'
+            echo 'Title=AlterSend'
+            # TODO: revert before upstream PR
+            echo 'Url=https://riftrogue.github.io/altersend-flatpak/'
+            echo 'Homepage=https://altersend.com/'
+            echo 'Comment=AlterSend Official Flatpak Repository'
+            echo 'Description=Peer-to-peer file transfer'
+            echo 'Icon=https://raw.githubusercontent.com/denislupookov/altersend/main/assets/01-logo-icon-logo-icon-512x512.png'
+            echo "GPGKey=${GPG_B64}"
+          } > repo/altersend.flatpakrepo
 
       - name: Deploy to Flatpak Repo (GitHub Pages)
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
