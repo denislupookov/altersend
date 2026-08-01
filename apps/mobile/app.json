@@ -2,7 +2,7 @@
   "expo": {
     "name": "AlterSend",
     "slug": "altersend",
-    "version": "1.7.0",
+    "version": "1.8.0",
     "newArchEnabled": true,
     "orientation": "portrait",
     "scheme": "altersend",
@@ -52,7 +52,8 @@
             ]
           }
         ]
-      }
+      },
+      "associatedDomains": ["applinks:altersend.com"]
     },
     "android": {
       "adaptiveIcon": {
@@ -72,6 +73,20 @@
         "android.permission.READ_MEDIA_AUDIO",
         "android.permission.READ_MEDIA_IMAGES",
         "android.permission.READ_MEDIA_VIDEO"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "altersend.com",
+              "pathPrefix": "/r"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
       ]
     },
     "plugins": [

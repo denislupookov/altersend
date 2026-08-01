@@ -1,4 +1,8 @@
 export const websiteUrl = 'https://altersend.com'
+export const webAppUrl = 'https://app.altersend.com'
+export const downloadUrl = 'https://altersend.com/download'
+export const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.altersend.mobile'
+export const appStoreUrl = 'https://apps.apple.com/app/id6772496271'
 export const sponsorUrl = 'https://altersend.com/sponsor'
 export const privacyPolicyUrl = 'https://altersend.com/privacy'
 export const termsOfServiceUrl = 'https://altersend.com/terms'

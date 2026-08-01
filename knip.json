@@ -4,10 +4,7 @@
     ".": {
       "entry": ["scripts/*.{js,cjs,mjs}"],
       "project": ["scripts/**/*.{js,cjs,mjs}"],
-      "ignoreDependencies": [
-        "expo",
-        "react-dom"
-      ]
+      "ignoreDependencies": ["expo", "react-dom"]
     },
     "packages/core": {
       "entry": ["src/**/*.test.ts"],
@@ -16,10 +13,7 @@
     "packages/drive": {
       "entry": ["src/**/*.test.ts", "test/**/*.test.ts"],
       "ignoreDependencies": ["bare-fs"],
-      "ignoreUnresolved": [
-        "^#fs$",
-        "^#path$"
-      ]
+      "ignoreUnresolved": ["^#fs$", "^#path$"]
     },
     "packages/domain": {
       "entry": ["src/**/*.test.ts"]
@@ -29,18 +23,10 @@
       "project": ["src/**/*.{ts,tsx}"]
     },
     "packages/components": {
-      "entry": [
-        "scripts/*.mjs",
-        ".storybook/{main,preview}.{ts,tsx}",
-        "src/**/*.stories.{ts,tsx}"
-      ],
+      "entry": ["scripts/*.mjs", ".storybook/{main,preview}.{ts,tsx}", "src/**/*.stories.{ts,tsx}"],
       "project": ["src/**/*.{ts,tsx}", "scripts/**/*.mjs"],
       "ignoreDependencies": ["lucide-react", "lucide-react-native"],
-      "ignoreUnresolved": [
-        "^\\./DragSurface$",
-        "^\\./useIconColor$",
-        "^\\./lucide$"
-      ]
+      "ignoreUnresolved": ["^\\./DragSurface$", "^\\./useIconColor$", "^\\./lucide$"]
     },
     "apps/desktop": {
       "entry": [
@@ -50,10 +36,7 @@
         "forge.config.{js,cjs,mjs}",
         "vite.config.{ts,js,mjs}"
       ],
-      "project": [
-        "src/**/*.{ts,tsx,cjs}",
-        "scripts/**/*.{js,cjs,mjs}"
-      ],
+      "project": ["src/**/*.{ts,tsx,cjs}", "scripts/**/*.{js,cjs,mjs}"],
       "ignoreDependencies": [
         "b4a",
         "bare-rpc",
@@ -68,14 +51,8 @@
         "@electron-forge/maker-zip",
         "app-builder-lib"
       ],
-      "ignoreUnresolved": [
-        "^\\./sentry-dsn\\.gen\\.js$",
-        "^\\./relay-conf-pubkey\\.gen\\.js$"
-      ],
-      "ignoreBinaries": [
-        "electron-builder.mac.json",
-        "electron-builder.linux.json"
-      ]
+      "ignoreUnresolved": ["^\\./sentry-dsn\\.gen\\.js$", "^\\./relay-conf-pubkey\\.gen\\.js$"],
+      "ignoreBinaries": ["electron-builder.mac.json", "electron-builder.linux.json"]
     },
     "apps/mobile": {
       "entry": [
@@ -85,18 +62,15 @@
         "metro.config.{js,cjs}",
         "babel.config.{js,cjs}"
       ],
-      "project": [
-        "app/**/*.{ts,tsx}",
-        "src/**/*.{ts,tsx}",
-        "scripts/**/*.{js,cjs,mjs}"
-      ],
-      "ignoreDependencies": [
-        "b4a",
-        "react-native-b4a",
-        "react-strict-dom",
-        "expo-updates"
-      ],
+      "project": ["app/**/*.{ts,tsx}", "src/**/*.{ts,tsx}", "scripts/**/*.{js,cjs,mjs}"],
+      "ignoreDependencies": ["b4a", "react-native-b4a", "react-strict-dom", "expo-updates"],
       "ignoreBinaries": ["eas"]
+    },
+    "apps/web": {
+      "entry": ["postcss.config.mjs"],
+      "project": ["src/**/*.{ts,tsx,css}"],
+      "ignore": ["src/stubs/**"],
+      "ignoreUnresolved": ["^react-strict-dom/babel-preset$"]
     }
   },
   "ignoreBinaries": ["pod"],

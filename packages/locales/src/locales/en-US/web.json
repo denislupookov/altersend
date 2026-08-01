@@ -1,0 +1,72 @@
+{
+  "join": {
+    "title": "Download shared files",
+    "description": "Paste the transfer code your sender gave you to connect.",
+    "codeLabel": "Transfer code",
+    "invalidCode": "That doesn’t look like a valid transfer code."
+  },
+  "connecting": {
+    "description": "Establishing a secure peer-to-peer link. This usually takes a few seconds.",
+    "stage": {
+      "idle": "Verifying transfer code and fetching the file list…",
+      "relay": "Connecting to relay…",
+      "finding": "Finding sender…",
+      "waiting": "Connected — waiting for the file list…",
+      "preparing": "Sender is preparing files…"
+    }
+  },
+  "download": {
+    "title": "{{files}} shared with you",
+    "description": "Download them right here in your browser — no app or account needed.",
+    "connected": "Connected to sender",
+    "allDownloaded": "All files downloaded",
+    "complete": "{{size}} · complete",
+    "keepTabOpen": "Downloading — keep this tab open",
+    "enterAnother": "Enter another code",
+    "downloadedHint": "Downloaded — check your browser's files.",
+    "asZip": "Download as ZIP",
+    "inAppWarning": "This browser can’t save downloads. Open the link in Safari or Chrome to receive your files."
+  },
+  "errors": {
+    "relayUnreachable": "Cannot reach the AlterSend relay. Check your connection and try again.",
+    "senderNotFound": "Sender not found — make sure the sender is sharing.",
+    "nothingShared": "Connected, but the sender did not share anything.",
+    "connectionFailed": "Connection lost — the sender may have stopped sharing. Try again."
+  },
+  "footer": {
+    "getApp": "Download",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "help": "Help"
+  },
+  "promo": {
+    "title": "Sent with AlterSend",
+    "subtitle": "Get the app to send files of your own",
+    "getFor": "Get for {{os}}",
+    "getApp": "Download the app"
+  },
+  "disconnected": {
+    "title": "The sender disconnected",
+    "description": "AlterSend transfers are peer-to-peer, so the connection needs both sides online. Ask the sender to reopen the transfer, then reconnect.",
+    "summary_complete": "All {{total}} files were downloaded before the link dropped.",
+    "allReceived": "All files received",
+    "completeTitle": "Transfer complete",
+    "completeDescription": "The sender went offline, but every file arrived — you’re all set.",
+    "waitingTitle": "Waiting for the sender to reconnect",
+    "waitingBody": "The connection dropped. Once they reopen the transfer, pick up where you left off.",
+    "alreadySaved": "{{completed}} of {{total}} files already saved",
+    "tryNow": "Try now",
+    "anotherCode": "Another code"
+  },
+  "sendBack": {
+    "title": "Want to send files back?",
+    "description": "Get the AlterSend app to send files of any size — end-to-end encrypted, no account needed.",
+    "maybeLater": "Maybe later"
+  },
+  "tooLarge": {
+    "title": "Too big for the browser",
+    "description": "Some transfers are better received in the app.",
+    "body": "Open it in the AlterSend app to receive it — no account needed.",
+    "openInApp": "Open in the app"
+  }
+}

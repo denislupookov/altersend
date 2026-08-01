@@ -1,7 +1,6 @@
-import { LinkRow, useTheme } from '@altersend/components'
+import { LinkRow, Modal, useTheme } from '@altersend/components'
 import { FileIcon, FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { Modal } from '../Modal'
 
 interface AddFilesModalProps {
   open: boolean
@@ -15,7 +14,13 @@ export function AddFilesModal({ open, onClose, onSelect }: AddFilesModalProps) {
   const c = theme.colors
 
   return (
-    <Modal open={open} title={t('send:dropzone.addTitle')} width={460} onClose={onClose}>
+    <Modal
+      closeLabel={t('common:actions.close')}
+      open={open}
+      title={t('send:dropzone.addTitle')}
+      width={460}
+      onClose={onClose}
+    >
       <div className='flex flex-col gap-2 px-4 pb-4'>
         <LinkRow
           standalone

@@ -1,0 +1,72 @@
+{
+  "join": {
+    "title": "Geteilte Dateien herunterladen",
+    "description": "Fügen Sie den Übertragungscode des Absenders ein, um sich zu verbinden.",
+    "codeLabel": "Übertragungscode",
+    "invalidCode": "Das sieht nicht nach einem gültigen Übertragungscode aus."
+  },
+  "connecting": {
+    "description": "Es wird eine sichere Peer-to-Peer-Verbindung aufgebaut. Das dauert meist nur wenige Sekunden.",
+    "stage": {
+      "idle": "Übertragungscode wird geprüft und die Dateiliste abgerufen…",
+      "relay": "Verbindung zum Relay wird hergestellt…",
+      "finding": "Absender wird gesucht…",
+      "waiting": "Verbunden – warten auf die Dateiliste…",
+      "preparing": "Absender bereitet die Dateien vor…"
+    }
+  },
+  "download": {
+    "title": "{{files}} für Sie freigegeben",
+    "description": "Laden Sie sie direkt hier im Browser herunter – ohne App und ohne Konto.",
+    "connected": "Mit Absender verbunden",
+    "allDownloaded": "Alle Dateien heruntergeladen",
+    "complete": "{{size}} · abgeschlossen",
+    "keepTabOpen": "Wird heruntergeladen – lassen Sie diesen Tab geöffnet",
+    "enterAnother": "Anderen Code eingeben",
+    "downloadedHint": "Heruntergeladen – sieh in den Dateien deines Browsers nach.",
+    "asZip": "Als ZIP herunterladen",
+    "inAppWarning": "Dieser Browser kann keine Downloads speichern. Öffne den Link in Safari oder Chrome, um deine Dateien zu empfangen."
+  },
+  "errors": {
+    "relayUnreachable": "Das AlterSend-Relay ist nicht erreichbar. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "senderNotFound": "Absender nicht gefunden – stellen Sie sicher, dass der Absender gerade teilt.",
+    "nothingShared": "Verbunden, aber der Absender hat nichts geteilt.",
+    "connectionFailed": "Verbindung verloren – der Absender teilt möglicherweise nicht mehr. Versuche es erneut."
+  },
+  "footer": {
+    "getApp": "App herunterladen",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "help": "Hilfe"
+  },
+  "promo": {
+    "title": "Mit AlterSend gesendet",
+    "subtitle": "Hol dir die App, um selbst Dateien zu senden",
+    "getFor": "Für {{os}} holen",
+    "getApp": "App herunterladen"
+  },
+  "disconnected": {
+    "title": "Der Absender hat die Verbindung getrennt",
+    "description": "AlterSend-Übertragungen sind Peer-to-Peer – beide Seiten müssen online sein. Bitte den Absender, die Übertragung erneut zu öffnen, und verbinde dich dann neu.",
+    "summary_complete": "Alle {{total}} Dateien wurden heruntergeladen, bevor die Verbindung abbrach.",
+    "allReceived": "Alle Dateien empfangen",
+    "completeTitle": "Übertragung abgeschlossen",
+    "completeDescription": "Der Absender ist offline gegangen, aber alle Dateien sind angekommen – du bist startklar.",
+    "waitingTitle": "Warten auf die erneute Verbindung",
+    "waitingBody": "Die Verbindung wurde unterbrochen. Sobald der Absender die Übertragung erneut öffnet, kannst du dort weitermachen.",
+    "alreadySaved": "{{completed}} von {{total}} Dateien bereits gespeichert",
+    "tryNow": "Jetzt versuchen",
+    "anotherCode": "Anderer Code"
+  },
+  "sendBack": {
+    "title": "Dateien zurücksenden?",
+    "description": "Hol dir die AlterSend-App, um Dateien beliebiger Größe zu senden – Ende-zu-Ende-verschlüsselt, ohne Konto.",
+    "maybeLater": "Vielleicht später"
+  },
+  "tooLarge": {
+    "title": "Zu groß für den Browser",
+    "description": "Manche Übertragungen empfängt man besser in der App.",
+    "body": "Öffne sie in der AlterSend-App, um sie zu empfangen – kein Konto nötig.",
+    "openInApp": "In der App öffnen"
+  }
+}

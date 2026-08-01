@@ -1,0 +1,72 @@
+{
+  "join": {
+    "title": "Scarica i file condivisi",
+    "description": "Incolla il codice di trasferimento che ti ha dato il mittente per connetterti.",
+    "codeLabel": "Codice di trasferimento",
+    "invalidCode": "Non sembra un codice di trasferimento valido."
+  },
+  "connecting": {
+    "description": "Creazione di un collegamento peer-to-peer sicuro. Di solito richiede pochi secondi.",
+    "stage": {
+      "idle": "Verifica del codice di trasferimento e recupero dell’elenco dei file…",
+      "relay": "Connessione al relay…",
+      "finding": "Ricerca del mittente…",
+      "waiting": "Connesso — in attesa dell’elenco dei file…",
+      "preparing": "Il mittente sta preparando i file…"
+    }
+  },
+  "download": {
+    "title": "{{files}} condivisi con te",
+    "description": "Scaricali direttamente nel browser — senza app né account.",
+    "connected": "Connesso al mittente",
+    "allDownloaded": "Tutti i file scaricati",
+    "complete": "{{size}} · completato",
+    "keepTabOpen": "Download in corso — tieni aperta questa scheda",
+    "enterAnother": "Inserisci un altro codice",
+    "downloadedHint": "Scaricato: controlla i file del tuo browser.",
+    "asZip": "Scarica come ZIP",
+    "inAppWarning": "Questo browser non può salvare i download. Apri il link in Safari o Chrome per ricevere i tuoi file."
+  },
+  "errors": {
+    "relayUnreachable": "Impossibile raggiungere il relay di AlterSend. Controlla la connessione e riprova.",
+    "senderNotFound": "Mittente non trovato — assicurati che stia condividendo.",
+    "nothingShared": "Connesso, ma il mittente non ha condiviso nulla.",
+    "connectionFailed": "Connessione persa: il mittente potrebbe aver interrotto la condivisione. Riprova."
+  },
+  "footer": {
+    "getApp": "Scarica l’app",
+    "privacy": "Privacy",
+    "terms": "Termini",
+    "help": "Aiuto"
+  },
+  "promo": {
+    "title": "Inviato con AlterSend",
+    "subtitle": "Scarica l’app per inviare i tuoi file",
+    "getFor": "Scarica per {{os}}",
+    "getApp": "Scarica l’app"
+  },
+  "disconnected": {
+    "title": "Il mittente si è disconnesso",
+    "description": "I trasferimenti AlterSend sono peer-to-peer: entrambe le parti devono essere online. Chiedi al mittente di riaprire il trasferimento, poi riconnettiti.",
+    "summary_complete": "Tutti i {{total}} file sono stati scaricati prima che il collegamento cadesse.",
+    "allReceived": "Tutti i file ricevuti",
+    "completeTitle": "Trasferimento completato",
+    "completeDescription": "Il mittente si è disconnesso, ma tutti i file sono arrivati: è tutto pronto.",
+    "waitingTitle": "In attesa che il mittente si riconnetta",
+    "waitingBody": "La connessione è caduta. Appena riapre il trasferimento, puoi riprendere da dove eri.",
+    "alreadySaved": "{{completed}} di {{total}} file già salvati",
+    "tryNow": "Riprova ora",
+    "anotherCode": "Altro codice"
+  },
+  "sendBack": {
+    "title": "Vuoi inviare file a tua volta?",
+    "description": "Scarica l’app AlterSend per inviare file di qualsiasi dimensione: crittografia end-to-end, nessun account.",
+    "maybeLater": "Forse più tardi"
+  },
+  "tooLarge": {
+    "title": "Troppo grande per il browser",
+    "description": "Alcuni trasferimenti è meglio riceverli nell’app.",
+    "body": "Aprilo nell’app AlterSend per riceverlo, senza account.",
+    "openInApp": "Apri nell’app"
+  }
+}

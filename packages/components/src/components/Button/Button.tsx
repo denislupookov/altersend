@@ -24,8 +24,10 @@ export interface ButtonProps extends Omit<ButtonElementProps, 'children' | 'styl
   iconOnly?: boolean
   loading?: boolean
   pill?: boolean
+  stack?: boolean
   size?: ButtonSize
   tooltip?: string
+  tooltipDescription?: string
   tooltipSide?: TooltipSide
   variant?: ButtonVariant
   width?: 'auto' | 'full'
@@ -95,8 +97,10 @@ export function Button({
   iconOnly = false,
   loading = false,
   pill,
+  stack = false,
   size = 'md',
   tooltip,
+  tooltipDescription,
   tooltipSide = 'top',
   type = 'button',
   variant = 'primary',
@@ -137,6 +141,7 @@ export function Button({
         iconOnly && iconOnlyPadding[size],
         styles[variant],
         pill && styles.pill,
+        stack && styles.stack,
         width === 'full' && styles.full,
         (showPressed || showHover) && pressedStyle[variant],
         isDisabled && !loading && (variant === 'ghost' ? styles.disabledGhost : styles.disabled)
@@ -149,6 +154,7 @@ export function Button({
             styles.textBase,
             textSize[size],
             textVariant[variant],
+            stack && styles.stackText,
             (showPressed || showHover) && pressedTextStyle[variant],
             isDisabled && !loading && styles.textDisabled
           ]}
@@ -158,7 +164,14 @@ export function Button({
       ) : (
         children
       )}
-      {tooltip ? <Tooltip label={tooltip} visible={showHover} side={tooltipSide} /> : null}
+      {tooltip ? (
+        <Tooltip
+          label={tooltip}
+          description={tooltipDescription}
+          visible={showHover}
+          side={tooltipSide}
+        />
+      ) : null}
     </html.button>
   )
 }

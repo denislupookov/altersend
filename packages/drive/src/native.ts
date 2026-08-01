@@ -1,4 +1,5 @@
 export * from './index'
+export { firstFreePath } from './engine/paths'
 export * from './adapters/disk-reader'
 export * from './adapters/disk-writer'
 export * from './api/drive'

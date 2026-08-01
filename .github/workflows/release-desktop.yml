@@ -392,6 +392,22 @@ jobs:
           done
 
 
+      - name: Snapshot OTA seeder baseline
+        run: |
+          HOSTS="${{ vars.OTA_SEEDER_HOSTS }}"
+          BASE="$RUNNER_TEMP/ota-seed-baseline.txt"
+          : > "$BASE"
+          if [ -z "$HOSTS" ]; then
+            echo "OTA_SEEDER_HOSTS not set — skipping seeder durability gate"
+            exit 0
+          fi
+          for H in $HOSTS; do
+            L=$(ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 "$H" \
+              'journalctl -u altersend-seed -o cat --no-pager -g "drive length" 2>/dev/null | tail -1 | grep -oE "[0-9]+$"' 2>/dev/null || true)
+            echo "$H ${L:-0}" >> "$BASE"
+            echo "baseline $H drive length=${L:-0}"
+          done
+
       - name: Stage and release to Pear DHT
         run: |
           export PATH="$HOME/Library/Application Support/pear/bin:$PATH"
@@ -461,6 +477,43 @@ jobs:
           fi
 
           pear release "$UPGRADE_LINK"
+
+      - name: Wait for OTA seeders to replicate release
+        run: |
+          BASE="$RUNNER_TEMP/ota-seed-baseline.txt"
+          if [ ! -s "$BASE" ]; then
+            echo "No seeder baseline recorded — gate skipped"
+            exit 0
+          fi
+          while read -r H L0; do
+            echo "Waiting for $H to replicate (baseline length $L0)..."
+            ok=0
+            settled=0
+            for i in $(seq 1 40); do
+              OUT=$(ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 "$H" '
+                len=$(journalctl -u altersend-seed -o cat --no-pager -g "drive length" 2>/dev/null | tail -1 | grep -oE "[0-9]+$")
+                rate=$(journalctl -u altersend-seed -o cat --no-pager -n 5 2>/dev/null | grep -oE "download [0-9.]+[kMG]?B - [0-9.]+[kMG]?B/s" | tail -1 | grep -oE "[0-9.]+[kMG]?B/s$")
+                echo "${len:-0}|${rate:-0B/s}"' 2>/dev/null || echo "0|0B/s")
+              LEN="${OUT%%|*}"
+              RATE="${OUT##*|}"
+              echo "  $H len=$LEN rate=$RATE"
+              if [ "${LEN:-0}" -gt "$L0" ]; then
+                case "$RATE" in
+                  *MB/s|*GB/s) settled=0 ;;
+                  *) settled=$((settled+1)) ;;
+                esac
+                if [ "$settled" -ge 3 ]; then
+                  echo "  $H replicated the new release and settled"
+                  ok=1
+                  break
+                fi
+              fi
+              sleep 15
+            done
+            if [ "$ok" != 1 ]; then
+              echo "::warning::$H did not confirm replication within timeout; the release is live but $H may still be catching up"
+            fi
+          done < "$BASE"
 
       - name: Cleanup
         if: always()

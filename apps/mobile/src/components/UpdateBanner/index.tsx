@@ -1,16 +1,14 @@
 import { useState } from 'react'
 import { Button, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
+import { appStoreUrl, playStoreUrl } from '@altersend/domain'
 import { Linking, Platform, StyleSheet, View } from 'react-native'
 import { useUpdateCheck } from '../../hooks/useUpdateCheck'
 import { BottomSheet } from '../BottomSheet'
 import { Text } from '@/src/components/ThemedText'
 import UpdateSvg from '../../../../../assets/update.svg'
 
-const STORE_URL =
-  Platform.OS === 'ios'
-    ? 'https://apps.apple.com/us/app/altersend-file-transfer/id6772496271'
-    : 'https://play.google.com/store/apps/details?id=com.altersend.mobile'
+const STORE_URL = Platform.OS === 'ios' ? appStoreUrl : playStoreUrl
 
 export function UpdateBanner() {
   const { t } = useTranslation(['common'])

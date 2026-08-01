@@ -1,4 +1,4 @@
-import { LaptopIcon, MonitorIcon, SmartphoneIcon, TabletIcon } from './set'
+import { GlobeIcon, LaptopIcon, MonitorIcon, SmartphoneIcon, TabletIcon } from './set'
 import type { IconComponent } from './types'
 
 export function deviceIcon(deviceType: string): IconComponent {
@@ -9,6 +9,8 @@ export function deviceIcon(deviceType: string): IconComponent {
       return MonitorIcon
     case 'tablet':
       return TabletIcon
+    case 'browser':
+      return GlobeIcon
     default:
       return SmartphoneIcon
   }

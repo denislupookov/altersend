@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
-import { Button } from '@altersend/components'
+import { Button, ErrorBanner } from '@altersend/components'
 import { SendIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { Layout, PairDeviceSheet } from '@/src/components'
@@ -14,7 +14,7 @@ import {
   isShareStep,
   useTransferStore
 } from '@altersend/domain'
-import { continueShare } from '@altersend/domain'
+import { continueShare, exceedsFileCountLimit } from '@altersend/domain'
 
 function NavigationController() {
   const router = useRouter()
@@ -59,6 +59,7 @@ export default function SendSelectScreen() {
   const hasSelectedFiles = selectedFiles.length > 0
   const fileCount = selectedFiles.filter((file) => file.kind !== 'text').length
   const textCount = selectedFiles.length - fileCount
+  const tooManyFiles = exceedsFileCountLimit(fileCount)
 
   const openMenu = useCallback(() => router.push('/settings'), [router])
 
@@ -70,15 +71,19 @@ export default function SendSelectScreen() {
         onMenuPress={openMenu}
         footer={
           hasSelectedFiles ? (
-            <Button
-              onClick={() => void continueShare(selectedFiles)}
-              size='lg'
-              variant='primary'
-              width='full'
-              icon={<SendIcon size={18} />}
-            >
-              {formatSendButtonLabel(fileCount, textCount, t)}
-            </Button>
+            <View style={{ gap: 8 }}>
+              {tooManyFiles ? <ErrorBanner message={t('send:files.tooMany')} /> : null}
+              <Button
+                disabled={tooManyFiles}
+                onClick={() => void continueShare(selectedFiles)}
+                size='lg'
+                variant='primary'
+                width='full'
+                icon={<SendIcon size={18} />}
+              >
+                {formatSendButtonLabel(fileCount, textCount, t)}
+              </Button>
+            </View>
           ) : undefined
         }
       >

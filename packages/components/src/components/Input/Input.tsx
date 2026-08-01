@@ -7,6 +7,7 @@ type InputElementProps = Parameters<typeof html.input>[0]
 export interface InputProps extends Omit<InputElementProps, 'style'> {
   description?: string
   error?: string
+  filled?: boolean
   icon?: ReactNode
   label?: string
   mono?: boolean
@@ -16,6 +17,7 @@ export interface InputProps extends Omit<InputElementProps, 'style'> {
 export function Input({
   description,
   error,
+  filled = false,
   icon,
   id,
   label,
@@ -34,8 +36,17 @@ export function Input({
   const hasError = Boolean(error)
   const useWrapper = Boolean(icon || trailing)
 
-  const fieldStyle = [styles.field, mono && styles.mono, hasError && styles.invalid]
-  const wrapperStyle = [styles.iconWrapper, hasError && styles.iconWrapperInvalid]
+  const fieldStyle = [
+    styles.field,
+    filled && styles.filled,
+    mono && styles.mono,
+    hasError && styles.invalid
+  ]
+  const wrapperStyle = [
+    styles.iconWrapper,
+    filled && styles.filled,
+    hasError && styles.iconWrapperInvalid
+  ]
 
   return (
     <html.div style={styles.root}>

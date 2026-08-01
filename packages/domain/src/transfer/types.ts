@@ -74,6 +74,8 @@ export interface TransferSessionState {
   uploadItems: SenderUploadItem[]
   peerDownloads: Record<string, PeerDownloadEvent>
   connectedPeers: Record<string, ConnectedPeer>
+  webPeers: Record<string, boolean>
+  outdatedPeers: Record<string, boolean>
   errorCode: TransferErrorCode | null
   errorMessage: string | null
   transferId: string | null
@@ -92,6 +94,9 @@ export type TransferAction =
   | { type: 'set_error'; code?: TransferErrorCode; message: string }
   | { type: 'status_changed'; state: ConnectionState; peers?: number }
   | { type: 'connection_type_changed'; peer: string; connectionType: TransferConnectionType }
+  | { type: 'peer_client_changed'; peer: string; client: 'web' }
+  | { type: 'peer_outdated'; peer: string }
+  | { type: 'peer_authenticated'; peer: string }
   | { type: 'role_changed'; role: TransferRole | null }
   | { type: 'apply_sharing_progress'; event: SharingStatusEvent }
   | { type: 'init_upload_items'; items: SenderUploadItem[] }

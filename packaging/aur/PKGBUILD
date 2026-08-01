@@ -1,0 +1,58 @@
+# Maintainer: Reazndev <ruby.florian@proton.me>
+
+pkgname=altersend-bin
+pkgver=1.7.0
+pkgrel=1
+pkgdesc='Private peer-to-peer file transfer application (prebuilt binary)'
+arch=('x86_64' 'aarch64')
+url='https://altersend.com/'
+license=('Apache-2.0')
+depends=('gtk3' 'libnotify' 'libsecret' 'libxss' 'nss')
+provides=('altersend')
+conflicts=('altersend' 'altersend-git')
+options=('!strip')
+source_x86_64=("AlterSend-x86_64.AppImage::https://github.com/denislupookov/altersend/releases/download/v${pkgver}/AlterSend-x86_64.AppImage")
+sha256sums_x86_64=('52d7245103f8a8f2e05ed6b62a39d19303c68bf45d6aadb07bc7abb2b77c23e4')
+source_aarch64=("AlterSend-arm64.AppImage::https://github.com/denislupookov/altersend/releases/download/v${pkgver}/AlterSend-arm64.AppImage")
+sha256sums_aarch64=('526d17c8fd58fac6dbb7da12524ca544aba5419ec1b3b5f73fcc0b2342c0aa26')
+
+prepare() {
+  cd "$srcdir"
+
+  local appimage
+  case "$CARCH" in
+    x86_64) appimage=AlterSend-x86_64.AppImage ;;
+    aarch64) appimage=AlterSend-arm64.AppImage ;;
+  esac
+
+  chmod +x "$appimage"
+  "./$appimage" --appimage-extract
+}
+
+package() {
+  cd "$srcdir"
+
+  install -d "$pkgdir/opt/altersend"
+  cp -a --no-preserve=ownership squashfs-root/. "$pkgdir/opt/altersend/"
+
+  install -Dm755 /dev/stdin "$pkgdir/usr/bin/altersend" <<'EOF'
+#!/bin/sh
+exec /opt/altersend/AppRun "$@"
+EOF
+
+  install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/altersend.desktop" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=AlterSend
+Comment=Private peer-to-peer file transfer
+Exec=altersend
+Icon=altersend
+Categories=Network;FileTransfer;
+StartupNotify=true
+Terminal=false
+StartupWMClass=altersend
+EOF
+
+  install -Dm644 squashfs-root/altersend.png \
+    "$pkgdir/usr/share/icons/hicolor/512x512/apps/altersend.png"
+}

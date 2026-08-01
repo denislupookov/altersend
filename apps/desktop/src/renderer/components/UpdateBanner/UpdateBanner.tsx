@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { Button } from '@altersend/components'
+import { Button, Modal } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
-import { Modal } from '../Modal'
 import updateSvg from '../../../../../../assets/update.svg'
 
 export function UpdateBanner({ ready }: { ready: boolean }) {
@@ -21,7 +20,12 @@ export function UpdateBanner({ ready }: { ready: boolean }) {
   }
 
   return (
-    <Modal open={ready && !dismissed} width={420} onClose={() => setDismissed(true)}>
+    <Modal
+      closeLabel={t('common:actions.close')}
+      open={ready && !dismissed}
+      width={420}
+      onClose={() => setDismissed(true)}
+    >
       <div className='flex flex-col items-center px-6 pb-1 pt-6 text-center'>
         <img src={updateSvg} alt='' aria-hidden className='mb-4 w-[168px]' />
         <h2 className='m-0 text-[20px] font-bold text-text-primary'>{t('common:update.ready')}</h2>

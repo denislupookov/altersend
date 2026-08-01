@@ -3,6 +3,7 @@ import { discardPendingProgress, getTransferApi, loadPeers, reportError } from '
 import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES, type TransferErrorCode } from './types'
 import { createInitialUploadItems, getPhaseFromSelection } from '../send/draftModel'
+import { exceedsFileCountLimit } from '../constants/transfer'
 import type { SelectedFile } from '../send/draftTypes'
 import type {
   DownloadFileRequest,
@@ -279,6 +280,7 @@ export const clearSenderFlow = (): void => {
 
 export const continueShare = async (files: SelectedFile[]): Promise<void> => {
   if (files.length === 0) return
+  if (exceedsFileCountLimit(files.filter((f) => f.kind !== 'text').length)) return
 
   const fileRequests: ShareFileRequest[] = files.map((file) => ({
     path: file.path,

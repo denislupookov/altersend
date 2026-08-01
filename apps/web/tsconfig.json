@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node"],
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "moduleSuffixes": [".web", ""],
+    "paths": {
+      "@altersend/core": ["./src/stubs/altersend-core.ts"],
+      "@altersend/core/topic-auth": ["../../packages/core/src/worklet/transfer/topic-auth.ts"],
+      "@altersend/core/protocol": ["../../packages/core/src/worklet/transfer/protocol.ts"],
+      "@altersend/drive": ["../../packages/drive/src/index.ts"],
+      "@altersend/drive/transport": ["../../packages/drive/src/transport.ts"],
+      "@altersend/domain": ["../../packages/domain/src"],
+      "@altersend/locales": ["../../packages/locales/src"],
+      "@altersend/components": ["../../packages/components/src"],
+      "@altersend/components/icons": ["../../packages/components/src/icons"],
+      "@altersend/components/theme": ["../../packages/components/src/theme"]
+    }
+  },
+  "include": ["src/**/*", "../../packages/core/src/types.d.ts"],
+  "exclude": ["dist", "node_modules"]
+}

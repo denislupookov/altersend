@@ -21,24 +21,17 @@ packages/
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  App layer (desktop renderer / React Native)                │
-│  - React UI, pages, user actions                            │
-│  - Reads state from domain store (Zustand)                  │
-│  - Dispatches commands via bindTransferApi()                │
+│  React UI + pages; reads domain store; dispatches commands  │
 └──────────────────────┬──────────────────────────────────────┘
-                       │ commands / events (typed RPC)
+                       │ typed RPC (commands / events)
 ┌──────────────────────▼──────────────────────────────────────┐
 │  Domain layer  (packages/domain)                            │
-│  - Zustand store + reducer                                  │
-│  - Send / Receive page models                               │
-│  - Format utilities, join-code logic                        │
+│  Zustand store + reducer; send/receive view models          │
 └──────────────────────┬──────────────────────────────────────┘
                        │ IPC / RPC bridge
 ┌──────────────────────▼──────────────────────────────────────┐
-│  Core worklet  (packages/core)                              │
-│  - Runs in a separate Bare process                          │
-│  - TransferOrchestrator: owns lifecycle + session state     │
-│  - Swarm: connect + replicate; Sender/Receiver: stage/write │
-│  - RPC server: encodes events, decodes commands             │
+│  Core worklet  (packages/core) — separate Bare process      │
+│  TransferOrchestrator (lifecycle + state); swarm; RPC server│
 └──────────────────────┬──────────────────────────────────────┘
                        │ Hyperswarm (DHT + noise encryption)
               Peer-to-peer network
@@ -48,94 +41,98 @@ packages/
 
 ### `packages/core`
 
-The protocol layer. Runs entirely inside a **Bare worklet** — a lightweight JS runtime (Bare) spawned by the host app. This isolates P2P networking from Electron / React Native.
-
-Key modules:
+The protocol layer, running entirely inside a **Bare worklet** (a lightweight JS runtime spawned by the host) so P2P networking is isolated from Electron / React Native.
 
 - `worklet/index.ts` — entrypoint; wires Bare IPC → RPC server → orchestrator
-- `worklet/transfer/orchestrator.ts` — top-level coordinator, owns session lifecycle + state and composes the transfer and remembered-device subsystems below
-- `worklet/transfer/swarm.ts` — `TransferSwarm`: Hyperswarm peer connectivity, Corestore replication, and per-peer control channels
-- `worklet/transfer/drive.ts` — the `@altersend/drive` chunk channel over Protomux (`altersend/drive`); the preferred transfer path
-- `worklet/transfer/control-channel.ts` — per-peer control messages (file offers, requests, progress, cancel)
-- `worklet/transfer/storage.ts` — `TransferStorage`: the ephemeral Corestore + Hyperdrive backing a session, plus the sender/receiver bound to them (wiped on every disconnect)
-- `worklet/transfer/sender.ts` — `TransferSender`: stages local files into the writable Hyperdrive (legacy sender path)
-- `worklet/transfer/receiver.ts` — `TransferReceiver`: picks the transfer path per file — the drive channel when the peer offers one, else the replicated Hyperdrive
-- `worklet/relay/config.ts` — relay enable state + relay list; `relayThrough` (the Hyperswarm fallback callback) and `isRelayHost` (connection-type classification)
-- `worklet/relay/conf.ts` — fetches the relay list from a signed HyperDHT mutable record; loads lazily once the relay is enabled (see [Relay fallback](#relay-fallback))
-- `worklet/identity/device-identity-store.ts` — `DeviceIdentityStore`: the stable device keypair, its secret is sealed in the OS keychain and injected at startup (see [Remembered devices & pairing](#remembered-devices--pairing))
-- `worklet/peers/store.ts` — `RememberedPeerStore`: persistent (HyperDB) list of paired devices
-- `worklet/peers/pairing-coordinator.ts` — `PairingCoordinator`: the dedicated pairing swarm + QR / code pairing handshake
-- `worklet/peers/discovery.ts` — `DiscoveryCoordinator`: background swarm to remembered devices (firewalled to known device keys) + code-free invites
-- `worklet/peers/recognition-coordinator.ts` — `RecognitionCoordinator`: recognizes an already-paired peer during a transfer without revealing identity to anyone else
-- `worklet/peers/remember-coordinator.ts` — `RememberCoordinator`: the pair-during-transfer vote handshake
-- `worklet/rpc/server.ts` — RPC server that bridges IPC to events/commands
-- `worklet/rpc/protocol.ts` — canonical RPC command/reply types and encode/decode helpers
-- `client/worker-client.ts` — typed client used by the host app to talk to the worklet
+- `worklet/transfer/orchestrator.ts` — top-level coordinator; owns session lifecycle + state, composes the subsystems below
+- `worklet/transfer/swarm.ts` — `TransferSwarm`: peer connectivity, Corestore replication, per-peer control channels
+- `worklet/transfer/drive.ts` — the `@altersend/drive` chunk channel over Protomux; the preferred transfer path
+- `worklet/transfer/control-channel.ts` — per-peer control messages (offers, requests, progress, cancel)
+- `worklet/transfer/storage.ts` — `TransferStorage`: the ephemeral Corestore + Hyperdrive for a session (wiped on disconnect)
+- `worklet/transfer/sender.ts` / `receiver.ts` — stage files into the writable Hyperdrive (legacy path); receiver picks drive channel per file, else replicated Hyperdrive
+- `worklet/transfer/topic-auth.ts` — the join-code proof (see [Topic authentication](#topic-authentication))
+- `worklet/relay/config.ts` / `conf.ts` — relay state + `relayThrough`; relay list from a signed DHT record (see [Relay fallback](#relay-fallback))
+- `worklet/identity/device-identity-store.ts` — the stable device keypair, sealed in the OS keychain (see [Pairing](#remembered-devices--pairing))
+- `worklet/peers/*` — `RememberedPeerStore`, `PairingCoordinator`, `DiscoveryCoordinator`, `RecognitionCoordinator`, `RememberCoordinator`
+- `worklet/rpc/*` — RPC server + canonical command/reply protocol; `client/worker-client.ts` is the host-side typed client
 
 ### `packages/drive`
 
-The chunked file-transfer engine, independent of Hyperswarm and Hyperdrive. A sender reads fixed-size chunks with `pread` and a receiver writes them at their offset with `pwrite`, so neither side keeps a second copy of the file on disk. A resume bitmap lets an interrupted transfer pick up where it stopped.
+The chunked file-transfer engine, independent of Hyperswarm and Hyperdrive. The sender `pread`s fixed-size chunks and the receiver `pwrite`s them at their offset, so neither side keeps a second copy on disk; a resume bitmap picks up an interrupted transfer where it stopped.
 
-It talks over a caller-supplied `DriveChannel` rather than owning a socket, which keeps it transport-agnostic — `packages/core` supplies a Protomux channel today. `DiskReader` / `DiskWriter` are the Bare-flavored adapters; the root export stays fs-free so the engine can run in a browser. See `packages/drive/README.md` for the wire protocol.
+It runs over a caller-supplied `DriveChannel` rather than owning a socket (core supplies a Protomux channel today), so it stays transport-agnostic. `DiskReader` / `DiskWriter` are the Bare adapters; the root export is fs-free so the engine also runs in a browser. Wire protocol: `packages/drive/README.md`.
 
 ### `packages/domain`
 
 State and business logic, shared across desktop and mobile.
 
-Key modules:
-
 - `transfer/store.ts` — Zustand store
 - `transfer/reducer.ts` — pure reducer (all state transitions)
 - `transfer/binding.ts` — `bindTransferApi()` wires the store to the core worklet
-- `send/` / `receive/` — page-level view models and join-code logic
+- `send/` / `receive/` — page view models and join-code logic
 
 ### `packages/components`
 
-Shared React components using **React Strict DOM** (works on both web and native) and Tailwind for styling. Built with Storybook for visual development.
+Shared React components in **React Strict DOM** (web + native) with Tailwind tokens; developed in Storybook.
 
 ### `packages/locales`
 
-Shared internationalization package used by desktop and mobile. It owns supported locale metadata, locale preference resolution, i18next initialization, and bundled translation catalogs. Desktop and mobile let users pick from 13 supported locales; the active locale resolves from the user's preference, falling back to the system locale and then `en-US`. See [i18n.md](i18n.md) for catalog structure and translation workflow.
+Locale metadata, preference resolution, i18next setup, and bundled catalogs for 13 locales. The active locale resolves from the user's preference, then system locale, then `en-US`. See [i18n.md](i18n.md).
 
 ## Transfer flow
 
-1. **Sender** enters the share screen → the core worklet generates a fresh, single-use swarm topic: a random 32-byte key, hex-encoded to a 64-char join code. Domain wraps it for display (QR / `com.altersend.mobile://join/<topic>` URL).
-2. **Receiver** scans the QR or types the join code → domain validates and extracts the hex topic, then passes it to core.
-3. Core worklet on both sides joins the Hyperswarm topic for that key. On each peer connection the shared Corestore replicates over the noise-encrypted socket.
-4. Sender stages the selected files into its writable Hyperdrive, then broadcasts a `transfer-ready` control message carrying file offers (each with the drive key).
-5. Receiver requests the offered files. Per file it opens a `@altersend/drive` chunk channel and streams chunks straight to disk; if the peer doesn't offer one (an older build), it falls back to downloading blobs from the replicated Hyperdrive. Progress and completion events flow back over the control channel → RPC → domain reducer → UI.
+1. **Sender** opens the share screen → the worklet generates a single-use topic: a random 32-byte key, hex-encoded to a 64-char join code, displayed as QR / `com.altersend.mobile://join/<topic>`.
+2. **Receiver** scans or types the code → domain validates and extracts the topic, passes it to core.
+3. Both sides join the Hyperswarm topic; on connection the shared Corestore replicates over the noise-encrypted socket.
+4. **Topic authentication** — the sender challenges the receiver to prove it holds the join code before releasing any offers; a wrong proof is rejected, while a peer that never proves it is flagged (not dropped). See [Topic authentication](#topic-authentication).
+5. Sender broadcasts a `transfer-ready` message with file offers (each carrying the drive key).
+6. Receiver requests each file over a `@altersend/drive` chunk channel, streaming chunks straight to disk (falling back to the replicated Hyperdrive for older peers). Progress flows back over the control channel → RPC → domain → UI.
 
-Step 5 is mid-migration. `@altersend/drive` is the path both sides take when they support it, and Hyperdrive remains only as the fallback for older peers — see the branch in `worklet/transfer/receiver.ts`. New transfer work belongs in `packages/drive`.
+Step 6 is mid-migration: `@altersend/drive` is the path when both sides support it, Hyperdrive is only the older-peer fallback. New transfer work belongs in `packages/drive`.
+
+A transfer is capped at **10,000 files** (`MAX_FILES_PER_TRANSFER`, validated in `control-validation.ts`); the send UI blocks earlier with a "zip them" hint. The whole offer list goes in one message on the single worklet thread, so huge counts would choke it.
+
+## Topic authentication
+
+The DHT **discovery topic** is only a hash — observable on the network, and (for the browser receiver) also routed through the public [hyperswarm-dht-relay](https://github.com/holepunchto/hyperswarm-dht-relay). Knowing it must not be enough to receive files; a peer has to prove it holds the actual **join code**.
+
+The sender sends a random `challenge` nonce; the receiver must reply with `topicProof(joinCode, nonce)` — a BLAKE2b hash of the code + nonce (`worklet/transfer/topic-auth.ts`). The join code never crosses the wire.
+
+A valid proof releases the offers (even if late); a wrong proof drops the connection. A peer silent past 10 s isn't dropped — it's flagged **"Update to connect"** (`peer-unauthenticated`) and can still auth late (`peer-authenticated` clears it), so a busy sender never aborts a legit receiver. Receiving from an older sender is unaffected — a receiver only answers a challenge, never requires one.
 
 ## Relay fallback
 
-Most transfers connect directly (P2P hole-punching). When two peers can't reach each other — typically both behind symmetric NAT, e.g. both on a commercial VPN — the transfer falls back to a **blind relay**: a public server that pairs the two peers and forwards their already-encrypted UDX stream. The relay never has the keys to decrypt the data — it relays ciphertext only.
+Most transfers connect directly via hole-punching. When two peers can't reach each other — typically both behind symmetric NAT (e.g. both on a VPN) — the transfer falls back to a **blind relay**: a public server that pairs the peers and forwards their already-encrypted UDX stream, never holding the keys to decrypt it.
 
-- **Engagement.** `relay/config.ts` exposes `relayThrough` to both swarms (`TransferSwarm`, `DiscoveryCoordinator`). It runs in "eager" mode: when enabled, it always offers the relay, so hyperdht can race a relayed path against a direct hole-punch and upgrade to direct if the punch lands.
-- **Relay discovery (relay-conf).** The relay's public key isn't baked into the app. `relay/conf.ts` reads the current relay list from a signed HyperDHT **mutable record** whose public key ships with the app (`--relay-conf-pubkey`, injected at build time); only the relay operator's secret can update it, so relays rotate with no app release. The list is fetched **lazily** — only once the relay is enabled — with a small bounded retry to survive a cold-start DHT miss. This uses a mutable record (not a hypercore) specifically because the worklet wipes its Corestore on every startup.
-- **Connection-type classification.** `TransferSwarm.classifyConnection` compares a peer socket's `remoteHost` against the known relay hosts (`isRelayHost`) and emits a per-peer `connection-type` (`direct` / `relay`) event. The receiver keys this per sender (`transferPeerKey`) so a mesh of receivers can't cross-contaminate the badge, and the UI shows **Connected** vs **Connected via relay**.
+- **Engagement** — `relay/config.ts` exposes `relayThrough` in "eager" mode: when enabled it always offers the relay, so hyperdht races a relayed path against a direct punch and upgrades to direct if the punch lands.
+- **Discovery** — the relay key isn't baked in. `relay/conf.ts` reads the relay list from a signed DHT **mutable record** (public key injected at build via `--relay-conf-pubkey`), so relays rotate with no app release. Fetched lazily once the relay is enabled, with bounded retry (the worklet wipes its Corestore on startup, so a hypercore won't do).
+- **Classification** — `TransferSwarm.classifyConnection` matches a peer's `remoteHost` against known relay hosts and emits a per-peer `connection-type` (`direct` / `relay`), keyed per sender; the UI shows **Connected** vs **Connected via relay**.
 
-The app is only ever a relay _client_ — it holds the relay's **public** key and address (from the relay-conf record) and never any relay secret.
+The app is only ever a relay _client_ — it holds the relay's public key and address, never a secret.
+
+## Browser receiver
+
+`apps/web` is a receive-only client that runs in a plain browser — no install. It reuses the same transfer engine (`@altersend/drive` over Protomux) and the [topic-authentication](#topic-authentication) handshake; the only thing that differs is how it reaches the DHT.
+
+A browser can't speak the UDP-based DHT directly, so it tunnels DHT operations over a WebSocket to a **hyperswarm-dht-relay**. The relay is **non-custodial** (`{ custodial: false }`): the browser generates and keeps its own keypair, so the relay only proxies traffic and the peer connection stays Noise-encrypted end to end — the relay is blind to content, exactly like the native blind relay.
+
+Two dht-relays are available — **Frankfurt** (`relay.altersend.com`) and **Singapore** (`relay-sg.altersend.com`). On startup the client opens a socket to both and keeps whichever connects first (`fastestRelay`), falling back to the other if one is down. From there it looks up the sender's discovery key, connects, authenticates, and streams chunks into a browser download sink (`apps/web/src/transfer/relay.ts`). Relay hosts can be overridden in dev with `VITE_RELAY_URL`.
 
 ## Remembered devices & pairing
 
-Beyond one-off code transfers, you can **pair** devices you own (or trust) so you can send to them later without a code. This lives entirely in the worklet (`packages/core/src/worklet/peers/*` + `identity/`) and is backed by three separate Hyperswarm instances:
+You can **pair** devices you trust to send to them later without a code. This lives in the worklet (`peers/*` + `identity/`) across three Hyperswarm instances:
 
-| Swarm                                  | Lifetime                       | Transport key           | Purpose                                                          |
-| -------------------------------------- | ------------------------------ | ----------------------- | ---------------------------------------------------------------- |
-| **Transfer** (`TransferSwarm`)         | per session                    | fresh per-topic keypair | the actual file transfer (the join-code flow above)              |
-| **Pairing** (`PairingCoordinator`)     | persistent for the app session | per-topic keypair       | the QR / code pairing handshake                                  |
-| **Discovery** (`DiscoveryCoordinator`) | persistent                     | the **device keypair**  | background connections to remembered devices + code-free invites |
+| Swarm                                  | Lifetime        | Transport key           | Purpose                                          |
+| -------------------------------------- | --------------- | ----------------------- | ------------------------------------------------ |
+| **Transfer** (`TransferSwarm`)         | per session     | fresh per-topic keypair | the file transfer (join-code flow above)         |
+| **Pairing** (`PairingCoordinator`)     | per app session | per-topic keypair       | the QR / code pairing handshake                  |
+| **Discovery** (`DiscoveryCoordinator`) | persistent      | the **device keypair**  | background links to remembered devices + invites |
 
-**Device identity.** Each install has a stable Ed25519 device keypair (`DeviceIdentityStore`). The secret never sits in plaintext on disk — the host seals it in the OS keychain (desktop `safeStorage`, mobile `expo-secure-store`) and injects it into the worklet at startup; only the public key + metadata are persisted.
-
-**Pairing.** Showing the QR opens the pairing swarm on a fresh topic (encoded in the QR). Both sides exchange a signed `pairing-info` (device pubkey + display name, signed over the connection's noise handshake so it can't be relayed) and vote to remember each other. On a mutual `remember`, each persists the other in its `RememberedPeerStore` and derives a shared **rendezvous topic** from both device keys + the handshake hash. An in-progress transfer peer can also be paired from the "Pair" button — the same vote handshake, via `RememberCoordinator`.
-
-**Discovery & invites.** The discovery swarm uses the device keypair as its transport identity and a firewall that admits only remembered device pubkeys, so it keeps authenticated background connections to your paired devices on their rendezvous topics. To send without a code you "invite" a remembered device: the worklet joins that peer's rendezvous topic, waits for the connection, and sends an invite the peer can accept to join your transfer.
-
-**Recognition (privacy).** A plain transfer uses a fresh per-topic key, so a counterparty never sees your stable identity. To still badge an _already-paired_ peer during a transfer, each side sends only a **signature** over the connection handshake (no pubkey, no name); the receiver matches it against its own remembered devices (`RecognitionCoordinator`). A non-paired peer receives an unattributable signature and learns nothing — full identity is exchanged only during explicit pairing.
-
-**Persistence.** The transfer Corestore/Hyperdrive is wiped on every disconnect (transfers are ephemeral), but the device identity and remembered-peer list persist across sessions.
+- **Device identity** — each install has a stable Ed25519 keypair (`DeviceIdentityStore`); the secret is sealed in the OS keychain (desktop `safeStorage`, mobile `expo-secure-store`) and injected at startup, only the public key persists.
+- **Pairing** — the QR opens a pairing swarm on a fresh topic; both sides exchange a signed `pairing-info` (pubkey + name, signed over the noise handshake so it can't be relayed) and vote to remember each other, deriving a shared rendezvous topic. A live transfer peer can pair via the "Pair" button (`RememberCoordinator`).
+- **Discovery & invites** — the discovery swarm uses the device keypair, firewalled to remembered pubkeys, keeping background links to paired devices. To send without a code you "invite" one: the worklet joins its rendezvous topic and sends an invite it can accept.
+- **Recognition (privacy)** — to badge an already-paired peer without revealing identity, each side sends only a **signature** over the handshake (no pubkey/name); the receiver matches it against its own remembered devices. A non-paired peer learns nothing.
+- **Persistence** — the transfer Corestore/Hyperdrive is wiped on every disconnect; device identity and the remembered-peer list persist.
 
 ## IPC bridge (desktop)
 
@@ -144,4 +141,4 @@ Renderer → preload.cjs (contextBridge) → main process → Bare worklet IPC
 Bare worklet → IPC → main process → preload.cjs → Renderer (events)
 ```
 
-All IPC messages are typed via the protocol definitions in `packages/core/src/worklet/rpc/protocol.ts`.
+All IPC messages are typed via `packages/core/src/worklet/rpc/protocol.ts`.

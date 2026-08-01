@@ -3,8 +3,9 @@ import type { PeerSocket } from 'hyperswarm'
 import c from 'compact-encoding'
 import { isValidControlMessage } from './control-validation'
 import type { DeviceType } from '../identity/device-identity-store'
+import { CONTROL_PROTOCOL, PROTOCOL_VERSION } from './protocol'
 
-export const PROTOCOL_VERSION = 1
+export { PROTOCOL_VERSION }
 
 export interface FileOffer {
   id: string
@@ -111,6 +112,21 @@ export interface DeviceInviteResponse {
   response: 'declined'
 }
 
+interface ClientHello {
+  type: 'hello'
+  client: 'web'
+}
+
+interface TopicChallenge {
+  type: 'challenge'
+  nonce: string
+}
+
+interface TopicAuth {
+  type: 'auth'
+  proof: string
+}
+
 export type PeerControlMessage =
   | TransferStart
   | TransferReady
@@ -123,6 +139,9 @@ export type PeerControlMessage =
   | Recognition
   | DeviceInvite
   | DeviceInviteResponse
+  | ClientHello
+  | TopicChallenge
+  | TopicAuth
 
 type PeerControlHandler = (message: PeerControlMessage) => void
 
@@ -139,7 +158,7 @@ export class PeerControlChannel {
     const mux = Protomux.from(socket)
     let instance: PeerControlChannel | null = null
     const channel = mux.createChannel({
-      protocol: 'altersend/control',
+      protocol: CONTROL_PROTOCOL,
       onopen: () => {
         if (instance) instance.flush()
       }

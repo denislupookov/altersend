@@ -1,4 +1,6 @@
-import { isValidHexKey } from '../transfer/utils'
+import { isBoundedString, isValidHexKey, MAX_DISPLAY_NAME_LEN } from '../transfer/utils'
+
+export { MAX_DISPLAY_NAME_LEN }
 import { isDeviceType, type DeviceType } from '../identity/device-type'
 
 export interface RememberedPeer {
@@ -11,12 +13,6 @@ export interface RememberedPeer {
   blocked: boolean
   pairedAt: number
   lastSeenAt: number
-}
-
-export const MAX_DISPLAY_NAME_LEN = 256
-
-function isBoundedString(x: unknown, maxLen: number): x is string {
-  return typeof x === 'string' && x.length > 0 && x.length <= maxLen
 }
 
 function isTimestamp(x: unknown): x is number {

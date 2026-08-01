@@ -1,0 +1,72 @@
+{
+  "join": {
+    "title": "共有されたファイルをダウンロード",
+    "description": "送信側から受け取った転送コードを貼り付けて接続します。",
+    "codeLabel": "転送コード",
+    "invalidCode": "有効な転送コードではないようです。"
+  },
+  "connecting": {
+    "description": "安全なピアツーピア接続を確立しています。通常は数秒で完了します。",
+    "stage": {
+      "idle": "転送コードを確認し、ファイル一覧を取得しています…",
+      "relay": "リレーに接続しています…",
+      "finding": "送信側を探しています…",
+      "waiting": "接続済み — ファイル一覧を待っています…",
+      "preparing": "送信側がファイルを準備しています…"
+    }
+  },
+  "download": {
+    "title": "{{files}}が共有されました",
+    "description": "アプリもアカウントも不要。このままブラウザでダウンロードできます。",
+    "connected": "送信側に接続済み",
+    "allDownloaded": "すべてのファイルをダウンロードしました",
+    "complete": "{{size}} · 完了",
+    "keepTabOpen": "ダウンロード中 — このタブを開いたままにしてください",
+    "enterAnother": "別のコードを入力",
+    "downloadedHint": "ダウンロード済み — ブラウザーのファイルを確認してください。",
+    "asZip": "ZIP でダウンロード",
+    "inAppWarning": "このブラウザーではダウンロードを保存できません。Safari または Chrome でリンクを開いてファイルを受け取ってください。"
+  },
+  "errors": {
+    "relayUnreachable": "AlterSend リレーに接続できません。接続を確認してもう一度お試しください。",
+    "senderNotFound": "送信側が見つかりません — 共有中かどうか確認してください。",
+    "nothingShared": "接続しましたが、送信側は何も共有していません。",
+    "connectionFailed": "接続が切れました。送信者が共有を停止した可能性があります。もう一度お試しください。"
+  },
+  "footer": {
+    "getApp": "アプリを入手",
+    "privacy": "プライバシー",
+    "terms": "利用規約",
+    "help": "ヘルプ"
+  },
+  "promo": {
+    "title": "AlterSend で送信",
+    "subtitle": "アプリを入手して自分でもファイルを送ろう",
+    "getFor": "{{os}} 版を入手",
+    "getApp": "アプリをダウンロード"
+  },
+  "disconnected": {
+    "title": "送信側の接続が切断されました",
+    "description": "AlterSend の転送はピアツーピアのため、両方がオンラインである必要があります。送信側に転送を再度開いてもらい、再接続してください。",
+    "summary_complete": "リンクが切れる前に {{total}} 個すべてのファイルをダウンロードしました。",
+    "allReceived": "すべてのファイルを受信しました",
+    "completeTitle": "転送が完了しました",
+    "completeDescription": "送信側はオフラインになりましたが、すべてのファイルが届きました。準備完了です。",
+    "waitingTitle": "送信側の再接続を待っています",
+    "waitingBody": "接続が切れました。送信側が転送を再度開くと、続きから再開できます。",
+    "alreadySaved": "{{total}} 個中 {{completed}} 個を保存済み",
+    "tryNow": "今すぐ試す",
+    "anotherCode": "別のコード"
+  },
+  "sendBack": {
+    "title": "ファイルを送り返しますか？",
+    "description": "AlterSend アプリを入手すれば、サイズ制限なしでファイルを送れます。エンドツーエンド暗号化、アカウント不要。",
+    "maybeLater": "後で"
+  },
+  "tooLarge": {
+    "title": "ブラウザーには大きすぎます",
+    "description": "アプリで受け取ったほうがよい転送もあります。",
+    "body": "AlterSend アプリで開いて受信できます（アカウント不要）。",
+    "openInApp": "アプリで開く"
+  }
+}

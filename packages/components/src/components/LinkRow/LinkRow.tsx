@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { html } from 'react-strict-dom'
-import { ChevronRightIcon, CloseIcon } from '../../icons'
+import { CheckIcon, ChevronRightIcon, CloseIcon } from '../../icons'
 import { usePressState } from '../../hooks/usePressState'
 import { fileTypeColors, useTheme } from '../../theme'
 import { FileKindIcon, getFileKind } from './fileKinds'
@@ -225,7 +225,11 @@ export function LinkRow({
 
             {status ? (
               <html.div style={styles.statusGroup}>
-                <html.div style={[styles.statusDot, statusToneStyle[status.tone ?? 'muted']]} />
+                {status.tone === 'success' ? (
+                  <CheckIcon size={14} color={theme.colors.colorSuccess} />
+                ) : (
+                  <html.div style={[styles.statusDot, statusToneStyle[status.tone ?? 'muted']]} />
+                )}
                 <html.p style={[styles.statusLabel, statusLabelToneStyle[status.tone ?? 'muted']]}>
                   {status.label}
                 </html.p>

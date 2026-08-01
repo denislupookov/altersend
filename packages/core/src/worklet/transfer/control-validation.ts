@@ -1,7 +1,7 @@
-import { isSafeFileName, isValidHexKey } from './utils'
+import { isBoundedString, isSafeFileName, isValidHexKey, MAX_DISPLAY_NAME_LEN } from './utils'
+import { PROTOCOL_VERSION } from './protocol'
 import { isDeviceType } from '../identity/device-type'
 import {
-  PROTOCOL_VERSION,
   type DownloadComplete,
   type DownloadFailed,
   type DownloadProgress,
@@ -22,17 +22,18 @@ const MAX_ID_LEN = 128
 const MAX_PATH_LEN = 4096
 const MAX_CONTENT_LEN = 65_536
 const MAX_MESSAGE_LEN = 1024
-const MAX_FILES_PER_TRANSFER = 10_000
-const MAX_DISPLAY_NAME_LEN = 256
+export const MAX_FILES_PER_TRANSFER = 10_000
 
 const SIGNATURE_HEX_RE = /^[0-9a-f]{128}$/i
 
-function isBoundedString(x: unknown, maxLen: number): x is string {
-  return typeof x === 'string' && x.length > 0 && x.length <= maxLen
-}
-
 function isValidSignatureHex(x: unknown): x is string {
   return typeof x === 'string' && SIGNATURE_HEX_RE.test(x)
+}
+
+const HEX_RE = /^[0-9a-f]+$/i
+
+function isBoundedHex(x: unknown, maxLen: number): x is string {
+  return typeof x === 'string' && x.length > 0 && x.length <= maxLen && HEX_RE.test(x)
 }
 
 function _isOptionalBoundedString(x: unknown, maxLen: number): boolean {
@@ -177,6 +178,12 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
       const v = x as Partial<DeviceInviteResponse>
       return isBoundedString(v.topic, MAX_ID_LEN) && v.response === 'declined'
     }
+    case 'hello':
+      return (x as { client?: unknown }).client === 'web'
+    case 'challenge':
+      return isBoundedHex((x as { nonce?: unknown }).nonce, MAX_ID_LEN)
+    case 'auth':
+      return isBoundedHex((x as { proof?: unknown }).proof, MAX_ID_LEN)
     default:
       return false
   }

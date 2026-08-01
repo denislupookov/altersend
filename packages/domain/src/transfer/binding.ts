@@ -182,6 +182,21 @@ function dispatchStatusEvent(event: StatusEvent): void {
         })
       }
       return
+    case 'peer-client':
+      if (event.peer && event.client) {
+        dispatchToTransferStore({
+          type: 'peer_client_changed',
+          peer: event.peer,
+          client: event.client
+        })
+      }
+      return
+    case 'peer-unauthenticated':
+      if (event.peer) dispatchToTransferStore({ type: 'peer_outdated', peer: event.peer })
+      return
+    case 'peer-authenticated':
+      if (event.peer) dispatchToTransferStore({ type: 'peer_authenticated', peer: event.peer })
+      return
     case 'joining':
     case 'joined':
     case 'disconnected':

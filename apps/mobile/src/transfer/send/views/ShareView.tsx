@@ -2,10 +2,13 @@ import { useState } from 'react'
 import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import {
-  buildInviteText,
+  buildShareInvite,
+  buildWebReceiveUrl,
+  exceedsWebLinkLimit,
   formatFileSize,
   formatItemsCount,
   useShareViewModel,
+  WEB_LINK_MAX_LABEL,
   type DeviceRenameTarget
 } from '@altersend/domain'
 import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
@@ -16,6 +19,7 @@ import {
   deviceIcon,
   FolderIcon,
   QrCodeIcon,
+  LinkIcon,
   ShareIcon
 } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
@@ -26,6 +30,8 @@ import { QRSection } from './QRSection'
 import { ShareQrSheet } from './ShareQrSheet'
 import { ShareFilesSheet } from './ShareFilesSheet'
 import { Text } from '@/src/components/ThemedText'
+
+const TILE_GAP = 12
 
 export function ShareView() {
   const { t } = useTranslation(['send', 'common', 'settings'])
@@ -47,10 +53,12 @@ export function ShareView() {
         title: t('send:status.inviteFailedToast', { name: peer.name }),
         hint: t('send:status.inviteFailedHint'),
         durationMs: 3500
-      })
+      }),
+    onPeerOutdated: () => toast.show({ title: t('send:status.peerOutdated'), durationMs: 4000 })
   })
   const [isFilesSheetOpen, setIsFilesSheetOpen] = useState(false)
   const [isQrOpen, setIsQrOpen] = useState(false)
+  const [contentWidth, setContentWidth] = useState(0)
   const [actionsTarget, setActionsTarget] = useState<DeviceRenameTarget | null>(null)
   const { openRename, renameSheet } = useDeviceRename(vm.rename)
 
@@ -60,7 +68,33 @@ export function ShareView() {
       await Clipboard.setStringAsync(vm.topic)
       vm.markCopied()
       toast.show({ title: t('send:connection.copiedToast') })
-      await Share.share({ message: buildInviteText(vm.topic) })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize)
+  const tileCount = webLinkTooLarge ? 2 : 3
+  const tileWidth =
+    contentWidth > 0 ? (contentWidth - TILE_GAP * (tileCount - 1)) / tileCount : undefined
+
+  const shareLink = async () => {
+    if (!vm.topic) return
+    try {
+      const link = buildWebReceiveUrl(vm.topic, process.env.EXPO_PUBLIC_WEB_URL)
+      await Clipboard.setStringAsync(link)
+      await Share.share({
+        message: buildShareInvite(t, {
+          link,
+          fileCount: vm.files.length,
+          textCount: vm.texts.length,
+          totalSize: vm.totalSize
+        })
+      })
+      toast.show({
+        title: t('send:connection.copiedToast'),
+        hint: t('send:connection.linkHint', { limit: WEB_LINK_MAX_LABEL })
+      })
     } catch (error) {
       console.error(error)
     }
@@ -68,7 +102,11 @@ export function ShareView() {
 
   return (
     <>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
+      >
         {vm.phase === 'waiting' && (
           <View style={styles.statusStrip}>
             <WaitingRadar
@@ -90,21 +128,40 @@ export function ShareView() {
 
         {vm.hasDevices ? (
           <View style={styles.tiles}>
-            <View style={styles.tile}>
+            <View style={[styles.tile, { width: tileWidth }]}>
               <Button
+                stack
+                size='sm'
                 variant='secondary'
                 width='full'
-                icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+                icon={vm.isCopied ? <CheckIcon size={18} /> : <CopyIcon size={18} />}
                 onClick={() => void copyTopic()}
               >
                 {vm.isCopied ? t('common:actions.copied') : t('send:connection.copyCode')}
               </Button>
             </View>
-            <View style={styles.tile}>
+            {!webLinkTooLarge && (
+              <View style={[styles.tile, { width: tileWidth }]}>
+                <Button
+                  stack
+                  size='sm'
+                  variant='secondary'
+                  width='full'
+                  disabled={!vm.topic}
+                  icon={<LinkIcon size={18} />}
+                  onClick={() => void shareLink()}
+                >
+                  {t('send:connection.shareLink')}
+                </Button>
+              </View>
+            )}
+            <View style={[styles.tile, { width: tileWidth }]}>
               <Button
+                stack
+                size='sm'
                 variant='secondary'
                 width='full'
-                icon={<QrCodeIcon size={16} />}
+                icon={<QrCodeIcon size={18} />}
                 onClick={() => setIsQrOpen(true)}
               >
                 {t('send:connection.qrCode')}
@@ -119,24 +176,39 @@ export function ShareView() {
               size={200}
               style={styles.qrPanelSection}
             />
-            <View style={styles.keyContainer}>
-              <Input
-                aria-label={t('send:connection.copyLabel')}
-                placeholder={t('send:connection.placeholder')}
-                readOnly
-                trailing={
+            <View style={styles.keyRow}>
+              <View style={styles.keyInput}>
+                <Input
+                  aria-label={t('send:connection.copyLabel')}
+                  placeholder={t('send:connection.placeholder')}
+                  readOnly
+                  trailing={
+                    <Button
+                      variant={vm.isCopied ? 'success' : 'ghost'}
+                      size='sm'
+                      iconOnly
+                      aria-label={t('send:connection.copyLabel')}
+                      disabled={!vm.topic}
+                      onClick={() => void copyTopic()}
+                      icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+                    />
+                  }
+                  value={vm.topic}
+                />
+              </View>
+              {!webLinkTooLarge && (
+                <View style={styles.keyAction}>
                   <Button
-                    variant={vm.isCopied ? 'success' : 'ghost'}
-                    size='sm'
+                    variant='secondary'
+                    width='full'
                     iconOnly
-                    aria-label={t('send:connection.copyLabel')}
+                    aria-label={t('send:connection.shareLink')}
                     disabled={!vm.topic}
-                    onClick={() => void copyTopic()}
-                    icon={vm.isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+                    icon={<LinkIcon size={18} />}
+                    onClick={() => void shareLink()}
                   />
-                }
-                value={vm.topic}
-              />
+                </View>
+              )}
             </View>
           </View>
         )}
@@ -305,12 +377,20 @@ const styles = StyleSheet.create({
   sectionCount: { fontSize: 11.5, fontWeight: '500' },
   section: { marginBottom: 16 },
   filesWrap: { marginBottom: 24 },
-  tiles: { flexDirection: 'row', alignItems: 'stretch', gap: 12, marginBottom: 24 },
-  tile: { flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0 },
+  tiles: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    width: '100%',
+    gap: TILE_GAP,
+    marginBottom: 24
+  },
+  tile: { flexGrow: 1, flexShrink: 1, minWidth: 0 },
   invitePanel: {
     marginBottom: 20
   },
-  keyContainer: { marginTop: 20, width: '100%' },
+  keyRow: { marginTop: 20, width: '100%', flexDirection: 'row', alignItems: 'center', gap: 8 },
+  keyInput: { flex: 1, minWidth: 0 },
+  keyAction: { width: 48, height: 48, flexDirection: 'row' },
   qrPanelSection: { paddingTop: 0 },
   initials: { fontSize: 14, fontWeight: '700', letterSpacing: 0.5 }
 })

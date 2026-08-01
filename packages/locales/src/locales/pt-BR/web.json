@@ -1,0 +1,72 @@
+{
+  "join": {
+    "title": "Baixar arquivos compartilhados",
+    "description": "Cole o código de transferência que o remetente lhe deu para conectar.",
+    "codeLabel": "Código de transferência",
+    "invalidCode": "Isso não parece um código de transferência válido."
+  },
+  "connecting": {
+    "description": "Estabelecendo uma conexão ponto a ponto segura. Isso costuma levar alguns segundos.",
+    "stage": {
+      "idle": "Verificando o código de transferência e obtendo a lista de arquivos…",
+      "relay": "Conectando ao retransmissor…",
+      "finding": "Procurando o remetente…",
+      "waiting": "Conectado — aguardando a lista de arquivos…",
+      "preparing": "O remetente está preparando os arquivos…"
+    }
+  },
+  "download": {
+    "title": "{{files}} compartilhados com você",
+    "description": "Baixe tudo aqui mesmo no navegador — sem aplicativo nem conta.",
+    "connected": "Conectado ao remetente",
+    "allDownloaded": "Todos os arquivos baixados",
+    "complete": "{{size}} · concluído",
+    "keepTabOpen": "Baixando — mantenha esta aba aberta",
+    "enterAnother": "Inserir outro código",
+    "downloadedHint": "Baixado — verifique os arquivos do seu navegador.",
+    "asZip": "Baixar como ZIP",
+    "inAppWarning": "Este navegador não consegue salvar downloads. Abra o link no Safari ou Chrome para receber seus arquivos."
+  },
+  "errors": {
+    "relayUnreachable": "Não foi possível acessar o retransmissor do AlterSend. Verifique sua conexão e tente novamente.",
+    "senderNotFound": "Remetente não encontrado — verifique se ele está compartilhando.",
+    "nothingShared": "Conectado, mas o remetente não compartilhou nada.",
+    "connectionFailed": "Conexão perdida — o remetente pode ter parado de compartilhar. Tente novamente."
+  },
+  "footer": {
+    "getApp": "Baixar o app",
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "help": "Ajuda"
+  },
+  "promo": {
+    "title": "Enviado com o AlterSend",
+    "subtitle": "Baixe o app para enviar seus próprios arquivos",
+    "getFor": "Obter para {{os}}",
+    "getApp": "Baixar o app"
+  },
+  "disconnected": {
+    "title": "O remetente se desconectou",
+    "description": "As transferências do AlterSend são ponto a ponto, então os dois lados precisam estar online. Peça ao remetente para reabrir a transferência e reconecte-se.",
+    "summary_complete": "Todos os {{total}} arquivos foram baixados antes de a conexão cair.",
+    "allReceived": "Todos os arquivos recebidos",
+    "completeTitle": "Transferência concluída",
+    "completeDescription": "O remetente ficou offline, mas todos os arquivos chegaram — está tudo pronto.",
+    "waitingTitle": "Aguardando o remetente reconectar",
+    "waitingBody": "A conexão caiu. Assim que ele reabrir a transferência, você continua de onde parou.",
+    "alreadySaved": "{{completed}} de {{total}} arquivos já salvos",
+    "tryNow": "Tentar agora",
+    "anotherCode": "Outro código"
+  },
+  "sendBack": {
+    "title": "Quer enviar arquivos de volta?",
+    "description": "Baixe o app do AlterSend para enviar arquivos de qualquer tamanho — criptografia de ponta a ponta, sem conta.",
+    "maybeLater": "Talvez depois"
+  },
+  "tooLarge": {
+    "title": "Muito grande para o navegador",
+    "description": "Algumas transferências são melhores no app.",
+    "body": "Abra no app AlterSend para receber — sem conta.",
+    "openInApp": "Abrir no app"
+  }
+}

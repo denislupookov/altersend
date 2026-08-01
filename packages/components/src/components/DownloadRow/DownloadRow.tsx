@@ -32,10 +32,11 @@ export interface DownloadRowProps {
   transferActive: boolean
   isFirst?: boolean
   compact?: boolean
+  standalone?: boolean
   onResume: (offer: FileOffer, targetPath: string) => void
-  onPause: (offer: FileOffer) => void
+  onPause?: (offer: FileOffer) => void
   onOpen: (offer: FileOffer, savedTo: string) => void
-  onPauseFolder: (offers: FileOffer[]) => void
+  onPauseFolder?: (offers: FileOffer[]) => void
   onResumeFolder: (offers: FileOffer[]) => void
 }
 
@@ -48,6 +49,7 @@ interface FileRowProps extends RowHandlers {
   transferActive: boolean
   isFirst?: boolean
   compact?: boolean
+  standalone?: boolean
 }
 
 function runRowAction(
@@ -59,7 +61,7 @@ function runRowAction(
     case 'resume':
       return handlers.onResume(offer, action.targetPath)
     case 'pause':
-      return handlers.onPause(offer)
+      return handlers.onPause?.(offer)
     case 'open':
       return handlers.onOpen(offer, action.savedTo)
   }
@@ -80,6 +82,7 @@ function FileRow({
   transferActive,
   isFirst = false,
   compact = false,
+  standalone = false,
   onResume,
   onPause,
   onOpen
@@ -92,7 +95,8 @@ function FileRow({
   return (
     <LinkRow
       file
-      bare
+      bare={!standalone}
+      standalone={standalone}
       compact={compact}
       isFirst={isFirst}
       label={offer.name}
@@ -119,6 +123,8 @@ function FolderRow({
   labelsFor,
   transferActive,
   isFirst = false,
+  compact = false,
+  standalone = false,
   onResume,
   onPause,
   onOpen,
@@ -135,8 +141,9 @@ function FolderRow({
     <>
       <LinkRow
         icon={<FolderIcon size={16} />}
-        bare
-        compact
+        bare={!standalone}
+        standalone={standalone}
+        compact={compact}
         isFirst={isFirst}
         label={folder.name}
         size={folder.totalSize}
@@ -151,7 +158,9 @@ function FolderRow({
                 kind={action}
                 label={labels[action]}
                 onPress={() =>
-                  action === 'pause' ? onPauseFolder(folder.offers) : onResumeFolder(folder.offers)
+                  action === 'pause'
+                    ? onPauseFolder?.(folder.offers)
+                    : onResumeFolder(folder.offers)
                 }
               />
             ) : null}

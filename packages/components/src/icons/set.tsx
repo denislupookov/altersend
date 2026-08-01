@@ -1,9 +1,9 @@
 import {
   AlertCircle,
+  AppWindow,
   Archive,
   ArrowLeft,
   ArrowUpRight,
-  AppWindow,
   Bell,
   Camera,
   Check,
@@ -11,10 +11,10 @@ import {
   ChevronRight,
   ChevronUp,
   ChevronsUpDown,
-  CloudUpload,
-  Code,
   Clipboard,
   ClipboardPaste,
+  CloudUpload,
+  Code,
   Copy,
   Database,
   Download,
@@ -27,6 +27,7 @@ import {
   Image,
   Info,
   Laptop,
+  Link,
   Lock,
   Mail,
   Menu,
@@ -36,13 +37,14 @@ import {
   MoreVertical,
   Music,
   PanelLeft,
-  Pause,
   PanelLeftClose,
   PanelLeftOpen,
+  Pause,
   Pencil,
   Play,
   Plus,
   QrCode,
+  RotateCw,
   Send,
   Settings,
   Share2,
@@ -51,13 +53,16 @@ import {
   Smartphone,
   Tablet,
   Trash2,
+  Unlink,
   Upload,
   Video,
   Waypoints,
-  X
+  WifiOff,
+  X,
+  XCircle
 } from './lucide'
 import { adaptLucide } from './adaptLucide'
-export { GithubIcon, DiscordIcon, XIcon } from './svgIcons'
+export { AppleIcon, DiscordIcon, GithubIcon, WindowsIcon, XIcon } from './svgIcons'
 
 export const AlertCircleIcon = adaptLucide(AlertCircle)
 export const ArchiveIcon = adaptLucide(Archive)
@@ -115,3 +120,8 @@ export const UploadIcon = adaptLucide(Upload)
 export const VideoIcon = adaptLucide(Video)
 export const WaypointsIcon = adaptLucide(Waypoints)
 export const CloseIcon = adaptLucide(X)
+export const RotateCwIcon = adaptLucide(RotateCw)
+export const WifiOffIcon = adaptLucide(WifiOff)
+export const XCircleIcon = adaptLucide(XCircle)
+export const UnlinkIcon = adaptLucide(Unlink)
+export const LinkIcon = adaptLucide(Link)

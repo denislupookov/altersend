@@ -48,21 +48,34 @@ export const styles = css.create({
     alignItems: 'flex-start'
   },
   tooltip: {
+    position: 'relative',
     margin: 0,
-    whiteSpace: 'nowrap',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderStrong,
-    borderRadius: tokens.radiusSm,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    borderRadius: tokens.radiusLg,
     backgroundColor: tokens.colorSurfaceTertiary,
+    paddingTop: tokens.space25,
+    paddingBottom: tokens.space25,
+    paddingLeft: tokens.space3,
+    paddingRight: tokens.space3,
+    boxShadow: `0 10px 30px ${tokens.colorShadow}`
+  },
+  title: {
+    textAlign: 'left',
+    whiteSpace: 'nowrap',
     color: tokens.colorTextPrimary,
-    paddingTop: tokens.space15,
-    paddingBottom: tokens.space15,
-    paddingLeft: tokens.space25,
-    paddingRight: tokens.space25,
     fontSize: tokens.fontSizeMd,
-    fontWeight: tokens.fontWeightMedium,
-    lineHeight: tokens.lineHeightTight,
-    boxShadow: `0 8px 24px ${tokens.colorShadow}`
+    fontWeight: tokens.fontWeightSemibold,
+    lineHeight: tokens.lineHeightTight
+  },
+  description: {
+    marginTop: tokens.space05,
+    textAlign: 'left',
+    whiteSpace: 'nowrap',
+    color: tokens.colorTextSecondary,
+    fontSize: tokens.fontSizeSm,
+    fontWeight: tokens.fontWeightRegular,
+    lineHeight: tokens.lineHeightSnug
   }
 })

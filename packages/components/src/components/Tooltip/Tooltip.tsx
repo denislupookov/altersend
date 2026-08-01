@@ -5,6 +5,7 @@ export type TooltipSide = 'left' | 'right' | 'top' | 'bottom'
 
 export interface TooltipProps {
   label: string
+  description?: string
   visible: boolean
   side?: TooltipSide
 }
@@ -16,13 +17,16 @@ const sideStyle = {
   bottom: styles.bottom
 } as const
 
-export function Tooltip({ label, visible, side = 'top' }: TooltipProps) {
+export function Tooltip({ label, description, visible, side = 'top' }: TooltipProps) {
   return (
     <html.div
       role='tooltip'
       style={[styles.layer, sideStyle[side], visible && styles.layerVisible]}
     >
-      <html.span style={styles.tooltip}>{label}</html.span>
+      <html.span style={styles.tooltip}>
+        <html.span style={styles.title}>{label}</html.span>
+        {description ? <html.span style={styles.description}>{description}</html.span> : null}
+      </html.span>
     </html.div>
   )
 }

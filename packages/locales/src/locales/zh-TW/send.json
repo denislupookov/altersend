@@ -51,7 +51,9 @@
     "pairedToast": "已與 {{name}} 配對",
     "inviteFailedToast": "無法連線到 {{name}}",
     "inviteFailedHint": "請確認其在線後重試",
-    "deviceConnected": "{{name}} 已連線"
+    "deviceConnected": "{{name}} 已連線",
+    "peerOutdated": "無法連線 — 此裝置需要較新版本的 AlterSend。",
+    "updateRequired": "更新以連接"
   },
   "connection": {
     "placeholder": "正在生成安全密钥...",
@@ -65,7 +67,12 @@
     "generating": "產生中…",
     "waitingForConnection": "正在等待連線…",
     "copyCode": "複製代碼",
-    "qrCode": "QR 碼"
+    "qrCode": "QR 碼",
+    "copyLink": "複製連結",
+    "shareLink": "分享連結",
+    "shareMessage": "透過 AlterSend 分享了 {{items}}——開啟連結即可下載：\n\n{{link}}",
+    "linkHint": "每次傳輸最多 {{limit}}",
+    "connectedViaBrowser": "透過瀏覽器連線"
   },
   "errors": {
     "folderUnsupported": "尚不支持文件夹。请仅选择文件。",
@@ -104,6 +111,7 @@
   "files": {
     "addedFiles": "已新增的檔案",
     "removeLabel": "删除{{name}}",
-    "addedText": "已新增文字"
+    "addedText": "已新增文字",
+    "tooMany": "檔案太多，無法傳送。請先壓縮成一個壓縮檔。"
   }
 }

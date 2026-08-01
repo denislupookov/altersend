@@ -1,0 +1,66 @@
+name: Update AUR package
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-aur-altersend-bin
+  cancel-in-progress: false
+
+jobs:
+  update-aur:
+    if: ${{ github.event.release.prerelease == false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Update package version and checksums
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Expected a release tag in the form v1.2.3, got: $RELEASE_TAG"
+            exit 1
+          fi
+
+          version="${RELEASE_TAG#v}"
+          release_url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}"
+          pkgbuild="packaging/aur/PKGBUILD"
+
+          curl --fail --location --retry 3 \
+            --output "$RUNNER_TEMP/AlterSend-x86_64.AppImage" \
+            "$release_url/AlterSend-x86_64.AppImage"
+          curl --fail --location --retry 3 \
+            --output "$RUNNER_TEMP/AlterSend-arm64.AppImage" \
+            "$release_url/AlterSend-arm64.AppImage"
+
+          x86_64_checksum="$(sha256sum "$RUNNER_TEMP/AlterSend-x86_64.AppImage" | cut -d ' ' -f 1)"
+          aarch64_checksum="$(sha256sum "$RUNNER_TEMP/AlterSend-arm64.AppImage" | cut -d ' ' -f 1)"
+
+          sed -i -E "s/^pkgver=.*/pkgver=${version}/" "$pkgbuild"
+          sed -i -E "s/^pkgrel=.*/pkgrel=1/" "$pkgbuild"
+          sed -i -E \
+            "s/^sha256sums_x86_64=.*/sha256sums_x86_64=('${x86_64_checksum}')/" \
+            "$pkgbuild"
+          sed -i -E \
+            "s/^sha256sums_aarch64=.*/sha256sums_aarch64=('${aarch64_checksum}')/" \
+            "$pkgbuild"
+
+      - name: Publish altersend-bin to the AUR
+        uses: KSXGitHub/github-actions-deploy-aur@084b0d9b15415bf9cdb65d44dad1efe37a354050 # v4.2.0
+        with:
+          pkgname: altersend-bin
+          pkgbuild: packaging/aur/PKGBUILD
+          commit_username: Reazndev
+          commit_email: ruby.florian@proton.me
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "altersend-bin: update to ${{ github.event.release.tag_name }}"

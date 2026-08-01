@@ -30,7 +30,8 @@
     "entitlements": "build/entitlements.mac.plist",
     "entitlementsInherit": "build/entitlements.mac.plist",
     "extendInfo": {
-      "NSCameraUsageDescription": "AlterSend uses your camera to scan a sender's connection QR code."
+      "NSCameraUsageDescription": "AlterSend uses your camera to scan a sender's connection QR code.",
+      "UIDesignRequiresCompatibility": true
     }
   },
   "afterSign": "scripts/notarize.cjs",

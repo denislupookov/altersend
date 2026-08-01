@@ -11,6 +11,7 @@ import {
   type WorkerClient
 } from '@altersend/core'
 import { writeFileViaTemp } from './writeFileViaTemp.js'
+import { migrateLegacyStore } from './migrateLegacyStore.js'
 import { isMac, isLinux, isWindows } from 'which-runtime'
 import { command, flag, sloppy } from 'paparam'
 import { createRequire } from 'module'
@@ -144,11 +145,13 @@ async function initDeviceKeychain(client: WorkerClient, identityRoot: string): P
 }
 
 function appDataDir(name: string): string {
-  return isMac
-    ? path.join(os.homedir(), 'Library', 'Application Support', name)
-    : isLinux
-      ? path.join(os.homedir(), '.config', name)
-      : path.join(os.homedir(), 'AppData', 'Local', name)
+  if (isMac) return path.join(os.homedir(), 'Library', 'Application Support', name)
+  if (isLinux) return path.join(os.homedir(), '.config', name)
+  return path.join(os.homedir(), 'AppData', 'Roaming', name)
+}
+
+function squirrelInstallDir(name: string): string {
+  return path.join(os.homedir(), 'AppData', 'Local', name)
 }
 
 export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): DesktopRuntime {
@@ -160,7 +163,10 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
     if (pear) return pear
 
     const appPath = getAppPath()
-    const dir = pearStore || appDataDir(appPath === null ? `${productName}-dev` : productName)
+    const name = appPath === null ? `${productName}-dev` : productName
+    const dir = pearStore || appDataDir(name)
+
+    if (!pearStore && isWindows) migrateLegacyStore(squirrelInstallDir(name), dir)
 
     const extension = isLinux ? '.AppImage' : isMac ? '.app' : '.msix'
     const instance: PearRuntimeInstance = new PearRuntime({

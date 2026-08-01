@@ -1,0 +1,72 @@
+{
+  "join": {
+    "title": "下载共享的文件",
+    "description": "粘贴发件人提供的传输代码即可连接。",
+    "codeLabel": "传输代码",
+    "invalidCode": "这看起来不是有效的传输代码。"
+  },
+  "connecting": {
+    "description": "正在建立安全的点对点连接，通常只需几秒钟。",
+    "stage": {
+      "idle": "正在验证传输代码并获取文件列表…",
+      "relay": "正在连接中继…",
+      "finding": "正在查找发件人…",
+      "waiting": "已连接 — 正在等待文件列表…",
+      "preparing": "发件人正在准备文件…"
+    }
+  },
+  "download": {
+    "title": "已与你共享 {{files}}",
+    "description": "无需应用或账户，直接在浏览器中下载。",
+    "connected": "已连接到发件人",
+    "allDownloaded": "所有文件已下载",
+    "complete": "{{size}} · 已完成",
+    "keepTabOpen": "正在下载 — 请保持此标签页打开",
+    "enterAnother": "输入其他代码",
+    "downloadedHint": "已下载 — 请在浏览器的文件中查看。",
+    "asZip": "下载为 ZIP",
+    "inAppWarning": "此浏览器无法保存下载内容。请在 Safari 或 Chrome 中打开链接以接收文件。"
+  },
+  "errors": {
+    "relayUnreachable": "无法连接到 AlterSend 中继。请检查网络连接后重试。",
+    "senderNotFound": "未找到发件人 — 请确认对方正在共享。",
+    "nothingShared": "已连接，但发件人没有共享任何内容。",
+    "connectionFailed": "连接已断开——发送方可能已停止共享。请重试。"
+  },
+  "footer": {
+    "getApp": "获取应用",
+    "privacy": "隐私",
+    "terms": "条款",
+    "help": "帮助"
+  },
+  "promo": {
+    "title": "通过 AlterSend 发送",
+    "subtitle": "获取应用，发送你自己的文件",
+    "getFor": "获取 {{os}} 版",
+    "getApp": "下载应用"
+  },
+  "disconnected": {
+    "title": "发件人已断开连接",
+    "description": "AlterSend 传输是点对点的，双方都需要在线。请发件人重新打开传输，然后重新连接。",
+    "summary_complete": "连接断开前所有 {{total}} 个文件均已下载。",
+    "allReceived": "已接收所有文件",
+    "completeTitle": "传输完成",
+    "completeDescription": "发送方已离线，但所有文件都已送达——一切就绪。",
+    "waitingTitle": "等待发送方重新连接",
+    "waitingBody": "连接已断开。对方重新打开传输后，即可从中断处继续。",
+    "alreadySaved": "已保存 {{total}} 个文件中的 {{completed}} 个",
+    "tryNow": "立即重试",
+    "anotherCode": "其他代码"
+  },
+  "sendBack": {
+    "title": "想回传文件吗？",
+    "description": "获取 AlterSend 应用，发送任意大小的文件——端到端加密，无需账户。",
+    "maybeLater": "以后再说"
+  },
+  "tooLarge": {
+    "title": "对浏览器来说太大了",
+    "description": "有些传输更适合在应用中接收。",
+    "body": "在 AlterSend 应用中打开即可接收，无需账户。",
+    "openInApp": "在应用中打开"
+  }
+}

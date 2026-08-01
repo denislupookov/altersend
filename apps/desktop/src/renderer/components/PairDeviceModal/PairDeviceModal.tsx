@@ -1,7 +1,6 @@
-import { Button } from '@altersend/components'
+import { Button, Modal } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import syncDevicesSvg from '../../../../../../assets/sync_devices.svg'
-import { Modal } from '../Modal'
 
 interface PairDeviceModalProps {
   open: boolean
@@ -10,10 +9,16 @@ interface PairDeviceModalProps {
 }
 
 export function PairDeviceModal({ open, onPair, onSkip }: PairDeviceModalProps) {
-  const { t } = useTranslation(['settings'])
+  const { t } = useTranslation(['settings', 'common'])
 
   return (
-    <Modal open={open} title={t('settings:pairPrompt.title')} width={560} onClose={onSkip}>
+    <Modal
+      closeLabel={t('common:actions.close')}
+      open={open}
+      title={t('settings:pairPrompt.title')}
+      width={560}
+      onClose={onSkip}
+    >
       <div className='flex flex-col items-center px-6 pb-2 pt-9 text-center'>
         <img src={syncDevicesSvg} alt='' aria-hidden className='mb-12 w-[240px] opacity-90' />
         <h2 className='m-0 text-[20px] font-bold leading-snug text-text-primary'>

@@ -1,0 +1,72 @@
+{
+  "join": {
+    "title": "下載共享的檔案",
+    "description": "貼上寄件者提供的傳輸代碼即可連線。",
+    "codeLabel": "傳輸代碼",
+    "invalidCode": "這看起來不是有效的傳輸代碼。"
+  },
+  "connecting": {
+    "description": "正在建立安全的點對點連線，通常只需幾秒鐘。",
+    "stage": {
+      "idle": "正在驗證傳輸代碼並取得檔案清單…",
+      "relay": "正在連線至中繼…",
+      "finding": "正在尋找寄件者…",
+      "waiting": "已連線 — 正在等待檔案清單…",
+      "preparing": "寄件者正在準備檔案…"
+    }
+  },
+  "download": {
+    "title": "已與你共享 {{files}}",
+    "description": "無需應用程式或帳號，直接在瀏覽器中下載。",
+    "connected": "已連線至寄件者",
+    "allDownloaded": "所有檔案已下載",
+    "complete": "{{size}} · 已完成",
+    "keepTabOpen": "正在下載 — 請保持此分頁開啟",
+    "enterAnother": "輸入其他代碼",
+    "downloadedHint": "已下載 — 請在瀏覽器的檔案中查看。",
+    "asZip": "下載為 ZIP",
+    "inAppWarning": "此瀏覽器無法儲存下載內容。請在 Safari 或 Chrome 中開啟連結以接收檔案。"
+  },
+  "errors": {
+    "relayUnreachable": "無法連線至 AlterSend 中繼。請檢查網路連線後重試。",
+    "senderNotFound": "找不到寄件者 — 請確認對方正在共享。",
+    "nothingShared": "已連線，但寄件者未共享任何內容。",
+    "connectionFailed": "連線已中斷——傳送方可能已停止共享。請重試。"
+  },
+  "footer": {
+    "getApp": "取得應用程式",
+    "privacy": "隱私權",
+    "terms": "條款",
+    "help": "說明"
+  },
+  "promo": {
+    "title": "透過 AlterSend 傳送",
+    "subtitle": "取得應用程式，傳送你自己的檔案",
+    "getFor": "取得 {{os}} 版",
+    "getApp": "下載應用程式"
+  },
+  "disconnected": {
+    "title": "寄件者已中斷連線",
+    "description": "AlterSend 傳輸是點對點的，雙方都需要在線。請寄件者重新開啟傳輸，然後重新連線。",
+    "summary_complete": "連線中斷前所有 {{total}} 個檔案皆已下載。",
+    "allReceived": "已接收所有檔案",
+    "completeTitle": "傳輸完成",
+    "completeDescription": "傳送方已離線，但所有檔案都已送達——一切就緒。",
+    "waitingTitle": "等待傳送方重新連線",
+    "waitingBody": "連線已中斷。對方重新開啟傳輸後，即可從中斷處繼續。",
+    "alreadySaved": "已儲存 {{total}} 個檔案中的 {{completed}} 個",
+    "tryNow": "立即重試",
+    "anotherCode": "其他代碼"
+  },
+  "sendBack": {
+    "title": "想回傳檔案嗎？",
+    "description": "取得 AlterSend 應用程式，傳送任意大小的檔案——端對端加密，無需帳戶。",
+    "maybeLater": "稍後再說"
+  },
+  "tooLarge": {
+    "title": "檔案太大，瀏覽器無法接收",
+    "description": "有些傳輸更適合在應用程式中接收。",
+    "body": "在 AlterSend 應用程式中開啟即可接收，無需帳戶。",
+    "openInApp": "在應用程式中開啟"
+  }
+}

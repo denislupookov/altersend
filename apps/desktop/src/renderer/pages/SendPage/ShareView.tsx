@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import {
   buildJoinUrl,
+  buildWebReceiveUrl,
+  exceedsWebLinkLimit,
   formatFileSize,
   formatItemsCount,
   formatTextSnippetPreview,
   groupSelectedFiles,
+  useCopiedFlag,
   useShareViewModel
 } from '@altersend/domain'
 import { Button, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
@@ -18,6 +21,7 @@ import {
 } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { Popover, QRCode, QRModal, useToast } from '../../components'
+import { CopyLinkButton } from './CopyLinkButton'
 import { TopicCopyButton } from './TopicCopyButton'
 
 export function ShareView() {
@@ -41,10 +45,14 @@ export function ShareView() {
         hint: t('send:status.inviteFailedHint'),
         variant: 'error',
         durationMs: 3500
-      })
+      }),
+    onPeerOutdated: () =>
+      toast.show({ title: t('send:status.peerOutdated'), variant: 'error', durationMs: 4000 })
   })
   const [isQrOpen, setIsQrOpen] = useState(false)
+  const { copiedId, flashCopied } = useCopiedFlag()
   const hasConnectedDevices = vm.connectedCount > 0
+  const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize)
   const fileRows = groupSelectedFiles(vm.files)
   const singleFolder = fileRows.length === 1 && fileRows[0].kind === 'folder' ? fileRows[0] : null
 
@@ -52,6 +60,13 @@ export function ShareView() {
     if (!vm.topic) return
     await navigator.clipboard.writeText(vm.topic)
     vm.markCopied()
+  }
+
+  const copyLink = async () => {
+    if (!vm.topic) return
+    const base = import.meta.env.VITE_WEB_URL as string | undefined
+    await navigator.clipboard.writeText(buildWebReceiveUrl(vm.topic, base))
+    flashCopied('link')
   }
 
   const hasTexts = vm.texts.length > 0
@@ -131,6 +146,13 @@ export function ShareView() {
               onCopy={() => void copyTopic()}
               placeholder={t('send:connection.placeholder')}
             />
+            {!webLinkTooLarge && (
+              <CopyLinkButton
+                topic={vm.topic}
+                copied={copiedId === 'link'}
+                onCopy={() => void copyLink()}
+              />
+            )}
             <div className='flex h-12 w-12 shrink-0'>
               <Button
                 variant='secondary'
@@ -186,13 +208,20 @@ export function ShareView() {
                     </div>
                   </div>
                 )}
-                <div className='flex w-full'>
+                <div className='flex w-full gap-2'>
                   <TopicCopyButton
                     topic={vm.topic}
                     copied={vm.isCopied}
                     onCopy={() => void copyTopic()}
                     placeholder={t('send:connection.placeholder')}
                   />
+                  {!webLinkTooLarge && (
+                    <CopyLinkButton
+                      topic={vm.topic}
+                      copied={copiedId === 'link'}
+                      onCopy={() => void copyLink()}
+                    />
+                  )}
                 </div>
                 {vm.hasDevices && filesCard}
               </div>

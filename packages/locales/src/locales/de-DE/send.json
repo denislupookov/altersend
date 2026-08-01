@@ -51,7 +51,9 @@
     "pairedToast": "Mit {{name}} gekoppelt",
     "inviteFailedToast": "{{name}} nicht erreichbar",
     "inviteFailedHint": "Stellen Sie sicher, dass es online ist, und versuchen Sie es erneut",
-    "deviceConnected": "{{name}} verbunden"
+    "deviceConnected": "{{name}} verbunden",
+    "peerOutdated": "Verbindung nicht möglich – dieses Gerät benötigt eine neuere AlterSend-Version.",
+    "updateRequired": "Zum Verbinden aktualisieren"
   },
   "connection": {
     "placeholder": "Sicherer Schlüssel wird generiert…",
@@ -65,7 +67,12 @@
     "generating": "Wird erstellt…",
     "waitingForConnection": "Warte auf Verbindung…",
     "copyCode": "Code kopieren",
-    "qrCode": "QR-Code"
+    "qrCode": "QR-Code",
+    "copyLink": "Link kopieren",
+    "shareLink": "Link teilen",
+    "shareMessage": "{{items}} für dich über AlterSend freigegeben — zum Herunterladen öffnen:\n\n{{link}}",
+    "linkHint": "Bis zu {{limit}} pro Übertragung",
+    "connectedViaBrowser": "Über Browser verbunden"
   },
   "errors": {
     "folderUnsupported": "Ordner werden noch nicht unterstützt. Bitte wählen Sie nur Dateien aus.",
@@ -104,6 +111,7 @@
   "files": {
     "addedFiles": "Hinzugefügte Dateien",
     "removeLabel": "Entfernen Sie {{name}}",
-    "addedText": "Hinzugefügter Text"
+    "addedText": "Hinzugefügter Text",
+    "tooMany": "Zu viele Dateien zum Senden. Packe sie zuerst in ein Archiv."
   }
 }

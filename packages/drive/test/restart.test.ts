@@ -17,10 +17,6 @@ class MemoryWriter implements ChunkWriter {
     this.bytes.set(data, offset)
   }
 
-  async readBack(offset: number, length: number): Promise<Uint8Array | null> {
-    return this.bytes.subarray(offset, offset + length)
-  }
-
   async finalize(): Promise<string> {
     return '/saved'
   }

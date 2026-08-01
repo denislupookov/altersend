@@ -54,6 +54,7 @@ Why use WeTransfer, Dropbox, or Google Drive when you can send files directly �
 
 - **No accounts** — no signup, no login, no email address required
 - **No cloud storage** — files go directly between devices; nothing is ever uploaded or stored on a server
+- **Receive in a browser** — recipients open a share link at [app.altersend.com](https://app.altersend.com) and download straight from the sender, no install
 - **End-to-end encrypted** — only your devices can read your files, always
 - **No file size limit** — send a 100 MB photo or 500 GB video archive, same experience
 - **Pair your devices** — pair a device once, then send to it without scanning or typing a code each time
@@ -99,6 +100,15 @@ Or, you can build and install the included Flatpak manifest yourself (needs `fla
 ```sh
 git clone https://github.com/denislupookov/altersend.git && cd altersend
 flatpak-builder --user --install --install-deps-from=flathub --force-clean build-dir flatpak/com.altersend.AlterSend.yaml
+```
+
+### Arch Linux
+
+AlterSend is available in the AUR as two packages: `altersend-bin` for official release binaries and `altersend-git` for the latest Git changes compiled from source.
+
+```sh
+yay -S altersend-bin
+yay -S altersend-git
 ```
 
 ## How it works
@@ -176,6 +186,7 @@ Platform installers (`.dmg`, `.exe`, `.AppImage`) are produced by the release CI
 apps/
   desktop/    Electron app — main + renderer + Bare worklet
   mobile/     React Native / Expo app
+  web/        Browser receiver
 packages/
   core/       P2P protocol — Hyperswarm, transfer orchestration, RPC
   drive/      Chunked file transfer — reads and writes files in place

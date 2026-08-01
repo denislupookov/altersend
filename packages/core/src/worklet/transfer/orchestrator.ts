@@ -42,6 +42,7 @@ import {
   type TransferReady,
   type TransferStart
 } from './control-channel'
+import { topicProof } from './topic-auth'
 import {
   createDownloadCompleteMessage,
   createDownloadFailedMessage,
@@ -85,6 +86,8 @@ async function tryAsync(label: string, op: () => Promise<unknown>): Promise<void
   }
 }
 
+const AUTH_TIMEOUT_MS = 10000
+
 export class TransferOrchestrator implements TransferRPC {
   private readonly emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void
   private readonly storage: TransferStorage
@@ -94,6 +97,9 @@ export class TransferOrchestrator implements TransferRPC {
 
   private activeTransfer: TransferStart | null = null
   private activeTransferReady: TransferReady | null = null
+  private readonly pendingNonce = new Map<string, string>()
+  private readonly authedPeers = new Set<string>()
+  private readonly authTimers = new Map<string, ReturnType<typeof setTimeout>>()
   private role: TransferRole | null = null
   private currentTopic: string | null = null
   private suspended: boolean = false
@@ -191,9 +197,27 @@ export class TransferOrchestrator implements TransferRPC {
 
   private onPeerConnected(session: PeerSession): void {
     this.sendStatus('peer-connected', { peer: session.peerKey, peers: this.swarm.peerCount })
-    if (this.activeTransfer) session.controlChannel.send(this.activeTransfer)
-    this.offerTo(session)
     this.recognition.onPeerConnected(session.peerKey)
+    if (this.role !== 'sender') return
+    const nonce = crypto.randomBytes(32).toString('hex')
+    this.pendingNonce.set(session.peerKey, nonce)
+    session.controlChannel.send({ type: 'challenge', nonce })
+    this.authTimers.set(
+      session.peerKey,
+      setTimeout(() => {
+        this.authTimers.delete(session.peerKey)
+        if (this.authedPeers.has(session.peerKey)) return
+        this.sendStatus('peer-unauthenticated', { peer: session.peerKey })
+      }, AUTH_TIMEOUT_MS)
+    )
+  }
+
+  private clearAuthTimer(peerKey: string): void {
+    const timer = this.authTimers.get(peerKey)
+    if (timer) {
+      clearTimeout(timer)
+      this.authTimers.delete(peerKey)
+    }
   }
 
   rememberVote(input: RememberVoteInput): Promise<RememberVoteReply> {
@@ -244,6 +268,9 @@ export class TransferOrchestrator implements TransferRPC {
 
   private onPeerDisconnected(peerKey: string | null, remainingCount: number): void {
     if (peerKey) {
+      this.pendingNonce.delete(peerKey)
+      this.authedPeers.delete(peerKey)
+      this.clearAuthTimer(peerKey)
       this.recognition.onPeerDisconnected(peerKey)
       this.remember.onPeerDisconnected(peerKey)
       this.sendStatus('peer-disconnected', { peer: peerKey, peers: remainingCount })
@@ -252,6 +279,23 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   private onControlMessage(message: PeerControlMessage, session: PeerSession): void {
+    if (message.type === 'hello') {
+      this.sendStatus('peer-client', { peer: session.peerKey, client: message.client })
+      return
+    }
+    if (message.type === 'challenge') {
+      if (this.role === 'receiver' && this.currentTopic) {
+        session.controlChannel.send({
+          type: 'auth',
+          proof: topicProof(this.currentTopic, message.nonce)
+        })
+      }
+      return
+    }
+    if (message.type === 'auth') {
+      this.verifyAuth(message.proof, session)
+      return
+    }
     if (message.type === 'recognition') {
       void this.recognition.handleRecognition(message, session.peerKey)
       return
@@ -495,7 +539,33 @@ export class TransferOrchestrator implements TransferRPC {
     }
   }
 
+  private verifyAuth(proof: string, session: PeerSession): void {
+    if (this.role !== 'sender') return
+    const nonce = this.pendingNonce.get(session.peerKey)
+    if (!nonce || !this.currentTopic) return
+    if (proof !== topicProof(this.currentTopic, nonce)) {
+      console.warn('TransferOrchestrator: peer failed topic auth', session.peerKey)
+      this.clearAuthTimer(session.peerKey)
+      session.socket.destroy()
+      return
+    }
+
+    this.pendingNonce.delete(session.peerKey)
+    this.clearAuthTimer(session.peerKey)
+
+    this.sendStatus('peer-authenticated', { peer: session.peerKey })
+    this.releaseOffers(session)
+  }
+
+  private releaseOffers(session: PeerSession): void {
+    if (this.authedPeers.has(session.peerKey)) return
+    this.authedPeers.add(session.peerKey)
+    if (this.activeTransfer) session.controlChannel.send(this.activeTransfer)
+    this.offerTo(session)
+  }
+
   private offerTo(session: PeerSession): void {
+    if (!this.authedPeers.has(session.peerKey)) return
     const ready = this.activeTransferReady
     if (!ready) return
 

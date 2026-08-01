@@ -18,6 +18,9 @@ export type TransferStatus =
   | 'disconnected'
   | 'reconnecting'
   | 'connection-type'
+  | 'peer-client'
+  | 'peer-unauthenticated'
+  | 'peer-authenticated'
 
 export type TransferRole = 'sender' | 'receiver'
 
@@ -58,6 +61,7 @@ export interface StatusEvent {
   pausable?: boolean
   paused?: boolean
   connectionType?: 'direct' | 'relay'
+  client?: 'web'
 }
 
 export interface RoleEvent {

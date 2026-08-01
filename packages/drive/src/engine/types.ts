@@ -13,7 +13,6 @@ export interface ChunkReader {
 export interface ChunkWriter {
   allocate(size: number): Promise<void>
   write(offset: number, data: Uint8Array): Promise<void>
-  readBack(offset: number, length: number): Promise<Uint8Array | null>
   finalize(): Promise<string>
   abort(): Promise<void>
 }

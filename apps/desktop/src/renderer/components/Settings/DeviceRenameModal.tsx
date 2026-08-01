@@ -1,7 +1,6 @@
-import { Button, Input } from '@altersend/components'
+import { Button, Input, Modal } from '@altersend/components'
 import { useDeviceRenameForm } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
-import { Modal } from '../Modal'
 
 interface DeviceRenameModalProps {
   open: boolean
@@ -25,7 +24,12 @@ export function DeviceRenameModal({
   })
 
   return (
-    <Modal open={open} title={t('settings:pairing.renameDevice')} onClose={onClose}>
+    <Modal
+      closeLabel={t('common:actions.close')}
+      open={open}
+      title={t('settings:pairing.renameDevice')}
+      onClose={onClose}
+    >
       <div className='px-4 pb-2'>
         <Input
           label={t('settings:pairing.nameLabel')}

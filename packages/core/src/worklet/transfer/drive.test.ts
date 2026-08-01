@@ -37,9 +37,6 @@ class MemoryWriter {
   async write(offset: number, data: Uint8Array) {
     this.bytes.set(data, offset)
   }
-  async readBack(offset: number, length: number) {
-    return this.bytes.subarray(offset, offset + length)
-  }
   async finalize() {
     return this.savedTo
   }

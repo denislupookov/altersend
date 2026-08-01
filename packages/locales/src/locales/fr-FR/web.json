@@ -1,0 +1,72 @@
+{
+  "join": {
+    "title": "Télécharger les fichiers partagés",
+    "description": "Collez le code de transfert que l’expéditeur vous a donné pour vous connecter.",
+    "codeLabel": "Code de transfert",
+    "invalidCode": "Cela ne ressemble pas à un code de transfert valide."
+  },
+  "connecting": {
+    "description": "Établissement d’une liaison pair-à-pair sécurisée. Cela prend généralement quelques secondes.",
+    "stage": {
+      "idle": "Vérification du code de transfert et récupération de la liste des fichiers…",
+      "relay": "Connexion au relais…",
+      "finding": "Recherche de l’expéditeur…",
+      "waiting": "Connecté — en attente de la liste des fichiers…",
+      "preparing": "L’expéditeur prépare les fichiers…"
+    }
+  },
+  "download": {
+    "title": "{{files}} partagés avec vous",
+    "description": "Téléchargez-les directement dans votre navigateur — sans application ni compte.",
+    "connected": "Connecté à l’expéditeur",
+    "allDownloaded": "Tous les fichiers téléchargés",
+    "complete": "{{size}} · terminé",
+    "keepTabOpen": "Téléchargement en cours — gardez cet onglet ouvert",
+    "enterAnother": "Saisir un autre code",
+    "downloadedHint": "Téléchargé — vérifiez les fichiers de votre navigateur.",
+    "asZip": "Télécharger en ZIP",
+    "inAppWarning": "Ce navigateur ne peut pas enregistrer les téléchargements. Ouvrez le lien dans Safari ou Chrome pour recevoir vos fichiers."
+  },
+  "errors": {
+    "relayUnreachable": "Impossible de joindre le relais AlterSend. Vérifiez votre connexion et réessayez.",
+    "senderNotFound": "Expéditeur introuvable — vérifiez qu’il est bien en train de partager.",
+    "nothingShared": "Connecté, mais l’expéditeur n’a rien partagé.",
+    "connectionFailed": "Connexion perdue — l’expéditeur a peut-être arrêté le partage. Réessayez."
+  },
+  "footer": {
+    "getApp": "Obtenir l’app",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "help": "Aide"
+  },
+  "promo": {
+    "title": "Envoyé avec AlterSend",
+    "subtitle": "Téléchargez l’app pour envoyer vos propres fichiers",
+    "getFor": "Obtenir pour {{os}}",
+    "getApp": "Télécharger l’app"
+  },
+  "disconnected": {
+    "title": "L’expéditeur s’est déconnecté",
+    "description": "Les transferts AlterSend sont pair-à-pair : les deux côtés doivent être en ligne. Demandez à l’expéditeur de rouvrir le transfert, puis reconnectez-vous.",
+    "summary_complete": "Les {{total}} fichiers ont été téléchargés avant la coupure du lien.",
+    "allReceived": "Tous les fichiers reçus",
+    "completeTitle": "Transfert terminé",
+    "completeDescription": "L’expéditeur s’est déconnecté, mais tous les fichiers sont bien arrivés — tout est prêt.",
+    "waitingTitle": "En attente de la reconnexion de l’expéditeur",
+    "waitingBody": "La connexion a été interrompue. Dès qu’il rouvre le transfert, reprenez où vous en étiez.",
+    "alreadySaved": "{{completed}} fichiers sur {{total}} déjà enregistrés",
+    "tryNow": "Réessayer",
+    "anotherCode": "Autre code"
+  },
+  "sendBack": {
+    "title": "Envoyer des fichiers en retour ?",
+    "description": "Téléchargez l’app AlterSend pour envoyer des fichiers de toute taille — chiffrés de bout en bout, sans compte.",
+    "maybeLater": "Plus tard"
+  },
+  "tooLarge": {
+    "title": "Trop volumineux pour le navigateur",
+    "description": "Certains transferts se reçoivent mieux dans l’app.",
+    "body": "Ouvrez-le dans l’app AlterSend pour le recevoir — sans compte.",
+    "openInApp": "Ouvrir dans l’app"
+  }
+}

@@ -51,7 +51,9 @@
     "pairedToast": "Paired with {{name}}",
     "inviteFailedToast": "Couldn't reach {{name}}",
     "inviteFailedHint": "Make sure it's online and try again",
-    "deviceConnected": "{{name}} connected"
+    "deviceConnected": "{{name}} connected",
+    "peerOutdated": "Can't connect — this device needs a newer version of AlterSend.",
+    "updateRequired": "Update to connect"
   },
   "connection": {
     "placeholder": "Generating secure key…",
@@ -65,7 +67,12 @@
     "generating": "Generating…",
     "waitingForConnection": "Waiting for a connection…",
     "copyCode": "Copy code",
-    "qrCode": "QR code"
+    "qrCode": "QR code",
+    "copyLink": "Copy link",
+    "shareLink": "Share link",
+    "shareMessage": "{{items}} shared with you via AlterSend — open to download:\n\n{{link}}",
+    "linkHint": "Up to {{limit}} per transfer",
+    "connectedViaBrowser": "Connected via browser"
   },
   "errors": {
     "folderUnsupported": "Folders aren't supported yet. Please select files only.",
@@ -104,6 +111,7 @@
   "files": {
     "addedFiles": "Added files",
     "removeLabel": "Remove {{name}}",
-    "addedText": "Added text"
+    "addedText": "Added text",
+    "tooMany": "Too many files to send. Zip them into an archive first."
   }
 }

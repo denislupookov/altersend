@@ -51,7 +51,9 @@
     "pairedToast": "{{name}} とペアリングしました",
     "inviteFailedToast": "{{name}} に接続できませんでした",
     "inviteFailedHint": "オンラインであることを確認してもう一度お試しください",
-    "deviceConnected": "{{name}} が接続しました"
+    "deviceConnected": "{{name}} が接続しました",
+    "peerOutdated": "接続できません — このデバイスには新しいバージョンの AlterSend が必要です。",
+    "updateRequired": "接続するには更新"
   },
   "connection": {
     "placeholder": "安全なキーを生成中…",
@@ -65,7 +67,12 @@
     "generating": "生成中…",
     "waitingForConnection": "接続を待機中…",
     "copyCode": "コードをコピー",
-    "qrCode": "QRコード"
+    "qrCode": "QRコード",
+    "copyLink": "リンクをコピー",
+    "shareLink": "リンクを共有",
+    "shareMessage": "{{items}} が AlterSend で共有されました。リンクを開くとダウンロードできます。\n\n{{link}}",
+    "linkHint": "1 回の転送につき最大 {{limit}}",
+    "connectedViaBrowser": "ブラウザで接続"
   },
   "errors": {
     "folderUnsupported": "フォルダはまだ対応していません。ファイルのみ選択してください。",
@@ -104,6 +111,7 @@
   "files": {
     "addedFiles": "追加したファイル",
     "removeLabel": "{{name}} を削除",
-    "addedText": "追加したテキスト"
+    "addedText": "追加したテキスト",
+    "tooMany": "送信するファイルが多すぎます。まずアーカイブに圧縮してください。"
   }
 }
