@@ -47,6 +47,7 @@
     "online": "В сети",
     "downloading": "Загрузка",
     "downloadingPercent": "Загрузка {{percent}}%",
+    "percent": "{{percent}}%",
     "waitingForJoin": "Ожидание подключения",
     "pairedToast": "Сопряжено с {{name}}",
     "inviteFailedToast": "Не удалось связаться с {{name}}",

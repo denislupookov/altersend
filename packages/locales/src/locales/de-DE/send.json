@@ -47,6 +47,7 @@
     "online": "Verbunden",
     "downloading": "Herunterladen",
     "downloadingPercent": "{{percent}} % wird heruntergeladen",
+    "percent": "{{percent}}%",
     "waitingForJoin": "Warten, dass jemand beitritt",
     "pairedToast": "Mit {{name}} gekoppelt",
     "inviteFailedToast": "{{name}} nicht erreichbar",

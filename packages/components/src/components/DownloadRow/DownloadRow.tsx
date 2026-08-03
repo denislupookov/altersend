@@ -5,15 +5,17 @@ import {
   getDownloadRowDisplay,
   getFolderRowAction,
   getFolderRowDisplay,
+  getFolderTransferRate,
   getOfferKey,
   type DownloadItemState,
   type DownloadRowDisplay,
   type DownloadRowAction,
   type DownloadRowLabels,
-  type ReceiveRow
+  type ReceiveRow,
+  type TransferRate
 } from '@altersend/domain'
 import type { IncomingFileOffer } from '@altersend/core'
-import { LinkRow } from '../LinkRow'
+import { LinkRow, type LinkRowStatus } from '../LinkRow'
 import { ChevronRightIcon, FolderIcon } from '../../icons'
 import { useTheme } from '../../theme'
 import { RowActionButton } from './RowActionButton'
@@ -28,6 +30,8 @@ export function rowKey(row: ReceiveRow): string {
 export interface DownloadRowProps {
   row: ReceiveRow
   states: Record<string, DownloadItemState>
+  rates: Record<string, TransferRate>
+  rateLabelFor: (rate: TransferRate | undefined) => string | undefined
   labelsFor: (display: DownloadRowDisplay) => DownloadRowLabels
   transferActive: boolean
   isFirst?: boolean
@@ -42,14 +46,28 @@ export interface DownloadRowProps {
 
 type RowHandlers = Pick<DownloadRowProps, 'onResume' | 'onPause' | 'onOpen'>
 
-interface FileRowProps extends RowHandlers {
+type RowPresentation = Pick<
+  DownloadRowProps,
+  | 'states'
+  | 'rates'
+  | 'rateLabelFor'
+  | 'labelsFor'
+  | 'transferActive'
+  | 'isFirst'
+  | 'compact'
+  | 'standalone'
+>
+
+interface FileRowProps extends RowHandlers, RowPresentation {
   offer: FileOffer
-  states: Record<string, DownloadItemState>
-  labelsFor: (display: DownloadRowDisplay) => DownloadRowLabels
-  transferActive: boolean
-  isFirst?: boolean
-  compact?: boolean
-  standalone?: boolean
+}
+
+function toRowStatus(
+  display: DownloadRowDisplay,
+  labels: DownloadRowLabels
+): LinkRowStatus | undefined {
+  if (!labels.status) return undefined
+  return { label: labels.status, tone: display.status.tone, detail: display.rateLabel }
 }
 
 function runRowAction(
@@ -78,6 +96,8 @@ export function DownloadRow(props: DownloadRowProps) {
 function FileRow({
   offer,
   states,
+  rates,
+  rateLabelFor,
   labelsFor,
   transferActive,
   isFirst = false,
@@ -87,8 +107,9 @@ function FileRow({
   onPause,
   onOpen
 }: FileRowProps) {
-  const state = states[getOfferKey(offer)]
-  const display = getDownloadRowDisplay(offer, state, transferActive)
+  const key = getOfferKey(offer)
+  const state = states[key]
+  const display = getDownloadRowDisplay(offer, state, transferActive, rateLabelFor(rates[key]))
   const labels = labelsFor(display)
   const action = getDownloadRowAction(display, state)
 
@@ -102,7 +123,7 @@ function FileRow({
       label={offer.name}
       size={offer.size}
       description={display.description}
-      status={labels.status ? { label: labels.status, tone: display.status.tone } : undefined}
+      status={toRowStatus(display, labels)}
       progressPercent={display.progressPercent}
       trailing={
         action ? (
@@ -120,6 +141,8 @@ function FileRow({
 function FolderRow({
   folder,
   states,
+  rates,
+  rateLabelFor,
   labelsFor,
   transferActive,
   isFirst = false,
@@ -133,7 +156,11 @@ function FolderRow({
 }: DownloadRowProps & { folder: Extract<ReceiveRow, { kind: 'folder' }> }) {
   const { theme } = useTheme()
   const [expanded, setExpanded] = useState(false)
-  const display = getFolderRowDisplay(folder.offers, states)
+  const display = getFolderRowDisplay(
+    folder.offers,
+    states,
+    rateLabelFor(getFolderTransferRate(folder.offers, states, rates))
+  )
   const labels = labelsFor(display)
   const action = getFolderRowAction(folder.offers, states)
 
@@ -148,7 +175,7 @@ function FolderRow({
         label={folder.name}
         size={folder.totalSize}
         description={display.description}
-        status={labels.status ? { label: labels.status, tone: display.status.tone } : undefined}
+        status={toRowStatus(display, labels)}
         progressPercent={display.progressPercent}
         onPress={() => setExpanded((open) => !open)}
         trailing={
@@ -177,6 +204,8 @@ function FolderRow({
               key={getOfferKey(offer)}
               offer={offer}
               states={states}
+              rates={rates}
+              rateLabelFor={rateLabelFor}
               labelsFor={labelsFor}
               transferActive={transferActive}
               onResume={onResume}

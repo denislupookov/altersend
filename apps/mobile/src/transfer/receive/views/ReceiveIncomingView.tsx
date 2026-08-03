@@ -2,6 +2,7 @@ import { Linking, View, StyleSheet } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import { DownloadRow, ReceivedTextRow, RowGroup, rowKey, useTheme } from '@altersend/components'
 import {
+  formatTransferRate,
   getDownloadRowLabels,
   getOfferKey,
   useCopiedFlag,
@@ -44,6 +45,8 @@ export function ReceiveIncomingView() {
               key={rowKey(row)}
               row={row}
               states={downloads.states}
+              rates={downloads.rates}
+              rateLabelFor={(rate) => formatTransferRate(rate, t)}
               labelsFor={(display) => getDownloadRowLabels(t, display)}
               transferActive={downloads.isDownloading}
               isFirst={index === 0}

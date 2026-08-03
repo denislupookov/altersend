@@ -9,7 +9,12 @@ import {
   useTheme
 } from '@altersend/components'
 import { ArrowLeftIcon, CheckIcon, DownloadIcon, PlayIcon } from '@altersend/components/icons'
-import { getDownloadRowLabels, getPrimaryDownloadLabel, useCopiedFlag } from '@altersend/domain'
+import {
+  formatTransferRate,
+  getDownloadRowLabels,
+  getPrimaryDownloadLabel,
+  useCopiedFlag
+} from '@altersend/domain'
 import { useEffect, useState } from 'react'
 import { useTranslation } from '@altersend/locales'
 import {
@@ -82,6 +87,8 @@ export function DownloadScreen({
       key={rowKey(row)}
       row={row}
       states={summary.states}
+      rates={summary.rates}
+      rateLabelFor={(rate) => formatTransferRate(rate, t)}
       labelsFor={(display) => getDownloadRowLabels(t, display)}
       transferActive={summary.isDownloading}
       isFirst={index === 0}

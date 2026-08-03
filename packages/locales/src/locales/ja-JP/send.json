@@ -47,6 +47,7 @@
     "online": "オンライン",
     "downloading": "ダウンロード中",
     "downloadingPercent": "{{percent}}% ダウンロード中",
+    "percent": "{{percent}}%",
     "waitingForJoin": "参加を待っています",
     "pairedToast": "{{name}} とペアリングしました",
     "inviteFailedToast": "{{name}} に接続できませんでした",

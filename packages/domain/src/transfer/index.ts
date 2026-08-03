@@ -10,6 +10,8 @@ export {
   type BindTransferApiOptions,
   type ErrorHandler
 } from './binding'
+export * from './rate'
+export * from './useTransferRates'
 export * from './effects/appActive'
 export * from './effects/peerWatchdog'
 export * from './effects/backgroundReconnectEffect'

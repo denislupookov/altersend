@@ -88,5 +88,13 @@
   "units": {
     "chars_one": "{{count}} 個字元",
     "chars_other": "{{count}} 個字元"
+  },
+  "transfer": {
+    "timeLeft": "剩餘 {{duration}}",
+    "durationSeconds": "{{seconds}}秒",
+    "durationMinutes": "{{minutes}}分鐘",
+    "durationMinutesSeconds": "{{minutes}}分{{seconds}}秒",
+    "durationHours": "{{hours}}小時",
+    "durationHoursMinutes": "{{hours}}小時{{minutes}}分"
   }
 }

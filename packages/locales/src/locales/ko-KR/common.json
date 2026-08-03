@@ -88,5 +88,13 @@
   "units": {
     "chars_one": "{{count}}자",
     "chars_other": "{{count}}자"
+  },
+  "transfer": {
+    "timeLeft": "{{duration}} 남음",
+    "durationSeconds": "{{seconds}}초",
+    "durationMinutes": "{{minutes}}분",
+    "durationMinutesSeconds": "{{minutes}}분 {{seconds}}초",
+    "durationHours": "{{hours}}시간",
+    "durationHoursMinutes": "{{hours}}시간 {{minutes}}분"
   }
 }

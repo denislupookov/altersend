@@ -88,5 +88,13 @@
   "units": {
     "chars_one": "{{count}} caractère",
     "chars_other": "{{count}} caractères"
+  },
+  "transfer": {
+    "timeLeft": "il reste {{duration}}",
+    "durationSeconds": "{{seconds}} s",
+    "durationMinutes": "{{minutes}} min",
+    "durationMinutesSeconds": "{{minutes}} min {{seconds}} s",
+    "durationHours": "{{hours}} h",
+    "durationHoursMinutes": "{{hours}} h {{minutes}} min"
   }
 }

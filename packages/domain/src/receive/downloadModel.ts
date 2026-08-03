@@ -1,5 +1,6 @@
 import type { DownloadFileRequest, IncomingFileOffer, RendererTransferEvent } from '@altersend/core'
 import { formatFileSize } from '../format'
+import { sumTransferRates, type TransferProgress, type TransferRate } from '../transfer/rate'
 
 export type DownloadStatus = 'idle' | 'downloading' | 'completed' | 'failed'
 
@@ -23,6 +24,7 @@ export type DownloadRowStatusTone = 'muted' | 'active' | 'success'
 
 export interface DownloadRowDisplay {
   description: string | undefined
+  rateLabel?: string
   progressPercent: number | undefined
   status: {
     kind: 'saved' | 'failed' | 'paused' | 'resuming' | 'progress' | 'ready' | 'waiting'
@@ -53,6 +55,38 @@ function getProgressPercent(bytesTransferred: number, totalBytes: number) {
   return Math.max(0, Math.min(100, Math.round((bytesTransferred / totalBytes) * 100)))
 }
 
+function getRemainingBytes(
+  offers: IncomingFileOffer[],
+  states: Record<string, DownloadItemState>
+): number {
+  const totals = getDownloadTotals(offers, states)
+  return Math.max(0, totals.totalBytes - totals.bytesTransferred)
+}
+
+export function getFolderTransferRate(
+  offers: IncomingFileOffer[],
+  states: Record<string, DownloadItemState>,
+  rates: Record<string, TransferRate>
+): TransferRate {
+  return sumTransferRates(
+    offers.map((offer) => rates[getOfferKey(offer)]),
+    getRemainingBytes(offers, states)
+  )
+}
+
+export function getActiveDownloadProgress(
+  states: Record<string, DownloadItemState>
+): Record<string, TransferProgress> {
+  const progress: Record<string, TransferProgress> = {}
+
+  for (const [key, state] of Object.entries(states)) {
+    if (state.status !== 'downloading' || state.totalBytes <= 0) continue
+    progress[key] = { bytesTransferred: state.bytesTransferred, totalBytes: state.totalBytes }
+  }
+
+  return progress
+}
+
 export function createDownloadStateMap(
   current: Record<string, DownloadItemState>,
   files: IncomingFileOffer[]
@@ -79,7 +113,8 @@ function stoppedRowKind(state: DownloadItemState): DownloadRowDisplay['status'][
 export function getDownloadRowDisplay(
   file: IncomingFileOffer,
   state: DownloadItemState | undefined,
-  transferActive = false
+  transferActive = false,
+  rateLabel?: string
 ): DownloadRowDisplay {
   const totalBytes = state?.totalBytes || (file.kind === 'file' ? file.size : 0)
   const percent = getProgressPercent(state?.bytesTransferred ?? 0, totalBytes)
@@ -128,6 +163,7 @@ export function getDownloadRowDisplay(
   if (isActive) {
     return {
       description: `${formatFileSize(state!.bytesTransferred)} / ${formatFileSize(totalBytes)}`,
+      rateLabel,
       progressPercent: percent,
       status: { kind: 'progress', tone: percent > 0 ? 'active' : 'muted' },
       percent,
@@ -451,7 +487,8 @@ export function groupReceiveRows(offers: IncomingFileOffer[]): ReceiveRow[] {
 
 export function getFolderRowDisplay(
   offers: FileOffer[],
-  states: Record<string, DownloadItemState>
+  states: Record<string, DownloadItemState>,
+  rateLabel?: string
 ): DownloadRowDisplay {
   const totals = getDownloadTotals(offers, states)
   const anyFailed = offers.some((offer) => {
@@ -485,6 +522,7 @@ export function getFolderRowDisplay(
   if (totals.activeCount > 0 || totals.completedCount > 0 || anyPaused) {
     return {
       description: `${formatFileSize(totals.bytesTransferred)} / ${formatFileSize(totals.totalBytes)}`,
+      rateLabel: totals.activeCount > 0 ? rateLabel : undefined,
       progressPercent: totals.percent,
       status: {
         kind: totals.activeCount === 0 && anyPaused ? 'paused' : 'progress',

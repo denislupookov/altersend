@@ -6,10 +6,12 @@ import {
   getPrimaryDownloadAction,
   groupReceiveRows,
   isResumable,
+  useDownloadRates,
   type DownloadItemState,
   type DownloadTotals,
   type PrimaryDownloadAction,
-  type ReceiveRow
+  type ReceiveRow,
+  type TransferRate
 } from '@altersend/domain'
 import type { TextOffer } from '../../transfer/peerProtocol'
 import type { TransferFile } from '../../types'
@@ -19,6 +21,7 @@ export interface DownloadSummary {
   rows: ReceiveRow[]
   states: Record<string, DownloadItemState>
   totals: DownloadTotals
+  rates: Record<string, TransferRate>
   count: number
   textCount: number
   isDownloading: boolean
@@ -27,7 +30,7 @@ export interface DownloadSummary {
 }
 
 export function useDownloadSummary(files: TransferFile[], texts: TextOffer[]): DownloadSummary {
-  return useMemo(() => {
+  const summary = useMemo(() => {
     const offers = files.map((file) => file.offer)
     const states = toDownloadStates(files)
     const totals = getDownloadTotals(offers, states)
@@ -56,4 +59,8 @@ export function useDownloadSummary(files: TransferFile[], texts: TextOffer[]): D
       })
     }
   }, [files, texts])
+
+  const rates = useDownloadRates(summary.states, summary.isDownloading)
+
+  return { ...summary, rates }
 }

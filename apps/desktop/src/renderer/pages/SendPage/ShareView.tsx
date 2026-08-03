@@ -269,6 +269,7 @@ export function ShareView() {
                       label={row.name}
                       subtitle={row.subtitle}
                       subtitleTone={row.subtitleTone}
+                      status={row.status}
                       progressPercent={row.progressPercent}
                       trailing={
                         row.action === 'pair' ? (

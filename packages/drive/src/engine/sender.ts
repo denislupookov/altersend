@@ -1,6 +1,6 @@
 import type { ChunkReader, DriveChannel, ControlMessage } from './types'
 import { selectChunkSize, chunkCount, chunkRange } from './chunker'
-import { PEER_SILENCE_TIMEOUT_MS, PROGRESS_STEP_BYTES } from './errors'
+import { PEER_SILENCE_TIMEOUT_MS, PROGRESS_STEP_BYTES } from './constants'
 import { Timeout } from './timeout'
 
 interface CancelOptions {

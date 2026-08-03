@@ -165,12 +165,27 @@ export const styles = css.create({
   subtitleInfo: {
     color: tokens.colorInfo
   },
+  statusColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: tokens.space05,
+    flexShrink: 0
+  },
   statusGroup: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     gap: tokens.space15,
     flexShrink: 0
+  },
+  statusDetail: {
+    margin: 0,
+    color: tokens.colorTextMuted,
+    fontFamily: tokens.fontFamilySans,
+    fontSize: tokens.fontSizeSm,
+    lineHeight: tokens.lineHeightNormal,
+    whiteSpace: 'nowrap'
   },
   statusDot: {
     width: tokens.space15,

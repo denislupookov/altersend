@@ -1,7 +1,8 @@
 import type { ChunkWriter, DriveChannel, ChunkHeader, ControlMessage } from './types'
 import { selectChunkSize, chunkCount, chunkRange } from './chunker'
 import { Bitmap } from './bitmap'
-import { IntegrityError, PEER_SILENCE_TIMEOUT_MS, PROGRESS_STEP_BYTES } from './errors'
+import { IntegrityError } from './errors'
+import { PEER_SILENCE_TIMEOUT_MS, PROGRESS_INTERVAL_MS, PROGRESS_STEP_BYTES } from './constants'
 import { Timeout } from './timeout'
 
 interface CancelOptions {
@@ -14,6 +15,7 @@ export interface ReceiverOptions {
   resumeBits?: Uint8Array
   stallTimeoutMs?: number
   progressStepBytes?: number
+  progressIntervalMs?: number
   onProgress?: (receivedBytes: number, totalBytes: number) => void
   onChunkWritten?: (bitmap: Bitmap) => void
 }
@@ -28,6 +30,7 @@ export class ReceiverSession {
   private bitmap: Bitmap | null = null
   private receivedBytes = 0
   private reportedBytes = 0
+  private reportedAt = 0
   private transferId: string | null
   private settled = false
   private cancelling = false
@@ -173,9 +176,17 @@ export class ReceiverSession {
   }
 
   private reportProgress(force: boolean): void {
+    if (!force && this.receivedBytes === this.reportedBytes) return
+
     const step = this.opts.progressStepBytes ?? PROGRESS_STEP_BYTES
-    if (!force && this.receivedBytes - this.reportedBytes < step) return
+    const now = Date.now()
+    const interval = this.opts.progressIntervalMs ?? PROGRESS_INTERVAL_MS
+    const steppedEnough = this.receivedBytes - this.reportedBytes >= step
+    const waitedEnough = now - this.reportedAt >= interval
+    if (!force && !steppedEnough && !waitedEnough) return
+
     this.reportedBytes = this.receivedBytes
+    this.reportedAt = now
     this.opts.onProgress?.(this.receivedBytes, this.size)
   }
 

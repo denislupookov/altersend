@@ -47,6 +47,7 @@
     "online": "在线",
     "downloading": "正在下载",
     "downloadingPercent": "正在下载 {{percent}}%",
+    "percent": "{{percent}}%",
     "waitingForJoin": "等待他人加入",
     "pairedToast": "已与 {{name}} 配对",
     "inviteFailedToast": "无法连接 {{name}}",

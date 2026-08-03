@@ -47,6 +47,7 @@
     "online": "網路",
     "downloading": "正在下載",
     "downloadingPercent": "正在下載 {{percent}}%",
+    "percent": "{{percent}}%",
     "waitingForJoin": "等待他人加入",
     "pairedToast": "已與 {{name}} 配對",
     "inviteFailedToast": "無法連線到 {{name}}",

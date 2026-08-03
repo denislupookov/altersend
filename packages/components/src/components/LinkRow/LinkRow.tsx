@@ -10,6 +10,12 @@ import { formatFileSize } from '@altersend/domain'
 export type LinkRowStatusTone = 'muted' | 'active' | 'success'
 export type LinkRowProgressState = 'waiting' | 'uploading' | 'completed'
 
+export interface LinkRowStatus {
+  label: string
+  tone?: LinkRowStatusTone
+  detail?: string
+}
+
 interface LinkRowBaseProps {
   icon?: ReactNode
   iconBackground?: string
@@ -32,7 +38,7 @@ interface LinkRowBaseProps {
   standalone?: boolean
   alignTop?: boolean
   disabled?: boolean
-  status?: { label: string; tone?: LinkRowStatusTone }
+  status?: LinkRowStatus
   progress?: LinkRowProgressState
   progressPercent?: number
 }
@@ -224,15 +230,22 @@ export function LinkRow({
             </html.div>
 
             {status ? (
-              <html.div style={styles.statusGroup}>
-                {status.tone === 'success' ? (
-                  <CheckIcon size={14} color={theme.colors.colorSuccess} />
-                ) : (
-                  <html.div style={[styles.statusDot, statusToneStyle[status.tone ?? 'muted']]} />
-                )}
-                <html.p style={[styles.statusLabel, statusLabelToneStyle[status.tone ?? 'muted']]}>
-                  {status.label}
-                </html.p>
+              <html.div style={styles.statusColumn}>
+                <html.div style={styles.statusGroup}>
+                  {status.tone === 'success' ? (
+                    <CheckIcon size={14} color={theme.colors.colorSuccess} />
+                  ) : (
+                    <html.div style={[styles.statusDot, statusToneStyle[status.tone ?? 'muted']]} />
+                  )}
+                  <html.p
+                    style={[styles.statusLabel, statusLabelToneStyle[status.tone ?? 'muted']]}
+                  >
+                    {status.label}
+                  </html.p>
+                </html.div>
+                {status.detail ? (
+                  <html.p style={styles.statusDetail}>{status.detail}</html.p>
+                ) : null}
               </html.div>
             ) : null}
           </html.div>

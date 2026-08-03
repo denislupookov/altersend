@@ -1,5 +1,6 @@
 import type { ConnectedPeer, PeerDownloadEvent, PeerListStatus, PeerStatusData } from './shareModel'
 import { derivePeerStatus } from './shareModel'
+import type { TransferProgress } from '../transfer/rate'
 
 export type PeerListEntryDetail =
   | { type: 'failed-file'; fileName: string }
@@ -38,6 +39,20 @@ export function applyPairState(
     const displayName = pairState === 'paired' ? peerDisplayNames[entry.peerKey] : undefined
     return { ...entry, pairState, displayName }
   })
+}
+
+export function getActivePeerProgress(entries: PeerListEntry[]): Record<string, TransferProgress> {
+  const progress: Record<string, TransferProgress> = {}
+
+  for (const entry of entries) {
+    if (entry.status !== 'downloading' || entry.detail?.type !== 'progress-bytes') continue
+    progress[entry.peerKey] = {
+      bytesTransferred: entry.detail.transferredBytes,
+      totalBytes: entry.detail.totalBytes
+    }
+  }
+
+  return progress
 }
 
 function getStatusDetail(data: PeerStatusData): PeerListEntryDetail | null {

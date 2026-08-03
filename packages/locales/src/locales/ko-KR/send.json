@@ -47,6 +47,7 @@
     "online": "온라인",
     "downloading": "다운로드 중",
     "downloadingPercent": "{{percent}}% 다운로드 중",
+    "percent": "{{percent}}%",
     "waitingForJoin": "참여를 기다리는 중",
     "pairedToast": "{{name}}와(과) 페어링됨",
     "inviteFailedToast": "{{name}}에 연결할 수 없습니다",

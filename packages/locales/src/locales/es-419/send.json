@@ -47,6 +47,7 @@
     "online": "En línea",
     "downloading": "Descargando",
     "downloadingPercent": "Descargando {{percent}}%",
+    "percent": "{{percent}}%",
     "waitingForJoin": "Esperando a que alguien se una",
     "pairedToast": "Emparejado con {{name}}",
     "inviteFailedToast": "No se pudo contactar con {{name}}",

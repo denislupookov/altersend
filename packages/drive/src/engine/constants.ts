@@ -1,0 +1,5 @@
+export const PEER_SILENCE_TIMEOUT_MS = 60_000
+
+export const PROGRESS_STEP_BYTES = 2 * 1024 * 1024
+
+export const PROGRESS_INTERVAL_MS = 500

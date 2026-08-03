@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { RememberedPeer } from '@altersend/core'
-import { formatFileSize, formatRelativeTime, type InviteStatus } from '../format'
+import {
+  formatFileSize,
+  formatRelativeTime,
+  formatTransferRate,
+  type InviteStatus
+} from '../format'
+import { useTransferRates } from '../transfer/useTransferRates'
+import type { TransferRate } from '../transfer/rate'
 import {
   forgetPeer,
   inviteDevice,
@@ -9,7 +16,7 @@ import {
   startSendSession
 } from '../transfer/commands'
 import { useTransferStore } from '../transfer/store'
-import { applyPairState, getPeerListEntries } from './peerListUi'
+import { applyPairState, getActivePeerProgress, getPeerListEntries } from './peerListUi'
 import type { PairState, PeerListEntryWithPair } from './peerListUi'
 import type { Translate } from '../i18n'
 import { useCopiedFlag } from '../useCopiedFlag'
@@ -19,6 +26,12 @@ const COPY_TOPIC_ID = 'topic'
 const PEER_JOIN_TOAST_DELAY_MS = 600
 
 export type SubtitleTone = 'muted' | 'success' | 'danger' | 'info'
+
+interface DeviceRowStatus {
+  label: string
+  tone: 'muted' | 'active' | 'success'
+  detail?: string
+}
 
 interface InviteStatusState {
   status: InviteStatus
@@ -35,6 +48,7 @@ export interface ConnectedDeviceRow {
   subtitle: string
   subtitleTone: SubtitleTone
   progressPercent?: number
+  status?: DeviceRowStatus
   action: 'pair' | 'pair-requested' | 'pair-done' | 'none'
 }
 
@@ -145,6 +159,19 @@ function connectedDeviceSubtitle(
   }
 }
 
+function connectedDeviceStatus(
+  entry: PeerListEntryWithPair,
+  rate: TransferRate | undefined,
+  t: Translate
+): DeviceRowStatus | undefined {
+  if (entry.status !== 'downloading' || entry.progressPercent === undefined) return undefined
+  return {
+    label: t('send:status.percent', { percent: entry.progressPercent }),
+    tone: 'active',
+    detail: formatTransferRate(rate, t)
+  }
+}
+
 function toPairAction(pairState: PairState | undefined): ConnectedDeviceRow['action'] {
   if (pairState === 'requested') return 'pair-requested'
   if (pairState === 'paired') return 'pair-done'
@@ -238,6 +265,9 @@ export function useShareViewModel(
     [peerEntries, pairStatus, peerDisplayNames]
   )
 
+  const peerProgress = useMemo(() => getActivePeerProgress(peerEntries), [peerEntries])
+  const peerRates = useTransferRates(peerProgress, Object.keys(peerProgress).length > 0)
+
   const offlineRemembered = useMemo(
     () =>
       rememberedPeers
@@ -274,6 +304,7 @@ export function useShareViewModel(
       subtitle,
       subtitleTone,
       progressPercent: entry.status === 'downloading' ? entry.progressPercent : undefined,
+      status: connectedDeviceStatus(entry, peerRates[entry.peerKey], t),
       action: connectedAction(entry, isWeb, isOutdated)
     }
   })

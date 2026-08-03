@@ -135,6 +135,33 @@ describe('full sender ↔ receiver loopback', () => {
     expect(lastReceived).toBe(input.length)
   })
 
+  it('reports progress on an interval when the byte step is never reached', async () => {
+    const input = pseudoRandom(200 * 1024)
+    const src = join(dir, 'src.bin')
+    const dst = join(dir, 'dst.bin')
+    await writeFile(src, input)
+
+    const [senderChannel, receiverChannel] = createChannelPair()
+    const progress: number[] = []
+    const receiver = new ReceiverSession(new DiskWriter(dst), receiverChannel, {
+      transferId: 't',
+      progressStepBytes: Number.MAX_SAFE_INTEGER,
+      progressIntervalMs: 0,
+      onProgress: (bytes) => progress.push(bytes)
+    })
+    const sender = new SenderSession(new DiskReader(src), senderChannel, {
+      transferId: 't',
+      name: 'file.bin'
+    })
+
+    await Promise.all([receiver.receive(), sender.start()])
+    await sender.close()
+
+    expect(progress.length).toBeGreaterThan(1)
+    expect(progress).toStrictEqual([...progress].sort((a, b) => a - b))
+    expect(progress.at(-1)).toBe(input.length)
+  })
+
   it('reports absolute progress when the peer only needs the tail', async () => {
     const input = pseudoRandom(200 * 1024)
     const src = join(dir, 'src.bin')

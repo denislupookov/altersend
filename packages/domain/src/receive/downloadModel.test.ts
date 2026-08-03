@@ -7,6 +7,7 @@ import {
   getFolderRowDisplay,
   getDownloadRowAction,
   getDownloadRowDisplay,
+  getActiveDownloadProgress,
   isResumable,
   canStopDownload,
   getFolderRowAction,
@@ -547,5 +548,65 @@ describe('stopping a download that never started', () => {
 
     expect(next['/a.bin'].status).toBe('failed')
     expect(getDownloadRowDisplay(offer('/a.bin'), next['/a.bin']).status.kind).toBe('paused')
+  })
+})
+
+describe('transfer rate on rows', () => {
+  const file = offer('/a.bin')
+
+  it('reports the rate separately from the transferred bytes', () => {
+    const row = getDownloadRowDisplay(file, state('downloading', 40), true, '2.0 MB/s · 30s left')
+    expect(row.description).toBe('40 B / 100 B')
+    expect(row.rateLabel).toBe('2.0 MB/s · 30s left')
+  })
+
+  it('leaves the rate unset when none was measured', () => {
+    const row = getDownloadRowDisplay(file, state('downloading', 40), true)
+    expect(row.description).toBe('40 B / 100 B')
+    expect(row.rateLabel).toBeUndefined()
+  })
+
+  it('omits the rate on paused rows', () => {
+    const paused: DownloadItemState = {
+      status: 'failed',
+      bytesTransferred: 40,
+      totalBytes: 100,
+      resumable: true,
+      savedTo: '/tmp/a.bin'
+    }
+    expect(getDownloadRowDisplay(file, paused, false, '2.0 MB/s').rateLabel).toBeUndefined()
+  })
+
+  it('reports the rate on folder rows with files in flight', () => {
+    const offers = [offer('/Photos/a.png'), offer('/Photos/b.png')]
+    const row = getFolderRowDisplay(
+      offers,
+      { '/Photos/a.png': state('completed', 100), '/Photos/b.png': state('downloading', 50) },
+      '4.0 MB/s · 10s left'
+    )
+    expect(row.description).toBe('150 B / 200 B')
+    expect(row.rateLabel).toBe('4.0 MB/s · 10s left')
+  })
+
+  it('omits the rate on folder rows with nothing in flight', () => {
+    const offers = [offer('/Photos/a.png'), offer('/Photos/b.png')]
+    const row = getFolderRowDisplay(
+      offers,
+      { '/Photos/a.png': state('completed', 100) },
+      '4.0 MB/s'
+    )
+    expect(row.rateLabel).toBeUndefined()
+  })
+})
+
+describe('getActiveDownloadProgress', () => {
+  it('tracks only downloading files with a known size', () => {
+    expect(
+      getActiveDownloadProgress({
+        '/a.bin': state('downloading', 40),
+        '/b.bin': state('completed', 100),
+        '/c.bin': { status: 'downloading', bytesTransferred: 10, totalBytes: 0 }
+      })
+    ).toEqual({ '/a.bin': { bytesTransferred: 40, totalBytes: 100 } })
   })
 })

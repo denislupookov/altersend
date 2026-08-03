@@ -2,9 +2,12 @@ import { useCallback, useMemo } from 'react'
 import type { IncomingFileOffer } from '@altersend/core'
 import { useTransferStore } from '../transfer/store'
 import { downloadFiles, pauseDownload } from '../transfer/commands'
+import { useTransferRates } from '../transfer/useTransferRates'
+import type { TransferRate } from '../transfer/rate'
 import {
   createDirectoryDownloadRequests,
   createSingleDownloadRequest,
+  getActiveDownloadProgress,
   getDownloadTotals,
   getOfferKey,
   canStopDownload,
@@ -21,6 +24,14 @@ import {
 export type ReceiveFileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
 export type ReceiveTextOffer = Extract<IncomingFileOffer, { kind: 'text' }>
 
+export function useDownloadRates(
+  states: Record<string, DownloadItemState>,
+  enabled: boolean
+): Record<string, TransferRate> {
+  const progress = useMemo(() => getActiveDownloadProgress(states), [states])
+  return useTransferRates(progress, enabled)
+}
+
 export interface ReceiveDownloads {
   rows: ReceiveRow[]
   fileOffers: ReceiveFileOffer[]
@@ -29,6 +40,7 @@ export interface ReceiveDownloads {
   pausedOffers: ReceiveFileOffer[]
   states: Record<string, DownloadItemState>
   totals: DownloadTotals
+  rates: Record<string, TransferRate>
   hasFiles: boolean
   isDownloading: boolean
   allDownloaded: boolean
@@ -64,6 +76,7 @@ export function useReceiveDownloads(): ReceiveDownloads {
   )
 
   const isDownloading = totals.activeCount > 0
+  const rates = useDownloadRates(states, isDownloading)
   const hasFiles = fileOffers.length > 0
   const allDownloaded = hasFiles && totals.completedCount === fileOffers.length
   const canResumeAll =
@@ -85,6 +98,7 @@ export function useReceiveDownloads(): ReceiveDownloads {
     pausedOffers,
     states,
     totals,
+    rates,
     hasFiles,
     isDownloading,
     allDownloaded,

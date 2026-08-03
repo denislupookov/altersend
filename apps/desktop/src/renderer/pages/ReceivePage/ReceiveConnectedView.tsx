@@ -6,6 +6,7 @@ import { useToast } from '../../components/Toast'
 import { isAskEveryTime } from '../../lifecycle/downloadLocationStorage'
 import {
   clearSession,
+  formatTransferRate,
   getDownloadRowLabels,
   getPrimaryDownloadLabel,
   getOfferKey,
@@ -92,6 +93,8 @@ export function ReceiveConnectedView() {
                 key={rowKey(row)}
                 row={row}
                 states={downloads.states}
+                rates={downloads.rates}
+                rateLabelFor={(rate) => formatTransferRate(rate, t)}
                 labelsFor={(display) => getDownloadRowLabels(t, display)}
                 transferActive={downloads.isDownloading}
                 isFirst={index === 0}
