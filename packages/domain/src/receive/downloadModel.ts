@@ -68,8 +68,9 @@ export function getFolderTransferRate(
   states: Record<string, DownloadItemState>,
   rates: Record<string, TransferRate>
 ): TransferRate {
+  const active = offers.filter((offer) => states[getOfferKey(offer)]?.status === 'downloading')
   return sumTransferRates(
-    offers.map((offer) => rates[getOfferKey(offer)]),
+    active.map((offer) => rates[getOfferKey(offer)]),
     getRemainingBytes(offers, states)
   )
 }

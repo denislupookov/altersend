@@ -9,18 +9,21 @@ import {
 
 const TICK_MS = 1000
 
-function isSameRates(
+export function isSameRates(
   current: Record<string, TransferRate>,
   next: Record<string, TransferRate>
 ): boolean {
   const keys = Object.keys(next)
   if (keys.length !== Object.keys(current).length) return false
 
-  return keys.every(
-    (key) =>
-      current[key]?.bytesPerSecond === next[key].bytesPerSecond &&
-      current[key]?.etaSeconds === next[key].etaSeconds
-  )
+  return keys.every((key) => {
+    const before = current[key]
+    return (
+      before !== undefined &&
+      before.bytesPerSecond === next[key].bytesPerSecond &&
+      before.etaSeconds === next[key].etaSeconds
+    )
+  })
 }
 
 export function useTransferRates(

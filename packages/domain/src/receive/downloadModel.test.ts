@@ -5,6 +5,7 @@ import {
   applyDownloadMessage,
   getDownloadTotals,
   getFolderRowDisplay,
+  getFolderTransferRate,
   getDownloadRowAction,
   getDownloadRowDisplay,
   getActiveDownloadProgress,
@@ -608,5 +609,29 @@ describe('getActiveDownloadProgress', () => {
         '/c.bin': { status: 'downloading', bytesTransferred: 10, totalBytes: 0 }
       })
     ).toEqual({ '/a.bin': { bytesTransferred: 40, totalBytes: 100 } })
+  })
+})
+
+describe('getFolderTransferRate', () => {
+  const offers = [offer('/Photos/a.png'), offer('/Photos/b.png')]
+
+  it('ignores rates left over from files that already completed', () => {
+    const rate = getFolderTransferRate(
+      offers,
+      { '/Photos/a.png': state('completed', 100), '/Photos/b.png': state('downloading', 20) },
+      { '/Photos/a.png': { bytesPerSecond: 900 }, '/Photos/b.png': { bytesPerSecond: 100 } }
+    )
+    expect(rate.bytesPerSecond).toBe(100)
+    expect(rate.etaSeconds).toBe(0.8)
+  })
+
+  it('sums the rates of every file still in flight', () => {
+    const rate = getFolderTransferRate(
+      offers,
+      { '/Photos/a.png': state('downloading', 50), '/Photos/b.png': state('downloading', 50) },
+      { '/Photos/a.png': { bytesPerSecond: 40 }, '/Photos/b.png': { bytesPerSecond: 60 } }
+    )
+    expect(rate.bytesPerSecond).toBe(100)
+    expect(rate.etaSeconds).toBe(1)
   })
 })
