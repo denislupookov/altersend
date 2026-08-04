@@ -55,7 +55,6 @@ let unsubscribe: (() => void) | null = null
 let lastStates: Record<string, DownloadItemState> | null = null
 let lastOffers: IncomingFileOffer[] | null = null
 let offersById = new Map<string, IncomingFileOffer>()
-let watched: Set<string> | null = null
 
 function indexOffers(offers: IncomingFileOffer[]): void {
   if (offers === lastOffers) return
@@ -67,59 +66,56 @@ function reset(): void {
   lastStates = null
   lastOffers = null
   offersById = new Map()
-  watched = null
   processed = new Set()
 }
 
-export function startDownloadRoutingEffect(): () => void {
-  if (started) return unsubscribe ?? (() => {})
-  started = true
+function evaluate(state: ReturnType<typeof transferStore.getState>): void {
+  const { receiveDownloadStates, incomingFileOffers } = state
+  if (receiveDownloadStates === lastStates) return
+  lastStates = receiveDownloadStates
 
-  const evaluate = (state: ReturnType<typeof transferStore.getState>): void => {
-    const { receiveDownloadStates, incomingFileOffers } = state
-    if (receiveDownloadStates === lastStates) return
-    lastStates = receiveDownloadStates
-
-    const keys = Object.keys(receiveDownloadStates)
-    if (keys.length === 0) {
-      if (processed.size > 0) flushNow()
-      reset()
-      return
-    }
-
-    indexOffers(incomingFileOffers)
-    if (!watched || watched.size + processed.size !== keys.length) {
-      watched = new Set(keys.filter((key) => !processed.has(key)))
-    }
-
-    for (const offerKey of watched) {
-      const item = receiveDownloadStates[offerKey]
-      if (!item || item.status !== 'completed') continue
-      if (item.destination !== undefined || !item.savedTo) continue
-
-      const offer = offersById.get(offerKey)
-      if (offer?.kind !== 'file') continue
-
-      processed.add(offerKey)
-      watched.delete(offerKey)
-      routeOne(offerKey, item.savedTo, offer.name).catch((err: unknown) => {
-        console.error('downloadRoutingEffect: routing failed for', offerKey, err)
-      })
-    }
+  const entries = Object.entries(receiveDownloadStates)
+  if (entries.length === 0) {
+    if (processed.size > 0) flushNow()
+    reset()
+    return
   }
+
+  indexOffers(incomingFileOffers)
+
+  for (const [offerKey, item] of entries) {
+    if (processed.has(offerKey)) continue
+    if (item.status !== 'completed') continue
+    if (item.destination !== undefined || !item.savedTo) continue
+
+    const offer = offersById.get(offerKey)
+    if (offer?.kind !== 'file') continue
+
+    processed.add(offerKey)
+    routeOne(offerKey, item.savedTo, offer.name).catch((err: unknown) => {
+      console.error('downloadRoutingEffect: routing failed for', offerKey, err)
+    })
+  }
+}
+
+function teardown(): void {
+  started = false
+  if (flushTimer) {
+    clearTimeout(flushTimer)
+    flushTimer = null
+  }
+  pendingDestinations = []
+  reset()
+  unsubscribe?.()
+  unsubscribe = null
+}
+
+export function startDownloadRoutingEffect(): () => void {
+  if (started) return teardown
+  started = true
 
   evaluate(transferStore.getState())
   unsubscribe = transferStore.subscribe(evaluate)
 
-  return () => {
-    started = false
-    if (flushTimer) {
-      clearTimeout(flushTimer)
-      flushTimer = null
-    }
-    pendingDestinations = []
-    reset()
-    unsubscribe?.()
-    unsubscribe = null
-  }
+  return teardown
 }

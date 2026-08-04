@@ -61,6 +61,7 @@ class TransferServiceModule : Module() {
     AsyncFunction("stop") {
       val context = requireContext()
       context.stopService(Intent(context, TransferForegroundService::class.java))
+      NotificationManagerCompat.from(context).cancel(TransferNotification.NOTIFICATION_ID)
     }
   }
 

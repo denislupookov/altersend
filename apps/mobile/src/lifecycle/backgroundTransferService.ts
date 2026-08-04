@@ -41,7 +41,9 @@ interface TransferSession {
 }
 
 function statusOf(activity: TransferActivity): string {
-  return [activity.phase, activity.deviceCount, activity.receivedPeers.length].join(':')
+  return [activity.phase, activity.role, activity.deviceCount, activity.receivedPeers.length].join(
+    ':'
+  )
 }
 
 let started = false

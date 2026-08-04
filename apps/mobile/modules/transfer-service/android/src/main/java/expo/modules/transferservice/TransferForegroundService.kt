@@ -116,7 +116,9 @@ class TransferForegroundService : Service() {
     }
 
     fun keepAlive() {
-      instance?.armStop(LIVENESS_TIMEOUT_MS)
+      val service = instance ?: return
+      service.armStop(LIVENESS_TIMEOUT_MS)
+      if (pendingTransferring) service.acquireWakeLock()
     }
   }
 }
