@@ -1,4 +1,5 @@
 import { dispatchToTransferStore } from './store'
+import { getAppActive } from './effects/appActive'
 import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES } from './types'
 import type { SharingStatusEvent } from '../send/draftModel'
@@ -58,6 +59,7 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
         peer: event.peer
       })
     case 'role':
+      if (event.role === null) discardPendingProgress()
       return dispatchToTransferStore({ type: 'role_changed', role: event.role })
     case 'error':
       return dispatchToTransferStore({
@@ -114,6 +116,7 @@ function dispatchRendererEvent(event: RendererTransferEvent): void {
 const PROGRESS_FLUSH_MS = 100
 const pendingProgress = new Map<string, () => void>()
 let progressTimer: ReturnType<typeof setTimeout> | null = null
+let lastFlushAt = 0
 
 function stopProgressTimer(): void {
   if (!progressTimer) return
@@ -123,12 +126,20 @@ function stopProgressTimer(): void {
 
 function queueProgress(key: string, dispatch: () => void): void {
   pendingProgress.set(key, dispatch)
+
+  if (!getAppActive()) {
+    const elapsed = Date.now() - lastFlushAt
+    if (elapsed >= PROGRESS_FLUSH_MS || elapsed < 0) flushProgress()
+    return
+  }
+
   if (progressTimer) return
   progressTimer = setTimeout(flushProgress, PROGRESS_FLUSH_MS)
 }
 
 function flushProgress(): void {
   stopProgressTimer()
+  lastFlushAt = Date.now()
   const pending = Array.from(pendingProgress.values())
   pendingProgress.clear()
   for (const dispatch of pending) dispatch()
@@ -136,6 +147,7 @@ function flushProgress(): void {
 
 export function discardPendingProgress(): void {
   stopProgressTimer()
+  lastFlushAt = 0
   pendingProgress.clear()
 }
 
@@ -200,6 +212,7 @@ function dispatchStatusEvent(event: StatusEvent): void {
     case 'joining':
     case 'joined':
     case 'disconnected':
+      if (event.state === 'disconnected') discardPendingProgress()
       return dispatchToTransferStore({
         type: 'status_changed',
         state: event.state,

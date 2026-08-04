@@ -96,5 +96,20 @@
     "durationMinutesSeconds": "{{minutes}}分{{seconds}}秒",
     "durationHours": "{{hours}}小时",
     "durationHoursMinutes": "{{hours}}小时{{minutes}}分"
+  },
+  "backgroundTransfer": {
+    "channelName": "文件传输",
+    "sending": "正在发送文件",
+    "receiving": "正在接收文件",
+    "preparing": "正在准备文件",
+    "progress": "{{percent}}% · {{transferred}} / {{total}}",
+    "waiting": "正在等待接收方",
+    "devicesConnected_one": "已连接 {{count}} 台设备",
+    "devicesConnected_other": "已连接 {{count}} 台设备",
+    "devicesReceived_one": "{{count}} 台设备已接收 · 等待中",
+    "devicesReceived_other": "{{count}} 台设备已接收 · 等待中",
+    "sentTo": "文件已发送至 {{device}}",
+    "someDevice": "某台设备",
+    "received": "文件已接收"
   }
 }

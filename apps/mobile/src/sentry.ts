@@ -45,5 +45,9 @@ export function closeSentry(): void {
 
 export function captureException(error: unknown, context?: string): void {
   if (!isCrashReportingEnabled()) return
-  Sentry.captureException(error, context ? { data: { context } } : undefined)
+  Sentry.captureException(error, context ? { extra: { context } } : undefined)
+}
+
+export function captureIn(context: string): (error: unknown) => void {
+  return (error) => captureException(error, context)
 }

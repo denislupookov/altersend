@@ -96,5 +96,20 @@
     "durationMinutesSeconds": "{{minutes}} min {{seconds}} s",
     "durationHours": "{{hours}} h",
     "durationHoursMinutes": "{{hours}} h {{minutes}} min"
+  },
+  "backgroundTransfer": {
+    "channelName": "Transferencias de archivos",
+    "sending": "Enviando archivos",
+    "receiving": "Recibiendo archivos",
+    "preparing": "Preparando archivos",
+    "progress": "{{percent}}% · {{transferred}} / {{total}}",
+    "waiting": "Esperando al receptor",
+    "devicesConnected_one": "{{count}} dispositivo conectado",
+    "devicesConnected_other": "{{count}} dispositivos conectados",
+    "devicesReceived_one": "{{count}} dispositivo recibió · esperando",
+    "devicesReceived_other": "{{count}} dispositivos recibieron · esperando",
+    "sentTo": "Archivos enviados a {{device}}",
+    "someDevice": "un dispositivo",
+    "received": "Archivos recibidos"
   }
 }

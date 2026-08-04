@@ -1,4 +1,5 @@
 import type { RendererTransferEvent } from '@altersend/core'
+import { toProgressPercent } from '../transfer/rate'
 
 export interface PeerEvent {
   id: string
@@ -94,7 +95,7 @@ export function applyPeerDownloadEvent(
   }
 }
 
-interface EventsSummary {
+export interface EventsSummary {
   failed: PeerDownloadEvent | null
   paused: PeerDownloadEvent | null
   inFlight: PeerDownloadEvent | null
@@ -104,7 +105,7 @@ interface EventsSummary {
   sumOfKnownTotals: number
 }
 
-function summarizeEvents(events: PeerDownloadEvent[]): EventsSummary | null {
+export function summarizeEvents(events: PeerDownloadEvent[]): EventsSummary | null {
   if (events.length === 0) return null
 
   let failed: PeerDownloadEvent | null = null
@@ -190,9 +191,7 @@ export function derivePeerStatus(
   if (inFlight) {
     const totalForDisplay = expectedTotalBytes > 0 ? expectedTotalBytes : sumOfKnownTotals
     const progressPercent =
-      totalForDisplay > 0
-        ? Math.max(0, Math.min(100, Math.round((transferredBytes / totalForDisplay) * 100)))
-        : undefined
+      totalForDisplay > 0 ? toProgressPercent(transferredBytes, totalForDisplay) : undefined
     return {
       status: 'downloading',
       completedCount,

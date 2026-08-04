@@ -96,5 +96,20 @@
     "durationMinutesSeconds": "{{minutes}}分{{seconds}}秒",
     "durationHours": "{{hours}}小時",
     "durationHoursMinutes": "{{hours}}小時{{minutes}}分"
+  },
+  "backgroundTransfer": {
+    "channelName": "檔案傳輸",
+    "sending": "正在傳送檔案",
+    "receiving": "正在接收檔案",
+    "preparing": "正在準備檔案",
+    "progress": "{{percent}}% · {{transferred}} / {{total}}",
+    "waiting": "正在等待接收端",
+    "devicesConnected_one": "已連線 {{count}} 台裝置",
+    "devicesConnected_other": "已連線 {{count}} 台裝置",
+    "devicesReceived_one": "{{count}} 台裝置已接收 · 等待中",
+    "devicesReceived_other": "{{count}} 台裝置已接收 · 等待中",
+    "sentTo": "檔案已傳送至 {{device}}",
+    "someDevice": "某台裝置",
+    "received": "檔案已接收"
   }
 }

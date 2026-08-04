@@ -96,5 +96,20 @@
     "durationMinutesSeconds": "{{minutes}} мин {{seconds}} с",
     "durationHours": "{{hours}} ч",
     "durationHoursMinutes": "{{hours}} ч {{minutes}} мин"
+  },
+  "backgroundTransfer": {
+    "channelName": "Передача файлов",
+    "sending": "Отправка файлов",
+    "receiving": "Получение файлов",
+    "preparing": "Подготовка файлов",
+    "progress": "{{percent}}% · {{transferred}} / {{total}}",
+    "waiting": "Ожидание получателя",
+    "devicesConnected_one": "{{count}} устройство подключено",
+    "devicesConnected_other": "{{count}} устройства подключено",
+    "devicesReceived_one": "{{count}} устройство получило · ожидание",
+    "devicesReceived_other": "{{count}} устройства получили · ожидание",
+    "sentTo": "Файлы отправлены на {{device}}",
+    "someDevice": "устройство",
+    "received": "Файлы получены"
   }
 }

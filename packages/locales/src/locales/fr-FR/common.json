@@ -96,5 +96,20 @@
     "durationMinutesSeconds": "{{minutes}} min {{seconds}} s",
     "durationHours": "{{hours}} h",
     "durationHoursMinutes": "{{hours}} h {{minutes}} min"
+  },
+  "backgroundTransfer": {
+    "channelName": "Transferts de fichiers",
+    "sending": "Envoi des fichiers",
+    "receiving": "Réception des fichiers",
+    "preparing": "Préparation des fichiers",
+    "progress": "{{percent}}% · {{transferred}} / {{total}}",
+    "waiting": "En attente du destinataire",
+    "devicesConnected_one": "{{count}} appareil connecté",
+    "devicesConnected_other": "{{count}} appareils connectés",
+    "devicesReceived_one": "{{count}} appareil a reçu · en attente",
+    "devicesReceived_other": "{{count}} appareils ont reçu · en attente",
+    "sentTo": "Fichiers envoyés à {{device}}",
+    "someDevice": "un appareil",
+    "received": "Fichiers reçus"
   }
 }

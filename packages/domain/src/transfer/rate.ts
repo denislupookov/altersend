@@ -17,6 +17,11 @@ export interface TransferProgress {
   totalBytes: number
 }
 
+export function toProgressPercent(bytesTransferred: number, totalBytes: number): number {
+  if (totalBytes <= 0) return 0
+  return Math.max(0, Math.min(100, Math.round((bytesTransferred / totalBytes) * 100)))
+}
+
 export function pushRateSample(samples: RateSample[], bytes: number, at: number): RateSample[] {
   const last = samples[samples.length - 1]
   if (last && bytes < last.bytes) return [{ bytes, at }]

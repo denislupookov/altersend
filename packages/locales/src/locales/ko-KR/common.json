@@ -96,5 +96,20 @@
     "durationMinutesSeconds": "{{minutes}}분 {{seconds}}초",
     "durationHours": "{{hours}}시간",
     "durationHoursMinutes": "{{hours}}시간 {{minutes}}분"
+  },
+  "backgroundTransfer": {
+    "channelName": "파일 전송",
+    "sending": "파일 보내는 중",
+    "receiving": "파일 받는 중",
+    "preparing": "파일 준비 중",
+    "progress": "{{percent}}% · {{transferred}} / {{total}}",
+    "waiting": "받는 사람 기다리는 중",
+    "devicesConnected_one": "{{count}}대 기기 연결됨",
+    "devicesConnected_other": "{{count}}대 기기 연결됨",
+    "devicesReceived_one": "{{count}}대 수신 완료 · 대기 중",
+    "devicesReceived_other": "{{count}}대 수신 완료 · 대기 중",
+    "sentTo": "{{device}}(으)로 파일을 보냈습니다",
+    "someDevice": "기기",
+    "received": "파일을 받았습니다"
   }
 }

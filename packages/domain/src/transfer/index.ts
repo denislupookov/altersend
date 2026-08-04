@@ -11,7 +11,9 @@ export {
   type ErrorHandler
 } from './binding'
 export * from './rate'
+export * from './activity'
 export * from './useTransferRates'
 export * from './effects/appActive'
+export * from './effects/backgroundTransfer'
 export * from './effects/peerWatchdog'
 export * from './effects/backgroundReconnectEffect'

@@ -1,6 +1,11 @@
 import type { DownloadFileRequest, IncomingFileOffer, RendererTransferEvent } from '@altersend/core'
 import { formatFileSize } from '../format'
-import { sumTransferRates, type TransferProgress, type TransferRate } from '../transfer/rate'
+import {
+  sumTransferRates,
+  toProgressPercent,
+  type TransferProgress,
+  type TransferRate
+} from '../transfer/rate'
 
 export type DownloadStatus = 'idle' | 'downloading' | 'completed' | 'failed'
 
@@ -48,11 +53,6 @@ export type ReceiveDownloadStatusEvent = Extract<RendererTransferEvent, { type: 
 
 export function getOfferKey(file: IncomingFileOffer) {
   return file.id
-}
-
-function getProgressPercent(bytesTransferred: number, totalBytes: number) {
-  if (totalBytes <= 0) return 0
-  return Math.max(0, Math.min(100, Math.round((bytesTransferred / totalBytes) * 100)))
 }
 
 function getRemainingBytes(
@@ -118,7 +118,7 @@ export function getDownloadRowDisplay(
   rateLabel?: string
 ): DownloadRowDisplay {
   const totalBytes = state?.totalBytes || (file.kind === 'file' ? file.size : 0)
-  const percent = getProgressPercent(state?.bytesTransferred ?? 0, totalBytes)
+  const percent = toProgressPercent(state?.bytesTransferred ?? 0, totalBytes)
   const isCompleted = state?.status === 'completed'
   const isActive = state?.status === 'downloading' && totalBytes > 0
 
@@ -434,7 +434,7 @@ export function getDownloadTotals(
     bytesTransferred,
     completedCount,
     activeCount,
-    percent: getProgressPercent(bytesTransferred, totalBytes)
+    percent: toProgressPercent(bytesTransferred, totalBytes)
   }
 }
 

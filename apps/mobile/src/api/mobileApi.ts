@@ -7,10 +7,11 @@ import {
   type TransferWorkerProcess,
   type WorkerClient
 } from '@altersend/core'
+import { isBackgroundTransferActive } from '@altersend/domain'
 import Constants from 'expo-constants'
 import { Directory, Paths } from 'expo-file-system'
 import * as SecureStore from 'expo-secure-store'
-import { Platform } from 'react-native'
+import { AppState, Platform, type AppStateStatus } from 'react-native'
 import { Worklet } from 'react-native-bare-kit'
 import { isRelayEnabled } from '../lifecycle/relayStorage'
 
@@ -74,8 +75,14 @@ async function getWorkletArgs() {
   return args
 }
 
+type StatefulWorklet = Worklet & {
+  readonly started: boolean
+  readonly terminated: boolean
+  readonly suspended: boolean
+}
+
 class MobileApi {
-  private worklet: Worklet | null = null
+  private worklet: StatefulWorklet | null = null
   private client: WorkerClient | null = null
   private startPromise: Promise<void> | null = null
   private readonly eventListeners = new Set<(event: RendererTransferEvent) => void>()
@@ -97,7 +104,8 @@ class MobileApi {
     }
 
     this.startPromise = (async () => {
-      this.worklet = new Worklet()
+      this.worklet = new Worklet() as StatefulWorklet
+      this.worklet.update = (state) => this.applyWorkletLifecycle(state)
 
       const source = Platform.select({
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- Metro resolves require() of bundle files to runtime resource IDs; ES6 import changes semantics
@@ -142,6 +150,31 @@ class MobileApi {
     })
 
     return this.startPromise
+  }
+
+  syncWorkletLifecycle = () => {
+    this.applyWorkletLifecycle(AppState.currentState)
+  }
+
+  resumeWorklet = () => {
+    const worklet = this.worklet
+    if (!worklet?.started || worklet.terminated) return
+    worklet.resume()
+  }
+
+  private applyWorkletLifecycle(state: AppStateStatus = AppState.currentState): void {
+    const worklet = this.worklet
+    if (!worklet?.started || worklet.terminated) return
+
+    if (state === 'active') {
+      worklet.resume()
+      return
+    }
+
+    if (state !== 'background' || worklet.suspended) return
+    if (isBackgroundTransferActive()) return
+
+    worklet.suspend()
   }
 
   onTransferEvent = (cb: (message: RendererTransferEvent) => void) => {

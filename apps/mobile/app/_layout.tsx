@@ -32,12 +32,13 @@ import { PairRequestBanner } from '../src/components/PairRequestBanner'
 import { InviteBanner } from '../src/components/InviteBanner'
 import { useAlterSendFonts } from '../src/theme/useAlterSendFonts'
 import { startAppStateBridge } from '../src/lifecycle/appStateBridge'
+import { startBackgroundTransferService } from '../src/lifecycle/backgroundTransferService'
 import { startDeepLinkHandler } from '../src/lifecycle/deepLinkHandler'
 import { getSavedLocalePreference } from '../src/lifecycle/localePreferenceStorage'
 import { isRelayEnabled } from '../src/lifecycle/relayStorage'
 import { getMobileSystemLocales } from '../src/lifecycle/systemLocale'
 import { ShareIntentHandler } from '../src/lifecycle/ShareIntentHandler'
-import { startPhotosCopyEffect } from '../src/transfer/receive'
+import { startDownloadRoutingEffect } from '../src/transfer/receive'
 import { initSentry, captureException } from '../src/sentry'
 
 SplashScreen.preventAutoHideAsync().catch(() => {})
@@ -52,7 +53,8 @@ mobileApi.worker
 startAppStateBridge()
 startPeerWatchdog()
 startBackgroundReconnectEffect()
-startPhotosCopyEffect()
+startBackgroundTransferService()
+startDownloadRoutingEffect()
 startDeepLinkHandler()
 
 function MobileCrashScreen({ error, onRestart }: { error: Error; onRestart: () => void }) {
