@@ -13,7 +13,8 @@ import android.util.Log
 private const val LOG_TAG = "TransferService"
 private const val WAKE_LOCK_TAG = "AlterSend:transfer"
 private const val WAKE_LOCK_TIMEOUT_MS = 6L * 60 * 60 * 1000
-private const val LIVENESS_TIMEOUT_MS = 15L * 60 * 1000
+private const val IDLE_TIMEOUT_MS = 15L * 60 * 1000
+private const val TRANSFERRING_TIMEOUT_MS = 60L * 60 * 1000
 
 class TransferForegroundService : Service() {
   private var wakeLock: PowerManager.WakeLock? = null
@@ -46,7 +47,7 @@ class TransferForegroundService : Service() {
     instance = this
     isRunning = true
     if (pendingTransferring) acquireWakeLock()
-    armStop(LIVENESS_TIMEOUT_MS)
+    armStop(livenessTimeout())
     return START_NOT_STICKY
   }
 
@@ -109,15 +110,19 @@ class TransferForegroundService : Service() {
     @Volatile
     private var pendingTransferring = false
 
+    private fun livenessTimeout(): Long =
+      if (pendingTransferring) TRANSFERRING_TIMEOUT_MS else IDLE_TIMEOUT_MS
+
     fun setTransferring(transferring: Boolean) {
       pendingTransferring = transferring
       val service = instance ?: return
       if (transferring) service.acquireWakeLock() else service.releaseWakeLock()
+      service.armStop(livenessTimeout())
     }
 
     fun keepAlive() {
       val service = instance ?: return
-      service.armStop(LIVENESS_TIMEOUT_MS)
+      service.armStop(livenessTimeout())
       if (pendingTransferring) service.acquireWakeLock()
     }
   }
