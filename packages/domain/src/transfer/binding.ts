@@ -129,7 +129,11 @@ function queueProgress(key: string, dispatch: () => void): void {
 
   if (!getAppActive()) {
     const elapsed = Date.now() - lastFlushAt
-    if (elapsed >= PROGRESS_FLUSH_MS || elapsed < 0) flushProgress()
+    if (elapsed >= PROGRESS_FLUSH_MS || elapsed < 0) {
+      flushProgress()
+      return
+    }
+    if (!progressTimer) progressTimer = setTimeout(flushProgress, PROGRESS_FLUSH_MS - elapsed)
     return
   }
 

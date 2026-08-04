@@ -92,11 +92,18 @@ describe('progress coalescing', () => {
     setAppActive(false)
     emit(progressEvent(100))
     emit(progressEvent(200))
+
     expect(bytesInStore()).toBe(100)
+  })
+
+  it('delivers a rate limited update without waiting for another event', () => {
+    setAppActive(false)
+    emit(progressEvent(100))
+    emit(progressEvent(200))
 
     vi.advanceTimersByTime(100)
-    emit(progressEvent(300))
-    expect(bytesInStore()).toBe(300)
+
+    expect(bytesInStore()).toBe(200)
   })
 
   it('flushes pending progress when the clock steps backwards', () => {
