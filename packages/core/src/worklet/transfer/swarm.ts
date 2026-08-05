@@ -6,6 +6,7 @@ import type { PeerControlMessage } from './control-channel'
 import { PeerIdentityStore, type NoiseKeyPair } from './peer-identity-store'
 import { PeerDrive } from './drive'
 import { relayThrough, isRelayHost } from '../relay/config'
+import { whenRelayConfReady } from '../relay/conf'
 
 type ConnectionType = 'direct' | 'relay'
 
@@ -151,7 +152,18 @@ export class TransferSwarm {
   private joinTopic(topic: Uint8Array): void {
     const discovery = crypto.discoveryKey(topic)
     this.joinedAny = true
-    this.ensureSwarm().join(discovery, { server: true, client: true })
+    const swarm = this.ensureSwarm()
+    swarm.join(discovery, { server: true, client: false })
+
+    const enableDialing = () => {
+      if (this.swarm !== swarm || !this.joinedAny) return
+      swarm.join(discovery, { server: true, client: true })
+    }
+
+    whenRelayConfReady().then(enableDialing, (err: unknown) => {
+      console.warn('TransferSwarm: relay conf wait failed', err)
+      enableDialing()
+    })
   }
 
   async endSession(): Promise<void> {

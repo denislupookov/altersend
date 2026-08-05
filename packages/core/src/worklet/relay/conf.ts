@@ -44,6 +44,26 @@ function isValidEntry(entry: unknown): entry is RelayRecordEntry {
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
+const READY_TIMEOUT_MS = 8000
+
+let readyResolve: (() => void) | null = null
+let readyPromise: Promise<void> | null = null
+
+function settleReady(): void {
+  readyResolve?.()
+  readyResolve = null
+}
+
+export function whenRelayConfReady(timeoutMs = READY_TIMEOUT_MS): Promise<void> {
+  if (loaded || !pubkey || !relayConfigSummary().enabled) return Promise.resolve()
+  if (!readyPromise) {
+    readyPromise = new Promise<void>((resolve) => {
+      readyResolve = resolve
+    })
+  }
+  return Promise.race([readyPromise, delay(timeoutMs)])
+}
+
 async function ensureRelayConf(): Promise<void> {
   if (!pubkey || loaded || inFlight || !relayConfigSummary().enabled) return
 
@@ -60,9 +80,11 @@ async function ensureRelayConf(): Promise<void> {
       }
       if (attempt < MAX_ATTEMPTS - 1) await delay(RETRY_DELAY_MS)
     }
+    console.warn('[relay-conf] no relays configured, hole-punch only')
   } finally {
     activeDht = null
     inFlight = false
+    settleReady()
     try {
       await dht.destroy()
     } catch (err) {

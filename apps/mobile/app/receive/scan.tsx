@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFill
   },
   overlayMaskVertical: {
     flex: 1
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 12
   },
   statusOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32

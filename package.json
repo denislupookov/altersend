@@ -50,13 +50,14 @@
     "knip": "^6.14.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.0.0",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.59.2"
   },
   "version": "1.8.0",
   "dependencies": {
-    "expo": "~55.0.15",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "react-native": "0.83.4"
+    "expo": "~56.0.18",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.85.3"
   }
 }

@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     position: 'relative'
   },
   camera: { flex: 1 },
-  scanOverlay: { ...StyleSheet.absoluteFillObject },
+  scanOverlay: { ...StyleSheet.absoluteFill },
   maskVertical: { flex: 1 },
   maskMiddle: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   maskSide: { flex: 1, height: FRAME_SIZE },
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
   permissionTitle: { fontSize: 18, fontWeight: '700', textAlign: 'center' },
   permissionText: { fontSize: 14, lineHeight: 20, textAlign: 'center' },
   statusOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 12

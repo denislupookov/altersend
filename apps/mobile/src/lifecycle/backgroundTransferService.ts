@@ -7,7 +7,7 @@ import {
   type TransferActivity,
   type TransferSessionState
 } from '@altersend/domain'
-import { AppState, PermissionsAndroid, Platform } from 'react-native'
+import { AppState } from 'react-native'
 import {
   isTransferServiceAvailable,
   notifyTransferCompleted,
@@ -19,6 +19,7 @@ import {
 } from '@/modules/transfer-service'
 import { mobileApi } from '../api/mobileApi'
 import { captureIn } from '../sentry'
+import { requestNotificationPermission } from './notificationPermission'
 import {
   buildReceivedNotification,
   buildSentNotification,
@@ -29,7 +30,6 @@ import {
 
 const MIN_UPDATE_INTERVAL_MS = 200
 const RATE_REFRESH_INTERVAL_MS = 1000
-const NOTIFICATION_PERMISSION_SDK = 33
 
 interface TransferSession {
   lastUpdatedAt: number
@@ -47,21 +47,9 @@ function statusOf(activity: TransferActivity): string {
 }
 
 let started = false
-let permissionRequested = false
 let session: TransferSession | null = null
 
 const report = (context: string) => captureIn(`backgroundTransferService.${context}`)
-
-async function requestNotificationPermission(): Promise<void> {
-  if (permissionRequested || Platform.OS !== 'android') return
-
-  const version = Platform.Version
-  if (typeof version === 'number' && version < NOTIFICATION_PERMISSION_SDK) return
-  if (AppState.currentState !== 'active') return
-
-  permissionRequested = true
-  await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
-}
 
 function begin(activity: TransferActivity, now: number): void {
   const current: TransferSession = {

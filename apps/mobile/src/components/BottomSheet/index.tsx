@@ -177,8 +177,8 @@ export function BottomSheet({
 }
 
 const styles = StyleSheet.create({
-  backdrop: { ...StyleSheet.absoluteFillObject },
-  keyboardAvoider: { ...StyleSheet.absoluteFillObject, justifyContent: 'flex-end' },
+  backdrop: { ...StyleSheet.absoluteFill },
+  keyboardAvoider: { ...StyleSheet.absoluteFill, justifyContent: 'flex-end' },
   sheet: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
