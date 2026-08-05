@@ -173,6 +173,7 @@ class MobileApi {
 
     if (state !== 'background' || worklet.suspended) return
     if (isBackgroundTransferActive()) return
+    if (Platform.OS !== 'android') return
 
     worklet.suspend()
   }

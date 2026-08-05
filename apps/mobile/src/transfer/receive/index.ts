@@ -1,4 +1,3 @@
-export { ErrorPanel } from './views/ErrorPanel'
 export { ReceiveCompleteView } from './views/ReceiveCompleteView'
 export { ReceiveConnectingView } from './views/ReceiveConnectingView'
 export { ReceiveIncomingView } from './views/ReceiveIncomingView'

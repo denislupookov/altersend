@@ -1,4 +1,4 @@
-import { getDownloadTotals } from '../receive/downloadModel'
+import { getDownloadTotals, isAutoResumable } from '../receive/downloadModel'
 import { summarizeEvents, type PeerDownloadEvent } from '../send/shareModel'
 import type { SenderUploadItem } from '../send/draftTypes'
 import { toProgressPercent } from './rate'
@@ -123,15 +123,17 @@ function getReceiverActivity(state: TransferSessionState): TransferActivity {
   let queued = false
   let failed = false
   let routing = false
+  let retrying = false
 
   for (const item of Object.values(state.receiveDownloadStates)) {
     if (item.queued === true) queued = true
     if (item.status === 'failed') failed = true
     if (item.status === 'completed' && item.destination === undefined) routing = true
+    if (state.peerCount > 0 && isAutoResumable(item)) retrying = true
   }
 
   return {
-    active: totals.activeCount > 0 || queued || routing,
+    active: totals.activeCount > 0 || queued || routing || retrying,
     settled: !failed,
     role: 'receiver',
     phase: 'transferring',

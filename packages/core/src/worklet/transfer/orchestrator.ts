@@ -617,7 +617,7 @@ export class TransferOrchestrator implements TransferRPC {
       throw new BadRequestError('Missing files to download')
     }
     if (this.suspended) {
-      throw new BadRequestError('Cannot download files while suspended')
+      await this.resume()
     }
 
     const controller = new AbortController()

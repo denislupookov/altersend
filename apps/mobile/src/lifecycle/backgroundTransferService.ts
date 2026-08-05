@@ -53,7 +53,7 @@ let session: TransferSession | null = null
 const report = (context: string) => captureIn(`backgroundTransferService.${context}`)
 
 async function requestNotificationPermission(): Promise<void> {
-  if (permissionRequested) return
+  if (permissionRequested || Platform.OS !== 'android') return
 
   const version = Platform.Version
   if (typeof version === 'number' && version < NOTIFICATION_PERMISSION_SDK) return

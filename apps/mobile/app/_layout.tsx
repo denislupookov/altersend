@@ -9,6 +9,7 @@ import type { Theme } from '@altersend/components'
 import {
   bindTransferApi,
   startBackgroundReconnectEffect,
+  startDownloadRetryEffect,
   startPeerWatchdog,
   useSimulatedLoading
 } from '@altersend/domain'
@@ -53,6 +54,7 @@ mobileApi.worker
 startAppStateBridge()
 startPeerWatchdog()
 startBackgroundReconnectEffect()
+startDownloadRetryEffect()
 startBackgroundTransferService()
 startDownloadRoutingEffect()
 startDeepLinkHandler()

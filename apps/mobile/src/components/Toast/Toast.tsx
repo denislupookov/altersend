@@ -3,9 +3,12 @@ import { Animated, Easing, Platform } from 'react-native'
 import { ToastIos } from './ToastIos'
 import { ToastAndroid } from './ToastAndroid'
 
+export type ToastTone = 'success' | 'error'
+
 export interface ToastPayload {
   id: number
   title: string
+  tone?: ToastTone
   hint?: string
   actionLabel?: string
   onPress?: () => void
@@ -71,6 +74,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
       <ToastIos
         title={toast.title}
         hint={toast.hint}
+        tone={toast.tone}
         translate={translate}
         opacity={opacity}
         onPress={handlePress}
@@ -82,6 +86,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
     <ToastAndroid
       title={toast.title}
       hint={toast.hint}
+      tone={toast.tone}
       actionLabel={toast.actionLabel}
       translate={translate}
       opacity={opacity}

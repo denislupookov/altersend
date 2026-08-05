@@ -111,6 +111,7 @@ export type TransferAction =
   | { type: 'clear_send_draft' }
   | { type: 'receive_download_event'; event: ReceiveDownloadStatusEvent }
   | { type: 'downloads_queued'; offerKeys: string[]; queued: boolean }
+  | { type: 'downloads_retries_exhausted'; offerKeys: string[] }
   | {
       type: 'download_routed'
       offerKey: string

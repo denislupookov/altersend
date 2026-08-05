@@ -3,9 +3,11 @@ import { Animated, Pressable, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from '@altersend/components'
 import { Text } from '@/src/components/ThemedText'
+import type { ToastTone } from './Toast'
 
 interface ToastAndroidProps {
   title: string
+  tone?: ToastTone
   hint?: string
   actionLabel?: string
   translate: Animated.Value
@@ -16,6 +18,7 @@ interface ToastAndroidProps {
 export function ToastAndroid({
   title,
   hint,
+  tone,
   actionLabel,
   translate,
   opacity,
@@ -43,7 +46,15 @@ export function ToastAndroid({
         ]}
       >
         <View style={styles.textBlock}>
-          <Text numberOfLines={1} style={[styles.title, { color: theme.colors.colorTextPrimary }]}>
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.title,
+              {
+                color: tone === 'error' ? theme.colors.colorDanger : theme.colors.colorTextPrimary
+              }
+            ]}
+          >
             {title}
           </Text>
           {hint ? (

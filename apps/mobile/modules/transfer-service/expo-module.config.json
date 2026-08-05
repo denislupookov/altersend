@@ -1,5 +1,9 @@
 {
-  "platforms": ["android"],
+  "platforms": ["android", "apple"],
+  "apple": {
+    "modules": ["TransferServiceModule"],
+    "appDelegateSubscribers": ["TransferTaskRegistrar"]
+  },
   "android": {
     "modules": ["expo.modules.transferservice.TransferServiceModule"]
   }

@@ -2,18 +2,20 @@ import React from 'react'
 import { Animated, Pressable, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from '@altersend/components'
-import { CheckIcon } from '@altersend/components/icons'
+import { AlertCircleIcon, CheckIcon } from '@altersend/components/icons'
 import { Text } from '@/src/components/ThemedText'
+import type { ToastTone } from './Toast'
 
 interface ToastIosProps {
   title: string
   hint?: string
+  tone?: ToastTone
   translate: Animated.Value
   opacity: Animated.Value
   onPress: () => void
 }
 
-export function ToastIos({ title, hint, translate, opacity, onPress }: ToastIosProps) {
+export function ToastIos({ title, hint, tone, translate, opacity, onPress }: ToastIosProps) {
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
 
@@ -36,8 +38,20 @@ export function ToastIos({ title, hint, translate, opacity, onPress }: ToastIosP
           }
         ]}
       >
-        <View style={[styles.icon, { backgroundColor: theme.colors.colorSuccess }]}>
-          <CheckIcon size={14} color={theme.colors.colorTextPrimary} />
+        <View
+          style={[
+            styles.icon,
+            {
+              backgroundColor:
+                tone === 'error' ? theme.colors.colorDanger : theme.colors.colorSuccess
+            }
+          ]}
+        >
+          {tone === 'error' ? (
+            <AlertCircleIcon size={14} color={theme.colors.colorTextPrimary} />
+          ) : (
+            <CheckIcon size={14} color={theme.colors.colorTextPrimary} />
+          )}
         </View>
         <View style={styles.textBlock}>
           <Text numberOfLines={1} style={[styles.title, { color: theme.colors.colorTextPrimary }]}>

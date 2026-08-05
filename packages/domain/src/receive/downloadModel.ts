@@ -23,6 +23,13 @@ export interface DownloadItemState {
   starting?: boolean
   queued?: boolean
   pausable?: boolean
+  pausedByUser?: boolean
+  retriesExhausted?: boolean
+}
+
+export function isAutoResumable(state: DownloadItemState | undefined): boolean {
+  if (!isResumable(state)) return false
+  return state?.pausedByUser !== true && state?.retriesExhausted !== true
 }
 
 export type DownloadRowStatusTone = 'muted' | 'active' | 'success'
@@ -353,7 +360,9 @@ export function applyDownloadMessage(
         queued: undefined,
         message: message.message,
         savedTo: message.savedTo ?? previous.savedTo,
-        resumable: message.resumable === true
+        resumable: message.resumable === true || previous.resumable === true,
+        pausedByUser: message.cancelled === true || undefined,
+        retriesExhausted: undefined
       }
     }
   }

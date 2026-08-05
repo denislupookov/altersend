@@ -21,7 +21,7 @@ const hardcodedCopyChecks = [
     snippets: ['Devices', '1 connected', '${activeCount} connected']
   },
   {
-    file: 'apps/mobile/src/transfer/receive/views/ErrorPanel.tsx',
+    file: 'apps/mobile/src/transfer/receive/utils/useErrorToast.ts',
     snippets: ['Transfer issue']
   },
   {

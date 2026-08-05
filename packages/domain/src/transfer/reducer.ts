@@ -374,6 +374,17 @@ export function transferSessionReducer(
         )
       }
     }
+    case 'downloads_retries_exhausted': {
+      if (state.role !== 'receiver') return state
+
+      const next = { ...state.receiveDownloadStates }
+      for (const key of action.offerKeys) {
+        const previous = next[key]
+        if (!previous) continue
+        next[key] = { ...previous, retriesExhausted: true }
+      }
+      return { ...state, receiveDownloadStates: next }
+    }
     case 'download_routed':
       if (state.role !== 'receiver') return state
       return {

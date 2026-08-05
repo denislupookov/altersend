@@ -7,7 +7,8 @@ import { useTranslation } from '@altersend/locales'
 import { useNavigation, useRouter } from 'expo-router'
 import { uriToPath } from '@/src/api/mobileApi'
 import { Layout, IllustrationLayout } from '@/src/components'
-import { ErrorPanel, ReceiveIncomingView, ReceiveReconnectingView } from '@/src/transfer/receive'
+import { ReceiveIncomingView, ReceiveReconnectingView } from '@/src/transfer/receive'
+import { useErrorToast } from '@/src/transfer/receive/utils/useErrorToast'
 import { exitToReceiveTab } from '@/src/transfer/receive/utils/exitToReceiveTab'
 import ConnectionLostSvg from '../../../../assets/connection-lost.svg'
 import {
@@ -36,6 +37,8 @@ export default function ReceiveIncomingScreen() {
   const isReconnecting = useTransferStore((s) => s.isReconnecting)
   const errorCode = useTransferStore((s) => s.errorCode)
   const displayError = getDisplayError(t, errorCode)
+
+  useErrorToast(displayError, t('receive:errors.transferIssue'))
 
   const { totals, fileOffers, allDownloaded } = downloads
   const hasIncomingFiles = incomingFileOffers.length > 0
@@ -200,9 +203,6 @@ export default function ReceiveIncomingScreen() {
         </View>
       }
     >
-      {displayError ? (
-        <ErrorPanel title={t('receive:errors.transferIssue')} message={displayError} />
-      ) : null}
       <ReceiveIncomingView />
     </Layout>
   )
