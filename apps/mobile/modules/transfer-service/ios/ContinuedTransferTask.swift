@@ -81,6 +81,7 @@ final class ContinuedTransferTask {
     onAttach?()
 
     continued.expirationHandler = { [weak self] in
+      continued.setTaskCompleted(success: false)
       self?.task = nil
       self?.submitted = false
       self?.onExpire?()

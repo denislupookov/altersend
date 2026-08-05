@@ -63,24 +63,27 @@ function retry(state: TransferSessionState, keys: string[]): void {
     .catch((error: unknown) => reportError('downloadRetryEffect', error))
     .finally(() => {
       inFlight = false
+      evaluate(transferStore.getState())
     })
+}
+
+function evaluate(state: TransferSessionState): void {
+  if (state.role !== 'receiver') {
+    attempts.clear()
+    seenBytes.clear()
+    return
+  }
+  if (inFlight || state.peerCount === 0) return
+
+  const keys = collectRetryable(state)
+  if (keys.length > 0) retry(state, keys)
 }
 
 export function startDownloadRetryEffect(): () => void {
   if (started) return teardown
   started = true
 
-  unsubscribe = transferStore.subscribe((state) => {
-    if (state.role !== 'receiver') {
-      attempts.clear()
-      seenBytes.clear()
-      return
-    }
-    if (inFlight || state.peerCount === 0) return
-
-    const keys = collectRetryable(state)
-    if (keys.length > 0) retry(state, keys)
-  })
+  unsubscribe = transferStore.subscribe(evaluate)
 
   return teardown
 }
