@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import * as Haptics from 'expo-haptics'
 import { Button } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import { useFocusEffect, useRouter } from 'expo-router'
@@ -52,7 +53,12 @@ export default function ReceiveScreen() {
   const submitJoin = async () => {
     if (isJoining || role !== null) return
     setShowValidation(true)
-    if (!isValidJoinCode) return
+    if (!isValidJoinCode) {
+      if (trimmedJoinCode.length > 0) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {})
+      }
+      return
+    }
     try {
       setIsJoining(true)
       await joinSession(trimmedJoinCode)

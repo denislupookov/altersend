@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
+import * as Haptics from 'expo-haptics'
 import { Button, Input } from '@altersend/components'
 import { ClipboardIcon } from '@altersend/components/icons'
 import { extractJoinCode, joinPairingSession, useTransferStore } from '@altersend/domain'
@@ -57,7 +58,13 @@ export function PairingManualCodeSheet({
 
   const join = async () => {
     setShowError(true)
-    if (!joinCode || isLoading || role !== null) return
+    if (!joinCode) {
+      if (value.trim().length > 0) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {})
+      }
+      return
+    }
+    if (isLoading || role !== null) return
     try {
       setIsJoining(true)
       await joinPairingSession(joinCode)

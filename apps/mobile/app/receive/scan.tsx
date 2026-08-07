@@ -7,6 +7,7 @@ import {
   type BarcodeScanningResult
 } from 'expo-camera'
 import * as ImagePicker from 'expo-image-picker'
+import * as Haptics from 'expo-haptics'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { QrCodeIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
@@ -73,6 +74,8 @@ export default function ReceiveScanScreen() {
         }
         return
       }
+
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {})
 
       try {
         scanLockRef.current = true

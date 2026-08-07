@@ -7,6 +7,7 @@ import {
   type BarcodeScanningResult
 } from 'expo-camera'
 import * as ImagePicker from 'expo-image-picker'
+import * as Haptics from 'expo-haptics'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { extractJoinCode, joinPairingSession, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
@@ -68,6 +69,8 @@ export function PairingScanSheet({
         }
         return
       }
+
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {})
 
       try {
         scanLockRef.current = true
