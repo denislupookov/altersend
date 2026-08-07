@@ -10,18 +10,16 @@ import * as ImagePicker from 'expo-image-picker'
 import { Button, useTheme, withAlpha } from '@altersend/components'
 import { QrCodeIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { useNavigation, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { extractJoinCode, useTransferStore } from '@altersend/domain'
 import { joinSession } from '@altersend/domain'
 import { Layout } from '@/src/components'
-import { IconButton } from '@/src/components/IconButton'
 import { useToast } from '@/src/components/Toast'
 import { Text } from '@/src/components/ThemedText'
 
 export default function ReceiveScanScreen() {
   const { t } = useTranslation(['receive', 'common'])
   const { theme } = useTheme()
-  const navigation = useNavigation()
   const router = useRouter()
   const toast = useToast()
   const role = useTransferStore((s) => s.role)
@@ -43,13 +41,6 @@ export default function ReceiveScanScreen() {
 
     router.replace('/receive')
   }, [router])
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerBackVisible: false,
-      headerLeft: () => <IconButton icon='back' label={t('common:actions.back')} onPress={goBack} />
-    })
-  }, [goBack, navigation, t, theme.colors.colorTextPrimary])
 
   useEffect(() => {
     if (!permission) {

@@ -90,7 +90,11 @@ function getHeaderOptions(theme: Theme) {
 }
 
 function getFlowScreenOptions(theme: Theme) {
-  return { ...getHeaderOptions(theme), headerTitle: '' } as const
+  return {
+    ...getHeaderOptions(theme),
+    headerTitle: '',
+    headerBackButtonMenuEnabled: false
+  } as const
 }
 
 function getTitledScreenOptions(theme: Theme, fontFamilyName?: string) {
@@ -159,16 +163,10 @@ function ThemedStack() {
           name='report'
           options={{ ...titledScreenOptions, title: t('feedback:title') }}
         />
-        <Stack.Screen
-          name='send/preparing'
-          options={{ ...flowScreenOptions, gestureEnabled: false }}
-        />
-        <Stack.Screen name='send/share' options={{ ...flowScreenOptions, gestureEnabled: false }} />
+        <Stack.Screen name='send/preparing' options={flowScreenOptions} />
+        <Stack.Screen name='send/share' options={flowScreenOptions} />
         <Stack.Screen name='receive/scan' options={flowScreenOptions} />
-        <Stack.Screen
-          name='receive/incoming'
-          options={{ ...flowScreenOptions, gestureEnabled: false }}
-        />
+        <Stack.Screen name='receive/incoming' options={flowScreenOptions} />
         <Stack.Screen
           name='receive/complete'
           options={{
