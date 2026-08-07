@@ -22,7 +22,7 @@
   --as-color-accent-hover: #ffffff;
   --as-color-accent-active: #d5dae3;
   --as-color-on-accent: #0b0f17;
-  --as-color-on-solid: #e7eaf0;
+  --as-color-control-knob: #e7eaf0;
   --as-color-success: #8ab86d;
   --as-color-success-subtle: rgba(138, 184, 109, 0.12);
   --as-color-warning: #d4a04a;
@@ -103,7 +103,7 @@
   --as-color-accent-hover: #000000;
   --as-color-accent-active: #333333;
   --as-color-on-accent: #ffffff;
-  --as-color-on-solid: #ffffff;
+  --as-color-control-knob: #ffffff;
   --as-color-success: #5f8750;
   --as-color-success-subtle: rgba(95, 135, 80, 0.12);
   --as-color-warning: #a06f1f;

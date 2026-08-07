@@ -71,7 +71,7 @@ export const styles = css.create({
     height: '20px',
     flexShrink: 0,
     borderRadius: '100px',
-    backgroundColor: tokens.colorOnSolid,
+    backgroundColor: tokens.colorControlKnob,
     transitionProperty: 'transform',
     transitionDuration: '150ms',
     transitionTimingFunction: 'ease-out'

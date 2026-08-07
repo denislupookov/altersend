@@ -54,7 +54,7 @@ export const tokens = css.defineVars({
   colorAccentHover: '#ffffff',
   colorAccentActive: '#d5dae3',
   colorOnAccent: '#0b0f17',
-  colorOnSolid: '#e7eaf0',
+  colorControlKnob: '#e7eaf0',
   colorSuccess: '#8ab86d',
   colorSuccessSubtle: 'rgba(138, 184, 109, 0.12)',
   colorWarning: '#d4a04a',

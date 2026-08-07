@@ -24,7 +24,7 @@ export const lightThemeStyle = css.createTheme(tokens, {
   colorAccentHover: '#000000',
   colorAccentActive: '#333333',
   colorOnAccent: '#ffffff',
-  colorOnSolid: '#ffffff',
+  colorControlKnob: '#ffffff',
   colorSuccess: '#5f8750',
   colorSuccessSubtle: 'rgba(95, 135, 80, 0.12)',
   colorWarning: '#a06f1f',

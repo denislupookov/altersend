@@ -17,7 +17,7 @@ export interface ThemeColors {
   colorAccentHover: string
   colorAccentActive: string
   colorOnAccent: string
-  colorOnSolid: string
+  colorControlKnob: string
   colorSuccess: string
   colorSuccessSubtle: string
   colorWarning: string

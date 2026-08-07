@@ -31,13 +31,20 @@ export function applyThemeSource(preference: ThemeSource): void {
   nativeTheme.themeSource = preference
 }
 
-export async function setThemeSource(preference: ThemeSource): Promise<void> {
+let pendingWrite: Promise<unknown> = Promise.resolve()
+
+export function setThemeSource(preference: ThemeSource): Promise<void> {
   const normalized = normalize(preference)
   applyThemeSource(normalized)
-  await writeFileViaTemp(
-    storePath(),
-    JSON.stringify({ preference: normalized } satisfies StoredTheme)
+
+  const write = pendingWrite.then(() =>
+    writeFileViaTemp(storePath(), JSON.stringify({ preference: normalized } satisfies StoredTheme))
   )
+  pendingWrite = write.catch((error) => {
+    console.warn('theme: could not persist preference', error)
+  })
+
+  return write
 }
 
 export function windowBackgroundColor(): string {
