@@ -35,7 +35,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const show = useCallback((input: ShowToastInput) => {
     nextId.current += 1
     setCurrent({ ...input, id: nextId.current })
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {})
+    Haptics.notificationAsync(
+      input.tone === 'error'
+        ? Haptics.NotificationFeedbackType.Error
+        : Haptics.NotificationFeedbackType.Success
+    ).catch(() => {})
   }, [])
 
   const dismiss = useCallback((id: number) => {

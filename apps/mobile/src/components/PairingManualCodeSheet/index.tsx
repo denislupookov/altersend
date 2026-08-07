@@ -66,7 +66,8 @@ export function PairingManualCodeSheet({
       console.warn('PairingManualCodeSheet: joinPairingSession failed', error)
       toast.show({
         title: t('settings:pairing.couldNotJoin'),
-        hint: t('settings:pairing.couldNotJoinHint')
+        hint: t('settings:pairing.couldNotJoinHint'),
+        tone: 'error'
       })
     } finally {
       setIsJoining(false)

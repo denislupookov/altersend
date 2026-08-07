@@ -67,6 +67,7 @@ export default function ReceiveScanScreen() {
           toast.show({
             title: t('receive:errors.unsupportedQrTitle'),
             hint: invalidHint,
+            tone: 'error',
             durationMs: 2500
           })
         }
@@ -85,6 +86,7 @@ export default function ReceiveScanScreen() {
         toast.show({
           title: t('receive:errors.mobileJoinFailedTitle'),
           hint: t('receive:errors.mobileJoinFailedHint'),
+          tone: 'error',
           durationMs: 3500
         })
       }
@@ -118,6 +120,7 @@ export default function ReceiveScanScreen() {
         toast.show({
           title: t('receive:errors.imageNoQrTitle'),
           hint: t('receive:errors.imageNoQrHint'),
+          tone: 'error',
           durationMs: 2500
         })
         return
@@ -125,7 +128,11 @@ export default function ReceiveScanScreen() {
       await resolveCode(scan.data, t('receive:errors.imageUnsupportedQrHint'))
     } catch (error) {
       console.warn('ReceiveScanScreen: importFromImage failed', error)
-      toast.show({ title: t('receive:errors.imageReadFailedTitle'), durationMs: 2500 })
+      toast.show({
+        title: t('receive:errors.imageReadFailedTitle'),
+        tone: 'error',
+        durationMs: 2500
+      })
     }
   }, [resolveCode, role, t, toast])
 

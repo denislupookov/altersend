@@ -53,9 +53,11 @@ export function ShareView() {
       toast.show({
         title: t('send:status.inviteFailedToast', { name: peer.name }),
         hint: t('send:status.inviteFailedHint'),
+        tone: 'error',
         durationMs: 3500
       }),
-    onPeerOutdated: () => toast.show({ title: t('send:status.peerOutdated'), durationMs: 4000 })
+    onPeerOutdated: () =>
+      toast.show({ title: t('send:status.peerOutdated'), tone: 'error', durationMs: 4000 })
   })
   const [isFilesSheetOpen, setIsFilesSheetOpen] = useState(false)
   const [isQrOpen, setIsQrOpen] = useState(false)

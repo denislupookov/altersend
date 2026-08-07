@@ -35,12 +35,13 @@ export function useDeviceRemove(forget: ForgetFn) {
     forget(peerKey)
       .then((removed) =>
         toast.show({
-          title: t(removed ? 'settings:pairing.deviceRemoved' : 'settings:pairing.removeFailed')
+          title: t(removed ? 'settings:pairing.deviceRemoved' : 'settings:pairing.removeFailed'),
+          tone: removed ? 'success' : 'error'
         })
       )
       .catch((error) => {
         console.warn('useDeviceRemove: forgetPeer failed', error)
-        toast.show({ title: t('settings:pairing.removeFailed') })
+        toast.show({ title: t('settings:pairing.removeFailed'), tone: 'error' })
       })
   }
 

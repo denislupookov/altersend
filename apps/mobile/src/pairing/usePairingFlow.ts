@@ -39,7 +39,7 @@ export function usePairingFlow() {
       closePairingSheets()
       toast.show({ title: t('settings:pairing.devicePaired') })
     },
-    onFailed: () => toast.show({ title: t('settings:pairing.pairFailed') })
+    onFailed: () => toast.show({ title: t('settings:pairing.pairFailed'), tone: 'error' })
   })
 
   useEffect(() => {

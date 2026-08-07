@@ -29,7 +29,8 @@ export function useDeviceRename(rename: RenameFn) {
 
     const renamed = await rename(target.peerKey, name)
     toast.show({
-      title: t(renamed ? 'settings:pairing.deviceRenamed' : 'settings:pairing.renameFailed')
+      title: t(renamed ? 'settings:pairing.deviceRenamed' : 'settings:pairing.renameFailed'),
+      tone: renamed ? 'success' : 'error'
     })
     return renamed
   }

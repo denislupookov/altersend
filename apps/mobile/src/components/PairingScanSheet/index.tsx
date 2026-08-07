@@ -62,7 +62,8 @@ export function PairingScanSheet({
           invalidScanAtRef.current = now
           toast.show({
             title: t('settings:pairing.unsupportedQr'),
-            hint: t('settings:pairing.unsupportedQrHint')
+            hint: t('settings:pairing.unsupportedQrHint'),
+            tone: 'error'
           })
         }
         return
@@ -79,7 +80,8 @@ export function PairingScanSheet({
         setIsResolving(false)
         toast.show({
           title: t('settings:pairing.couldNotJoin'),
-          hint: t('settings:pairing.couldNotJoinQrHint')
+          hint: t('settings:pairing.couldNotJoinQrHint'),
+          tone: 'error'
         })
       }
     },
@@ -117,14 +119,15 @@ export function PairingScanSheet({
       if (!scan) {
         toast.show({
           title: t('settings:pairing.noQrFound'),
-          hint: t('settings:pairing.noQrFoundHint')
+          hint: t('settings:pairing.noQrFoundHint'),
+          tone: 'error'
         })
         return
       }
       await resolveCode(scan.data)
     } catch (error) {
       console.warn('PairingScanSheet: importFromImage failed', error)
-      toast.show({ title: t('settings:pairing.couldNotReadImage') })
+      toast.show({ title: t('settings:pairing.couldNotReadImage'), tone: 'error' })
     }
   }, [resolveCode, role, toast, t])
 

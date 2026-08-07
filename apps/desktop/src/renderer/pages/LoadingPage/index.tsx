@@ -42,7 +42,7 @@ export default function LoadingPage({ progress = 0 }: LoadingPageProps) {
       <div className='flex shrink-0 flex-col items-center px-8 pb-[76px]'>
         <div className='h-[10px] w-full max-w-[360px] overflow-hidden rounded-full bg-border-primary'>
           <div
-            className='h-full rounded-full bg-info transition-[width] duration-100 ease-out'
+            className='h-full rounded-full bg-accent transition-[width] duration-100 ease-out'
             style={{ width: `${clamped}%` }}
           />
         </div>
