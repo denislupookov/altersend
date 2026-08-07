@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Animated, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 import { buildJoinUrl } from '@altersend/domain'
-import { useTheme } from '@altersend/components'
+import { qrColors, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
 
@@ -32,12 +32,12 @@ export function QRSection({ topic, showWaitingState, size = 200, style }: QRSect
   return (
     <View style={[styles.qrSection, style]}>
       {topic ? (
-        <View style={[styles.qrContainer, { backgroundColor: theme.colors.colorTextPrimary }]}>
+        <View style={[styles.qrContainer, { backgroundColor: qrColors.background }]}>
           <QRCode
             value={buildJoinUrl(topic)}
             size={size}
-            backgroundColor={theme.colors.colorTextPrimary}
-            color={theme.colors.colorBackground}
+            backgroundColor={qrColors.background}
+            color={qrColors.module}
           />
         </View>
       ) : (
@@ -45,7 +45,7 @@ export function QRSection({ topic, showWaitingState, size = 200, style }: QRSect
           style={[
             styles.qrContainer,
             styles.qrPlaceholder,
-            { backgroundColor: theme.colors.colorTextPrimary, height: size, width: size }
+            { backgroundColor: qrColors.background, height: size, width: size }
           ]}
         >
           <Text style={{ color: theme.colors.colorTextSecondary }}>

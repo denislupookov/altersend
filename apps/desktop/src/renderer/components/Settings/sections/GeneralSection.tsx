@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Button, LinkRow, ToggleSwitch, useTheme } from '@altersend/components'
+import {
+  AppearancePicker,
+  Button,
+  LinkRow,
+  SYSTEM_THEME_PREFERENCE,
+  ThemeType,
+  ToggleSwitch,
+  useTheme
+} from '@altersend/components'
 import { FolderIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../../api/bridgeApi'
@@ -23,9 +31,15 @@ function truncatePath(folder: string): string {
 
 export function GeneralSection() {
   const { t } = useTranslation(['settings', 'errors'])
-  const { theme } = useTheme()
+  const { theme, themePreference, setThemePreference } = useTheme()
   const c = theme.colors
   const toast = useToast()
+
+  const appearanceLabels = {
+    [ThemeType.Light]: t('settings:appearance.light'),
+    [ThemeType.Dark]: t('settings:appearance.dark'),
+    [SYSTEM_THEME_PREFERENCE]: t('settings:appearance.system')
+  }
 
   const [folder, setFolder] = useState<string | null>(null)
   const [askEveryTime, setAsk] = useState(isAskEveryTime)
@@ -115,6 +129,17 @@ export function GeneralSection() {
             />
           }
         />
+
+        <div className='mt-3 flex flex-col gap-2.5'>
+          <h3 className='m-0 text-[16px] font-semibold text-text-primary'>
+            {t('settings:appearance.title')}
+          </h3>
+          <AppearancePicker
+            value={themePreference}
+            labels={appearanceLabels}
+            onChange={setThemePreference}
+          />
+        </div>
       </div>
     </SectionShell>
   )

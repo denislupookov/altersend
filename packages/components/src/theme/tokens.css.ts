@@ -23,6 +23,7 @@ export const tokens = css.defineVars({
   colorAccentHover: '#ffffff',
   colorAccentActive: '#d5dae3',
   colorOnAccent: '#0b0f17',
+  colorOnSolid: '#e7eaf0',
   colorSuccess: '#8ab86d',
   colorSuccessSubtle: 'rgba(138, 184, 109, 0.12)',
   colorWarning: '#d4a04a',
@@ -79,9 +80,13 @@ export const tokens = css.defineVars({
   lineHeightSnug: "1.35",
   lineHeightNormal: "1.4",
   lineHeightRelaxed: "1.5",
+});
+
+export const fontTokens = css.defineVars({
   fontFamilySans: "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Helvetica Neue\", Helvetica, system-ui, sans-serif",
   fontFamilyDisplay: "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Helvetica Neue\", Helvetica, system-ui, sans-serif",
   fontFamilyMono: "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Monaco\", \"Consolas\", \"Liberation Mono\", \"Courier New\", monospace",
 });
 
 export type Tokens = typeof tokens;
+export type FontTokens = typeof fontTokens;

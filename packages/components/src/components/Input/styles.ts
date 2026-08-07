@@ -1,5 +1,5 @@
 import { css } from 'react-strict-dom'
-import { tokens } from '../../theme/tokens.css'
+import { fontTokens, tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   root: {
@@ -12,7 +12,7 @@ export const styles = css.create({
   label: {
     margin: 0,
     color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeBase,
     fontWeight: tokens.fontWeightRegular,
     lineHeight: tokens.lineHeightNormal
@@ -29,7 +29,7 @@ export const styles = css.create({
     paddingInline: tokens.space3,
     backgroundColor: tokens.colorBackgroundSubtle,
     color: tokens.colorTextPrimary,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeBase,
     fontWeight: tokens.fontWeightRegular,
     lineHeight: tokens.lineHeightNormal,
@@ -58,7 +58,7 @@ export const styles = css.create({
     backgroundColor: tokens.colorSurfaceSecondary
   },
   mono: {
-    fontFamily: tokens.fontFamilyMono,
+    fontFamily: fontTokens.fontFamilyMono,
     fontSize: tokens.fontSizeBase
   },
   invalid: {
@@ -72,7 +72,7 @@ export const styles = css.create({
   hint: {
     margin: 0,
     color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeMd,
     fontWeight: tokens.fontWeightRegular,
     lineHeight: tokens.lineHeightRelaxed
@@ -139,7 +139,7 @@ export const styles = css.create({
     borderColor: 'transparent',
     backgroundColor: 'transparent',
     color: tokens.colorTextPrimary,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeBase,
     fontWeight: tokens.fontWeightRegular,
     lineHeight: tokens.lineHeightNormal,
@@ -153,7 +153,7 @@ export const styles = css.create({
     }
   },
   inputInnerMono: {
-    fontFamily: tokens.fontFamilyMono,
+    fontFamily: fontTokens.fontFamilyMono,
     fontSize: tokens.fontSizeBase
   },
   trailingSlot: {

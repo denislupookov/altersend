@@ -6,6 +6,12 @@
     "support": "Assistance",
     "about": "À propos"
   },
+  "appearance": {
+    "title": "Apparence",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
   "crashReports": {
     "label": "Rapports d'erreur",
     "description": "Partagez des données anonymes sur les accidents pour contribuer à améliorer AlterSend"

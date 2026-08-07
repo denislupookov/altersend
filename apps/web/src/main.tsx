@@ -1,14 +1,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ThemeProvider, ThemeType } from '@altersend/components'
+import {
+  ThemeProvider,
+  applyDocumentTheme,
+  getSystemTheme,
+  resolveThemePreference
+} from '@altersend/components'
 import { initI18n, resolveLocalePreference } from '@altersend/locales'
 import App from './App'
 import { getBrowserLocales, getSavedLocalePreference } from './localePreference'
+import { getSavedThemePreference, setSavedThemePreference } from './themePreference'
 import { registerStreamWorker, sweepOpfs } from './transfer/storage'
 import './strict.css'
 import './index.css'
 
 async function bootstrap() {
+  const themePreference = getSavedThemePreference()
+  applyDocumentTheme(resolveThemePreference(themePreference, getSystemTheme()))
   registerStreamWorker()
   sweepOpfs()
 
@@ -20,7 +28,7 @@ async function bootstrap() {
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <ThemeProvider theme={ThemeType.Dark}>
+      <ThemeProvider preference={themePreference} onPreferenceChange={setSavedThemePreference}>
         <App />
       </ThemeProvider>
     </React.StrictMode>

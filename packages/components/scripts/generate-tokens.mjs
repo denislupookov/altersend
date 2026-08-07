@@ -18,7 +18,9 @@ function toJsValue(value) {
 }
 
 function kebab(key) {
-  return key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+  return key
+    .replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)
+    .replace(/(\d+)(?=[a-z])/g, '-$1');
 }
 
 const header = `// AUTO-GENERATED — do not edit directly.\n// Source: src/theme/tokens.json  |  Generator: scripts/generate-tokens.mjs\n// Run \`npm run generate-tokens\` to update.\n`;
@@ -39,7 +41,6 @@ const scaleEntriesAsCss = [
 const scaleEntriesAsString = [
   ...fontWeightEntries,
   ...lineHeightEntries,
-  ...fontFamilyEntries,
 ];
 
 const tokensCssTs = `${header}
@@ -51,7 +52,12 @@ ${scaleEntriesAsCss.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).j
 ${scaleEntriesAsString.map(([key, value]) => `  ${key}: ${JSON.stringify(value)},`).join('\n')}
 });
 
+export const fontTokens = css.defineVars({
+${fontFamilyEntries.map(([key, value]) => `  ${key}: ${JSON.stringify(value)},`).join('\n')}
+});
+
 export type Tokens = typeof tokens;
+export type FontTokens = typeof fontTokens;
 `;
 
 const tokensCssNativeTs = `${header}
@@ -77,12 +83,16 @@ ${darkColorEntries.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).jo
 ${scaleEntriesAsCss.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).join('\n')}
 ${fontWeightEntries.map(([key, value]) => `  ${key}: ${JSON.stringify(value)},`).join('\n')}
 ${lineHeightEntries.map(([key, value]) => `  ${key}: ${JSON.stringify(value)},`).join('\n')}
+});
+
+export const fontTokens = css.defineVars({
   fontFamilySans: nativeFontFamily.fontFamilySans,
   fontFamilyDisplay: nativeFontFamily.fontFamilyDisplay,
   fontFamilyMono: nativeFontFamily.fontFamilyMono,
 });
 
 export type Tokens = typeof tokens;
+export type FontTokens = typeof fontTokens;
 `;
 
 const tokensRawTs = `${header}

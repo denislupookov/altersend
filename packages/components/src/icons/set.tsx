@@ -33,6 +33,7 @@ import {
   Menu,
   MessageSquare,
   Monitor,
+  Moon,
   MoreHorizontal,
   MoreVertical,
   Music,
@@ -51,6 +52,7 @@ import {
   Shield,
   SlidersHorizontal,
   Smartphone,
+  Sun,
   Tablet,
   Trash2,
   Unlink,
@@ -93,6 +95,8 @@ export const ImageIcon = adaptLucide(Image)
 export const InfoIcon = adaptLucide(Info)
 export const LaptopIcon = adaptLucide(Laptop)
 export const MonitorIcon = adaptLucide(Monitor)
+export const MoonIcon = adaptLucide(Moon)
+export const SunIcon = adaptLucide(Sun)
 export const TabletIcon = adaptLucide(Tablet)
 export const LockIcon = adaptLucide(Lock)
 export const MailIcon = adaptLucide(Mail)

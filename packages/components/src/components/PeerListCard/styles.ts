@@ -1,5 +1,5 @@
 import { css } from 'react-strict-dom'
-import { tokens } from '../../theme/tokens.css'
+import { fontTokens, tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   section: {
@@ -25,7 +25,7 @@ export const styles = css.create({
   headerLabel: {
     margin: 0,
     color: tokens.colorTextSecondary,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeXs,
     fontWeight: tokens.fontWeightSemibold,
     lineHeight: tokens.lineHeightNormal,
@@ -35,7 +35,7 @@ export const styles = css.create({
   headerCount: {
     margin: 0,
     color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeXs,
     lineHeight: tokens.lineHeightNormal
   },
@@ -104,7 +104,7 @@ export const styles = css.create({
   avatarText: {
     margin: 0,
     color: tokens.colorInfo,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: 10,
     fontWeight: tokens.fontWeightBold,
     letterSpacing: 0.5,
@@ -123,7 +123,7 @@ export const styles = css.create({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     color: tokens.colorTextPrimary,
-    fontFamily: tokens.fontFamilyMono,
+    fontFamily: fontTokens.fontFamilyMono,
     fontSize: tokens.fontSizeMd,
     lineHeight: tokens.lineHeightSnug
   },
@@ -133,7 +133,7 @@ export const styles = css.create({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeXs,
     lineHeight: tokens.lineHeightNormal
   },
@@ -154,14 +154,14 @@ export const styles = css.create({
   pairedText: {
     margin: 0,
     color: tokens.colorSuccess,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeSm,
     fontWeight: tokens.fontWeightSemibold
   },
   requestedText: {
     margin: 0,
     color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeSm,
     fontWeight: tokens.fontWeightMedium,
     lineHeight: tokens.lineHeightNormal
@@ -173,7 +173,7 @@ export const styles = css.create({
   },
   statusText: {
     margin: 0,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeSm,
     fontWeight: tokens.fontWeightMedium
   },

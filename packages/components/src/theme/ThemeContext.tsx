@@ -7,6 +7,13 @@ import { lightThemeStyle } from './themes/light.css'
 import { DEFAULT_FONT_FAMILY_KEY, getNativeFontFamilyName, type FontFamilyKey } from './fonts'
 import { getFontFamilyCssVariables, type FontFamilyCssVariables } from './fontCssVariables'
 import { fontThemeStyles } from './fontThemes.css'
+import { useSystemTheme } from './useSystemTheme'
+import { applyDocumentTheme } from './documentTheme'
+import {
+  SYSTEM_THEME_PREFERENCE,
+  resolveThemePreference,
+  type ThemePreference
+} from './themePreference'
 import type { Theme } from './types'
 import { ThemeType } from './types'
 
@@ -79,21 +86,24 @@ function restoreFontRoot(snapshot: FontRootSnapshot) {
 interface ThemeContextValue {
   theme: Theme
   themeType: ThemeType
+  themePreference: ThemePreference
   fontFamily: FontFamilyKey
   fontFamilyName: string | undefined
-  setTheme: (theme: ThemeType) => void
+  setThemePreference: (preference: ThemePreference) => void
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
   theme: darkTheme,
   themeType: ThemeType.Dark,
+  themePreference: SYSTEM_THEME_PREFERENCE,
   fontFamily: DEFAULT_FONT_FAMILY_KEY,
   fontFamilyName: getNativeFontFamilyName(DEFAULT_FONT_FAMILY_KEY),
-  setTheme: () => {}
+  setThemePreference: () => {}
 })
 
 interface ThemeProviderProps {
-  theme?: ThemeType
+  preference?: ThemePreference
+  onPreferenceChange?: (preference: ThemePreference) => void
   fontFamily?: FontFamilyKey
   children: ReactNode
 }
@@ -108,15 +118,20 @@ const styles = css.create({
 })
 
 export function ThemeProvider({
-  theme: initialTheme = ThemeType.Dark,
+  preference: initialPreference = SYSTEM_THEME_PREFERENCE,
+  onPreferenceChange,
   fontFamily = DEFAULT_FONT_FAMILY_KEY,
   children
 }: ThemeProviderProps) {
-  const [themeType, setThemeType] = useState<ThemeType>(initialTheme)
+  const [themePreference, setThemePreferenceState] = useState<ThemePreference>(initialPreference)
+  const systemTheme = useSystemTheme()
+  const themeType = resolveThemePreference(themePreference, systemTheme)
   const themeStyle = getThemeStyle(themeType)
   const fontThemeStyle = getFontThemeStyle(fontFamily)
   const fontFamilyName = getNativeFontFamilyName(fontFamily)
   const fontRootStyle = useMemo(() => getFontFamilyCssVariables(fontFamily), [fontFamily])
+
+  useEffect(() => setThemePreferenceState(initialPreference), [initialPreference])
 
   useEffect(() => {
     if (typeof document === 'undefined') return
@@ -128,14 +143,22 @@ export function ThemeProvider({
     return () => snapshots.forEach(restoreFontRoot)
   }, [fontRootStyle])
 
+  useEffect(() => applyDocumentTheme(themeType), [themeType])
+
+  const setThemePreference = (next: ThemePreference) => {
+    setThemePreferenceState(next)
+    onPreferenceChange?.(next)
+  }
+
   return (
     <ThemeContext.Provider
       value={{
         theme: getTheme(themeType),
         themeType,
+        themePreference,
         fontFamily,
         fontFamilyName,
-        setTheme: setThemeType
+        setThemePreference
       }}
     >
       <html.div

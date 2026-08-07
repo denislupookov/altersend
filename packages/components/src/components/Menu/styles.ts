@@ -1,5 +1,5 @@
 import { css } from 'react-strict-dom'
-import { tokens } from '../../theme/tokens.css'
+import { fontTokens, tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   group: {
@@ -11,7 +11,7 @@ export const styles = css.create({
     margin: 0,
     paddingInline: tokens.space4,
     color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeLg,
     fontWeight: tokens.fontWeightMedium,
     lineHeight: tokens.lineHeightSnug
@@ -74,7 +74,7 @@ export const styles = css.create({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     color: tokens.colorTextPrimary,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeLg,
     fontWeight: tokens.fontWeightMedium,
     lineHeight: tokens.lineHeightSnug
@@ -91,7 +91,7 @@ export const styles = css.create({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeSm,
     lineHeight: tokens.lineHeightNormal
   },
@@ -106,7 +106,7 @@ export const styles = css.create({
   value: {
     margin: 0,
     color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeLg,
     lineHeight: tokens.lineHeightSnug,
     whiteSpace: 'nowrap'

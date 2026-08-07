@@ -1,3 +1,4 @@
+export * from './AppearancePicker/index'
 export * from './Badge/index'
 export * from './Button/index'
 export * from './CrashScreen/index'

@@ -54,6 +54,7 @@
   --color-accent-hover: var(--as-color-accent-hover);
   --color-accent-active: var(--as-color-accent-active);
   --color-on-accent: var(--as-color-on-accent);
+  --color-on-solid: var(--as-color-on-solid);
   --color-success: var(--as-color-success);
   --color-success-subtle: var(--as-color-success-subtle);
   --color-warning: var(--as-color-warning);

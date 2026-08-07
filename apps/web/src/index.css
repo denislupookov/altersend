@@ -15,6 +15,7 @@
   --radius-md: var(--as-radius-md);
   --radius-lg: var(--as-radius-lg);
   --radius-xl: var(--as-radius-xl);
+  --radius-2xl: var(--as-radius-2xl);
   --radius-full: var(--as-radius-full);
 
   --text-xs: var(--as-font-size-xs);
@@ -23,6 +24,7 @@
   --text-base: var(--as-font-size-base);
   --text-lg: var(--as-font-size-lg);
   --text-xl: var(--as-font-size-xl);
+  --text-2xl: var(--as-font-size-2xl);
 
   --font-weight-regular: var(--as-font-weight-regular);
   --font-weight-medium: var(--as-font-weight-medium);
@@ -52,6 +54,7 @@
   --color-accent-hover: var(--as-color-accent-hover);
   --color-accent-active: var(--as-color-accent-active);
   --color-on-accent: var(--as-color-on-accent);
+  --color-on-solid: var(--as-color-on-solid);
   --color-success: var(--as-color-success);
   --color-success-subtle: var(--as-color-success-subtle);
   --color-warning: var(--as-color-warning);

@@ -1,6 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { CrashScreen, ErrorBoundary, ThemeProvider, ThemeType } from '@altersend/components'
+import {
+  CrashScreen,
+  ErrorBoundary,
+  ThemeProvider,
+  applyDocumentTheme,
+  getSystemTheme,
+  resolveThemePreference,
+  type ThemePreference
+} from '@altersend/components'
 import {
   getLocaleFontFamily,
   initI18n,
@@ -20,6 +28,7 @@ import { initSentry, captureException } from './sentry'
 import { isCrashReportingEnabled } from './lifecycle/crashReportingStorage'
 import { isRelayEnabled } from './lifecycle/relayStorage'
 import { getSavedLocalePreference } from './lifecycle/localePreferenceStorage'
+import { getSavedThemePreference, setSavedThemePreference } from './lifecycle/themeStorage'
 import { getDesktopSystemLocales } from './lifecycle/systemLocale'
 import './strict.css'
 import './fonts.css'
@@ -39,6 +48,16 @@ function DesktopCrashScreen({ error }: { error: Error }) {
   )
 }
 
+const savedThemePreference = getSavedThemePreference()
+
+function handleThemePreferenceChange(preference: ThemePreference) {
+  setSavedThemePreference(preference)
+  if (!hasBridge()) return
+  bridgeApi
+    .setThemePreference(preference)
+    .catch((error) => captureException(error, 'setThemePreference'))
+}
+
 function DesktopRoot() {
   const { i18n } = useTranslation()
   const language = i18n.resolvedLanguage ?? i18n.language
@@ -46,7 +65,11 @@ function DesktopRoot() {
   const fontFamily = getLocaleFontFamily(locale)
 
   return (
-    <ThemeProvider theme={ThemeType.Dark} fontFamily={fontFamily}>
+    <ThemeProvider
+      preference={savedThemePreference}
+      onPreferenceChange={handleThemePreferenceChange}
+      fontFamily={fontFamily}
+    >
       <ErrorBoundary
         fallback={(error) => {
           captureException(error)
@@ -58,6 +81,8 @@ function DesktopRoot() {
     </ThemeProvider>
   )
 }
+
+applyDocumentTheme(resolveThemePreference(savedThemePreference, getSystemTheme()))
 
 initSentry()
 void bridgeApi.setSentryEnabled(isCrashReportingEnabled())

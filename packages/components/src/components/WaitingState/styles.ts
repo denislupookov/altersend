@@ -1,5 +1,5 @@
 import { css } from 'react-strict-dom'
-import { tokens } from '../../theme/tokens.css'
+import { fontTokens, tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   wrap: {
@@ -16,7 +16,7 @@ export const styles = css.create({
   },
   title: {
     margin: 0,
-    fontFamily: tokens.fontFamilyDisplay,
+    fontFamily: fontTokens.fontFamilyDisplay,
     fontSize: 20,
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorTextPrimary,
@@ -26,7 +26,7 @@ export const styles = css.create({
   description: {
     margin: 0,
     maxWidth: 300,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: 14,
     fontWeight: tokens.fontWeightRegular,
     color: tokens.colorTextMuted,

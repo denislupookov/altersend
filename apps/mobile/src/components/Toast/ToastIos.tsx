@@ -48,9 +48,9 @@ export function ToastIos({ title, hint, tone, translate, opacity, onPress }: Toa
           ]}
         >
           {tone === 'error' ? (
-            <AlertCircleIcon size={14} color={theme.colors.colorTextPrimary} />
+            <AlertCircleIcon size={14} color={theme.colors.colorOnSolid} />
           ) : (
-            <CheckIcon size={14} color={theme.colors.colorTextPrimary} />
+            <CheckIcon size={14} color={theme.colors.colorOnSolid} />
           )}
         </View>
         <View style={styles.textBlock}>

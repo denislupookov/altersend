@@ -6,6 +6,12 @@
     "support": "Unterstützung",
     "about": "Info"
   },
+  "appearance": {
+    "title": "Erscheinungsbild",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "Automatisch"
+  },
   "crashReports": {
     "label": "Absturzberichte",
     "description": "Teilen Sie anonyme Absturzdaten, um AlterSend zu verbessern"

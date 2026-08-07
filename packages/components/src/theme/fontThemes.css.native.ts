@@ -1,36 +1,36 @@
 import { css } from 'react-strict-dom'
-import { tokens } from './tokens.css'
+import { fontTokens } from './tokens.css'
 import type { FontFamilyKey } from './fonts'
 
 type FontThemeStyle = ReturnType<typeof css.createTheme>
 
 const nativeSystemFontFamily = 'System'
 
-const latinFontThemeStyle = css.createTheme(tokens, {
+const latinFontThemeStyle = css.createTheme(fontTokens, {
   fontFamilySans: nativeSystemFontFamily,
   fontFamilyDisplay: nativeSystemFontFamily,
   fontFamilyMono: 'monospace'
 })
 
-const japaneseFontThemeStyle = css.createTheme(tokens, {
+const japaneseFontThemeStyle = css.createTheme(fontTokens, {
   fontFamilySans: 'AlterSend Sans JP',
   fontFamilyDisplay: 'AlterSend Sans JP',
   fontFamilyMono: 'monospace'
 })
 
-const koreanFontThemeStyle = css.createTheme(tokens, {
+const koreanFontThemeStyle = css.createTheme(fontTokens, {
   fontFamilySans: 'AlterSend Sans KR',
   fontFamilyDisplay: 'AlterSend Sans KR',
   fontFamilyMono: 'monospace'
 })
 
-const simplifiedChineseFontThemeStyle = css.createTheme(tokens, {
+const simplifiedChineseFontThemeStyle = css.createTheme(fontTokens, {
   fontFamilySans: 'AlterSend Sans SC',
   fontFamilyDisplay: 'AlterSend Sans SC',
   fontFamilyMono: 'monospace'
 })
 
-const traditionalChineseFontThemeStyle = css.createTheme(tokens, {
+const traditionalChineseFontThemeStyle = css.createTheme(fontTokens, {
   fontFamilySans: 'AlterSend Sans TC',
   fontFamilyDisplay: 'AlterSend Sans TC',
   fontFamilyMono: 'monospace'

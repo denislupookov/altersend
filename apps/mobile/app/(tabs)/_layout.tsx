@@ -1,11 +1,11 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs'
 import { Ionicons } from '@expo/vector-icons'
-import { useTheme } from '@altersend/components'
+import { ThemeType, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 
 export default function TabLayout() {
   const { t } = useTranslation(['common'])
-  const { theme } = useTheme()
+  const { theme, themeType } = useTheme()
   const c = theme.colors
   return (
     <NativeTabs
@@ -16,7 +16,9 @@ export default function TabLayout() {
         selected: { color: c.colorInfo }
       }}
       indicatorColor={c.colorBackground}
-      blurEffect='systemChromeMaterialDark'
+      blurEffect={
+        themeType === ThemeType.Light ? 'systemChromeMaterialLight' : 'systemChromeMaterialDark'
+      }
       backgroundColor={c.colorBackground}
       shadowColor={c.colorBorderStrong}
       disableTransparentOnScrollEdge

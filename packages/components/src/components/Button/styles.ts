@@ -1,5 +1,5 @@
 import { css } from 'react-strict-dom'
-import { tokens } from '../../theme/tokens.css'
+import { fontTokens, tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   base: {
@@ -15,7 +15,7 @@ export const styles = css.create({
     padding: tokens.space3,
     alignItems: 'center',
     justifyContent: 'center',
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeMd,
     fontWeight: tokens.fontWeightSemibold,
     lineHeight: 1.1,
@@ -229,7 +229,7 @@ export const styles = css.create({
     }
   },
   textBase: {
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontWeight: tokens.fontWeightSemibold,
     letterSpacing: '-0.005em',
     textAlign: 'center',
