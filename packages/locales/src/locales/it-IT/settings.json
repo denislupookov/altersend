@@ -6,6 +6,12 @@
     "support": "Supporto",
     "about": "Informazioni"
   },
+  "appearance": {
+    "title": "Aspetto",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema"
+  },
   "crashReports": {
     "label": "Rapporti sugli incidenti",
     "description": "Condividi dati anonimi sugli arresti anomali per contribuire a migliorare AlterSend"

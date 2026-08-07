@@ -6,6 +6,12 @@
     "support": "サポート",
     "about": "情報"
   },
+  "appearance": {
+    "title": "外観",
+    "light": "ライト",
+    "dark": "ダーク",
+    "system": "システム"
+  },
   "crashReports": {
     "label": "クラッシュレポート",
     "description": "AlterSend 改善のため匿名のクラッシュデータを共有する"

@@ -1,5 +1,5 @@
 import { css } from 'react-strict-dom'
-import { tokens } from '../../theme/tokens.css'
+import { fontTokens, tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   card: {
@@ -122,7 +122,7 @@ export const styles = css.create({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     color: tokens.colorTextPrimary,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeBase,
     fontWeight: tokens.fontWeightMedium,
     lineHeight: tokens.lineHeightSnug
@@ -138,7 +138,7 @@ export const styles = css.create({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeSm,
     lineHeight: tokens.lineHeightNormal
   },
@@ -182,7 +182,7 @@ export const styles = css.create({
   statusDetail: {
     margin: 0,
     color: tokens.colorTextMuted,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeSm,
     lineHeight: tokens.lineHeightNormal,
     whiteSpace: 'nowrap'
@@ -205,7 +205,7 @@ export const styles = css.create({
   statusLabel: {
     margin: 0,
     color: tokens.colorTextSecondary,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeSm,
     lineHeight: tokens.lineHeightNormal
   },

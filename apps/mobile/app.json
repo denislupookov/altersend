@@ -23,6 +23,7 @@
         "LSSupportsOpeningDocumentsInPlace": true,
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleAllowMixedLocalizations": true,
+        "UIViewControllerBasedStatusBarAppearance": true,
         "UIBackgroundModes": ["processing"],
         "BGTaskSchedulerPermittedIdentifiers": ["com.altersend.mobile.transfer"]
       },

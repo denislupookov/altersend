@@ -49,7 +49,7 @@ export function LoadingScreen({ progress = 0 }: LoadingScreenProps) {
           <View
             style={[
               styles.progressFill,
-              { backgroundColor: theme.colors.colorAccent, width: `${clamped}%` as `${number}%` }
+              { backgroundColor: theme.colors.colorInfo, width: `${clamped}%` as `${number}%` }
             ]}
           />
         </View>

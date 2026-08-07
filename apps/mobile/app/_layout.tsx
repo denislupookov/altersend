@@ -5,7 +5,7 @@ import {
   ThemeType,
   useTheme
 } from '@altersend/components'
-import type { Theme } from '@altersend/components'
+import type { Theme, ThemePreference } from '@altersend/components'
 import {
   bindTransferApi,
   startBackgroundReconnectEffect,
@@ -24,6 +24,7 @@ import { Stack } from 'expo-router'
 import { Platform, StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
 import * as SplashScreen from 'expo-splash-screen'
+import * as SystemUI from 'expo-system-ui'
 import { LoadingScreen } from '../src/loading'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { mobileApi } from '../src/api/mobileApi'
@@ -36,6 +37,11 @@ import { startAppStateBridge } from '../src/lifecycle/appStateBridge'
 import { startBackgroundTransferService } from '../src/lifecycle/backgroundTransferService'
 import { startDeepLinkHandler } from '../src/lifecycle/deepLinkHandler'
 import { getSavedLocalePreference } from '../src/lifecycle/localePreferenceStorage'
+import {
+  getSavedThemePreference,
+  getThemePreferenceSnapshot,
+  setSavedThemePreference
+} from '../src/lifecycle/themePreferenceStorage'
 import { isRelayEnabled } from '../src/lifecycle/relayStorage'
 import { getMobileSystemLocales } from '../src/lifecycle/systemLocale'
 import { ShareIntentHandler } from '../src/lifecycle/ShareIntentHandler'
@@ -94,16 +100,34 @@ function getTitledScreenOptions(theme: Theme, fontFamilyName?: string) {
   } as const
 }
 
+function persistThemePreference(preference: ThemePreference) {
+  setSavedThemePreference(preference).catch((error) =>
+    captureException(error, 'setSavedThemePreference')
+  )
+}
+
 function ThemedStack() {
-  const { theme, fontFamilyName } = useTheme()
+  const { theme, themeType, fontFamilyName } = useTheme()
   const { t } = useTranslation(['settings', 'feedback'])
   const flowScreenOptions = getFlowScreenOptions(theme)
   const titledScreenOptions = getTitledScreenOptions(theme, fontFamilyName)
   const progress = useSimulatedLoading()
+  const statusBarStyle = themeType === ThemeType.Light ? 'dark' : 'light'
+
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync(theme.colors.colorBackground).catch((error) =>
+      captureException(error, 'setSystemBackgroundColor')
+    )
+  }, [theme])
 
   return (
     <>
-      <Stack screenOptions={{ contentStyle: { backgroundColor: theme.colors.colorBackground } }}>
+      <Stack
+        screenOptions={{
+          contentStyle: { backgroundColor: theme.colors.colorBackground },
+          statusBarStyle
+        }}
+      >
         <Stack.Screen name='index' options={{ headerShown: false }} />
         <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
         <Stack.Screen name='onboarding' options={{ headerShown: false, gestureEnabled: false }} />
@@ -171,7 +195,11 @@ function AppShell() {
   return (
     <SafeAreaProvider>
       <View style={styles.root}>
-        <ThemeProvider theme={ThemeType.Dark} fontFamily={fontFamily}>
+        <ThemeProvider
+          preference={getThemePreferenceSnapshot()}
+          onPreferenceChange={persistThemePreference}
+          fontFamily={fontFamily}
+        >
           <ErrorBoundary
             fallback={(error, reset) => {
               captureException(error)
@@ -193,37 +221,37 @@ function AppShell() {
 }
 
 export default function RootLayout() {
-  const [i18nReady, setI18nReady] = useState(false)
+  const [preferencesReady, setPreferencesReady] = useState(false)
   const [fontsLoaded, fontError] = useAlterSendFonts()
 
   useEffect(() => {
     let mounted = true
-    async function initializeLocale() {
+    async function initializePreferences() {
       try {
-        const preference = await getSavedLocalePreference()
-        await initI18n(resolveLocalePreference(preference, getMobileSystemLocales()))
+        const [locale] = await Promise.all([getSavedLocalePreference(), getSavedThemePreference()])
+        await initI18n(resolveLocalePreference(locale, getMobileSystemLocales()))
       } catch (error) {
         captureException(error)
-        console.warn('Failed to initialize locale:', error)
+        console.warn('Failed to initialize preferences:', error)
       } finally {
-        if (mounted) setI18nReady(true)
+        if (mounted) setPreferencesReady(true)
       }
     }
 
-    void initializeLocale()
+    void initializePreferences()
     return () => {
       mounted = false
     }
   }, [])
 
   useEffect(() => {
-    if (i18nReady && fontsLoaded) {
+    if (preferencesReady && fontsLoaded) {
       SplashScreen.hideAsync().catch(console.warn)
     }
-  }, [fontsLoaded, i18nReady])
+  }, [fontsLoaded, preferencesReady])
 
   if (fontError) throw fontError
-  if (!i18nReady || !fontsLoaded) return null
+  if (!preferencesReady || !fontsLoaded) return null
 
   return <AppShell />
 }

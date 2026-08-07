@@ -6,6 +6,12 @@
     "support": "支援",
     "about": "關於"
   },
+  "appearance": {
+    "title": "外觀",
+    "light": "淺色",
+    "dark": "深色",
+    "system": "跟隨系統"
+  },
   "crashReports": {
     "label": "崩潰報告",
     "description": "共享匿名崩潰資料以幫助改進AlterSend"

@@ -2,7 +2,7 @@ import { app, BrowserWindow, screen, shell } from 'electron'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { isLinux } from 'which-runtime'
-import { rawTokens } from '@altersend/components/theme/raw'
+import { applyThemeSource, loadThemeSource, windowBackgroundColor } from './theme.js'
 import type { PearRuntimeInstance } from './runtime.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -21,13 +21,14 @@ export async function createMainWindow(pear: PearRuntimeInstance) {
   const { width: workAreaWidth, height: workAreaHeight } = screen.getPrimaryDisplay().workAreaSize
   const width = Math.min(980, workAreaWidth)
   const height = Math.min(792, workAreaHeight)
+  applyThemeSource(await loadThemeSource())
   const win = new BrowserWindow({
     width,
     height,
     minWidth: Math.min(minWidth, width),
     minHeight: Math.min(minHeight, height),
     show: false,
-    backgroundColor: rawTokens.colors.dark.colorBackground,
+    backgroundColor: windowBackgroundColor(),
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import QRCodeLib from 'qrcode'
-import { useTheme } from '@altersend/components'
+import { qrColors } from '@altersend/components'
 
 interface QRCodeProps {
   value: string
@@ -11,9 +11,6 @@ interface QRCodeProps {
 
 export function QRCode({ value, loadingLabel, imageLabel, size = 220 }: QRCodeProps) {
   const [svg, setSvg] = useState<string | null>(null)
-  const { theme } = useTheme()
-  const dark = theme.colors.colorBackground
-  const light = theme.colors.colorTextPrimary
 
   useEffect(() => {
     let cancelled = false
@@ -27,8 +24,8 @@ export function QRCode({ value, loadingLabel, imageLabel, size = 220 }: QRCodePr
       errorCorrectionLevel: 'M',
       margin: 1,
       color: {
-        dark,
-        light
+        dark: qrColors.module,
+        light: qrColors.background
       }
     })
       .then((generated) => {
@@ -47,7 +44,7 @@ export function QRCode({ value, loadingLabel, imageLabel, size = 220 }: QRCodePr
     return () => {
       cancelled = true
     }
-  }, [value, dark, light])
+  }, [value])
 
   if (!svg) {
     return (
@@ -66,7 +63,7 @@ export function QRCode({ value, loadingLabel, imageLabel, size = 220 }: QRCodePr
       className='rounded-lg p-3'
       dangerouslySetInnerHTML={{ __html: svg }}
       role='img'
-      style={{ width: size, height: size, backgroundColor: light }}
+      style={{ width: size, height: size, backgroundColor: qrColors.background }}
     />
   )
 }

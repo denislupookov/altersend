@@ -1,5 +1,5 @@
 import { css } from 'react-strict-dom'
-import { tokens } from '../../theme/tokens.css'
+import { fontTokens, tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   base: {
@@ -12,7 +12,7 @@ export const styles = css.create({
     borderStyle: 'solid',
     borderRadius: tokens.radiusMd,
     padding: 0,
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeBase,
     fontWeight: tokens.fontWeightMedium,
     lineHeight: tokens.lineHeightTight,

@@ -7,8 +7,9 @@ import {
 } from '@altersend/components/icons'
 import { useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
-import logoMark from '../../../../../../assets/altersend-logo.png'
-import { Button, ListItem } from '@altersend/components'
+import logoMarkOnLight from '../../../../../../assets/altersend-logo-dark.png'
+import logoMarkOnDark from '../../../../../../assets/altersend-logo.png'
+import { Button, ListItem, ThemeType, useTheme } from '@altersend/components'
 import { openSettingsPanel } from '../Settings'
 
 export type TransferTab = 'send' | 'receive'
@@ -25,7 +26,9 @@ export function Sidebar({
   onToggleCollapsed: () => void
 }) {
   const { t } = useTranslation(['common'])
+  const { themeType } = useTheme()
   const role = useTransferStore((s) => s.role)
+  const logoMark = themeType === ThemeType.Light ? logoMarkOnLight : logoMarkOnDark
   const toggleLabel = collapsed
     ? t('common:labels.expandSidebar')
     : t('common:labels.collapseSidebar')

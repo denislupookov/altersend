@@ -12,6 +12,7 @@ import { readdir, stat } from 'fs/promises'
 import path from 'path'
 import { isPathSafe, type TransferMethod } from '@altersend/core'
 import { getDownloadFolder, setDownloadFolder } from './downloadLocation.js'
+import { setThemeSource, type ThemeSource } from './theme.js'
 import type { DesktopRuntime } from './runtime.js'
 import { setReportingEnabled } from './sentry.js'
 
@@ -240,6 +241,10 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.handle('sentry:setEnabled', (_evt, enabled: boolean) => {
     setReportingEnabled(enabled)
   })
+
+  ipcMain.handle('theme:setPreference', (_evt, preference: ThemeSource) =>
+    setThemeSource(preference)
+  )
 
   ipcMain.handle('app:requestCameraAccess', async () => {
     if (!isMac) return true

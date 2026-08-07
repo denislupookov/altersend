@@ -1,7 +1,17 @@
 export { rawTokens, type RawTokens } from './tokens.raw'
-export { tokens, type Tokens } from './tokens.css'
+export { tokens, fontTokens, type Tokens, type FontTokens } from './tokens.css'
 export { ThemeType, type Theme, type ThemeColors } from './types'
 export { ThemeProvider, useTheme } from './ThemeContext'
+export {
+  SYSTEM_THEME_PREFERENCE,
+  THEME_PREFERENCE_OPTIONS,
+  normalizeThemePreference,
+  resolveThemePreference,
+  type ThemePreference
+} from './themePreference'
+export { getSystemTheme } from './useSystemTheme'
+export { applyDocumentTheme } from './documentTheme'
+export { qrColors } from './qrColors'
 export { withAlpha } from './withAlpha'
 export { fileTypeColors, type FileTypeColor, type FileTypeKey } from './fileTypeColors'
 export { space, radius, fontSize, fontWeight, lineHeight, fontFamily } from './scales'

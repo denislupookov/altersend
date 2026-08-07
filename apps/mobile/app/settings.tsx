@@ -3,7 +3,14 @@ import { StyleSheet, View } from 'react-native'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { LOCALE_OPTIONS, useTranslation, type LocalePreference } from '@altersend/locales'
 import { loadPeers, useTransferStore } from '@altersend/domain'
-import { MenuGroup, MenuItem, useTheme } from '@altersend/components'
+import {
+  AppearancePicker,
+  MenuGroup,
+  MenuItem,
+  SYSTEM_THEME_PREFERENCE,
+  ThemeType,
+  useTheme
+} from '@altersend/components'
 import {
   GlobeIcon,
   InfoIcon,
@@ -21,7 +28,7 @@ import {
 
 export default function SettingsScreen() {
   const { t } = useTranslation(['settings', 'common'])
-  const { theme } = useTheme()
+  const { theme, themePreference, setThemePreference } = useTheme()
   const c = theme.colors
   const router = useRouter()
   const [localePreference, setLocalePreference] = useState<LocalePreference>(
@@ -54,6 +61,12 @@ export default function SettingsScreen() {
   const languageLabel =
     LOCALE_OPTIONS.find((option) => option.preference === localePreference)?.nativeName ??
     t('common:labels.systemDefault')
+
+  const appearanceLabels = {
+    [ThemeType.Light]: t('settings:appearance.light'),
+    [ThemeType.Dark]: t('settings:appearance.dark'),
+    [SYSTEM_THEME_PREFERENCE]: t('settings:appearance.system')
+  }
 
   return (
     <Layout hasNativeHeader>
@@ -97,6 +110,13 @@ export default function SettingsScreen() {
             onPress={() => router.push('/about')}
           />
         </MenuGroup>
+
+        <AppearancePicker
+          value={themePreference}
+          labels={appearanceLabels}
+          onChange={setThemePreference}
+          title={t('settings:appearance.title')}
+        />
       </View>
     </Layout>
   )

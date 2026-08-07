@@ -6,6 +6,12 @@
     "support": "지원",
     "about": "정보"
   },
+  "appearance": {
+    "title": "화면 모드",
+    "light": "라이트",
+    "dark": "다크",
+    "system": "시스템"
+  },
   "crashReports": {
     "label": "충돌 보고서",
     "description": "AlterSend 개선을 위해 익명 충돌 데이터 공유"

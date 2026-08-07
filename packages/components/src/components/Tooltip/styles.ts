@@ -54,7 +54,7 @@ export const styles = css.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     borderRadius: tokens.radiusLg,
-    backgroundColor: tokens.colorSurfaceTertiary,
+    backgroundColor: tokens.colorSurfaceSecondary,
     paddingTop: tokens.space25,
     paddingBottom: tokens.space25,
     paddingLeft: tokens.space3,

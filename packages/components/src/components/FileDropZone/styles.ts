@@ -1,5 +1,5 @@
 import { css } from 'react-strict-dom'
-import { tokens } from '../../theme/tokens.css'
+import { fontTokens, tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   card: {
@@ -81,7 +81,7 @@ export const styles = css.create({
     maxWidth: 360
   },
   title: {
-    fontFamily: tokens.fontFamilyDisplay,
+    fontFamily: fontTokens.fontFamilyDisplay,
     fontSize: tokens.fontSizeLg,
     fontWeight: tokens.fontWeightMedium,
     letterSpacing: '-0.005em',
@@ -93,7 +93,7 @@ export const styles = css.create({
     fontSize: tokens.fontSizeBase
   },
   description: {
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeMd,
     fontWeight: tokens.fontWeightRegular,
     color: tokens.colorTextFaint,

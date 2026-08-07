@@ -6,6 +6,12 @@
     "support": "Soporte",
     "about": "Acerca de"
   },
+  "appearance": {
+    "title": "Apariencia",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
   "crashReports": {
     "label": "Informes de fallos",
     "description": "Comparte datos anónimos sobre fallos para ayudar a mejorar AlterSend"

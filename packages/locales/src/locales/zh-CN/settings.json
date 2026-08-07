@@ -6,6 +6,12 @@
     "support": "支持",
     "about": "关于"
   },
+  "appearance": {
+    "title": "外观",
+    "light": "浅色",
+    "dark": "深色",
+    "system": "跟随系统"
+  },
   "crashReports": {
     "label": "崩溃报告",
     "description": "共享匿名崩溃数据以帮助改进AlterSend"

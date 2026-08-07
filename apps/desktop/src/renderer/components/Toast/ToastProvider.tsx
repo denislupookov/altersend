@@ -73,7 +73,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             style={{ animation: 'as-toast-in 220ms cubic-bezier(0.16, 1, 0.3, 1)' }}
           >
             <span
-              className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-text-primary ${current.variant === 'error' ? 'bg-danger' : 'bg-success'}`}
+              className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-background ${current.variant === 'error' ? 'bg-danger' : 'bg-success'}`}
             >
               {current.variant === 'error' ? (
                 <AlertCircleIcon size={11} />

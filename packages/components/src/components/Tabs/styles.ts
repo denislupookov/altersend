@@ -1,5 +1,5 @@
 import { css } from 'react-strict-dom'
-import { tokens } from '../../theme/tokens.css'
+import { fontTokens, tokens } from '../../theme/tokens.css'
 
 export const styles = css.create({
   root: {
@@ -26,7 +26,7 @@ export const styles = css.create({
     borderStyle: 'solid',
     borderColor: tokens.colorBorderPrimary,
     borderRadius: tokens.radiusMd,
-    backgroundColor: tokens.colorBackgroundSubtle
+    backgroundColor: tokens.colorSurfacePrimary
   },
   listStretch: {
     alignSelf: 'stretch',
@@ -43,7 +43,7 @@ export const styles = css.create({
     borderWidth: 0,
     borderRadius: tokens.radiusSm,
     backgroundColor: 'transparent',
-    fontFamily: tokens.fontFamilySans,
+    fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeBase,
     cursor: 'pointer',
     transitionDuration: '150ms',
