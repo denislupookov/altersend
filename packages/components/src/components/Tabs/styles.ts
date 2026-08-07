@@ -26,7 +26,7 @@ export const styles = css.create({
     borderStyle: 'solid',
     borderColor: tokens.colorBorderPrimary,
     borderRadius: tokens.radiusMd,
-    backgroundColor: tokens.colorBackgroundSubtle
+    backgroundColor: tokens.colorSurfacePrimary
   },
   listStretch: {
     alignSelf: 'stretch',

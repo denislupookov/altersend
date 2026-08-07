@@ -85,9 +85,9 @@ export const styles = css.create({
   },
   primary: {
     backgroundColor: tokens.colorTextPrimary,
-    borderColor: tokens.colorBorderPrimary,
+    borderColor: 'transparent',
     color: tokens.colorBackground,
-    boxShadow: `0 1px 2px ${tokens.colorShadow}, inset 0 1px 0 ${tokens.colorHighlight}`,
+    boxShadow: `0 1px 2px ${tokens.colorShadow}`,
     ':hover': {
       backgroundColor: tokens.colorAccentActive,
       borderColor: tokens.colorBorderStrong
