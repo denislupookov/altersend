@@ -24,6 +24,7 @@ import {
   ShareIcon
 } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
+import { useRouter } from 'expo-router'
 import { useToast } from '@/src/components/Toast'
 import { ConfirmDialog, DeviceActionsSheet, DeviceRenameSheet } from '@/src/components'
 import { useDeviceRename } from '@/src/pairing/useDeviceRename'
@@ -40,6 +41,7 @@ export function ShareView() {
   const { theme } = useTheme()
   const c = theme.colors
   const toast = useToast()
+  const router = useRouter()
   const vm = useShareViewModel(t, {
     onPeerJoined: (peer) =>
       toast.show({
@@ -80,12 +82,17 @@ export function ShareView() {
 
   const pro = useSubscriptionStore((state) => state.active)
   const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize, pro)
-  const tileCount = webLinkTooLarge ? 2 : 3
+  const tileCount = 3
   const tileWidth =
     contentWidth > 0 ? (contentWidth - TILE_GAP * (tileCount - 1)) / tileCount : undefined
 
   const shareLink = async () => {
     if (!vm.topic) return
+    if (webLinkTooLarge) {
+      router.push('/account')
+      return
+    }
+
     try {
       const link = buildWebReceiveUrl(vm.topic, process.env.EXPO_PUBLIC_WEB_URL)
       await Clipboard.setStringAsync(link)
@@ -146,21 +153,19 @@ export function ShareView() {
                 {vm.isCopied ? t('common:actions.copied') : t('send:connection.copyCode')}
               </Button>
             </View>
-            {!webLinkTooLarge && (
-              <View style={[styles.tile, { width: tileWidth }]}>
-                <Button
-                  stack
-                  size='sm'
-                  variant='secondary'
-                  width='full'
-                  disabled={!vm.topic}
-                  icon={<LinkIcon size={18} />}
-                  onClick={() => void shareLink()}
-                >
-                  {t('send:connection.shareLink')}
-                </Button>
-              </View>
-            )}
+            <View style={[styles.tile, { width: tileWidth }]}>
+              <Button
+                stack
+                size='sm'
+                variant='secondary'
+                width='full'
+                disabled={!vm.topic}
+                icon={<LinkIcon size={18} />}
+                onClick={() => void shareLink()}
+              >
+                {t('send:connection.shareLink')}
+              </Button>
+            </View>
             <View style={[styles.tile, { width: tileWidth }]}>
               <Button
                 stack
@@ -202,19 +207,17 @@ export function ShareView() {
                   value={vm.topic}
                 />
               </View>
-              {!webLinkTooLarge && (
-                <View style={styles.keyAction}>
-                  <Button
-                    variant='secondary'
-                    width='full'
-                    iconOnly
-                    aria-label={t('send:connection.shareLink')}
-                    disabled={!vm.topic}
-                    icon={<LinkIcon size={18} />}
-                    onClick={() => void shareLink()}
-                  />
-                </View>
-              )}
+              <View style={styles.keyAction}>
+                <Button
+                  variant='secondary'
+                  width='full'
+                  iconOnly
+                  aria-label={t('send:connection.shareLink')}
+                  disabled={!vm.topic}
+                  icon={<LinkIcon size={18} />}
+                  onClick={() => void shareLink()}
+                />
+              </View>
             </View>
           </View>
         )}

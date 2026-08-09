@@ -148,13 +148,12 @@ export function ShareView() {
               onCopy={() => void copyTopic()}
               placeholder={t('send:connection.placeholder')}
             />
-            {!webLinkTooLarge && (
-              <CopyLinkButton
-                topic={vm.topic}
-                copied={copiedId === 'link'}
-                onCopy={() => void copyLink()}
-              />
-            )}
+            <CopyLinkButton
+              topic={vm.topic}
+              copied={copiedId === 'link'}
+              locked={webLinkTooLarge}
+              onCopy={() => void copyLink()}
+            />
             <div className='flex h-12 w-12 shrink-0'>
               <Button
                 variant='secondary'
@@ -217,13 +216,12 @@ export function ShareView() {
                     onCopy={() => void copyTopic()}
                     placeholder={t('send:connection.placeholder')}
                   />
-                  {!webLinkTooLarge && (
-                    <CopyLinkButton
-                      topic={vm.topic}
-                      copied={copiedId === 'link'}
-                      onCopy={() => void copyLink()}
-                    />
-                  )}
+                  <CopyLinkButton
+                    topic={vm.topic}
+                    copied={copiedId === 'link'}
+                    locked={webLinkTooLarge}
+                    onCopy={() => void copyLink()}
+                  />
                 </div>
                 {vm.hasDevices && filesCard}
               </div>
