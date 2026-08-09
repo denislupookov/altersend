@@ -30,12 +30,15 @@ function flattenStringEntries(value: unknown, prefix = ''): StringEntry[] {
 
 function isPlaceholderOnly(value: string): boolean {
   const withoutPlaceholders = value.replace(/\{\{[^}]+\}\}/g, '')
-  const withoutPunctuation = withoutPlaceholders.replace(/[\s%.,:;!?()[\]{}'"“”‘’…·\-+/#|]+/g, '')
+  const withoutPunctuation = withoutPlaceholders.replace(/[\s%.,:;!?()[\]{}'"“”‘’…·\-–—+/#|]+/g, '')
   return withoutPunctuation.length === 0
 }
 
 const identicalValueAllowList = new Set([
   'AlterSend',
+  'AlterSend Pro',
+  'Pro',
+  'Upgrade',
   'Discord',
   'Downloads',
   'General',
@@ -50,6 +53,7 @@ const identicalValueAllowList = new Set([
 
 const identicalKeyAllowList = new Set([
   'common.files.count_one',
+  'settings.account.codePlaceholder',
   'common.files.text',
   'common.files.items_one',
   'common.labels.desktop',

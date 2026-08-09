@@ -4,7 +4,7 @@ interface SubscriptionState {
   active: boolean
 }
 
-export const subscriptionStore = create<SubscriptionState>()(() => ({ active: false }))
+const subscriptionStore = create<SubscriptionState>()(() => ({ active: false }))
 
 export const useSubscriptionStore = subscriptionStore
 

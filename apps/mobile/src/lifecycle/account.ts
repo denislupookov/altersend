@@ -1,4 +1,4 @@
-import { Linking } from 'react-native'
+import { AppState, Linking } from 'react-native'
 import * as SecureStore from 'expo-secure-store'
 import { accountApiUrl, createAccountRuntime, type AccountStorage } from '@altersend/domain'
 import { mobileApi } from '@/src/api/mobileApi'
@@ -32,5 +32,11 @@ const runtime = createAccountRuntime({
 
 export const accountAdapter = runtime.adapter
 export const syncAccountToken = runtime.syncToken
-export const startAccountSync = runtime.startSync
-export const stopAccountSync = runtime.stopSync
+const warnSync = (err: unknown) => console.warn('[account] foreground sync failed', err)
+
+export function startAccountSync(): void {
+  runtime.startSync()
+  AppState.addEventListener('change', (next) => {
+    if (next === 'active') runtime.syncTokenIfStale().catch(warnSync)
+  })
+}

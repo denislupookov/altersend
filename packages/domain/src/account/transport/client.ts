@@ -3,7 +3,7 @@ import { AccountApiError, NETWORK_ERROR_STATUS, TIMEOUT_ERROR_STATUS } from './A
 
 const REQUEST_TIMEOUT_MS = 15000
 
-export interface NewAccount {
+interface NewAccount {
   code: string
   validUntil: string
   active: boolean
@@ -15,18 +15,18 @@ export interface AccountStatus {
   validUntil?: string
 }
 
-export interface AccountToken {
+interface AccountToken {
   token: string
   expiresAt: number
 }
 
-export interface AccountDeletion {
+interface AccountDeletion {
   deleted: boolean
   subscriptionCancelled: boolean
   customerDeleted: boolean
 }
 
-export interface PlanPriceResponse {
+interface PlanPriceResponse {
   plan: BillingPlan
   formatted: string
 }

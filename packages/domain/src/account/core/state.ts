@@ -39,6 +39,7 @@ export interface AccountSession {
   error: AccountError | null
   entry: string
   plan: BillingPlan
+  rotated: boolean
 }
 
 export type AccountAction =
@@ -52,7 +53,7 @@ export type AccountAction =
   | { type: 'showPaywall' }
   | { type: 'upgrading'; account: AccountState }
   | { type: 'awaitingApproval'; account: AccountState }
-  | { type: 'purchased'; account: AccountState }
+  | { type: 'purchased'; account: AccountState; rotated?: boolean }
   | { type: 'activated'; account: AccountState }
   | { type: 'acknowledged' }
   | { type: 'forgotten' }
@@ -63,7 +64,8 @@ export const initialAccountSession: AccountSession = {
   busy: false,
   error: null,
   entry: '',
-  plan: 'monthly'
+  plan: 'monthly',
+  rotated: false
 }
 
 export function accountReducer(state: AccountSession, action: AccountAction): AccountSession {
@@ -93,6 +95,7 @@ export function accountReducer(state: AccountSession, action: AccountAction): Ac
         ...state,
         phase: state.phase === 'active' ? 'active' : 'success',
         account: action.account,
+        rotated: Boolean(action.rotated),
         error: null
       }
     case 'activated':

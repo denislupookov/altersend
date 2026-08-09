@@ -18,6 +18,11 @@ const runtime = createAccountRuntime({
 })
 
 export const accountAdapter = runtime.adapter
-export const syncAccountToken = runtime.syncToken
-export const startAccountSync = runtime.startSync
-export const stopAccountSync = runtime.stopSync
+const warnSync = (err: unknown) => console.warn('[account] focus sync failed', err)
+
+export function startAccountSync(): void {
+  runtime.startSync()
+  window.addEventListener('focus', () => {
+    runtime.syncTokenIfStale().catch(warnSync)
+  })
+}

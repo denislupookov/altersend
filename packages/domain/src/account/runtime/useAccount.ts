@@ -35,11 +35,11 @@ export interface AccountAdapter {
   purchases?: PurchaseAdapter
 }
 
-export interface AccountStoreActions {
+interface AccountStoreActions {
   restore(): Promise<boolean>
 }
 
-export interface AccountSubscriptionActions {
+interface AccountSubscriptionActions {
   logOut(): void
   manage(): void
 }
@@ -51,6 +51,7 @@ export interface AccountModel {
   errorKey: string | null
   entry: string
   codeReady: boolean
+  rotated: boolean
   plan: BillingPlan
   prices: PlanPrices
   store?: AccountStoreActions
@@ -309,6 +310,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
       errorKey: accountErrorKey(session.error),
       entry: session.entry,
       codeReady: isAccountCodeReady(session.entry),
+      rotated: session.rotated,
       plan: session.plan,
       prices,
       store,

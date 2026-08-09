@@ -14,10 +14,13 @@ import { IconButton } from '@/src/components/IconButton'
 import { Text } from '@/src/components/ThemedText'
 import { purchasesReady } from '@/src/lifecycle/purchases'
 import { HEADER_TOP, SCREEN_PADDING } from './constants'
+import { PlanCellValue } from './PlanCellValue'
 import { successTap } from './haptics'
 import type { AccountPhaseProps } from './types'
 
 const PRO_COLUMN_WIDTH = 80
+const FREE_CHECK_SIZE = 15
+const PRO_CHECK_SIZE = 17
 
 function openExternalUrl(url: string) {
   Linking.openURL(url).catch((err) => console.warn('[account] could not open url', err))
@@ -132,10 +135,22 @@ export function Paywall({ model, errorText, onDismiss }: AccountPhaseProps) {
             style={[styles.tableRow, index === rows.length - 1 && styles.tableRowLast]}
           >
             <Text style={[styles.rowLabel, { color: c.colorTextSecondary }]}>{row.label}</Text>
-            <Text style={[styles.freeCell, styles.freeValue, { color: c.colorTextMuted }]}>
-              {row.free}
-            </Text>
-            <Text style={[styles.proValue, { color: c.colorTextPrimary }]}>{row.pro}</Text>
+            <View style={styles.freeCell}>
+              <PlanCellValue
+                cell={row.free}
+                color={c.colorTextMuted}
+                size={FREE_CHECK_SIZE}
+                style={styles.freeValue}
+              />
+            </View>
+            <View style={styles.proCell}>
+              <PlanCellValue
+                cell={row.pro}
+                color={c.colorTextPrimary}
+                size={PRO_CHECK_SIZE}
+                style={styles.proValue}
+              />
+            </View>
           </View>
         ))}
       </View>
@@ -166,14 +181,15 @@ const styles = StyleSheet.create({
   },
   tableHead: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
   headLabel: { fontSize: 15, fontWeight: '600' },
-  headColumn: { fontSize: 13, fontWeight: '600' },
+  headColumn: { fontSize: 13, fontWeight: '600', textAlign: 'center' },
   tableRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16 },
   tableRowLast: { paddingBottom: 24 },
   rowLabel: { flex: 1, fontSize: 14, lineHeight: 19, paddingRight: 12 },
-  freeCell: { width: 56, marginRight: 16, textAlign: 'center' },
-  freeValue: { fontSize: 14 },
+  freeCell: { width: 56, marginRight: 16, alignItems: 'center' },
+  freeValue: { fontSize: 14, textAlign: 'center' },
   proHeadCell: { width: PRO_COLUMN_WIDTH, alignItems: 'center' },
-  proValue: { width: PRO_COLUMN_WIDTH, textAlign: 'center', fontSize: 16, fontWeight: '600' },
+  proCell: { width: PRO_COLUMN_WIDTH, alignItems: 'center' },
+  proValue: { textAlign: 'center', fontSize: 16, fontWeight: '600' },
   proChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
   proChipLabel: { fontSize: 13, fontWeight: '600' },
   footer: { gap: 10 },

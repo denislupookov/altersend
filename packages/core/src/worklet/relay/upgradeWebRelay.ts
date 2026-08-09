@@ -23,18 +23,14 @@ export async function upgradeWebRelay(cid: string, host: string): Promise<boolea
   try {
     const socket = dht.connect(key) as Closable
     const announced = announceProToken(socket, token, cid)
-    
+
     if (announced) {
       await new Promise((resolve) => setTimeout(resolve, SETTLE_MS))
     }
 
     socket.destroy()
     return announced
-  } catch (err) {
-    console.warn(
-      '[pro] web relay upgrade failed',
-      err instanceof Error ? err.message : String(err)
-    )
+  } catch {
     return false
   } finally {
     await dht.destroy().catch((err) => {

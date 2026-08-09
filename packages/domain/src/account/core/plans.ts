@@ -16,7 +16,12 @@ export function pricesFrom(offers: PlanOffer[]): PlanPrices {
   return prices
 }
 
-export const UNLIMITED = '∞'
+export type PlanCell = { type: 'text'; value: string } | { type: 'check' }
+
+const cellText = (value: string): PlanCell => ({ type: 'text', value })
+
+const UNLIMITED = cellText('∞')
+const INCLUDED: PlanCell = { type: 'check' }
 
 export const BILLING_PLANS: BillingPlan[] = ['monthly', 'yearly']
 
@@ -27,8 +32,8 @@ const PLAN_LABEL_KEY: Record<BillingPlan, string> = {
 
 export interface PlanComparisonRow {
   label: string
-  free: string
-  pro: string
+  free: PlanCell
+  pro: PlanCell
 }
 
 export function planLabel(plan: BillingPlan, t: TranslateFn, prices?: PlanPrices): string {
@@ -36,8 +41,6 @@ export function planLabel(plan: BillingPlan, t: TranslateFn, prices?: PlanPrices
   const price = prices?.[plan]
   return price ? `${name} · ${price}` : name
 }
-
-export const INCLUDED = '✓'
 
 export function planComparisonRows(t: TranslateFn): PlanComparisonRow[] {
   return [
@@ -48,17 +51,17 @@ export function planComparisonRows(t: TranslateFn): PlanComparisonRow[] {
     },
     {
       label: t('settings:account.featurePriority'),
-      free: t('settings:account.none'),
+      free: cellText(t('settings:account.none')),
       pro: INCLUDED
     },
     {
       label: t('settings:account.featureWebCap'),
-      free: WEB_LINK_MAX_LABEL,
+      free: cellText(WEB_LINK_MAX_LABEL),
       pro: UNLIMITED
     },
     {
       label: t('settings:account.featureAppCap'),
-      free: NATIVE_RELAY_MAX_LABEL,
+      free: cellText(NATIVE_RELAY_MAX_LABEL),
       pro: UNLIMITED
     }
   ]

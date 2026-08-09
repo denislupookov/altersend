@@ -2,6 +2,7 @@ import type { AccountClient } from '../transport'
 import { setSubscriptionActive } from './store'
 
 const REFRESH_MS = 12 * 60 * 60 * 1000
+const STALE_AFTER_MS = 5 * 60 * 1000
 
 export interface TokenSyncOptions {
   client: AccountClient
@@ -11,6 +12,7 @@ export interface TokenSyncOptions {
 
 export interface TokenSync {
   sync(): Promise<boolean>
+  syncIfStale(minAgeMs?: number): Promise<boolean>
   start(): void
   stop(): void
 }
@@ -18,6 +20,7 @@ export interface TokenSync {
 export function createTokenSync({ client, readCode, applyToken }: TokenSyncOptions): TokenSync {
   let token: string | null = null
   let timer: ReturnType<typeof setInterval> | null = null
+  let lastSyncAt = 0
 
   const report = (err: unknown) =>
     console.warn('[account] token sync failed:', err instanceof Error ? err.message : String(err))
@@ -44,12 +47,20 @@ export function createTokenSync({ client, readCode, applyToken }: TokenSyncOptio
       return token !== null
     }
 
+    lastSyncAt = Date.now()
     await push()
+
     return token !== null
+  }
+
+  async function syncIfStale(minAgeMs = STALE_AFTER_MS): Promise<boolean> {
+    if (Date.now() - lastSyncAt < minAgeMs) return token !== null
+    return sync()
   }
 
   return {
     sync,
+    syncIfStale,
     start() {
       if (timer) return
       sync().catch(report)

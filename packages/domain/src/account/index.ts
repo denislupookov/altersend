@@ -9,6 +9,7 @@ export {
   planLabel,
   type AccountPhase,
   type BillingPlan,
+  type PlanCell,
   type PlanOffer
 } from './core'
 

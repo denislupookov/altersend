@@ -3,9 +3,12 @@ import { useTranslation } from '@altersend/locales'
 import { BILLING_PLANS, planComparisonRows, planLabel, type BillingPlan } from '@altersend/domain'
 import { HeroBackdrop } from '../../../HeroBackdrop'
 import { SectionShell } from '../SectionShell'
+import { PlanCellValue } from './PlanCellValue'
 import type { AccountPhaseProps } from './types'
 
 const COLUMNS = 'grid grid-cols-[minmax(0,1fr)_72px_104px] items-center gap-x-4'
+const FREE_CHECK_SIZE = 15
+const PRO_CHECK_SIZE = 17
 
 export function Paywall({ model, errorText }: AccountPhaseProps) {
   const { t } = useTranslation(['settings', 'common'])
@@ -69,10 +72,18 @@ export function Paywall({ model, errorText }: AccountPhaseProps) {
             className={`${COLUMNS} relative py-4 ${index === rows.length - 1 ? 'pb-6' : ''}`}
           >
             <span className='text-[14px] leading-[19px] text-text-secondary'>{row.label}</span>
-            <span className='text-center text-[14px] text-text-muted'>{row.free}</span>
-            <span className='text-center text-[16px] font-semibold text-text-primary'>
-              {row.pro}
-            </span>
+            <PlanCellValue
+              cell={row.free}
+              className='block text-center text-[14px] text-text-muted'
+              size={FREE_CHECK_SIZE}
+              tone='muted'
+            />
+            <PlanCellValue
+              cell={row.pro}
+              className='block text-center text-[16px] font-semibold text-text-primary'
+              size={PRO_CHECK_SIZE}
+              tone='primary'
+            />
           </div>
         ))}
       </div>

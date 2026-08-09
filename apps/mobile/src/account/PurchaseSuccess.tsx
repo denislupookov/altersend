@@ -18,7 +18,9 @@ export function PurchaseSuccess({ model, onDismiss }: AccountPhaseProps) {
   const c = theme.colors
   const { copied, copyCode } = useCopyAccountCode(model.account?.code)
 
-  useEffect(() => successTap(), [])
+  useEffect(() => {
+    if (!model.rotated) successTap()
+  }, [model.rotated])
 
   if (!model.account) return null
 
@@ -45,6 +47,12 @@ export function PurchaseSuccess({ model, onDismiss }: AccountPhaseProps) {
           {t('settings:account.successTitle')}
         </Text>
       </View>
+
+      {model.rotated ? (
+        <Text style={[styles.warning, { color: c.colorWarning }]}>
+          {t('settings:account.codeReplaced')}
+        </Text>
+      ) : null}
 
       <Text style={[styles.warning, { color: c.colorTextSecondary }]}>
         {t('settings:account.saveWarning')}

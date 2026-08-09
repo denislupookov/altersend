@@ -14,6 +14,7 @@ export interface AccountRuntimeOptions {
 export interface AccountRuntime {
   adapter: AccountAdapter
   syncToken(): Promise<boolean>
+  syncTokenIfStale(): Promise<boolean>
   startSync(): void
   stopSync(): void
 }
@@ -37,6 +38,7 @@ export function createAccountRuntime({
       purchases
     },
     syncToken: tokenSync.sync,
+    syncTokenIfStale: tokenSync.syncIfStale,
     startSync: tokenSync.start,
     stopSync: tokenSync.stop
   }

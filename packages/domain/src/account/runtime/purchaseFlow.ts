@@ -118,10 +118,11 @@ export async function restoreFromStore(ctx: PurchaseContext): Promise<RestoreOut
     return 'notMoved'
   }
 
-  ctx.dispatch({
-    type: 'activated',
-    account: { code: reserved.code, validUntil: status.validUntil ?? null }
-  })
+  const account = { code: reserved.code, validUntil: status.validUntil ?? null }
+
+  ctx.dispatch(
+    reserved.fresh ? { type: 'purchased', account, rotated: true } : { type: 'activated', account }
+  )
   await ctx.syncToken()
 
   return 'restored'

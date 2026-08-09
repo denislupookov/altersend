@@ -1,4 +1,4 @@
-export const BURST_PIECES = 22
+const BURST_PIECES = 22
 export const BURST_DURATION_MS = 1900
 export const MARK_DURATION_MS = 420
 export const PIECE_SIZE = 8
