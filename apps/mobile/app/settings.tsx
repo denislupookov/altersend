@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { LOCALE_OPTIONS, useTranslation, type LocalePreference } from '@altersend/locales'
-import { loadPeers, useTransferStore } from '@altersend/domain'
+import { loadPeers, useSubscriptionStore, useTransferStore } from '@altersend/domain'
 import {
   AppearancePicker,
   MenuGroup,
@@ -17,6 +17,7 @@ import {
   MailIcon,
   SlidersHorizontalIcon,
   SmartphoneIcon,
+  UserIcon,
   WaypointsIcon
 } from '@altersend/components/icons'
 import { Layout } from '@/src/components'
@@ -35,6 +36,7 @@ export default function SettingsScreen() {
     getLocalePreferenceSnapshot
   )
   const peers = useTransferStore((s) => s.peers)
+  const isPro = useSubscriptionStore((s) => s.active)
 
   useEffect(() => {
     void loadPeers()
@@ -71,6 +73,17 @@ export default function SettingsScreen() {
   return (
     <Layout hasNativeHeader>
       <View style={styles.container}>
+        {isPro ? (
+          <MenuGroup>
+            <MenuItem
+              isLast
+              label={t('settings:account.title')}
+              icon={<UserIcon size={19} color={c.colorTextSecondary} />}
+              onPress={() => router.push('/subscription')}
+            />
+          </MenuGroup>
+        ) : null}
+
         <MenuGroup title={t('settings:sections.general')}>
           <MenuItem
             label={t('settings:pairing.pairedDevices')}

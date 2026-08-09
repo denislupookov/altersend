@@ -11,7 +11,8 @@ import {
   startBackgroundReconnectEffect,
   startDownloadRetryEffect,
   startPeerWatchdog,
-  useSimulatedLoading
+  useSimulatedLoading,
+  useSubscriptionStore
 } from '@altersend/domain'
 import {
   getLocaleFontFamily,
@@ -29,6 +30,7 @@ import { LoadingScreen } from '../src/loading'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { mobileApi } from '../src/api/mobileApi'
 import { ToastProvider } from '../src/components/Toast'
+import { AccountProvider } from '../src/account'
 import { UpdateBanner } from '../src/components/UpdateBanner'
 import { PairRequestBanner } from '../src/components/PairRequestBanner'
 import { InviteBanner } from '../src/components/InviteBanner'
@@ -43,6 +45,9 @@ import {
   setSavedThemePreference
 } from '../src/lifecycle/themePreferenceStorage'
 import { isRelayEnabled } from '../src/lifecycle/relayStorage'
+import { startAccountSync, syncAccountToken } from '../src/lifecycle/account'
+import { startPurchases } from '../src/lifecycle/purchases'
+import { UpgradeButton } from '@/src/components'
 import { getMobileSystemLocales } from '../src/lifecycle/systemLocale'
 import { ShareIntentHandler } from '../src/lifecycle/ShareIntentHandler'
 import { startDownloadRoutingEffect } from '../src/transfer/receive'
@@ -57,6 +62,10 @@ bindTransferApi(mobileApi, {
 mobileApi.worker
   .setRelayConfig({ enabled: isRelayEnabled() })
   .catch((err) => captureException(err, 'setRelayConfig'))
+startPurchases(() => {
+  syncAccountToken().catch((err) => console.warn('[account] entitlement sync failed', err))
+})
+startAccountSync()
 startAppStateBridge()
 startPeerWatchdog()
 startBackgroundReconnectEffect()
@@ -117,6 +126,7 @@ function ThemedStack() {
   const titledScreenOptions = getTitledScreenOptions(theme, fontFamilyName)
   const progress = useSimulatedLoading()
   const statusBarStyle = themeType === ThemeType.Light ? 'dark' : 'light'
+  const isPro = useSubscriptionStore((state) => state.active)
 
   useEffect(() => {
     SystemUI.setBackgroundColorAsync(theme.colors.colorBackground).catch((error) =>
@@ -137,7 +147,11 @@ function ThemedStack() {
         <Stack.Screen name='onboarding' options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen
           name='settings'
-          options={{ ...titledScreenOptions, title: t('settings:title') }}
+          options={{
+            ...titledScreenOptions,
+            title: t('settings:title'),
+            headerRight: isPro ? undefined : () => <UpgradeButton />
+          }}
         />
         <Stack.Screen
           name='language'
@@ -150,6 +164,18 @@ function ThemedStack() {
         <Stack.Screen
           name='connection'
           options={{ ...titledScreenOptions, title: t('settings:rows.connection') }}
+        />
+        <Stack.Screen
+          name='account'
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+            animation: 'slide_from_bottom'
+          }}
+        />
+        <Stack.Screen
+          name='subscription'
+          options={{ ...titledScreenOptions, title: t('settings:account.title') }}
         />
         <Stack.Screen
           name='devices'
@@ -205,11 +231,13 @@ function AppShell() {
             }}
           >
             <ToastProvider>
-              <ShareIntentHandler />
-              <ThemedStack />
-              <UpdateBanner />
-              <PairRequestBanner />
-              <InviteBanner />
+              <AccountProvider>
+                <ShareIntentHandler />
+                <ThemedStack />
+                <UpdateBanner />
+                <PairRequestBanner />
+                <InviteBanner />
+              </AccountProvider>
             </ToastProvider>
           </ErrorBoundary>
         </ThemeProvider>

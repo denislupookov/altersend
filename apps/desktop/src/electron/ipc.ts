@@ -11,7 +11,13 @@ import { isMac } from 'which-runtime'
 import { readdir, stat } from 'fs/promises'
 import path from 'path'
 import { isPathSafe, type TransferMethod } from '@altersend/core'
-import { getDownloadFolder, setDownloadFolder } from './downloadLocation.js'
+import {
+  clearAccountCode,
+  getDownloadFolder,
+  readAccountCode,
+  setDownloadFolder,
+  writeAccountCode
+} from './store/index.js'
 import { setThemeSource, type ThemeSource } from './theme.js'
 import type { DesktopRuntime } from './runtime.js'
 import { setReportingEnabled } from './sentry.js'
@@ -208,6 +214,17 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.handle('app:pickDirectory', (evt) => pickFolder(evt))
 
   ipcMain.handle('app:getDownloadFolder', () => getDownloadFolder())
+
+  ipcMain.handle('account:getCode', () => readAccountCode())
+
+  ipcMain.handle('account:setCode', (_evt, code: string) => {
+    if (typeof code !== 'string' || !/^\d{16}$/.test(code)) {
+      throw new Error('account:setCode expects a normalised 16-digit code')
+    }
+    return writeAccountCode(code)
+  })
+
+  ipcMain.handle('account:clearCode', () => clearAccountCode())
 
   ipcMain.handle('app:chooseDownloadFolder', async (evt) => {
     const folder = await pickFolder(evt)

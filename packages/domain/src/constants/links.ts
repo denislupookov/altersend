@@ -1,4 +1,5 @@
 export const websiteUrl = 'https://altersend.com'
+export const accountApiUrl = 'https://api.altersend.com'
 export const webAppUrl = 'https://app.altersend.com'
 export const downloadUrl = 'https://altersend.com/download'
 export const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.altersend.mobile'

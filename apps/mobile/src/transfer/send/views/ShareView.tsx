@@ -5,6 +5,7 @@ import {
   buildShareInvite,
   buildWebReceiveUrl,
   exceedsWebLinkLimit,
+  useSubscriptionStore,
   formatFileSize,
   formatItemsCount,
   useShareViewModel,
@@ -77,7 +78,8 @@ export function ShareView() {
     }
   }
 
-  const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize)
+  const pro = useSubscriptionStore((state) => state.active)
+  const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize, pro)
   const tileCount = webLinkTooLarge ? 2 : 3
   const tileWidth =
     contentWidth > 0 ? (contentWidth - TILE_GAP * (tileCount - 1)) / tileCount : undefined
@@ -97,7 +99,7 @@ export function ShareView() {
       })
       toast.show({
         title: t('send:connection.copiedToast'),
-        hint: t('send:connection.linkHint', { limit: WEB_LINK_MAX_LABEL })
+        hint: pro ? undefined : t('send:connection.linkHint', { limit: WEB_LINK_MAX_LABEL })
       })
     } catch (error) {
       console.error(error)

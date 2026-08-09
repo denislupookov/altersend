@@ -64,6 +64,15 @@ export const bridgeApi = {
   async chooseDownloadFolder() {
     return requireBridge().chooseDownloadFolder()
   },
+  getAccountCode() {
+    return requireBridge().getAccountCode()
+  },
+  setAccountCode(code: string) {
+    return requireBridge().setAccountCode(code)
+  },
+  clearAccountCode() {
+    return requireBridge().clearAccountCode()
+  },
   appRestart() {
     return requireBridge().appRestart()
   },

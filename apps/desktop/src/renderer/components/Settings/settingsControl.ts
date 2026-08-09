@@ -3,6 +3,7 @@ export type SettingsSection =
   | 'general'
   | 'language'
   | 'connection'
+  | 'account'
   | 'feedback'
   | 'about'
 

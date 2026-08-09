@@ -132,6 +132,9 @@ declare module 'hyperswarm' {
       firewall?: (remotePublicKey: Uint8Array) => boolean
       relayThrough?: ((force: boolean, swarm: unknown) => Uint8Array[] | null) | Uint8Array[] | null
     })
+    readonly dht: {
+      connect(publicKey: Uint8Array, opts?: unknown): unknown
+    }
     join(
       discoveryKey: Uint8Array,
       opts?: { server?: boolean; client?: boolean }
@@ -165,7 +168,7 @@ declare module 'protomux' {
   export interface ProtomuxChannel {
     addMessage<T = unknown>(opts: {
       encoding: unknown
-      onmessage: (message: T) => void
+      onmessage?: (message: T) => void
     }): ProtomuxMessage<T>
     open(): void
     close(): void

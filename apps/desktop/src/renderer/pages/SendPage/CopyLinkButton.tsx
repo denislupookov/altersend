@@ -1,7 +1,7 @@
 import { useTranslation } from '@altersend/locales'
 import { Button, useTheme } from '@altersend/components'
 import { CheckIcon, LinkIcon } from '@altersend/components/icons'
-import { WEB_LINK_MAX_LABEL } from '@altersend/domain'
+import { useSubscriptionStore, WEB_LINK_MAX_LABEL } from '@altersend/domain'
 
 interface CopyLinkButtonProps {
   topic: string
@@ -12,6 +12,7 @@ interface CopyLinkButtonProps {
 export function CopyLinkButton({ topic, copied, onCopy }: CopyLinkButtonProps) {
   const { t } = useTranslation(['send', 'common'])
   const { theme } = useTheme()
+  const pro = useSubscriptionStore((state) => state.active)
   const label = copied ? t('common:actions.copied') : t('send:connection.shareLink')
 
   return (
@@ -23,7 +24,7 @@ export function CopyLinkButton({ topic, copied, onCopy }: CopyLinkButtonProps) {
         aria-label={t('send:connection.copyLink')}
         tooltip={label}
         tooltipDescription={
-          copied ? undefined : t('send:connection.linkHint', { limit: WEB_LINK_MAX_LABEL })
+          copied || pro ? undefined : t('send:connection.linkHint', { limit: WEB_LINK_MAX_LABEL })
         }
         tooltipSide='left'
         disabled={!topic}

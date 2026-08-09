@@ -10,8 +10,7 @@ import {
   type TransferMethod,
   type WorkerClient
 } from '@altersend/core'
-import { writeFileViaTemp } from './writeFileViaTemp.js'
-import { migrateLegacyStore } from './migrateLegacyStore.js'
+import { migrateLegacyStore, writeFileViaTemp } from './store/index.js'
 import { isMac, isLinux, isWindows } from 'which-runtime'
 import { command, flag, sloppy } from 'paparam'
 import { createRequire } from 'module'

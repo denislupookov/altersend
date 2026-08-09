@@ -28,9 +28,18 @@ interface RelayEntry {
   socket: WebSocket
 }
 
-function fastestRelay(urls: string[]): Promise<RelayEntry> {
+function connectionId(): string {
+  const bytes = new Uint8Array(16)
+  crypto.getRandomValues(bytes)
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+function fastestRelay(urls: string[], cid: string): Promise<RelayEntry> {
   return new Promise((resolve, reject) => {
-    const entries = urls.map((url) => ({ url, socket: new WebSocket(url) }))
+    const entries = urls.map((url) => ({
+      url,
+      socket: new WebSocket(`${url.replace(/\/$/, '')}/?cid=${cid}`)
+    }))
     if (entries.length === 0) {
       reject(new Error('relayUnreachable'))
       return
@@ -70,13 +79,15 @@ function withTimeout<T>(promise: Promise<T>, ms: number, code: ConnectErrorCode)
 
 export async function openRelay(
   urls: string[]
-): Promise<{ dht: RelayDHT; teardown: () => void; url: string }> {
-  const { socket, url } = await fastestRelay(urls)
+): Promise<{ dht: RelayDHT; teardown: () => void; url: string; cid: string }> {
+  const cid = connectionId()
+  const { socket, url } = await fastestRelay(urls, cid)
   const dht = new DHT(new Stream(true, socket), { custodial: false }) as unknown as RelayDHT
   let torn = false
   return {
     dht,
     url,
+    cid,
     teardown: () => {
       if (torn) return
       torn = true
@@ -86,10 +97,12 @@ export async function openRelay(
   }
 }
 
-export async function fetchRelayLimit(wsUrl: string): Promise<number | null> {
+export async function fetchRelayLimit(wsUrl: string, cid?: string): Promise<number | null> {
   try {
     const base = wsUrl.replace(/^ws/, 'http')
-    const res = await fetch(new URL('/limits.json', base), { signal: AbortSignal.timeout(3000) })
+    const url = new URL('/limits.json', base)
+    if (cid) url.searchParams.set('cid', cid)
+    const res = await fetch(url, { signal: AbortSignal.timeout(3000) })
     if (!res.ok) return null
     const data = (await res.json()) as { maxTransferBytes?: unknown }
     const bytes = Number(data.maxTransferBytes)

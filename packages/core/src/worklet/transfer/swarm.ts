@@ -6,6 +6,7 @@ import type { PeerControlMessage } from './control-channel'
 import { PeerIdentityStore, type NoiseKeyPair } from './peer-identity-store'
 import { PeerDrive } from './drive'
 import { relayThrough, isRelayHost } from '../relay/config'
+import { attachProAnnounce } from '../relay/announce'
 import { whenRelayConfReady } from '../relay/conf'
 
 type ConnectionType = 'direct' | 'relay'
@@ -60,6 +61,7 @@ export class TransferSwarm {
 
   private createSwarm(keyPair?: NoiseKeyPair): Hyperswarm {
     const swarm = new Hyperswarm({ ...(keyPair ? { keyPair } : {}), relayThrough })
+    attachProAnnounce(swarm.dht)
     swarm.on('connection', (socket, info) => {
       this.handleConnection(socket, info).catch((err) => {
         console.error(

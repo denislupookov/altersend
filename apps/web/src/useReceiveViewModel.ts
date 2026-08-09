@@ -103,7 +103,16 @@ export function useReceiveViewModel(): ReceiveViewModel {
     putFiles([])
     setTexts([])
 
-    connect(trimmed, { onClosed: handlePeerClosed }, controller.signal)
+    connect(
+      trimmed,
+      {
+        onClosed: handlePeerClosed,
+        onLimit: (bytes) => {
+          if (!controller.signal.aborted) setMaxTransferBytes(bytes)
+        }
+      },
+      controller.signal
+    )
       .then((connection) => {
         if (controller.signal.aborted) {
           connection.close()

@@ -71,6 +71,9 @@ declare global {
     getPathForFile: (file: File) => string
     getDownloadFolder: () => Promise<string | null>
     chooseDownloadFolder: () => Promise<string | null>
+    getAccountCode: () => Promise<string | null>
+    setAccountCode: (code: string) => Promise<void>
+    clearAccountCode: () => Promise<void>
     appRestart: () => Promise<unknown>
     onDeepLink: (cb: (url: string) => void) => () => void
     onRuntimeUpdated: (cb: () => void) => () => void

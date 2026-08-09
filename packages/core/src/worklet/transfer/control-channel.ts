@@ -127,6 +127,12 @@ interface TopicAuth {
   proof: string
 }
 
+interface WebRelayConnection {
+  type: 'web-relay'
+  cid: string
+  host: string
+}
+
 export type PeerControlMessage =
   | TransferStart
   | TransferReady
@@ -142,6 +148,7 @@ export type PeerControlMessage =
   | ClientHello
   | TopicChallenge
   | TopicAuth
+  | WebRelayConnection
 
 type PeerControlHandler = (message: PeerControlMessage) => void
 

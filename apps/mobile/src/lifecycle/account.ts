@@ -1,0 +1,36 @@
+import { Linking } from 'react-native'
+import * as SecureStore from 'expo-secure-store'
+import { accountApiUrl, createAccountRuntime, type AccountStorage } from '@altersend/domain'
+import { mobileApi } from '@/src/api/mobileApi'
+import { purchaseAdapter, purchasesReady } from './purchases'
+import { isRelayEnabled } from './relayStorage'
+
+const CODE_KEY = 'altersend.account.code'
+
+const accountStorage: AccountStorage = {
+  async read() {
+    try {
+      return await SecureStore.getItemAsync(CODE_KEY)
+    } catch (err) {
+      console.warn('[account] could not read stored code', err)
+      return null
+    }
+  },
+  write: (code) => SecureStore.setItemAsync(CODE_KEY, code),
+  clear: () => SecureStore.deleteItemAsync(CODE_KEY)
+}
+
+const runtime = createAccountRuntime({
+  baseUrl: process.env.EXPO_PUBLIC_PRO_API_URL || accountApiUrl,
+  storage: accountStorage,
+  openUrl: (url) => Linking.openURL(url),
+  applyToken: async (proToken) => {
+    await mobileApi.worker.setRelayConfig({ enabled: isRelayEnabled(), proToken })
+  },
+  purchases: purchasesReady ? purchaseAdapter : undefined
+})
+
+export const accountAdapter = runtime.adapter
+export const syncAccountToken = runtime.syncToken
+export const startAccountSync = runtime.startSync
+export const stopAccountSync = runtime.stopSync

@@ -1,0 +1,106 @@
+import { Button, ExternalLink, Tabs, TabsList, TabsTrigger } from '@altersend/components'
+import { useTranslation } from '@altersend/locales'
+import {
+  BILLING_PLANS,
+  planComparisonRows,
+  planLabel,
+  privacyPolicyUrl,
+  termsOfServiceUrl,
+  type BillingPlan
+} from '@altersend/domain'
+import { HeroBackdrop } from '../../../HeroBackdrop'
+import { bridgeApi } from '../../../../api/bridgeApi'
+import { SectionShell } from '../SectionShell'
+import type { AccountPhaseProps } from './types'
+
+const COLUMNS = 'grid grid-cols-[minmax(0,1fr)_72px_104px] items-center gap-x-4'
+
+function openExternalUrl(url: string) {
+  bridgeApi.openExternalUrl(url).catch((err) => console.warn('[account] could not open url', err))
+}
+
+export function Paywall({ model, errorText }: AccountPhaseProps) {
+  const { t } = useTranslation(['settings', 'common'])
+  const rows = planComparisonRows(t)
+
+  const footer = (
+    <div className='flex flex-col gap-3'>
+      <div className='flex items-center justify-between gap-3'>
+        <Button size='sm' variant='ghost' disabled={model.busy} onClick={model.showEntry}>
+          {t('settings:account.haveCodeLink')}
+        </Button>
+        <Button size='sm' variant='primary' loading={model.busy} onClick={model.startUpgrade}>
+          {t('settings:account.getPro')}
+        </Button>
+      </div>
+
+      <div className='flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-text-muted'>
+        <ExternalLink onPress={() => openExternalUrl(termsOfServiceUrl)}>
+          {t('settings:rows.terms')}
+        </ExternalLink>
+        <ExternalLink onPress={() => openExternalUrl(privacyPolicyUrl)}>
+          {t('settings:rows.privacyPolicy')}
+        </ExternalLink>
+      </div>
+    </div>
+  )
+
+  return (
+    <SectionShell backdrop={<HeroBackdrop />} footer={footer}>
+      <h2 className='m-0 mt-6 text-[30px] font-bold leading-tight tracking-[-0.6px] text-text-primary'>
+        {t('settings:account.paywallTitle')}
+      </h2>
+      <p className='m-0 mt-1.5 text-[15px] leading-[21px] text-text-secondary'>
+        {t('settings:account.paywallLead')}
+      </p>
+
+      <div className='mt-6'>
+        <Tabs
+          size='sm'
+          stretch
+          value={model.plan}
+          onValueChange={(next) => model.choosePlan(next as BillingPlan)}
+        >
+          <TabsList>
+            {BILLING_PLANS.map((option) => (
+              <TabsTrigger key={option} value={option}>
+                {planLabel(option, t, model.prices)}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
+
+      <div className='relative mt-7'>
+        <div className='pointer-events-none absolute inset-y-0 right-0 w-[104px] rounded-2xl border border-border-primary bg-background-subtle' />
+
+        <div className={`${COLUMNS} relative py-3`}>
+          <span className='text-[15px] font-semibold text-text-primary'>
+            {t('settings:account.included')}
+          </span>
+          <span className='text-center text-[13px] font-semibold text-text-muted'>
+            {t('settings:account.columnFree')}
+          </span>
+          <span className='justify-self-center rounded-lg bg-surface-primary px-3 py-1.5 text-[13px] font-semibold text-text-primary'>
+            {t('settings:account.columnPro')}
+          </span>
+        </div>
+
+        {rows.map((row, index) => (
+          <div
+            key={row.label}
+            className={`${COLUMNS} relative py-4 ${index === rows.length - 1 ? 'pb-6' : ''}`}
+          >
+            <span className='text-[14px] leading-[19px] text-text-secondary'>{row.label}</span>
+            <span className='text-center text-[14px] text-text-muted'>{row.free}</span>
+            <span className='text-center text-[16px] font-semibold text-text-primary'>
+              {row.pro}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {errorText ? <p className='m-0 mt-4 text-[12px] text-text-danger'>{errorText}</p> : null}
+    </SectionShell>
+  )
+}
