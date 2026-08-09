@@ -42,6 +42,11 @@ export const INCLUDED = '✓'
 export function planComparisonRows(t: TranslateFn): PlanComparisonRow[] {
   return [
     {
+      label: t('settings:account.featureDirect'),
+      free: UNLIMITED,
+      pro: UNLIMITED
+    },
+    {
       label: t('settings:account.featurePriority'),
       free: t('settings:account.none'),
       pro: INCLUDED

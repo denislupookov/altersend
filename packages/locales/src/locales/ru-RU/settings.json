@@ -164,8 +164,9 @@
     "included": "What's included",
     "getPro": "Get Pro",
     "none": "–",
+    "featureDirect": "Direct P2P transfer",
     "featurePriority": "Priority when the relay is busy",
-    "featureWebCap": "Web link transfer cap",
-    "featureAppCap": "App relay transfer cap"
+    "featureWebCap": "Relayed transfer, web link",
+    "featureAppCap": "Relayed transfer, app to app"
   }
 }

@@ -152,7 +152,10 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
 
         if (status.active) {
           dispatch({ type: 'activated', account: { code, validUntil: status.validUntil ?? null } })
+          return
         }
+
+        dispatch({ type: 'showPaywall' })
       })
       .catch((err) => warn('status lookup failed', err))
 
