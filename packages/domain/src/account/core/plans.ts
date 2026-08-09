@@ -1,9 +1,4 @@
-import {
-  NATIVE_RELAY_MAX_LABEL,
-  PRO_PRICE_MONTHLY,
-  PRO_PRICE_YEARLY,
-  WEB_LINK_MAX_LABEL
-} from '../../constants/transfer'
+import { NATIVE_RELAY_MAX_LABEL, WEB_LINK_MAX_LABEL } from '../../constants/transfer'
 import type { BillingPlan } from './billing'
 
 export type TranslateFn = (key: string, values?: Record<string, string | number>) => string
@@ -30,11 +25,6 @@ const PLAN_LABEL_KEY: Record<BillingPlan, string> = {
   yearly: 'settings:account.planYearly'
 }
 
-const PLAN_PRICE: Record<BillingPlan, string | null> = {
-  monthly: PRO_PRICE_MONTHLY,
-  yearly: PRO_PRICE_YEARLY
-}
-
 export interface PlanComparisonRow {
   label: string
   free: string
@@ -43,7 +33,7 @@ export interface PlanComparisonRow {
 
 export function planLabel(plan: BillingPlan, t: TranslateFn, prices?: PlanPrices): string {
   const name = t(PLAN_LABEL_KEY[plan])
-  const price = prices?.[plan] ?? PLAN_PRICE[plan]
+  const price = prices?.[plan]
   return price ? `${name} · ${price}` : name
 }
 

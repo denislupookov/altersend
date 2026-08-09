@@ -1,47 +1,24 @@
-import { Button, ExternalLink, Tabs, TabsList, TabsTrigger } from '@altersend/components'
+import { Button, Tabs, TabsList, TabsTrigger } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
-import {
-  BILLING_PLANS,
-  planComparisonRows,
-  planLabel,
-  privacyPolicyUrl,
-  termsOfServiceUrl,
-  type BillingPlan
-} from '@altersend/domain'
+import { BILLING_PLANS, planComparisonRows, planLabel, type BillingPlan } from '@altersend/domain'
 import { HeroBackdrop } from '../../../HeroBackdrop'
-import { bridgeApi } from '../../../../api/bridgeApi'
 import { SectionShell } from '../SectionShell'
 import type { AccountPhaseProps } from './types'
 
 const COLUMNS = 'grid grid-cols-[minmax(0,1fr)_72px_104px] items-center gap-x-4'
-
-function openExternalUrl(url: string) {
-  bridgeApi.openExternalUrl(url).catch((err) => console.warn('[account] could not open url', err))
-}
 
 export function Paywall({ model, errorText }: AccountPhaseProps) {
   const { t } = useTranslation(['settings', 'common'])
   const rows = planComparisonRows(t)
 
   const footer = (
-    <div className='flex flex-col gap-3'>
-      <div className='flex items-center justify-between gap-3'>
-        <Button size='sm' variant='ghost' disabled={model.busy} onClick={model.showEntry}>
-          {t('settings:account.haveCodeLink')}
-        </Button>
-        <Button size='sm' variant='primary' loading={model.busy} onClick={model.startUpgrade}>
-          {t('settings:account.getPro')}
-        </Button>
-      </div>
-
-      <div className='flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-text-muted'>
-        <ExternalLink onPress={() => openExternalUrl(termsOfServiceUrl)}>
-          {t('settings:rows.terms')}
-        </ExternalLink>
-        <ExternalLink onPress={() => openExternalUrl(privacyPolicyUrl)}>
-          {t('settings:rows.privacyPolicy')}
-        </ExternalLink>
-      </div>
+    <div className='flex items-center justify-between gap-3'>
+      <Button size='sm' variant='ghost' disabled={model.busy} onClick={model.showEntry}>
+        {t('settings:account.haveCodeLink')}
+      </Button>
+      <Button size='sm' variant='primary' loading={model.busy} onClick={model.startUpgrade}>
+        {t('settings:account.getPro')}
+      </Button>
     </div>
   )
 

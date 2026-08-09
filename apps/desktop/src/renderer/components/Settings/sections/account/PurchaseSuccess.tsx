@@ -1,15 +1,22 @@
 import { AccountCodeCard, Button, SuccessBurst, useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { formatAccountCode, useCopiedFlag } from '@altersend/domain'
+import {
+  ACCOUNT_CODE_FILE_NAME,
+  accountCodeFile,
+  formatAccountCode,
+  useCopiedFlag
+} from '@altersend/domain'
+import { bridgeApi } from '../../../../api/bridgeApi'
 import { SectionShell } from '../SectionShell'
 import type { AccountPhaseProps } from './types'
 
 const COPY_ID = 'account-code'
+const SAVE_ID = 'account-code-file'
 const BURST_SIZE = 72
 
 export function PurchaseSuccess({ model }: AccountPhaseProps) {
-  const { t } = useTranslation(['settings', 'common'])
+  const { t, i18n } = useTranslation(['settings', 'common'])
   const { copiedId, flashCopied } = useCopiedFlag()
   const { theme } = useTheme()
   const c = theme.colors
@@ -17,6 +24,28 @@ export function PurchaseSuccess({ model }: AccountPhaseProps) {
   if (!model.account) return null
 
   const code = model.account.code
+
+  const saveCode = () => {
+    if (!model.account) return
+
+    const contents = accountCodeFile(
+      model.account.code,
+      new Date().toLocaleDateString(i18n.resolvedLanguage ?? i18n.language),
+      {
+        title: t('settings:account.codeFileTitle'),
+        codeLabel: t('settings:account.codeFileCode'),
+        savedLabel: t('settings:account.codeFileSaved'),
+        warning: t('settings:account.codeFileWarning')
+      }
+    )
+
+    bridgeApi
+      .saveAccountCode(contents, ACCOUNT_CODE_FILE_NAME)
+      .then((saved) => {
+        if (saved) flashCopied(SAVE_ID)
+      })
+      .catch((err) => console.warn('[account] saving the code failed', err))
+  }
 
   const copyCode = () => {
     if (!code) return
@@ -48,20 +77,24 @@ export function PurchaseSuccess({ model }: AccountPhaseProps) {
         </h2>
       </div>
 
-      <div className='mt-7'>
+      <p className='m-0 mx-auto mt-3 max-w-[420px] text-center text-[14px] leading-[20px] text-text-secondary'>
+        {t('settings:account.saveWarning')}
+      </p>
+
+      <div className='mt-6'>
         <AccountCodeCard
           code={model.account.code}
           label={t('settings:account.yourCode')}
           copyLabel={t('common:actions.copy')}
           copiedLabel={t('settings:account.copied')}
+          saveLabel={t('settings:account.saveCode')}
+          savedLabel={t('settings:account.codeFileSaved')}
           copied={copiedId === COPY_ID}
+          saved={copiedId === SAVE_ID}
           onCopy={copyCode}
+          onSave={saveCode}
         />
       </div>
-
-      <p className='m-0 mt-4 text-center text-[14px] leading-[20px] text-text-secondary'>
-        {t('settings:account.saveWarning')}
-      </p>
     </SectionShell>
   )
 }

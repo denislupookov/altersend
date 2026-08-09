@@ -9,6 +9,7 @@ export type AccountError =
   | 'server'
   | 'timedOut'
   | 'nothingToRestore'
+  | 'restoreNotMoved'
 
 const ERROR_KEY: Record<AccountError, string> = {
   failed: 'settings:account.failed',
@@ -16,7 +17,8 @@ const ERROR_KEY: Record<AccountError, string> = {
   offline: 'settings:account.offline',
   server: 'settings:account.serverError',
   timedOut: 'settings:account.timedOut',
-  nothingToRestore: 'settings:account.nothingToRestore'
+  nothingToRestore: 'settings:account.nothingToRestore',
+  restoreNotMoved: 'settings:account.restoreNotMoved'
 }
 
 export function accountErrorKey(error: AccountError | null): string | null {

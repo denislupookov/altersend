@@ -98,21 +98,23 @@ export async function buyWithCard(
   return true
 }
 
-export async function restoreFromStore(ctx: PurchaseContext): Promise<boolean> {
+export type RestoreOutcome = 'restored' | 'nothingToRestore' | 'notMoved'
+
+export async function restoreFromStore(ctx: PurchaseContext): Promise<RestoreOutcome> {
   const { purchases } = ctx
-  if (!purchases) return false
+  if (!purchases) return 'nothingToRestore'
 
   const stored = await ctx.storage.read()
   if (stored) await purchases.identify(stored)
-  if (!(await purchases.restore())) return false
+  if (!(await purchases.restore())) return 'nothingToRestore'
 
   const reserved = await reserveCode(ctx)
   if (reserved.fresh) await purchases.identify(reserved.code)
 
   const status = await ctx.client.syncStore(reserved.code)
   if (!status.active) {
-    ctx.poll(reserved.code)
-    return true
+    if (reserved.fresh) await abandon(ctx, reserved)
+    return 'notMoved'
   }
 
   ctx.dispatch({
@@ -120,5 +122,6 @@ export async function restoreFromStore(ctx: PurchaseContext): Promise<boolean> {
     account: { code: reserved.code, validUntil: status.validUntil ?? null }
   })
   await ctx.syncToken()
-  return true
+
+  return 'restored'
 }

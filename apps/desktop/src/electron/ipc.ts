@@ -16,7 +16,8 @@ import {
   getDownloadFolder,
   readAccountCode,
   setDownloadFolder,
-  writeAccountCode
+  writeAccountCode,
+  writeFileViaTemp
 } from './store/index.js'
 import { setThemeSource, type ThemeSource } from './theme.js'
 import type { DesktopRuntime } from './runtime.js'
@@ -225,6 +226,28 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
   })
 
   ipcMain.handle('account:clearCode', () => clearAccountCode())
+
+  ipcMain.handle('account:saveCode', async (evt, contents: string, defaultName: string) => {
+    if (!isPathSafe(defaultName) || path.basename(defaultName) !== defaultName) {
+      throw new Error('Refused: defaultName must be a bare file name')
+    }
+
+    const parentWindow = BrowserWindow.fromWebContents(evt.sender) ?? undefined
+    const startDir = await getDownloadFolder()
+    const dialogOptions = {
+      title: 'Save your Pro code',
+      defaultPath: startDir ? path.join(startDir, defaultName) : defaultName
+    }
+
+    const result = parentWindow
+      ? await dialog.showSaveDialog(parentWindow, dialogOptions)
+      : await dialog.showSaveDialog(dialogOptions)
+
+    if (result.canceled || !result.filePath) return null
+
+    await writeFileViaTemp(result.filePath, contents)
+    return result.filePath
+  })
 
   ipcMain.handle('app:chooseDownloadFolder', async (evt) => {
     const folder = await pickFolder(evt)

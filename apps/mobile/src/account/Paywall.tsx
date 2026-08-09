@@ -14,6 +14,7 @@ import { IconButton } from '@/src/components/IconButton'
 import { Text } from '@/src/components/ThemedText'
 import { purchasesReady } from '@/src/lifecycle/purchases'
 import { HEADER_TOP, SCREEN_PADDING } from './constants'
+import { successTap } from './haptics'
 import type { AccountPhaseProps } from './types'
 
 const PRO_COLUMN_WIDTH = 80
@@ -24,6 +25,7 @@ function openExternalUrl(url: string) {
 
 export function Paywall({ model, errorText, onDismiss }: AccountPhaseProps) {
   const { t } = useTranslation(['settings', 'common'])
+  const restore = model.store?.restore
   const { theme } = useTheme()
   const c = theme.colors
   const rows = planComparisonRows(t)
@@ -53,7 +55,9 @@ export function Paywall({ model, errorText, onDismiss }: AccountPhaseProps) {
 
       <View style={styles.legalLinks}>
         {model.store ? (
-          <ExternalLink onPress={model.store.restore}>{t('settings:account.restore')}</ExternalLink>
+          <ExternalLink onPress={() => restore?.().then((ok) => ok && successTap())}>
+            {t('settings:account.restore')}
+          </ExternalLink>
         ) : null}
         <ExternalLink onPress={() => openExternalUrl(termsOfServiceUrl)}>
           {t('settings:rows.terms')}

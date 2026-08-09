@@ -26,7 +26,13 @@ export interface AccountDeletion {
   customerDeleted: boolean
 }
 
+export interface PlanPriceResponse {
+  plan: BillingPlan
+  formatted: string
+}
+
 export interface AccountClient {
+  prices(): Promise<PlanPriceResponse[]>
   create(): Promise<NewAccount>
   status(code: string): Promise<AccountStatus>
   syncStore(code: string): Promise<AccountStatus>
@@ -39,7 +45,7 @@ export interface AccountClient {
 async function send<T>(
   baseUrl: string,
   path: string,
-  method: 'POST' | 'DELETE',
+  method: 'GET' | 'POST' | 'DELETE',
   body?: unknown
 ): Promise<T> {
   const controller = new AbortController()
@@ -50,7 +56,7 @@ async function send<T>(
     response = await fetch(`${baseUrl}${path}`, {
       method,
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(body ?? {}),
+      body: method === 'GET' ? undefined : JSON.stringify(body ?? {}),
       signal: controller.signal
     })
   } catch (err) {
@@ -71,6 +77,15 @@ export function createAccountClient(baseUrl: string): AccountClient {
   const post = <T>(path: string, body?: unknown) => send<T>(baseUrl, path, 'POST', body)
 
   return {
+    async prices() {
+      const { prices } = await send<{ prices: PlanPriceResponse[] }>(
+        baseUrl,
+        '/api/pro/prices',
+        'GET'
+      )
+      return prices
+    },
+
     create: () => post<NewAccount>('/api/pro/account'),
 
     async status(code) {

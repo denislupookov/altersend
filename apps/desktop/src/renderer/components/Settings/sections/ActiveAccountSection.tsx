@@ -4,14 +4,16 @@ import { useTranslation } from '@altersend/locales'
 import { formatAccountCode, useCopiedFlag } from '@altersend/domain'
 import type { AccountModel } from '@altersend/domain'
 import { ConfirmDialog } from '../../ConfirmDialog'
+import { useToast } from '../../Toast'
 import { SectionShell } from './SectionShell'
 
 const COPY_ID = 'account-code'
 
 export function ActiveAccountSection({ model }: { model: AccountModel }) {
-  const { t } = useTranslation(['settings', 'common'])
+  const { t } = useTranslation(['settings', 'common', 'send'])
   const { copiedId, flashCopied } = useCopiedFlag()
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  const toast = useToast()
+  const [confirmLogOut, setConfirmLogOut] = useState(false)
 
   const account = model.account
   const errorText = model.errorKey && t(model.errorKey)
@@ -29,7 +31,10 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
   const copyCode = () => {
     navigator.clipboard
       .writeText(formatAccountCode(account.code))
-      .then(() => flashCopied(COPY_ID))
+      .then(() => {
+        flashCopied(COPY_ID)
+        toast.show({ title: t('send:connection.copiedToast') })
+      })
       .catch((err) => console.warn('[account] clipboard write failed', err))
   }
 
@@ -37,19 +42,11 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
     <div className='flex items-center justify-end gap-2'>
       <Button
         size='sm'
-        variant='secondary'
-        disabled={model.busy}
-        onClick={model.subscription.logOut}
-      >
-        {t('settings:account.logOut')}
-      </Button>
-      <Button
-        size='sm'
         variant='danger'
         disabled={model.busy}
-        onClick={() => setConfirmDelete(true)}
+        onClick={() => setConfirmLogOut(true)}
       >
-        {t('settings:account.deleteAccount')}
+        {t('settings:account.logOut')}
       </Button>
     </div>
   )
@@ -95,16 +92,17 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
 
       <ConfirmDialog
         destructive
-        open={confirmDelete}
-        title={t('settings:account.deleteTitle')}
-        message={t('settings:account.deleteBody')}
-        confirmLabel={t('settings:account.deleteAccount')}
+        open={confirmLogOut}
+        title={t('settings:account.logOutTitle')}
+        message={t('settings:account.logOutBody', { code: formatAccountCode(account.code) })}
+        confirmLabel={t('settings:account.copyAndLogOut')}
         cancelLabel={t('common:actions.cancel')}
         onConfirm={() => {
-          setConfirmDelete(false)
-          model.subscription.destroy()
+          setConfirmLogOut(false)
+          copyCode()
+          model.subscription.logOut()
         }}
-        onCancel={() => setConfirmDelete(false)}
+        onCancel={() => setConfirmLogOut(false)}
       />
     </SectionShell>
   )

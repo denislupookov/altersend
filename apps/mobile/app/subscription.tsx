@@ -1,26 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import * as Clipboard from 'expo-clipboard'
 import { AccountCodeCard, Button, LinkRow, Spinner, useTheme } from '@altersend/components'
-import { LogOutIcon, TrashIcon } from '@altersend/components/icons'
+import { LogOutIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { formatAccountCode, useCopiedFlag } from '@altersend/domain'
+import { formatAccountCode } from '@altersend/domain'
 import { useRouter } from 'expo-router'
 import { ConfirmDialog, Layout } from '@/src/components'
 import { useToast } from '@/src/components/Toast'
 import { useAccountModel } from '@/src/account'
-
-const COPY_ID = 'account-code'
+import { selectionTap } from '@/src/account/haptics'
+import { useCopyAccountCode } from '@/src/account/useCopyAccountCode'
 
 export default function SubscriptionScreen() {
-  const { t } = useTranslation(['settings', 'common'])
-  const { copiedId, flashCopied } = useCopiedFlag()
+  const { t } = useTranslation(['settings', 'common', 'send'])
   const { theme } = useTheme()
   const c = theme.colors
   const toast = useToast()
   const router = useRouter()
   const model = useAccountModel()
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  const { copied, copyCode } = useCopyAccountCode(model.account?.code)
+  const [confirmLogOut, setConfirmLogOut] = useState(false)
   const wasActive = useRef(false)
 
   const { errorKey, clearError, phase, account } = model
@@ -49,33 +48,17 @@ export default function SubscriptionScreen() {
     )
   }
 
-  const copyCode = () => {
-    Clipboard.setStringAsync(formatAccountCode(account.code))
-      .then(() => flashCopied(COPY_ID))
-      .catch((err) => console.warn('[account] clipboard write failed', err))
-  }
-
   const footer = (
     <View style={styles.footer}>
       <Button
         size='lg'
-        variant='secondary'
+        variant='danger'
         width='full'
         icon={<LogOutIcon size={16} />}
         disabled={model.busy}
-        onClick={model.subscription.logOut}
+        onClick={() => setConfirmLogOut(true)}
       >
         {t('settings:account.logOut')}
-      </Button>
-      <Button
-        size='lg'
-        variant='danger'
-        width='full'
-        icon={<TrashIcon size={16} />}
-        disabled={model.busy}
-        onClick={() => setConfirmDelete(true)}
-      >
-        {t('settings:account.deleteAccount')}
       </Button>
     </View>
   )
@@ -90,8 +73,9 @@ export default function SubscriptionScreen() {
         copiedLabel={t('settings:account.copied')}
         revealLabel={t('settings:account.reveal')}
         hideLabel={t('settings:account.hide')}
-        copied={copiedId === COPY_ID}
+        copied={copied}
         onCopy={copyCode}
+        onToggleReveal={selectionTap}
       />
 
       <View style={styles.planCard}>
@@ -119,16 +103,17 @@ export default function SubscriptionScreen() {
 
       <ConfirmDialog
         destructive
-        open={confirmDelete}
-        title={t('settings:account.deleteTitle')}
-        message={t('settings:account.deleteBody')}
-        confirmLabel={t('settings:account.deleteAccount')}
+        open={confirmLogOut}
+        title={t('settings:account.logOutTitle')}
+        message={t('settings:account.logOutBody', { code: formatAccountCode(account.code) })}
+        confirmLabel={t('settings:account.copyAndLogOut')}
         cancelLabel={t('common:actions.cancel')}
         onConfirm={() => {
-          setConfirmDelete(false)
-          model.subscription.destroy()
+          setConfirmLogOut(false)
+          copyCode()
+          model.subscription.logOut()
         }}
-        onCancel={() => setConfirmDelete(false)}
+        onCancel={() => setConfirmLogOut(false)}
       />
     </Layout>
   )

@@ -1,33 +1,26 @@
+import { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
-import * as Clipboard from 'expo-clipboard'
 import { AccountCodeCard, Button, SuccessBurst, useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { formatAccountCode, useCopiedFlag } from '@altersend/domain'
 import { Layout } from '@/src/components'
 import { Text } from '@/src/components/ThemedText'
 import { DismissRow } from './DismissRow'
+import { successTap } from './haptics'
+import { useCopyAccountCode } from './useCopyAccountCode'
 import type { AccountPhaseProps } from './types'
 
-const COPY_ID = 'account-code'
 const BURST_SIZE = 84
 
 export function PurchaseSuccess({ model, onDismiss }: AccountPhaseProps) {
   const { t } = useTranslation(['settings', 'common'])
-  const { copiedId, flashCopied } = useCopiedFlag()
   const { theme } = useTheme()
   const c = theme.colors
+  const { copied, copyCode } = useCopyAccountCode(model.account?.code)
+
+  useEffect(() => successTap(), [])
 
   if (!model.account) return null
-
-  const code = model.account.code
-
-  const copyCode = () => {
-    if (!code) return
-    Clipboard.setStringAsync(formatAccountCode(code))
-      .then(() => flashCopied(COPY_ID))
-      .catch((err) => console.warn('[account] clipboard write failed', err))
-  }
 
   const footer = (
     <View style={styles.footer}>
@@ -53,20 +46,20 @@ export function PurchaseSuccess({ model, onDismiss }: AccountPhaseProps) {
         </Text>
       </View>
 
+      <Text style={[styles.warning, { color: c.colorTextSecondary }]}>
+        {t('settings:account.saveWarning')}
+      </Text>
+
       <View style={styles.card}>
         <AccountCodeCard
           code={model.account.code}
           label={t('settings:account.yourCode')}
           copyLabel={t('common:actions.copy')}
           copiedLabel={t('settings:account.copied')}
-          copied={copiedId === COPY_ID}
+          copied={copied}
           onCopy={copyCode}
         />
       </View>
-
-      <Text style={[styles.warning, { color: c.colorTextSecondary }]}>
-        {t('settings:account.saveWarning')}
-      </Text>
     </Layout>
   )
 }
@@ -81,6 +74,6 @@ const styles = StyleSheet.create({
     marginTop: -28,
     textAlign: 'center'
   },
-  card: { marginTop: 28 },
-  warning: { fontSize: 14, lineHeight: 20, marginTop: 16, textAlign: 'center' }
+  card: { marginTop: 24 },
+  warning: { fontSize: 14, lineHeight: 20, marginTop: 12, textAlign: 'center' }
 })

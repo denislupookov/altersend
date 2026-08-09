@@ -74,6 +74,7 @@ declare global {
     getAccountCode: () => Promise<string | null>
     setAccountCode: (code: string) => Promise<void>
     clearAccountCode: () => Promise<void>
+    saveAccountCode: (contents: string, defaultName: string) => Promise<string | null>
     appRestart: () => Promise<unknown>
     onDeepLink: (cb: (url: string) => void) => () => void
     onRuntimeUpdated: (cb: () => void) => () => void

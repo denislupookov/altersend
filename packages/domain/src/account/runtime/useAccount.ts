@@ -24,7 +24,7 @@ import {
 } from './purchaseFlow'
 import { isSubscriptionActive } from './store'
 import { useEntitlementPoll } from './useEntitlementPoll'
-import { useStorePrices } from './useStorePrices'
+import { usePlanPrices } from './usePlanPrices'
 
 export interface AccountAdapter {
   client: AccountClient
@@ -35,12 +35,11 @@ export interface AccountAdapter {
 }
 
 export interface AccountStoreActions {
-  restore(): void
+  restore(): Promise<boolean>
 }
 
 export interface AccountSubscriptionActions {
   logOut(): void
-  destroy(): void
   manage(): void
 }
 
@@ -72,7 +71,7 @@ const warn = (context: string, err: unknown) => console.warn(`[account] ${contex
 export function useAccount(adapter: AccountAdapter): AccountModel {
   const { client, storage, openUrl, syncToken, purchases } = adapter
   const [session, dispatch] = useReducer(accountReducer, initialAccountSession)
-  const prices = useStorePrices(purchases)
+  const prices = usePlanPrices(client, purchases)
   const inFlight = useRef(false)
 
   const creditPurchase = useCallback(
@@ -193,11 +192,20 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   }, [context, run, session.plan])
 
   const restore = useCallback(() => {
-    run(async () => {
-      const restored = await restoreFromStore(context)
-      if (!restored) dispatch({ type: 'failed', error: 'nothingToRestore' })
+    return run(async () => {
+      const outcome = await restoreFromStore(context)
 
-      return restored
+      if (outcome === 'nothingToRestore') {
+        dispatch({ type: 'failed', error: 'nothingToRestore' })
+        return false
+      }
+
+      if (outcome === 'notMoved') {
+        dispatch({ type: 'failed', error: 'restoreNotMoved' })
+        return false
+      }
+
+      return true
     })
   }, [context, run])
 
@@ -247,17 +255,6 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
     [client, run, session.entry, storage, syncToken]
   )
 
-  const destroy = useCallback(() => {
-    run(async () => {
-      if (!session.account) return false
-
-      await client.remove(session.account.code)
-      await forget()
-
-      return true
-    })
-  }, [client, forget, run, session.account])
-
   const manage = useCallback(() => {
     run(async () => {
       if (!session.account) return false
@@ -282,8 +279,8 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   }, [forget, run])
 
   const subscription = useMemo<AccountSubscriptionActions>(
-    () => ({ logOut, destroy, manage }),
-    [destroy, logOut, manage]
+    () => ({ logOut, manage }),
+    [logOut, manage]
   )
 
   const setEntry = useCallback(

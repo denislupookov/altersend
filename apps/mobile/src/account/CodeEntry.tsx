@@ -8,6 +8,7 @@ import { HeroBackdrop, Layout } from '@/src/components'
 import { IconButton } from '@/src/components/IconButton'
 import { Text } from '@/src/components/ThemedText'
 import { HEADER_TOP } from './constants'
+import { selectionTap, successTap } from './haptics'
 import type { AccountPhaseProps } from './types'
 
 export function CodeEntry({ model, errorText, onDismiss }: AccountPhaseProps) {
@@ -16,8 +17,17 @@ export function CodeEntry({ model, errorText, onDismiss }: AccountPhaseProps) {
 
   const paste = () => {
     Clipboard.getStringAsync()
-      .then(model.setEntry)
+      .then((text) => {
+        model.setEntry(text)
+        selectionTap()
+      })
       .catch((err) => console.warn('[account] clipboard read failed', err))
+  }
+
+  const activate = () => {
+    model.activate().then((ok) => {
+      if (ok) successTap()
+    })
   }
 
   return (
@@ -75,7 +85,7 @@ export function CodeEntry({ model, errorText, onDismiss }: AccountPhaseProps) {
           width='full'
           loading={model.busy}
           disabled={!model.codeReady}
-          onClick={model.activate}
+          onClick={activate}
         >
           {t('settings:account.activate')}
         </Button>
