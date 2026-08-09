@@ -20,7 +20,8 @@ import {
   buyWithCard,
   reserveCode,
   restoreFromStore,
-  type PurchaseContext
+  type PurchaseContext,
+  type ReservedCode
 } from './purchaseFlow'
 import { isSubscriptionActive } from './store'
 import { useEntitlementPoll } from './useEntitlementPoll'
@@ -73,9 +74,11 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   const [session, dispatch] = useReducer(accountReducer, initialAccountSession)
   const prices = usePlanPrices(client, purchases)
   const inFlight = useRef(false)
+  const pending = useRef<ReservedCode | null>(null)
 
   const creditPurchase = useCallback(
     async (code: string, status: AccountStatus) => {
+      pending.current = null
       dispatch({ type: 'purchased', account: { code, validUntil: status.validUntil ?? null } })
       await syncToken()
     },
@@ -110,6 +113,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   }, [])
 
   const forget = useCallback(async () => {
+    pending.current = null
     stopPolling()
     await storage.clear()
     dispatch({ type: 'forgotten' })
@@ -148,19 +152,14 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
 
         if (status.active) {
           dispatch({ type: 'activated', account: { code, validUntil: status.validUntil ?? null } })
-          return
         }
-
-        if (!purchases) dispatch({ type: 'upgrading', account: { code, validUntil: null } })
-
-        pollUntilActive(code)
       })
       .catch((err) => warn('status lookup failed', err))
 
     return () => {
       cancelled = true
     }
-  }, [client, pollUntilActive, purchases, storage])
+  }, [client, storage])
 
   const context = useMemo<PurchaseContext>(
     () => ({
@@ -179,6 +178,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   const startUpgrade = useCallback(() => {
     run(async () => {
       const reserved = await reserveCode(context)
+      pending.current = reserved
 
       try {
         return context.purchases
@@ -222,14 +222,14 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   }, [pollUntilActive, session.account])
 
   const cancelUpgrade = useCallback(() => {
-    const abandoned = session.account?.code
+    const reserved = pending.current
     run(async () => {
-      if (abandoned) await client.remove(abandoned)
-      await forget()
+      if (reserved) await abandon(context, reserved)
+      else await forget()
 
       return true
     })
-  }, [client, forget, run, session.account])
+  }, [context, forget, run])
 
   const activate = useCallback(
     () =>
@@ -241,8 +241,13 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
         }
 
         const status = await client.status(code)
-        if (!status.exists || !status.active) {
+        if (!status.exists) {
           dispatch({ type: 'failed', error: 'unknownCode' })
+          return false
+        }
+
+        if (!status.active) {
+          dispatch({ type: 'failed', error: 'expiredCode' })
           return false
         }
 
@@ -259,9 +264,8 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
     run(async () => {
       if (!session.account) return false
 
-      const url = purchases
-        ? await purchases.managementUrl()
-        : await client.portal(session.account.code)
+      const storeUrl = purchases ? await purchases.managementUrl() : null
+      const url = storeUrl ?? (await client.portal(session.account.code))
 
       if (!url) return false
       await openUrl(url)

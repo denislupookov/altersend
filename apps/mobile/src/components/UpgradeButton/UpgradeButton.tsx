@@ -9,7 +9,7 @@ export function UpgradeButton() {
   return (
     <Host matchContents>
       <Button
-        variant='outlined'
+        variant='filled'
         label={t('settings:account.upgrade')}
         onPress={() => router.push('/account')}
       />

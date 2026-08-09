@@ -104,12 +104,13 @@ export async function restoreFromStore(ctx: PurchaseContext): Promise<RestoreOut
   const { purchases } = ctx
   if (!purchases) return 'nothingToRestore'
 
-  const stored = await ctx.storage.read()
-  if (stored) await purchases.identify(stored)
-  if (!(await purchases.restore())) return 'nothingToRestore'
-
   const reserved = await reserveCode(ctx)
-  if (reserved.fresh) await purchases.identify(reserved.code)
+  await purchases.identify(reserved.code)
+
+  if (!(await purchases.restore())) {
+    await abandon(ctx, reserved)
+    return 'nothingToRestore'
+  }
 
   const status = await ctx.client.syncStore(reserved.code)
   if (!status.active) {

@@ -9,8 +9,6 @@ import type { BillingPlan, PlanOffer, PurchaseAdapter, PurchaseOutcome } from '@
 
 const PRO_ENTITLEMENT = 'pro'
 
-const APPLE_SUBSCRIPTIONS_URL = 'https://apps.apple.com/account/subscriptions'
-
 const apiKey =
   Platform.OS === 'ios'
     ? process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY
@@ -77,9 +75,9 @@ export const purchaseAdapter: PurchaseAdapter = {
   },
 
   async managementUrl() {
-    if (!apiKey) return APPLE_SUBSCRIPTIONS_URL
+    if (!apiKey) return null
     const info = await Purchases.getCustomerInfo()
-    return info.managementURL ?? APPLE_SUBSCRIPTIONS_URL
+    return info.managementURL ?? null
   },
 
   async identify(code) {

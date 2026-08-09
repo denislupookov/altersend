@@ -80,8 +80,9 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
           onCopy={copyCode}
         />
 
+        <div className='h-px bg-border-primary' />
+
         <LinkRow
-          bare
           isLast
           label={t('settings:account.subscriptionRow')}
           trailing={

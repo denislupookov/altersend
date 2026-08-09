@@ -61,7 +61,7 @@ export default function SubscriptionScreen() {
         onClick={() => setConfirmLogOut(true)}
       >
         {t('settings:account.logOut')}
-      </Button>
+      </Button>{' '}
     </View>
   )
 
