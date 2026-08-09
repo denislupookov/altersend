@@ -11,6 +11,7 @@ type ButtonElementProps = Parameters<typeof html.button>[0]
 export type ButtonVariant =
   | 'primary'
   | 'secondary'
+  | 'surface'
   | 'outline'
   | 'ghost'
   | 'light'
@@ -36,6 +37,7 @@ export interface ButtonProps extends Omit<ButtonElementProps, 'children' | 'styl
 const pressedStyle = {
   primary: styles.primaryPressed,
   secondary: styles.secondaryPressed,
+  surface: styles.surfacePressed,
   outline: styles.outlinePressed,
   ghost: styles.ghostPressed,
   light: styles.lightPressed,
@@ -52,6 +54,7 @@ const textSize = {
 const textVariant = {
   primary: styles.textPrimary,
   secondary: styles.textSecondary,
+  surface: styles.textSecondary,
   outline: styles.textOutline,
   ghost: styles.textGhost,
   light: styles.textLight,
@@ -68,6 +71,7 @@ const normalIconColor: Record<ButtonVariant, keyof ReturnType<typeof useTheme>['
   {
     primary: 'colorBackground',
     secondary: 'colorTextPrimary',
+    surface: 'colorTextPrimary',
     outline: 'colorTextPrimary',
     ghost: 'colorTextSecondary',
     light: 'colorOnAccent',

@@ -4,7 +4,7 @@ import { impactTap } from './haptics'
 
 const COPY_ID = 'account-code'
 
-export function useCopyAccountCode(code: string | undefined) {
+export function useCopyAccountCode(code: string | undefined, onCopied?: () => void) {
   const { copiedId, flashCopied } = useCopiedFlag()
 
   const copyCode = () => {
@@ -13,6 +13,7 @@ export function useCopyAccountCode(code: string | undefined) {
     Clipboard.setStringAsync(formatAccountCode(code))
       .then(() => {
         flashCopied(COPY_ID)
+        onCopied?.()
         return impactTap()
       })
       .catch((err) => console.warn('[account] clipboard write failed', err))

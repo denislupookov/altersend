@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { AccountCodeCard, Button, LinkRow, Spinner } from '@altersend/components'
+import { ChevronRightIcon } from '@altersend/components/icons'
+
 import { useTranslation } from '@altersend/locales'
 import { formatAccountCode, useCopiedFlag } from '@altersend/domain'
 import type { AccountModel } from '@altersend/domain'
@@ -10,7 +12,7 @@ import { SectionShell } from './SectionShell'
 const COPY_ID = 'account-code'
 
 export function ActiveAccountSection({ model }: { model: AccountModel }) {
-  const { t } = useTranslation(['settings', 'common', 'send'])
+  const { t, i18n } = useTranslation(['settings', 'common', 'send'])
   const { copiedId, flashCopied } = useCopiedFlag()
   const toast = useToast()
   const [confirmLogOut, setConfirmLogOut] = useState(false)
@@ -38,6 +40,16 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
       .catch((err) => console.warn('[account] clipboard write failed', err))
   }
 
+  const planSummary = account.validUntil
+    ? t('settings:account.subscriptionValue', {
+        plan: t('settings:account.planPro'),
+        date: new Date(account.validUntil).toLocaleDateString(
+          i18n.resolvedLanguage ?? i18n.language,
+          { month: 'short', day: 'numeric', year: 'numeric' }
+        )
+      })
+    : t('settings:account.planPro')
+
   const footer = (
     <div className='flex items-center justify-end gap-2'>
       <Button
@@ -53,9 +65,11 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
 
   return (
     <SectionShell title={t('settings:account.title')} footer={footer}>
-      <div className='mt-1 flex flex-col gap-5'>
+      <div className='mt-1 overflow-hidden rounded-2xl border border-border-primary bg-background-subtle'>
         <AccountCodeCard
+          attached
           hidden
+          inline
           code={account.code}
           label={t('settings:account.yourCode')}
           copyLabel={t('common:actions.copy')}
@@ -67,24 +81,16 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
         />
 
         <LinkRow
-          standalone
+          bare
           isLast
-          label={t('settings:account.planPro')}
-          subtitle={
-            account.validUntil
-              ? t('settings:account.activeUntil', { date: account.validUntil.slice(0, 10) })
-              : undefined
-          }
+          label={t('settings:account.subscriptionRow')}
           trailing={
-            <Button
-              size='sm'
-              variant='ghost'
-              loading={model.busy}
-              onClick={model.subscription.manage}
-            >
-              {t('settings:account.manage')}
-            </Button>
+            <div className='flex items-center gap-2'>
+              <span className='text-[14px] text-text-muted'>{planSummary}</span>
+              <ChevronRightIcon size={14} />
+            </div>
           }
+          onPress={model.subscription.manage}
         />
       </div>
 

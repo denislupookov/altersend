@@ -12,6 +12,8 @@ export interface AccountCodeCardProps {
   copiedLabel: string
   copied?: boolean
   hidden?: boolean
+  inline?: boolean
+  attached?: boolean
   revealLabel?: string
   hideLabel?: string
   saveLabel?: string
@@ -29,6 +31,8 @@ export function AccountCodeCard({
   copiedLabel,
   copied = false,
   hidden = false,
+  inline = false,
+  attached = false,
   revealLabel,
   hideLabel,
   saveLabel,
@@ -40,49 +44,59 @@ export function AccountCodeCard({
 }: AccountCodeCardProps) {
   const [revealed, setRevealed] = useState(false)
   const masked = hidden && !revealed
+  const value = masked ? maskAccountCode(code) : formatAccountCode(code)
+
+  const actions = (
+    <html.div style={styles.actions}>
+      {hidden ? (
+        <Button
+          size='sm'
+          variant='surface'
+          iconOnly
+          aria-label={revealed ? hideLabel : revealLabel}
+          icon={revealed ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+          onClick={() => {
+            setRevealed((current) => !current)
+            onToggleReveal?.(!revealed)
+          }}
+        />
+      ) : null}
+      <Button
+        size='sm'
+        variant={copied ? 'success' : 'surface'}
+        iconOnly
+        aria-label={copied ? copiedLabel : copyLabel}
+        icon={copied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+        onClick={onCopy}
+      />
+      {onSave ? (
+        <Button
+          size='sm'
+          variant={saved ? 'success' : 'surface'}
+          iconOnly
+          aria-label={saved ? savedLabel : saveLabel}
+          icon={saved ? <CheckIcon size={16} /> : <DownloadIcon size={16} />}
+          onClick={onSave}
+        />
+      ) : null}
+    </html.div>
+  )
 
   return (
-    <html.div style={styles.card}>
-      <html.div style={styles.row}>
-        <html.div style={styles.text}>
-          <html.p style={styles.label}>{label}</html.p>
-          <html.p style={styles.code}>
-            {masked ? maskAccountCode(code) : formatAccountCode(code)}
-          </html.p>
-        </html.div>
-        <html.div style={styles.actions}>
-          {hidden ? (
-            <Button
-              size='sm'
-              variant='ghost'
-              iconOnly
-              aria-label={revealed ? hideLabel : revealLabel}
-              icon={revealed ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
-              onClick={() => {
-                setRevealed((current) => !current)
-                onToggleReveal?.(!revealed)
-              }}
-            />
-          ) : null}
-          <Button
-            size='sm'
-            variant={copied ? 'success' : 'ghost'}
-            iconOnly
-            aria-label={copied ? copiedLabel : copyLabel}
-            icon={copied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
-            onClick={onCopy}
-          />
-          {onSave ? (
-            <Button
-              size='sm'
-              variant={saved ? 'success' : 'ghost'}
-              iconOnly
-              aria-label={saved ? savedLabel : saveLabel}
-              icon={saved ? <CheckIcon size={16} /> : <DownloadIcon size={16} />}
-              onClick={onSave}
-            />
-          ) : null}
-        </html.div>
+    <html.div style={[styles.card, attached && styles.cardAttached]}>
+      <html.div style={[styles.row, inline && styles.rowInline]}>
+        {inline ? (
+          <>
+            <html.p style={styles.inlineLabel}>{label}</html.p>
+            <html.p style={[styles.code, styles.codeInline]}>{value}</html.p>
+          </>
+        ) : (
+          <html.div style={styles.text}>
+            <html.p style={styles.label}>{label}</html.p>
+            <html.p style={styles.code}>{value}</html.p>
+          </html.div>
+        )}
+        {actions}
       </html.div>
     </html.div>
   )

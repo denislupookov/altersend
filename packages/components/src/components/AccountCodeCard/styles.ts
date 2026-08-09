@@ -7,16 +7,41 @@ export const styles = css.create({
     borderStyle: 'solid',
     borderColor: tokens.colorBorderPrimary,
     borderRadius: tokens.radiusLg,
-    backgroundColor: tokens.colorBackgroundSubtle,
-    paddingBlock: tokens.space35,
-    paddingInline: tokens.space4
+    backgroundColor: tokens.colorBackgroundSubtle
+  },
+  cardAttached: {
+    borderWidth: 0,
+    borderRadius: 0,
+    backgroundColor: 'transparent'
   },
   row: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: tokens.space3
+    gap: tokens.space3,
+    paddingBlock: tokens.space35,
+    paddingInline: tokens.space4
+  },
+  rowInline: {
+    alignItems: 'center',
+    paddingBlock: tokens.space3
+  },
+  inlineLabel: {
+    margin: 0,
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
+    minWidth: 0,
+    color: tokens.colorTextPrimary,
+    fontFamily: fontTokens.fontFamilySans,
+    fontSize: tokens.fontSizeBase,
+    fontWeight: tokens.fontWeightMedium,
+    lineHeight: tokens.lineHeightNormal
+  },
+  codeInline: {
+    fontSize: tokens.fontSizeBase,
+    color: tokens.colorTextSecondary
   },
   actions: {
     display: 'flex',
@@ -32,13 +57,11 @@ export const styles = css.create({
   },
   label: {
     margin: 0,
-    color: tokens.colorTextMuted,
+    color: tokens.colorTextPrimary,
     fontFamily: fontTokens.fontFamilySans,
-    fontSize: tokens.fontSizeXs,
-    fontWeight: tokens.fontWeightSemibold,
-    lineHeight: tokens.lineHeightNormal,
-    textTransform: 'uppercase',
-    letterSpacing: 1
+    fontSize: tokens.fontSizeLg,
+    fontWeight: tokens.fontWeightMedium,
+    lineHeight: tokens.lineHeightNormal
   },
   code: {
     margin: 0,

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { AccountCodeCard, Button, LinkRow, Spinner, useTheme } from '@altersend/components'
+import { AccountCodeCard, Button, MenuItem, Spinner, useTheme } from '@altersend/components'
 import { LogOutIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { formatAccountCode } from '@altersend/domain'
@@ -12,13 +12,15 @@ import { selectionTap } from '@/src/account/haptics'
 import { useCopyAccountCode } from '@/src/account/useCopyAccountCode'
 
 export default function SubscriptionScreen() {
-  const { t } = useTranslation(['settings', 'common', 'send'])
+  const { t, i18n } = useTranslation(['settings', 'common', 'send'])
   const { theme } = useTheme()
   const c = theme.colors
   const toast = useToast()
   const router = useRouter()
   const model = useAccountModel()
-  const { copied, copyCode } = useCopyAccountCode(model.account?.code)
+  const { copied, copyCode } = useCopyAccountCode(model.account?.code, () =>
+    toast.show({ title: t('send:connection.copiedToast') })
+  )
   const [confirmLogOut, setConfirmLogOut] = useState(false)
   const wasActive = useRef(false)
 
@@ -63,41 +65,46 @@ export default function SubscriptionScreen() {
     </View>
   )
 
+  const planSummary = account.validUntil
+    ? t('settings:account.subscriptionValue', {
+        plan: t('settings:account.planPro'),
+        date: new Date(account.validUntil).toLocaleDateString(
+          i18n.resolvedLanguage ?? i18n.language,
+          { month: 'short', day: 'numeric' }
+        )
+      })
+    : t('settings:account.planPro')
+
   return (
     <Layout hasNativeHeader footer={footer}>
-      <AccountCodeCard
-        hidden
-        code={account.code}
-        label={t('settings:account.yourCode')}
-        copyLabel={t('common:actions.copy')}
-        copiedLabel={t('settings:account.copied')}
-        revealLabel={t('settings:account.reveal')}
-        hideLabel={t('settings:account.hide')}
-        copied={copied}
-        onCopy={copyCode}
-        onToggleReveal={selectionTap}
-      />
+      <View
+        style={[
+          styles.group,
+          { borderColor: c.colorBorderPrimary, backgroundColor: c.colorBackgroundSubtle }
+        ]}
+      >
+        <AccountCodeCard
+          attached
+          hidden
+          code={account.code}
+          label={t('settings:account.yourCode')}
+          copyLabel={t('common:actions.copy')}
+          copiedLabel={t('settings:account.copied')}
+          revealLabel={t('settings:account.reveal')}
+          hideLabel={t('settings:account.hide')}
+          copied={copied}
+          onCopy={copyCode}
+          onToggleReveal={selectionTap}
+        />
 
-      <View style={styles.planCard}>
-        <LinkRow
-          standalone
+        <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
+
+        <MenuItem
           isLast
-          label={t('settings:account.planPro')}
-          subtitle={
-            account.validUntil
-              ? t('settings:account.activeUntil', { date: account.validUntil.slice(0, 10) })
-              : undefined
-          }
-          trailing={
-            <Button
-              size='sm'
-              variant='ghost'
-              loading={model.busy}
-              onClick={model.subscription.manage}
-            >
-              {t('settings:account.manage')}
-            </Button>
-          }
+          label={t('settings:account.subscriptionRow')}
+          value={planSummary}
+          disabled={model.busy}
+          onPress={model.subscription.manage}
         />
       </View>
 
@@ -120,7 +127,8 @@ export default function SubscriptionScreen() {
 }
 
 const styles = StyleSheet.create({
+  group: { borderWidth: 1, borderRadius: 16, overflow: 'hidden' },
+  divider: { height: StyleSheet.hairlineWidth },
   loading: { alignItems: 'center', paddingTop: 32 },
-  planCard: { marginTop: 14 },
   footer: { gap: 10 }
 })
