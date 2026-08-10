@@ -36,10 +36,35 @@ export interface PlanComparisonRow {
   pro: PlanCell
 }
 
+const PLAN_PRICE_KEY: Record<BillingPlan, string> = {
+  monthly: 'settings:account.pricePerMonth',
+  yearly: 'settings:account.pricePerYear'
+}
+
 export function planLabel(plan: BillingPlan, t: TranslateFn, prices?: PlanPrices): string {
-  const name = t(PLAN_LABEL_KEY[plan])
   const price = prices?.[plan]
-  return price ? `${name} · ${price}` : name
+  return price ? t(PLAN_PRICE_KEY[plan], { price }) : t(PLAN_LABEL_KEY[plan])
+}
+
+const PLAN_CAPTION_KEY: Record<BillingPlan, string> = {
+  monthly: 'settings:account.billedMonthly',
+  yearly: 'settings:account.billedYearly'
+}
+
+export interface PlanRow {
+  plan: BillingPlan
+  title: string
+  caption: string
+  price: string | null
+}
+
+export function planRows(t: TranslateFn, prices?: PlanPrices): PlanRow[] {
+  return BILLING_PLANS.map((plan) => ({
+    plan,
+    title: t(PLAN_LABEL_KEY[plan]),
+    caption: t(PLAN_CAPTION_KEY[plan]),
+    price: prices?.[plan] ?? null
+  }))
 }
 
 export function planComparisonRows(t: TranslateFn): PlanComparisonRow[] {

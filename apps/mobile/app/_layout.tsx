@@ -46,7 +46,7 @@ import {
 } from '../src/lifecycle/themePreferenceStorage'
 import { isRelayEnabled } from '../src/lifecycle/relayStorage'
 import { startAccountSync, syncAccountToken } from '../src/lifecycle/account'
-import { startPurchases } from '../src/lifecycle/purchases'
+import { watchEntitlement } from '../src/lifecycle/purchases'
 import { UpgradeButton } from '@/src/components'
 import { getMobileSystemLocales } from '../src/lifecycle/systemLocale'
 import { ShareIntentHandler } from '../src/lifecycle/ShareIntentHandler'
@@ -62,7 +62,7 @@ bindTransferApi(mobileApi, {
 mobileApi.worker
   .setRelayConfig({ enabled: isRelayEnabled() })
   .catch((err) => captureException(err, 'setRelayConfig'))
-startPurchases(() => {
+watchEntitlement(() => {
   syncAccountToken().catch((err) => console.warn('[account] entitlement sync failed', err))
 })
 startAccountSync()

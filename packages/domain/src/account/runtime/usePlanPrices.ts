@@ -3,10 +3,16 @@ import { pricesFrom, type PlanOffer, type PlanPrices } from '../core'
 import type { PurchaseAdapter } from '../ports'
 import type { AccountClient } from '../transport'
 
-export function usePlanPrices(client: AccountClient, purchases?: PurchaseAdapter): PlanPrices {
+export function usePlanPrices(
+  client: AccountClient,
+  purchases?: PurchaseAdapter,
+  storeRequested = true
+): PlanPrices {
   const [prices, setPrices] = useState<PlanPrices>({})
 
   useEffect(() => {
+    if (purchases && !storeRequested) return
+
     let cancelled = false
 
     const load = async (): Promise<PlanOffer[]> => {
@@ -25,7 +31,7 @@ export function usePlanPrices(client: AccountClient, purchases?: PurchaseAdapter
     return () => {
       cancelled = true
     }
-  }, [client, purchases])
+  }, [client, purchases, storeRequested])
 
   return prices
 }

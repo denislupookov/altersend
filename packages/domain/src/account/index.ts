@@ -7,10 +7,12 @@ export {
   maskAccountCode,
   planComparisonRows,
   planLabel,
+  planRows,
   type AccountPhase,
   type BillingPlan,
   type PlanCell,
-  type PlanOffer
+  type PlanOffer,
+  type PlanRow
 } from './core'
 
 export type { AccountStorage, PurchaseAdapter, PurchaseOutcome } from './ports'

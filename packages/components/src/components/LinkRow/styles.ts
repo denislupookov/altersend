@@ -78,6 +78,13 @@ export const styles = css.create({
   rowActive: {
     backgroundColor: tokens.colorSurfacePrimary
   },
+  rowSelected: {
+    borderColor: tokens.colorAccent,
+    backgroundColor: tokens.colorSurfacePrimary,
+    ':hover': {
+      borderColor: tokens.colorAccent
+    }
+  },
   iconBox: {
     width: tokens.space9,
     height: tokens.space9,

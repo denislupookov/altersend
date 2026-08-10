@@ -1,13 +1,12 @@
+import { useEffect } from 'react'
 import { Linking, StyleSheet, View } from 'react-native'
-import { Button, ExternalLink, Tabs, TabsList, TabsTrigger, useTheme } from '@altersend/components'
+import { Button, ExternalLink, LinkRow, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import {
-  BILLING_PLANS,
   planComparisonRows,
-  planLabel,
+  planRows,
   privacyPolicyUrl,
-  termsOfServiceUrl,
-  type BillingPlan
+  termsOfServiceUrl
 } from '@altersend/domain'
 import { HeroBackdrop, Layout } from '@/src/components'
 import { IconButton } from '@/src/components/IconButton'
@@ -32,6 +31,9 @@ export function Paywall({ model, errorText, onDismiss }: AccountPhaseProps) {
   const { theme } = useTheme()
   const c = theme.colors
   const rows = planComparisonRows(t)
+  const { prepareStore } = model
+
+  useEffect(() => prepareStore(), [prepareStore])
 
   const footer = (
     <View style={[styles.footer, styles.footerBar, { borderTopColor: c.colorBorderStrong }]}>
@@ -41,11 +43,18 @@ export function Paywall({ model, errorText, onDismiss }: AccountPhaseProps) {
         size='lg'
         width='full'
         loading={model.busy}
-        disabled={!purchasesReady}
+        disabled={!purchasesReady || model.storeUnavailable}
         onClick={model.startUpgrade}
       >
         {t('settings:account.getPro')}
       </Button>
+
+      {model.storeUnavailable ? (
+        <Text style={[styles.note, { color: c.colorTextSecondary }]}>
+          {t('settings:account.storeUnavailable')}
+        </Text>
+      ) : null}
+
       <Button
         size='sm'
         variant='ghost'
@@ -90,19 +99,21 @@ export function Paywall({ model, errorText, onDismiss }: AccountPhaseProps) {
       </Text>
 
       <View style={styles.plans}>
-        <Tabs
-          stretch
-          value={model.plan}
-          onValueChange={(next) => model.choosePlan(next as BillingPlan)}
-        >
-          <TabsList>
-            {BILLING_PLANS.map((option) => (
-              <TabsTrigger key={option} value={option}>
-                {planLabel(option, t, model.prices)}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        {planRows(t, model.prices).map((row) => (
+          <LinkRow
+            key={row.plan}
+            standalone
+            label={row.title}
+            subtitle={row.caption}
+            selected={row.plan === model.plan}
+            onPress={() => model.choosePlan(row.plan)}
+            trailing={
+              row.price ? (
+                <Text style={[styles.planPrice, { color: c.colorTextPrimary }]}>{row.price}</Text>
+              ) : null
+            }
+          />
+        ))}
       </View>
 
       <View style={styles.table}>
@@ -168,7 +179,8 @@ const styles = StyleSheet.create({
   },
   title: { flexShrink: 1, fontSize: 30, fontWeight: '700', letterSpacing: -0.6, marginBottom: 6 },
   lead: { fontSize: 15, lineHeight: 21 },
-  plans: { marginTop: 24, marginBottom: 8 },
+  plans: { marginTop: 24, marginBottom: 8, gap: 10 },
+  planPrice: { fontSize: 16, fontWeight: '600' },
   table: { position: 'relative', marginTop: 28 },
   proColumn: {
     position: 'absolute',
@@ -193,6 +205,7 @@ const styles = StyleSheet.create({
   proChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
   proChipLabel: { fontSize: 13, fontWeight: '600' },
   footer: { gap: 10 },
+  note: { fontSize: 13, lineHeight: 18, textAlign: 'center' },
   error: { fontSize: 13, lineHeight: 18, marginTop: 12, textAlign: 'center' },
   legalLinks: {
     flexDirection: 'row',

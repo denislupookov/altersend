@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import {
   accountErrorKey,
   accountReducer,
@@ -26,6 +26,7 @@ import {
 import { isSubscriptionActive } from './store'
 import { useEntitlementPoll } from './useEntitlementPoll'
 import { usePlanPrices } from './usePlanPrices'
+import { useStoreAvailability } from './useStoreAvailability'
 
 export interface AccountAdapter {
   client: AccountClient
@@ -52,6 +53,7 @@ export interface AccountModel {
   entry: string
   codeReady: boolean
   rotated: boolean
+  storeUnavailable: boolean
   plan: BillingPlan
   prices: PlanPrices
   store?: AccountStoreActions
@@ -59,6 +61,7 @@ export interface AccountModel {
   clearError(): void
   setEntry(input: string): void
   choosePlan(plan: BillingPlan): void
+  prepareStore(): void
   showEntry(): void
   showPaywall(): void
   startUpgrade(): void
@@ -73,7 +76,9 @@ const warn = (context: string, err: unknown) => console.warn(`[account] ${contex
 export function useAccount(adapter: AccountAdapter): AccountModel {
   const { client, storage, openUrl, syncToken, purchases } = adapter
   const [session, dispatch] = useReducer(accountReducer, initialAccountSession)
-  const prices = usePlanPrices(client, purchases)
+  const [storeRequested, setStoreRequested] = useState(false)
+  const storeUnavailable = useStoreAvailability(storeRequested ? purchases : undefined)
+  const prices = usePlanPrices(client, purchases, storeRequested)
   const inFlight = useRef(false)
   const pending = useRef<ReservedCode | null>(null)
 
@@ -180,6 +185,8 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   )
 
   const startUpgrade = useCallback(() => {
+    if (storeUnavailable) return
+
     run(async () => {
       const reserved = await reserveCode(context)
       pending.current = reserved
@@ -193,7 +200,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
         throw err
       }
     })
-  }, [context, run, session.plan])
+  }, [context, run, session.plan, storeUnavailable])
 
   const restore = useCallback(() => {
     return run(async () => {
@@ -214,8 +221,8 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   }, [context, run])
 
   const store = useMemo<AccountStoreActions | undefined>(
-    () => (purchases ? { restore } : undefined),
-    [purchases, restore]
+    () => (purchases && !storeUnavailable ? { restore } : undefined),
+    [purchases, restore, storeUnavailable]
   )
 
   const retryUpgrade = useCallback(() => {
@@ -301,6 +308,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   const showEntry = useCallback(() => dispatch({ type: 'showEntry' }), [])
   const showPaywall = useCallback(() => dispatch({ type: 'showPaywall' }), [])
   const acknowledge = useCallback(() => dispatch({ type: 'acknowledged' }), [])
+  const prepareStore = useCallback(() => setStoreRequested(true), [])
 
   return useMemo(
     () => ({
@@ -311,6 +319,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
       entry: session.entry,
       codeReady: isAccountCodeReady(session.entry),
       rotated: session.rotated,
+      storeUnavailable,
       plan: session.plan,
       prices,
       store,
@@ -318,6 +327,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
       clearError,
       setEntry,
       choosePlan,
+      prepareStore,
       showEntry,
       showPaywall,
       startUpgrade,
@@ -332,6 +342,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
       cancelUpgrade,
       choosePlan,
       clearError,
+      prepareStore,
       prices,
       retryUpgrade,
       session,
@@ -340,6 +351,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
       showPaywall,
       startUpgrade,
       store,
+      storeUnavailable,
       subscription
     ]
   )

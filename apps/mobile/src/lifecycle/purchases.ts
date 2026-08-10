@@ -16,17 +16,27 @@ const apiKey =
 
 export const purchasesReady = Boolean(apiKey)
 
-export function startPurchases(onEntitlementChange?: () => void): void {
-  if (!apiKey) return
+let configured = false
+let onEntitlementChange: (() => void) | null = null
+
+export function watchEntitlement(listener: () => void): void {
+  onEntitlementChange = listener
+}
+
+function ensureConfigured(): boolean {
+  if (!apiKey) return false
+  if (configured) return true
 
   try {
     Purchases.configure({ apiKey })
-    if (onEntitlementChange) {
-      Purchases.addCustomerInfoUpdateListener((_info: CustomerInfo) => onEntitlementChange())
-    }
+    Purchases.addCustomerInfoUpdateListener((_info: CustomerInfo) => onEntitlementChange?.())
+    configured = true
   } catch (err) {
     console.warn('[purchases] could not configure RevenueCat', err)
+    return false
   }
+
+  return true
 }
 
 function errorCode(err: unknown): string | null {
@@ -58,8 +68,20 @@ async function packageForPlan(plan: BillingPlan): Promise<PurchasesPackage> {
 }
 
 export const purchaseAdapter: PurchaseAdapter = {
+  async available() {
+    if (!ensureConfigured()) return false
+
+    try {
+      if (!(await Purchases.canMakePayments())) return false
+      return (await Purchases.getOfferings()).current !== null
+    } catch (err) {
+      console.warn('[purchases] store unavailable', err)
+      return false
+    }
+  },
+
   async offers() {
-    if (!apiKey) return []
+    if (!ensureConfigured()) return []
 
     const offering = (await Purchases.getOfferings()).current
     if (!offering) return []
@@ -75,17 +97,21 @@ export const purchaseAdapter: PurchaseAdapter = {
   },
 
   async managementUrl() {
-    if (!apiKey) return null
+    if (!ensureConfigured()) return null
     const info = await Purchases.getCustomerInfo()
     return info.managementURL ?? null
   },
 
   async identify(code) {
+    if (!ensureConfigured()) return
+
     const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, code)
     await Purchases.logIn(hash)
   },
 
   async buy(plan): Promise<PurchaseOutcome> {
+    if (!ensureConfigured()) return 'cancelled'
+
     const selected = await packageForPlan(plan)
 
     try {
@@ -103,6 +129,8 @@ export const purchaseAdapter: PurchaseAdapter = {
   },
 
   async restore() {
+    if (!ensureConfigured()) return false
+
     return isPro(await Purchases.restorePurchases())
   }
 }
