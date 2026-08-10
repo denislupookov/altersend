@@ -11,18 +11,29 @@ function tokenPath(): string {
   return path.join(app.getPath('userData'), 'pro-token')
 }
 
-function sealingAvailable(): boolean {
-  return safeStorage.isEncryptionAvailable()
+function sealed(): boolean {
+  return app.isPackaged
+}
+
+function readSecret(raw: Buffer): string {
+  return sealed() ? safeStorage.decryptString(raw) : raw.toString('utf8')
+}
+
+function writeSecret(value: string): Buffer {
+  if (!sealed()) return Buffer.from(value, 'utf8')
+
+  if (!safeStorage.isEncryptionAvailable()) {
+    throw new Error('Refusing to store the account code: OS encryption is unavailable')
+  }
+
+  return safeStorage.encryptString(value)
 }
 
 const CODE_PATTERN = /^\d{16}$/
 
 export async function readAccountCode(): Promise<string | null> {
-  if (!sealingAvailable()) return null
-
   try {
-    const raw = await readFile(storePath())
-    const code = safeStorage.decryptString(raw).trim()
+    const code = readSecret(await readFile(storePath())).trim()
     return CODE_PATTERN.test(code) ? code : null
   } catch {
     return null
@@ -30,19 +41,12 @@ export async function readAccountCode(): Promise<string | null> {
 }
 
 export async function writeAccountCode(code: string): Promise<void> {
-  if (!sealingAvailable()) {
-    throw new Error('Refusing to store the account code: OS encryption is unavailable')
-  }
-
-  await writeFileViaTemp(storePath(), safeStorage.encryptString(code))
+  await writeFileViaTemp(storePath(), writeSecret(code))
 }
 
 export async function readAccountToken(): Promise<string | null> {
-  if (!sealingAvailable()) return null
-
   try {
-    const raw = await readFile(tokenPath())
-    return safeStorage.decryptString(raw).trim() || null
+    return readSecret(await readFile(tokenPath())).trim() || null
   } catch {
     return null
   }
@@ -54,9 +58,7 @@ export async function writeAccountToken(token: string | null): Promise<void> {
     return
   }
 
-  if (!sealingAvailable()) return
-
-  await writeFileViaTemp(tokenPath(), safeStorage.encryptString(token))
+  await writeFileViaTemp(tokenPath(), writeSecret(token))
 }
 
 export async function clearAccountCode(): Promise<void> {
