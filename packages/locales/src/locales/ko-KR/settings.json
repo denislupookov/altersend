@@ -146,6 +146,7 @@
     "savedCodeConfirm": "네, 저장했습니다",
     "done": "완료",
     "copied": "복사됨",
+    "copyFailed": "코드를 복사하지 못했습니다. 로그아웃하기 전에 직접 복사하세요.",
     "saveCode": "코드를 파일로 저장",
     "codeFileTitle": "AlterSend Pro",
     "codeFileCode": "계정 코드",

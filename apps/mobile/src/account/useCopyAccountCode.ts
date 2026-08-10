@@ -7,16 +7,21 @@ const COPY_ID = 'account-code'
 export function useCopyAccountCode(code: string | undefined, onCopied?: () => void) {
   const { copiedId, flashCopied } = useCopiedFlag()
 
-  const copyCode = () => {
-    if (!code) return
+  const copyCode = async (): Promise<boolean> => {
+    if (!code) return false
 
-    Clipboard.setStringAsync(formatAccountCode(code))
-      .then(() => {
-        flashCopied(COPY_ID)
-        onCopied?.()
-        return impactTap()
-      })
-      .catch((err) => console.warn('[account] clipboard write failed', err))
+    try {
+      await Clipboard.setStringAsync(formatAccountCode(code))
+    } catch (err) {
+      console.warn('[account] clipboard write failed', err)
+      return false
+    }
+
+    flashCopied(COPY_ID)
+    onCopied?.()
+    await impactTap()
+
+    return true
   }
 
   return { copied: copiedId === COPY_ID, copyCode }

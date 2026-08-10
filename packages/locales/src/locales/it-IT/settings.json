@@ -146,6 +146,7 @@
     "savedCodeConfirm": "Sì, l'ho salvato",
     "done": "Fatto",
     "copied": "Copiato",
+    "copyFailed": "Non è stato possibile copiare il codice: copialo manualmente prima di uscire.",
     "saveCode": "Salva il codice in un file",
     "codeFileTitle": "AlterSend Pro",
     "codeFileCode": "Codice account",

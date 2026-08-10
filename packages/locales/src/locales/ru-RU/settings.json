@@ -146,6 +146,7 @@
     "savedCodeConfirm": "Да, сохранил",
     "done": "Готово",
     "copied": "Скопировано",
+    "copyFailed": "Не удалось скопировать код — скопируйте его вручную перед выходом.",
     "saveCode": "Сохранить код в файл",
     "codeFileTitle": "AlterSend Pro",
     "codeFileCode": "Код аккаунта",

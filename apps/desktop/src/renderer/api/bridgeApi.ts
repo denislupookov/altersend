@@ -73,6 +73,12 @@ export const bridgeApi = {
   clearAccountCode() {
     return requireBridge().clearAccountCode()
   },
+  getAccountToken() {
+    return requireBridge().getAccountToken()
+  },
+  setAccountToken(token: string | null) {
+    return requireBridge().setAccountToken(token)
+  },
   saveAccountCode(contents: string, defaultName: string) {
     return requireBridge().saveAccountCode(contents, defaultName)
   },

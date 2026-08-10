@@ -6,6 +6,7 @@ import { purchaseAdapter, purchasesReady } from './purchases'
 import { isRelayEnabled } from './relayStorage'
 
 const CODE_KEY = 'altersend.account.code'
+const TOKEN_KEY = 'altersend.account.token'
 
 const accountStorage: AccountStorage = {
   async read() {
@@ -17,7 +18,17 @@ const accountStorage: AccountStorage = {
     }
   },
   write: (code) => SecureStore.setItemAsync(CODE_KEY, code),
-  clear: () => SecureStore.deleteItemAsync(CODE_KEY)
+  clear: () => SecureStore.deleteItemAsync(CODE_KEY),
+  async readToken() {
+    try {
+      return await SecureStore.getItemAsync(TOKEN_KEY)
+    } catch (err) {
+      console.warn('[account] could not read cached token', err)
+      return null
+    }
+  },
+  writeToken: (token) =>
+    token ? SecureStore.setItemAsync(TOKEN_KEY, token) : SecureStore.deleteItemAsync(TOKEN_KEY)
 }
 
 const runtime = createAccountRuntime({

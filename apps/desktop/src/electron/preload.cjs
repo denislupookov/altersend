@@ -33,6 +33,8 @@ contextBridge.exposeInMainWorld('bridge', {
   getAccountCode: () => ipcRenderer.invoke('account:getCode'),
   setAccountCode: (code) => ipcRenderer.invoke('account:setCode', code),
   clearAccountCode: () => ipcRenderer.invoke('account:clearCode'),
+  getAccountToken: () => ipcRenderer.invoke('account:getToken'),
+  setAccountToken: (token) => ipcRenderer.invoke('account:setToken', token),
   saveAccountCode: (contents, defaultName) =>
     ipcRenderer.invoke('account:saveCode', contents, defaultName),
   chooseDownloadFolder: () => ipcRenderer.invoke('app:chooseDownloadFolder'),

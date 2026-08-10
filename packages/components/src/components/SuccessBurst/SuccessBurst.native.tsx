@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { Animated, Easing, StyleSheet, View } from 'react-native'
-import { BURST_DURATION_MS, MARK_DURATION_MS, PIECES, PIECE_SIZE } from './constants'
+import { BURST_DURATION_MS, PIECES, PIECE_SIZE } from './constants'
 
 export interface SuccessBurstProps {
   icon: ReactNode
@@ -102,5 +102,3 @@ const styles = StyleSheet.create({
   },
   mark: { alignItems: 'center', justifyContent: 'center' }
 })
-
-export { MARK_DURATION_MS }

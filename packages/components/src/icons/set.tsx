@@ -3,7 +3,6 @@ import {
   AppWindow,
   Archive,
   ArrowLeft,
-  ArrowRight,
   ArrowUpCircle,
   ArrowUpRight,
   Bell,
@@ -52,7 +51,6 @@ import {
   Settings,
   Share2,
   Shield,
-  Sparkles,
   Eye,
   EyeOff,
   LogOut,
@@ -76,7 +74,6 @@ export { AppleIcon, DiscordIcon, GithubIcon, WindowsIcon, XIcon } from './svgIco
 export const AlertCircleIcon = adaptLucide(AlertCircle)
 export const ArchiveIcon = adaptLucide(Archive)
 export const ArrowLeftIcon = adaptLucide(ArrowLeft)
-export const ArrowRightIcon = adaptLucide(ArrowRight)
 export const ArrowUpCircleIcon = adaptLucide(ArrowUpCircle)
 export const ArrowUpRightIcon = adaptLucide(ArrowUpRight)
 export const AppWindowIcon = adaptLucide(AppWindow)
@@ -126,7 +123,6 @@ export const SendIcon = adaptLucide(Send)
 export const SettingsIcon = adaptLucide(Settings)
 export const ShareIcon = adaptLucide(Share2)
 export const ShieldIcon = adaptLucide(Shield)
-export const SparklesIcon = adaptLucide(Sparkles)
 export const LogOutIcon = adaptLucide(LogOut)
 export const EyeIcon = adaptLucide(Eye)
 export const EyeOffIcon = adaptLucide(EyeOff)

@@ -117,8 +117,10 @@ export default function SubscriptionScreen() {
         cancelLabel={t('common:actions.cancel')}
         onConfirm={() => {
           setConfirmLogOut(false)
-          copyCode()
-          model.subscription.logOut()
+          copyCode().then((copied) => {
+            if (copied) model.subscription.logOut()
+            else toast.show({ title: t('settings:account.copyFailed'), tone: 'error' })
+          })
         }}
         onCancel={() => setConfirmLogOut(false)}
       />

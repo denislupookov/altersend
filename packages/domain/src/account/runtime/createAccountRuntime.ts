@@ -27,7 +27,13 @@ export function createAccountRuntime({
   purchases
 }: AccountRuntimeOptions): AccountRuntime {
   const client = createAccountClient(baseUrl)
-  const tokenSync = createTokenSync({ client, readCode: storage.read, applyToken })
+  const tokenSync = createTokenSync({
+    client,
+    readCode: storage.read,
+    applyToken,
+    readCachedToken: storage.readToken?.bind(storage),
+    cacheToken: storage.writeToken?.bind(storage)
+  })
 
   return {
     adapter: {

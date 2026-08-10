@@ -1,5 +1,10 @@
 import type { BillingPlan } from '../core'
-import { AccountApiError, NETWORK_ERROR_STATUS, TIMEOUT_ERROR_STATUS } from './AccountApiError'
+import {
+  AccountApiError,
+  NETWORK_ERROR_STATUS,
+  SERVER_ERROR_STATUS,
+  TIMEOUT_ERROR_STATUS
+} from './AccountApiError'
 
 const REQUEST_TIMEOUT_MS = 15000
 
@@ -60,17 +65,25 @@ async function send<T>(
       signal: controller.signal
     })
   } catch (err) {
+    clearTimeout(expiry)
     const status = controller.signal.aborted ? TIMEOUT_ERROR_STATUS : NETWORK_ERROR_STATUS
     throw new AccountApiError(status, `${path} could not be reached`, err)
+  }
+
+  try {
+    if (!response.ok) {
+      throw new AccountApiError(response.status, `${path} failed with ${response.status}`)
+    }
+
+    return (await response.json()) as T
+  } catch (err) {
+    if (err instanceof AccountApiError) throw err
+
+    const status = controller.signal.aborted ? TIMEOUT_ERROR_STATUS : SERVER_ERROR_STATUS
+    throw new AccountApiError(status, `${path} returned an unreadable body`, err)
   } finally {
     clearTimeout(expiry)
   }
-
-  if (!response.ok) {
-    throw new AccountApiError(response.status, `${path} failed with ${response.status}`)
-  }
-
-  return (await response.json()) as T
 }
 
 export function createAccountClient(baseUrl: string): AccountClient {

@@ -30,14 +30,17 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
     )
   }
 
-  const copyCode = () => {
-    navigator.clipboard
-      .writeText(formatAccountCode(account.code))
-      .then(() => {
-        flashCopied(COPY_ID)
-        toast.show({ title: t('send:connection.copiedToast') })
-      })
-      .catch((err) => console.warn('[account] clipboard write failed', err))
+  const copyCode = async (): Promise<boolean> => {
+    try {
+      await navigator.clipboard.writeText(formatAccountCode(account.code))
+    } catch {
+      return false
+    }
+
+    flashCopied(COPY_ID)
+    toast.show({ title: t('send:connection.copiedToast') })
+
+    return true
   }
 
   const planSummary = account.validUntil
@@ -106,8 +109,10 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
         cancelLabel={t('common:actions.cancel')}
         onConfirm={() => {
           setConfirmLogOut(false)
-          copyCode()
-          model.subscription.logOut()
+          copyCode().then((copied) => {
+            if (copied) model.subscription.logOut()
+            else toast.show({ title: t('settings:account.copyFailed'), variant: 'error' })
+          })
         }}
         onCancel={() => setConfirmLogOut(false)}
       />

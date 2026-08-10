@@ -6,8 +6,12 @@ const repoRoot = new URL('../../..', import.meta.url)
 const mobileRoot = new URL('apps/mobile', repoRoot)
 const allowedRawTextFiles = new Set(['src/components/ThemedText.tsx'])
 
+const skippedDirs = new Set(['node_modules', 'ios', 'android', '.expo'])
+
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((entry) => {
+    if (skippedDirs.has(entry)) return []
+
     const path = join(dir, entry)
     const stat = statSync(path)
     if (stat.isDirectory()) return walk(path)

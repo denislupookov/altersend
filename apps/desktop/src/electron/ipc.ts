@@ -15,8 +15,10 @@ import {
   clearAccountCode,
   getDownloadFolder,
   readAccountCode,
+  readAccountToken,
   setDownloadFolder,
   writeAccountCode,
+  writeAccountToken,
   writeFileViaTemp
 } from './store/index.js'
 import { setThemeSource, type ThemeSource } from './theme.js'
@@ -226,6 +228,15 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
   })
 
   ipcMain.handle('account:clearCode', () => clearAccountCode())
+
+  ipcMain.handle('account:getToken', () => readAccountToken())
+
+  ipcMain.handle('account:setToken', (_evt, token: unknown) => {
+    if (token !== null && typeof token !== 'string') {
+      throw new Error('account:setToken expects a string or null')
+    }
+    return writeAccountToken(token)
+  })
 
   ipcMain.handle('account:saveCode', async (evt, contents: string, defaultName: string) => {
     if (!isPathSafe(defaultName) || path.basename(defaultName) !== defaultName) {

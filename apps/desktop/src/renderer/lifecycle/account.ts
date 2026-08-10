@@ -5,7 +5,9 @@ import { isRelayEnabled } from './relayStorage'
 const accountStorage: AccountStorage = {
   read: () => bridgeApi.getAccountCode(),
   write: (code) => bridgeApi.setAccountCode(code),
-  clear: () => bridgeApi.clearAccountCode()
+  clear: () => bridgeApi.clearAccountCode(),
+  readToken: () => bridgeApi.getAccountToken(),
+  writeToken: (token) => bridgeApi.setAccountToken(token)
 }
 
 const runtime = createAccountRuntime({

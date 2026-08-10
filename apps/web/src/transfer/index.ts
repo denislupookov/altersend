@@ -17,15 +17,13 @@ function watchRelayLimit(
   handlers: ConnectHandlers,
   signal?: AbortSignal
 ): void {
-  const initial = connection.maxTransferBytes ?? null
   const timers = LIMIT_RECHECK_MS.map((delay) =>
     setTimeout(() => {
       if (signal?.aborted) return
       fetchRelayLimit(url, cid)
         .then((bytes) => {
           if (signal?.aborted) return
-          if (bytes === null || bytes === connection.maxTransferBytes) return
-          if (initial !== null && bytes <= initial) return
+          if (bytes === null || bytes <= (connection.maxTransferBytes ?? 0)) return
           connection.maxTransferBytes = bytes
           handlers.onLimit?.(bytes)
         })

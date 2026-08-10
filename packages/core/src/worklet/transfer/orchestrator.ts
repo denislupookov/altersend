@@ -313,6 +313,8 @@ export class TransferOrchestrator implements TransferRPC {
       return
     }
     if (message.type === 'web-relay') {
+      if (!this.authedPeers.has(session.peerKey)) return
+
       upgradeWebRelay(message.cid, message.host).catch((err) => {
         console.warn('[pro] web relay upgrade rejected', err instanceof Error ? err.message : err)
       })

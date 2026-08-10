@@ -146,6 +146,7 @@
     "savedCodeConfirm": "已儲存",
     "done": "完成",
     "copied": "已複製",
+    "copyFailed": "無法複製你的代碼，請在登出前手動複製。",
     "saveCode": "將代碼儲存為檔案",
     "codeFileTitle": "AlterSend Pro",
     "codeFileCode": "帳號代碼",

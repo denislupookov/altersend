@@ -20,6 +20,11 @@ export interface ReservedCode {
 
 const warn = (context: string, err: unknown) => console.warn(`[account] ${context}`, err)
 
+export function assertHttpsUrl(url: string, context: string): string {
+  if (!/^https:\/\//i.test(url)) throw new Error(`[account] ${context} returned a non-https url`)
+  return url
+}
+
 export async function reserveCode(ctx: PurchaseContext): Promise<ReservedCode> {
   const stored = await ctx.storage.read()
 
@@ -34,7 +39,23 @@ export async function reserveCode(ctx: PurchaseContext): Promise<ReservedCode> {
 }
 
 export async function abandon(ctx: PurchaseContext, reserved: ReservedCode): Promise<void> {
-  if (reserved.fresh) await ctx.discard(reserved.code)
+  if (!reserved.fresh) return
+
+  const status = await ctx.client.status(reserved.code).catch((err) => {
+    warn('status check before discard failed', err)
+    return null
+  })
+
+  if (status?.active) {
+    ctx.dispatch({
+      type: 'purchased',
+      account: { code: reserved.code, validUntil: status.validUntil ?? null }
+    })
+    await ctx.syncToken()
+    return
+  }
+
+  await ctx.discard(reserved.code)
 }
 
 async function creditFromStore(ctx: PurchaseContext, code: string): Promise<AccountStatus | null> {
@@ -48,14 +69,16 @@ async function creditFromStore(ctx: PurchaseContext, code: string): Promise<Acco
 
 async function settle(ctx: PurchaseContext, code: string): Promise<void> {
   const credited = await creditFromStore(ctx, code)
+  const account = { code, validUntil: credited?.validUntil ?? null }
 
-  ctx.dispatch({
-    type: 'purchased',
-    account: { code, validUntil: credited?.validUntil ?? null }
-  })
+  if (!credited?.active) {
+    ctx.dispatch({ type: 'awaitingApproval', account })
+    ctx.poll(code)
+    return
+  }
+
+  ctx.dispatch({ type: 'purchased', account })
   await ctx.syncToken()
-
-  if (!credited?.active) ctx.poll(code)
 }
 
 export async function buyFromStore(
@@ -93,7 +116,8 @@ export async function buyWithCard(
   const { code } = reserved
 
   ctx.dispatch({ type: 'upgrading', account: { code, validUntil: null } })
-  await ctx.openUrl(await ctx.client.checkout(code, plan))
+  const url = assertHttpsUrl(await ctx.client.checkout(code, plan), 'checkout')
+  await ctx.openUrl(url)
   ctx.poll(code)
   return true
 }
@@ -114,7 +138,7 @@ export async function restoreFromStore(ctx: PurchaseContext): Promise<RestoreOut
 
   const status = await ctx.client.syncStore(reserved.code)
   if (!status.active) {
-    if (reserved.fresh) await abandon(ctx, reserved)
+    await abandon(ctx, reserved)
     return 'notMoved'
   }
 

@@ -1,4 +1,10 @@
-export { clearAccountCode, readAccountCode, writeAccountCode } from './accountStore.js'
+export {
+  clearAccountCode,
+  readAccountCode,
+  readAccountToken,
+  writeAccountCode,
+  writeAccountToken
+} from './accountStore.js'
 export { createJsonStore } from './createJsonStore.js'
 export { getDownloadFolder, setDownloadFolder } from './downloadLocation.js'
 export { migrateLegacyStore } from './migrateLegacyStore.js'

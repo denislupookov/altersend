@@ -16,6 +16,7 @@ import type { AccountStorage, PurchaseAdapter } from '../ports'
 import { classifyAccountError, type AccountClient, type AccountStatus } from '../transport'
 import {
   abandon,
+  assertHttpsUrl,
   buyFromStore,
   buyWithCard,
   reserveCode,
@@ -23,7 +24,7 @@ import {
   type PurchaseContext,
   type ReservedCode
 } from './purchaseFlow'
-import { isSubscriptionActive } from './store'
+import { isSubscriptionActive, useSubscriptionStore } from './store'
 import { useEntitlementPoll } from './useEntitlementPoll'
 import { usePlanPrices } from './usePlanPrices'
 import { useStoreAvailability } from './useStoreAvailability'
@@ -170,6 +171,24 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
     }
   }, [client, storage])
 
+  const subscriptionActive = useSubscriptionStore((state) => state.active)
+
+  useEffect(() => {
+    if (!subscriptionActive || session.phase !== 'paywall' || session.account) return
+
+    let cancelled = false
+    storage
+      .read()
+      .then((code) => {
+        if (code && !cancelled) dispatch({ type: 'activated', account: { code, validUntil: null } })
+      })
+      .catch((err) => warn('cached entitlement lookup failed', err))
+
+    return () => {
+      cancelled = true
+    }
+  }, [session.account, session.phase, storage, subscriptionActive])
+
   const context = useMemo<PurchaseContext>(
     () => ({
       client,
@@ -235,12 +254,16 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   const cancelUpgrade = useCallback(() => {
     const reserved = pending.current
     run(async () => {
-      if (reserved) await abandon(context, reserved)
-      else await forget()
+      stopPolling()
+      pending.current = null
+
+      if (reserved?.fresh) await abandon(context, reserved)
+      else if (!reserved) await forget()
+      else dispatch({ type: 'showPaywall' })
 
       return true
     })
-  }, [context, forget, run])
+  }, [context, forget, run, stopPolling])
 
   const activate = useCallback(
     () =>
@@ -279,7 +302,7 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
       const url = storeUrl ?? (await client.portal(session.account.code))
 
       if (!url) return false
-      await openUrl(url)
+      await openUrl(assertHttpsUrl(url, 'manage'))
 
       return true
     })
