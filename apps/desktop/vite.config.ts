@@ -1,8 +1,18 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import viteBabel from 'vite-plugin-babel'
 import { join, resolve } from 'path'
+
+function originOf(url: string | undefined): string | null {
+  if (!url) return null
+
+  try {
+    return new URL(url).origin
+  } catch {
+    throw new Error(`VITE_PRO_API_URL is not a valid url: ${url}`)
+  }
+}
 
 export default defineConfig(async ({ mode }) => {
   const workspaceRoot = resolve(__dirname, '../..')
@@ -59,8 +69,19 @@ export default defineConfig(async ({ mode }) => {
     }
   }
 
+  const apiOrigin = originOf(loadEnv(mode, __dirname, 'VITE_').VITE_PRO_API_URL)
+
+  const cspPlugin = {
+    name: 'csp-api-origin',
+    transformIndexHtml(html: string) {
+      if (!apiOrigin) return html
+      return html.replace('connect-src ', `connect-src ${apiOrigin} `)
+    }
+  }
+
   return {
     plugins: [
+      cspPlugin,
       react({
         babel: {
           configFile: resolve(__dirname, 'babel.config.cjs')

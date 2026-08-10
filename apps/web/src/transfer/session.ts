@@ -10,12 +10,18 @@ import type { ConnectHandlers, Connection, Peer, RelayDHT } from './types'
 
 const OFFER_TIMEOUT_MS = 30000
 
+interface WebRelayConnection {
+  cid: string
+  host: string
+}
+
 export function waitForOffers(
   dht: RelayDHT,
   peer: Peer,
   topicHex: string,
   teardown: () => void,
-  handlers: ConnectHandlers
+  handlers: ConnectHandlers,
+  relay: WebRelayConnection
 ): Promise<Connection> {
   const conn = dht.connect(peer.publicKey)
   const transfers = new Map<string, FileTransfer>()
@@ -52,6 +58,7 @@ export function waitForOffers(
         if (message.type === 'challenge') {
           const nonce = (message as { nonce?: string }).nonce
           if (nonce) proto.sendControl({ type: 'auth', proof: topicProof(topicHex, nonce) })
+          proto.sendControl({ type: 'web-relay', cid: relay.cid, host: relay.host })
           return
         }
         if (message.type === 'transfer-start') {

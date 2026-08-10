@@ -102,15 +102,20 @@ async function tryFetch(dht: DHT): Promise<boolean> {
   try {
     const record = await dht.mutableGet(pubkey, { latest: true })
     if (!record?.value) return false
-    const parsed = JSON.parse(b4a.toString(record.value, 'utf8')) as { relays?: unknown }
+    const parsed = JSON.parse(b4a.toString(record.value, 'utf8')) as {
+      relays?: unknown
+      web?: unknown
+    }
     if (
       Array.isArray(parsed.relays) &&
       parsed.relays.length > 0 &&
       parsed.relays.every(isValidEntry)
     ) {
       const relays = parsed.relays as RelayRecordEntry[]
+      const web = Array.isArray(parsed.web) ? parsed.web.filter(isValidEntry) : []
       configureRelay({
-        relays: relays.map((r) => ({ keyHex: r.key, host: r.host, utcOffset: recordUtcOffset(r) }))
+        relays: relays.map((r) => ({ keyHex: r.key, host: r.host, utcOffset: recordUtcOffset(r) })),
+        webRelays: web.map((r) => ({ keyHex: r.key, host: r.host }))
       })
       return true
     }

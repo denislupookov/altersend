@@ -38,7 +38,7 @@ export function ConfirmDialog({
         ) : null}
         <AlertDialog.DismissButton>
           <TextButton onClick={onCancel} colors={{ contentColor: c.colorTextSecondary }}>
-            {cancelLabel}
+            <Text color={c.colorTextSecondary}>{cancelLabel}</Text>
           </TextButton>
         </AlertDialog.DismissButton>
         <AlertDialog.ConfirmButton>
@@ -46,7 +46,7 @@ export function ConfirmDialog({
             onClick={onConfirm}
             colors={{ contentColor: destructive ? c.colorDanger : c.colorInfo }}
           >
-            {confirmLabel}
+            <Text color={destructive ? c.colorDanger : c.colorInfo}>{confirmLabel}</Text>
           </TextButton>
         </AlertDialog.ConfirmButton>
       </AlertDialog>

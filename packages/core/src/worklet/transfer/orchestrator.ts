@@ -72,7 +72,8 @@ import { RememberCoordinator } from '../peers/remember-coordinator'
 import { RecognitionCoordinator } from '../peers/recognition-coordinator'
 import { DiscoveryCoordinator } from '../peers/discovery'
 import { PairingCoordinator } from '../peers/pairing-coordinator'
-import { configureRelay, relayConfigSummary } from '../relay/config'
+import { configureRelay, relayConfigSummary, setRelaySending } from '../relay/config'
+import { upgradeWebRelay } from '../relay/upgradeWebRelay'
 
 function createTransferId(): string {
   return crypto.randomBytes(16).toString('hex')
@@ -311,6 +312,14 @@ export class TransferOrchestrator implements TransferRPC {
       this.verifyAuth(message.proof, session)
       return
     }
+    if (message.type === 'web-relay') {
+      if (!this.authedPeers.has(session.peerKey)) return
+
+      upgradeWebRelay(message.cid, message.host).catch((err) => {
+        console.warn('[pro] web relay upgrade rejected', err instanceof Error ? err.message : err)
+      })
+      return
+    }
     if (message.type === 'recognition') {
       void this.recognition.handleRecognition(message, session.peerKey)
       return
@@ -389,6 +398,7 @@ export class TransferOrchestrator implements TransferRPC {
   private setRole(role: TransferRole | null): void {
     if (this.role === role) return
     this.role = role
+    setRelaySending(role === 'sender')
     this.emitIPC(createRoleEvent(role))
   }
 
@@ -690,7 +700,7 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   async setRelayConfig(input: SetRelayConfigInput): Promise<SetRelayConfigReply> {
-    configureRelay({ enabled: input.enabled })
+    configureRelay({ enabled: input.enabled, proToken: input.proToken })
     const { enabled, keyCount } = relayConfigSummary()
     return { enabled, keyCount }
   }

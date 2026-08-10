@@ -16,6 +16,8 @@ import {
 } from '@altersend/domain'
 import { continueShare, exceedsFileCountLimit } from '@altersend/domain'
 
+const SEND_FLOW_PATHS = new Set(['/send', '/send/preparing', '/send/share'])
+
 function NavigationController() {
   const router = useRouter()
   const pathname = usePathname()
@@ -27,6 +29,7 @@ function NavigationController() {
     const target =
       step === 'preparing' ? '/send/preparing' : isShareStep(step) ? '/send/share' : '/send'
 
+    if (!SEND_FLOW_PATHS.has(pathname)) return
     if (pathname === target) return
 
     if (target === '/send/preparing') {

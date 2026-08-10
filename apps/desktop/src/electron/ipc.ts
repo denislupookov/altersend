@@ -11,7 +11,16 @@ import { isMac } from 'which-runtime'
 import { readdir, stat } from 'fs/promises'
 import path from 'path'
 import { isPathSafe, type TransferMethod } from '@altersend/core'
-import { getDownloadFolder, setDownloadFolder } from './downloadLocation.js'
+import {
+  clearAccountCode,
+  getDownloadFolder,
+  readAccountCode,
+  readAccountToken,
+  setDownloadFolder,
+  writeAccountCode,
+  writeAccountToken,
+  writeFileViaTemp
+} from './store/index.js'
 import { setThemeSource, type ThemeSource } from './theme.js'
 import type { DesktopRuntime } from './runtime.js'
 import { setReportingEnabled } from './sentry.js'
@@ -208,6 +217,48 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.handle('app:pickDirectory', (evt) => pickFolder(evt))
 
   ipcMain.handle('app:getDownloadFolder', () => getDownloadFolder())
+
+  ipcMain.handle('account:getCode', () => readAccountCode())
+
+  ipcMain.handle('account:setCode', (_evt, code: string) => {
+    if (typeof code !== 'string' || !/^\d{16}$/.test(code)) {
+      throw new Error('account:setCode expects a normalised 16-digit code')
+    }
+    return writeAccountCode(code)
+  })
+
+  ipcMain.handle('account:clearCode', () => clearAccountCode())
+
+  ipcMain.handle('account:getToken', () => readAccountToken())
+
+  ipcMain.handle('account:setToken', (_evt, token: unknown) => {
+    if (token !== null && typeof token !== 'string') {
+      throw new Error('account:setToken expects a string or null')
+    }
+    return writeAccountToken(token)
+  })
+
+  ipcMain.handle('account:saveCode', async (evt, contents: string, defaultName: string) => {
+    if (!isPathSafe(defaultName) || path.basename(defaultName) !== defaultName) {
+      throw new Error('Refused: defaultName must be a bare file name')
+    }
+
+    const parentWindow = BrowserWindow.fromWebContents(evt.sender) ?? undefined
+    const startDir = await getDownloadFolder()
+    const dialogOptions = {
+      title: 'Save your Pro code',
+      defaultPath: startDir ? path.join(startDir, defaultName) : defaultName
+    }
+
+    const result = parentWindow
+      ? await dialog.showSaveDialog(parentWindow, dialogOptions)
+      : await dialog.showSaveDialog(dialogOptions)
+
+    if (result.canceled || !result.filePath) return null
+
+    await writeFileViaTemp(result.filePath, contents)
+    return result.filePath
+  })
 
   ipcMain.handle('app:chooseDownloadFolder', async (evt) => {
     const folder = await pickFolder(evt)

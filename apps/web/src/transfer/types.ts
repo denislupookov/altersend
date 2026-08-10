@@ -9,6 +9,7 @@ type ConnectStage = 'relay' | 'finding' | 'waiting' | 'preparing'
 export interface ConnectHandlers {
   onStatus?: (stage: ConnectStage) => void
   onClosed?: () => void
+  onLimit?: (maxTransferBytes: number | null) => void
 }
 
 export interface DownloadHandlers {

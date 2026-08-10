@@ -118,6 +118,23 @@ export const styles = css.create({
   secondaryPressed: {
     backgroundColor: tokens.colorSurfaceSecondary
   },
+  surface: {
+    backgroundColor: tokens.colorSurfacePrimary,
+    borderColor: tokens.colorBorderPrimary,
+    color: tokens.colorTextPrimary,
+    boxShadow: 'none',
+    ':hover': {
+      backgroundColor: tokens.colorSurfaceSecondary,
+      borderColor: tokens.colorBorderStrong
+    },
+    ':focus-visible': {
+      outline: 'none',
+      boxShadow: `0 0 0 2px ${tokens.colorFocusRing}`
+    }
+  },
+  surfacePressed: {
+    backgroundColor: tokens.colorSurfaceSecondary
+  },
   outline: {
     backgroundColor: tokens.colorBackgroundSubtle,
     borderColor: tokens.colorBorderStrong,

@@ -184,6 +184,10 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
       return isBoundedHex((x as { nonce?: unknown }).nonce, MAX_ID_LEN)
     case 'auth':
       return isBoundedHex((x as { proof?: unknown }).proof, MAX_ID_LEN)
+    case 'web-relay': {
+      const v = x as { cid?: unknown; host?: unknown }
+      return isBoundedString(v.cid, MAX_ID_LEN) && isBoundedString(v.host, MAX_ID_LEN)
+    }
     default:
       return false
   }

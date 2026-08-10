@@ -116,6 +116,7 @@ export interface InitDeviceSecretReply {
 
 export interface SetRelayConfigInput {
   enabled: boolean
+  proToken?: string | null
 }
 
 export interface SetRelayConfigReply {

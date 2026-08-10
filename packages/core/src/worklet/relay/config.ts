@@ -6,14 +6,25 @@ interface RelayEntry {
   utcOffset: number | null
 }
 
+interface WebRelayEntry {
+  key: Uint8Array
+  host: string
+}
+
 interface RelayState {
   enabled: boolean
   relays: RelayEntry[]
+  webRelays: WebRelayEntry[]
+  proToken: string | null
+  sending: boolean
 }
 
 const state: RelayState = {
   enabled: false,
-  relays: []
+  relays: [],
+  webRelays: [],
+  proToken: null,
+  sending: false
 }
 
 let relayLoader: (() => void) | null = null
@@ -28,9 +39,16 @@ interface RelayEntryInput {
   utcOffset?: number
 }
 
+interface WebRelayEntryInput {
+  keyHex: string
+  host: string
+}
+
 export interface RelayConfigInput {
   enabled?: boolean
   relays?: readonly RelayEntryInput[]
+  webRelays?: readonly WebRelayEntryInput[]
+  proToken?: string | null
 }
 
 function toRelayEntry({ keyHex, host, utcOffset }: RelayEntryInput): RelayEntry {
@@ -46,7 +64,28 @@ export function configureRelay(input: RelayConfigInput): void {
     state.relays = input.relays.map(toRelayEntry)
   }
 
+  if (input.webRelays) {
+    state.webRelays = input.webRelays.map(({ keyHex, host }) => ({
+      key: b4a.from(keyHex, 'hex'),
+      host
+    }))
+  }
+
+  if (input.proToken !== undefined) {
+    state.proToken = input.proToken
+  }
+
   if (state.enabled) relayLoader?.()
+}
+
+export function setRelaySending(sending: boolean): void {
+  state.sending = sending
+}
+
+export function proTokenFor(key: Uint8Array): string | null {
+  if (!state.proToken || !state.sending) return null
+  if (!state.relays.some((relay) => b4a.equals(relay.key, key))) return null
+  return state.proToken
 }
 
 export function relayConfigSummary(): { enabled: boolean; keyCount: number } {
@@ -74,4 +113,22 @@ export function relayThrough(_force: boolean, _swarm?: unknown): Uint8Array[] | 
 
 export function isRelayHost(host: string | null | undefined): boolean {
   return !!host && state.relays.some((r) => r.host === host)
+}
+
+function bareHost(host: string): string {
+  return host
+    .replace(/^wss?:\/\//, '')
+    .replace(/\/.*$/, '')
+    .replace(/:\d+$/, '')
+    .toLowerCase()
+}
+
+export function webRelayKeyForHost(host: string): Uint8Array | null {
+  if (!state.proToken || !state.sending) return null
+  const wanted = bareHost(host)
+  return state.webRelays.find((relay) => bareHost(relay.host) === wanted)?.key ?? null
+}
+
+export function proToken(): string | null {
+  return state.proToken
 }

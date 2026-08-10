@@ -9,22 +9,28 @@ import { Text } from '@/src/components/ThemedText'
 interface LayoutProps {
   title?: string
   description?: string
+  backdrop?: React.ReactElement
   badge?: React.ReactElement
   footer?: React.ReactElement
   hasNativeHeader?: boolean
   compactHeader?: boolean
+  compactTop?: boolean
   noScroll?: boolean
   onMenuPress?: () => void
 }
 
+const SCREEN_PADDING = 20
+
 export const Layout = ({
   title,
   description,
+  backdrop,
   badge,
   footer,
   children,
   hasNativeHeader,
   compactHeader,
+  compactTop,
   noScroll,
   onMenuPress
 }: PropsWithChildren<LayoutProps>) => {
@@ -33,8 +39,14 @@ export const Layout = ({
   const insets = useSafeAreaInsets()
 
   const showHeader = Boolean(title || description || badge || onMenuPress)
-  const nativeHeaderPaddingTop = showHeader ? 8 : 24
-  const paddingTop = hasNativeHeader ? nativeHeaderPaddingTop : insets.top + 32
+
+  const resolvePaddingTop = () => {
+    if (hasNativeHeader) return showHeader ? 8 : 24
+    if (compactTop) return insets.top + 8
+    return insets.top + 32
+  }
+
+  const paddingTop = resolvePaddingTop()
   const paddingBottom = Platform.OS === 'ios' ? insets.bottom + 8 : 28
 
   return (
@@ -48,6 +60,12 @@ export const Layout = ({
         }
       ]}
     >
+      {backdrop ? (
+        <View pointerEvents='none' style={styles.backdrop}>
+          {backdrop}
+        </View>
+      ) : null}
+
       {showHeader ? (
         <View style={[styles.header, compactHeader && styles.headerCompact]}>
           {badge ? <View style={styles.badgeSlot}>{badge}</View> : null}
@@ -70,7 +88,7 @@ export const Layout = ({
       ) : null}
 
       {noScroll ? (
-        <View style={styles.scrollView}>{children}</View>
+        <View style={[styles.scrollView, styles.scrollContent]}>{children}</View>
       ) : (
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           {children}
@@ -83,8 +101,13 @@ export const Layout = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: 20
+    flex: 1
+  },
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0
   },
   titleRow: {
     flexDirection: 'row',
@@ -94,7 +117,8 @@ const styles = StyleSheet.create({
   },
   header: {
     maxWidth: 720,
-    marginBottom: 24
+    marginBottom: 24,
+    paddingHorizontal: SCREEN_PADDING
   },
   headerCompact: {
     marginBottom: 4
@@ -118,10 +142,12 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 8
+    paddingBottom: 8,
+    paddingHorizontal: SCREEN_PADDING
   },
   footer: {
     gap: 8,
-    paddingTop: 12
+    paddingTop: 12,
+    paddingHorizontal: SCREEN_PADDING
   }
 })

@@ -28,6 +28,7 @@ interface LinkRowBaseProps {
   subtitleWrap?: boolean
   description?: string
   isActive?: boolean
+  selected?: boolean
   isFirst?: boolean
   trailing?: ReactNode
   onPress?: () => void
@@ -95,6 +96,7 @@ export function LinkRow({
   subtitleWrap = false,
   description,
   isActive,
+  selected,
   isFirst = false,
   trailing,
   onPress,
@@ -183,6 +185,7 @@ export function LinkRow({
           alignTop && styles.rowAlignTop,
           onPress && !disabled && styles.rowPressable,
           isActive && styles.rowActive,
+          selected && styles.rowSelected,
           interactive &&
             isPressed &&
             ({ backgroundColor: theme.colors.colorSurfacePrimary } as never)

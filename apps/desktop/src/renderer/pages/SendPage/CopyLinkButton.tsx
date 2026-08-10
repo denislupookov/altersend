@@ -2,14 +2,16 @@ import { useTranslation } from '@altersend/locales'
 import { Button, useTheme } from '@altersend/components'
 import { CheckIcon, LinkIcon } from '@altersend/components/icons'
 import { WEB_LINK_MAX_LABEL } from '@altersend/domain'
+import { openSettingsPanel } from '../../components/Settings/settingsControl'
 
 interface CopyLinkButtonProps {
   topic: string
   copied: boolean
+  locked?: boolean
   onCopy: () => void
 }
 
-export function CopyLinkButton({ topic, copied, onCopy }: CopyLinkButtonProps) {
+export function CopyLinkButton({ topic, copied, locked = false, onCopy }: CopyLinkButtonProps) {
   const { t } = useTranslation(['send', 'common'])
   const { theme } = useTheme()
   const label = copied ? t('common:actions.copied') : t('send:connection.shareLink')
@@ -23,7 +25,7 @@ export function CopyLinkButton({ topic, copied, onCopy }: CopyLinkButtonProps) {
         aria-label={t('send:connection.copyLink')}
         tooltip={label}
         tooltipDescription={
-          copied ? undefined : t('send:connection.linkHint', { limit: WEB_LINK_MAX_LABEL })
+          locked ? t('send:connection.linkHint', { limit: WEB_LINK_MAX_LABEL }) : undefined
         }
         tooltipSide='left'
         disabled={!topic}
@@ -34,7 +36,7 @@ export function CopyLinkButton({ topic, copied, onCopy }: CopyLinkButtonProps) {
             <LinkIcon size={18} />
           )
         }
-        onClick={onCopy}
+        onClick={locked ? () => openSettingsPanel('account') : onCopy}
       />
     </div>
   )

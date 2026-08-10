@@ -8,6 +8,34 @@ import type { ConnectHandlers, Connection } from './types'
 export { connectErrorCode } from './relay'
 export type { ConnectHandlers, Connection } from './types'
 
+const LIMIT_RECHECK_MS = [1500, 4000, 9000]
+
+function watchRelayLimit(
+  url: string,
+  cid: string,
+  connection: Connection,
+  handlers: ConnectHandlers,
+  signal?: AbortSignal
+): void {
+  const timers = LIMIT_RECHECK_MS.map((delay) =>
+    setTimeout(() => {
+      if (signal?.aborted) return
+      fetchRelayLimit(url, cid)
+        .then((bytes) => {
+          if (signal?.aborted) return
+          if (bytes === null || bytes <= (connection.maxTransferBytes ?? 0)) return
+          connection.maxTransferBytes = bytes
+          handlers.onLimit?.(bytes)
+        })
+        .catch((err) => console.warn('Relay limit re-check failed', err))
+    }, delay)
+  )
+
+  signal?.addEventListener('abort', () => {
+    for (const timer of timers) clearTimeout(timer)
+  })
+}
+
 export async function connect(
   code: string,
   handlers: ConnectHandlers,
@@ -28,7 +56,7 @@ export async function connect(
     throwIfAborted()
     handlers.onStatus?.('relay')
     const remaining = urls.filter((candidate) => !tried.has(candidate))
-    const { dht, teardown, url } = await openRelay(remaining)
+    const { dht, teardown, url, cid } = await openRelay(remaining)
     tried.add(url)
     const onAbort = () => teardown()
     signal?.addEventListener('abort', onAbort, { once: true })
@@ -44,8 +72,13 @@ export async function connect(
       throwIfAborted()
       if (!peer) throw new Error('senderNotFound')
 
-      const connection = await waitForOffers(dht, peer, topicHex, teardown, handlers)
+      const connection = await waitForOffers(dht, peer, topicHex, teardown, handlers, {
+        cid,
+        host: url
+      })
       connection.maxTransferBytes = await limit
+
+      watchRelayLimit(url, cid, connection, handlers, signal)
       return connection
     } catch (err) {
       teardown()
