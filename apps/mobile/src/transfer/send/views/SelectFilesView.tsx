@@ -122,9 +122,9 @@ export function SelectFilesView() {
     }
 
     Alert.alert(t('send:actions.pickFilesTitle'), undefined, [
+      { text: t('common:actions.cancel'), style: 'cancel' },
       { text: t('common:files.photos'), onPress: () => void pickFromPhotos() },
-      { text: t('common:files.files'), onPress: () => void pickFromFiles() },
-      { text: t('common:actions.cancel'), style: 'cancel' }
+      { text: t('common:files.files'), onPress: () => void pickFromFiles() }
     ])
   }
 
