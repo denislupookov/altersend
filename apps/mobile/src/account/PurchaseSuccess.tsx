@@ -1,9 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { AccountCodeCard, Button, SuccessBurst, useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { Layout } from '@/src/components'
+import { ConfirmDialog, Layout } from '@/src/components'
 import { Text } from '@/src/components/ThemedText'
 import { DismissRow } from './DismissRow'
 import { successTap } from './haptics'
@@ -17,6 +17,7 @@ export function PurchaseSuccess({ model, onDismiss }: AccountPhaseProps) {
   const { theme } = useTheme()
   const c = theme.colors
   const { copied, copyCode } = useCopyAccountCode(model.account?.code)
+  const [confirmDone, setConfirmDone] = useState(false)
 
   useEffect(() => {
     if (!model.rotated) successTap()
@@ -26,7 +27,7 @@ export function PurchaseSuccess({ model, onDismiss }: AccountPhaseProps) {
 
   const footer = (
     <View style={styles.footer}>
-      <Button size='lg' width='full' onClick={model.acknowledge}>
+      <Button size='lg' width='full' onClick={() => setConfirmDone(true)}>
         {t('settings:account.done')}
       </Button>
     </View>
@@ -57,6 +58,16 @@ export function PurchaseSuccess({ model, onDismiss }: AccountPhaseProps) {
       <Text style={[styles.warning, { color: c.colorTextSecondary }]}>
         {t('settings:account.saveWarning')}
       </Text>
+
+      <ConfirmDialog
+        open={confirmDone}
+        title={t('settings:account.savedCodeTitle')}
+        message={t('settings:account.savedCodeBody')}
+        confirmLabel={t('settings:account.savedCodeConfirm')}
+        cancelLabel={t('common:actions.cancel')}
+        onConfirm={model.acknowledge}
+        onCancel={() => setConfirmDone(false)}
+      />
 
       <View style={styles.card}>
         <AccountCodeCard

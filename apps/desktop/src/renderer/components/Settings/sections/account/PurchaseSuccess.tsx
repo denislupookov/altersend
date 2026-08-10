@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { AccountCodeCard, Button, SuccessBurst, useTheme } from '@altersend/components'
 import { CheckIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
@@ -8,6 +9,7 @@ import {
   useCopiedFlag
 } from '@altersend/domain'
 import { bridgeApi } from '../../../../api/bridgeApi'
+import { ConfirmDialog } from '../../../ConfirmDialog'
 import { SectionShell } from '../SectionShell'
 import type { AccountPhaseProps } from './types'
 
@@ -18,6 +20,7 @@ const BURST_SIZE = 72
 export function PurchaseSuccess({ model }: AccountPhaseProps) {
   const { t, i18n } = useTranslation(['settings', 'common'])
   const { copiedId, flashCopied } = useCopiedFlag()
+  const [confirmDone, setConfirmDone] = useState(false)
   const { theme } = useTheme()
   const c = theme.colors
 
@@ -57,7 +60,7 @@ export function PurchaseSuccess({ model }: AccountPhaseProps) {
 
   const footer = (
     <div className='flex items-center justify-end'>
-      <Button size='sm' variant='primary' onClick={model.acknowledge}>
+      <Button size='sm' variant='primary' onClick={() => setConfirmDone(true)}>
         {t('settings:account.done')}
       </Button>
     </div>
@@ -95,6 +98,16 @@ export function PurchaseSuccess({ model }: AccountPhaseProps) {
           onSave={saveCode}
         />
       </div>
+
+      <ConfirmDialog
+        open={confirmDone}
+        title={t('settings:account.savedCodeTitle')}
+        message={t('settings:account.savedCodeBody')}
+        confirmLabel={t('settings:account.savedCodeConfirm')}
+        cancelLabel={t('common:actions.cancel')}
+        onConfirm={model.acknowledge}
+        onCancel={() => setConfirmDone(false)}
+      />
     </SectionShell>
   )
 }
