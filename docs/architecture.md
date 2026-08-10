@@ -52,6 +52,7 @@ The protocol layer, running entirely inside a **Bare worklet** (a lightweight JS
 - `worklet/transfer/sender.ts` / `receiver.ts` — stage files into the writable Hyperdrive (legacy path); receiver picks drive channel per file, else replicated Hyperdrive
 - `worklet/transfer/topic-auth.ts` — the join-code proof (see [Topic authentication](#topic-authentication))
 - `worklet/relay/config.ts` / `conf.ts` — relay state + `relayThrough`; relay list from a signed DHT record (see [Relay fallback](#relay-fallback))
+- `worklet/relay/announce.ts` / `upgradeWebRelay.ts` — present a signed cap token to a relay (see [Relay fallback](#relay-fallback))
 - `worklet/identity/device-identity-store.ts` — the stable device keypair, sealed in the OS keychain (see [Pairing](#remembered-devices--pairing))
 - `worklet/peers/*` — `RememberedPeerStore`, `PairingCoordinator`, `DiscoveryCoordinator`, `RecognitionCoordinator`, `RememberCoordinator`
 - `worklet/rpc/*` — RPC server + canonical command/reply protocol; `client/worker-client.ts` is the host-side typed client
@@ -107,6 +108,7 @@ Most transfers connect directly via hole-punching. When two peers can't reach ea
 - **Engagement** — `relay/config.ts` exposes `relayThrough` in "eager" mode: when enabled it always offers the relay, so hyperdht races a relayed path against a direct punch and upgrades to direct if the punch lands.
 - **Discovery** — the relay key isn't baked in. `relay/conf.ts` reads the relay list from a signed DHT **mutable record** (public key injected at build via `--relay-conf-pubkey`), so relays rotate with no app release. Fetched lazily once the relay is enabled, with bounded retry (the worklet wipes its Corestore on startup, so a hypercore won't do).
 - **Classification** — `TransferSwarm.classifyConnection` matches a peer's `remoteHost` against known relay hosts and emits a per-peer `connection-type` (`direct` / `relay`), keyed per sender; the UI shows **Connected** vs **Connected via relay**.
+- **Caps** — a relay caps how much a session forwards. A sender raises its own cap with a short-lived token signed by the entitlement service and verified against the relay's public key: `relay/announce.ts` sends it over a protomux `altersend-pro` channel, and `config.ts` releases it only while sending and only to a key from the signed relay list. A browser receiver asks its sender for the upgrade via the `web-relay` control message; `upgradeWebRelay.ts` dials the relay to announce it. Enforced relay-side.
 
 The app is only ever a relay _client_ — it holds the relay's public key and address, never a secret.
 
