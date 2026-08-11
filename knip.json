@@ -32,6 +32,7 @@
       "entry": [
         "src/electron/main.ts",
         "src/electron/preload.cjs",
+        "src/**/*.test.ts",
         "scripts/*.{js,cjs,mjs}",
         "forge.config.{js,cjs,mjs}",
         "vite.config.{ts,js,mjs}"

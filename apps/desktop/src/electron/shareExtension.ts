@@ -6,20 +6,14 @@ import { promisify } from 'util'
 
 const run = promisify(execFile)
 
-export const SHARE_EXTENSION_BUNDLE_ID = 'com.altersend.desktop.ShareExtension'
+const SHARE_EXTENSION_BUNDLE_ID = 'com.altersend.desktop.ShareExtension'
 
 const SETTINGS_URL =
   'x-apple.systempreferences:com.apple.ExtensionsPreferences?extensionPointIdentifier=com.apple.share-services'
 const QUERY_TIMEOUT_MS = 3000
 
 export function shareContainerDir(): string {
-  return path.join(
-    os.homedir(),
-    'Library',
-    'Containers',
-    SHARE_EXTENSION_BUNDLE_ID,
-    'Data'
-  )
+  return path.join(os.homedir(), 'Library', 'Containers', SHARE_EXTENSION_BUNDLE_ID, 'Data')
 }
 
 export async function readShareExtensionState(): Promise<ShareExtensionState> {

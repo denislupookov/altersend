@@ -88,7 +88,9 @@ export function enqueueExternalPaths(paths: string[]): void {
   if (batchTimer) clearTimeout(batchTimer)
   batchTimer = setTimeout(() => {
     batchTimer = null
-    resolvePending().catch((err) => console.error('externalFiles: failed to read shared paths', err))
+    resolvePending().catch((err) =>
+      console.error('externalFiles: failed to read shared paths', err)
+    )
   }, BATCH_DELAY_MS)
 }
 

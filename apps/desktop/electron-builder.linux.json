@@ -25,11 +25,7 @@
     "target": ["AppImage"],
     "artifactName": "${productName}-${arch}.${ext}",
     "category": "Network;FileTransfer",
-    "mimeTypes": [
-      "application/octet-stream",
-      "inode/directory",
-      "x-scheme-handler/altersend"
-    ]
+    "mimeTypes": ["application/octet-stream", "inode/directory", "x-scheme-handler/altersend"]
   },
   "toolsets": {
     "appimage": "1.0.2"
