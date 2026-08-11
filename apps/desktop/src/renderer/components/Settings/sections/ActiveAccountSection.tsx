@@ -16,6 +16,7 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
   const { copiedId, flashCopied } = useCopiedFlag()
   const toast = useToast()
   const [confirmLogOut, setConfirmLogOut] = useState(false)
+  const [confirmCancel, setConfirmCancel] = useState(false)
 
   const account = model.account
   const errorText = model.errorKey && t(model.errorKey)
@@ -43,15 +44,24 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
     return true
   }
 
-  const planSummary = account.validUntil
-    ? t('settings:account.subscriptionValue', {
-        plan: t('settings:account.planPro'),
-        date: new Date(account.validUntil).toLocaleDateString(
-          i18n.resolvedLanguage ?? i18n.language,
-          { month: 'short', day: 'numeric', year: 'numeric' }
-        )
-      })
-    : t('settings:account.planPro')
+  const billingDate = (value: string) =>
+    new Date(value).toLocaleDateString(i18n.resolvedLanguage ?? i18n.language, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    })
+
+  const planSummary =
+    model.subscription.cancelling && model.subscription.endsAt
+      ? t('settings:account.endsOn', { date: billingDate(model.subscription.endsAt) })
+      : account.validUntil
+        ? [
+            t('settings:account.untilDate', { date: billingDate(account.validUntil) }),
+            model.subscription.canManage ? t('settings:account.manageSubscription') : null
+          ]
+            .filter(Boolean)
+            .join(' · ')
+        : t('settings:account.manageSubscription')
 
   const footer = (
     <div className='flex items-center justify-end gap-2'>
@@ -91,10 +101,16 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
           trailing={
             <div className='flex items-center gap-2'>
               <span className='text-[14px] text-text-muted'>{planSummary}</span>
-              <ChevronRightIcon size={14} />
+              {model.subscription.canManage ? <ChevronRightIcon size={14} /> : null}
             </div>
           }
-          onPress={model.subscription.manage}
+          onPress={
+            !model.subscription.canManage
+              ? undefined
+              : model.subscription.managedByStore
+                ? model.subscription.manage
+                : () => setConfirmCancel(true)
+          }
         />
       </div>
 
@@ -115,6 +131,20 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
           })
         }}
         onCancel={() => setConfirmLogOut(false)}
+      />
+
+      <ConfirmDialog
+        destructive
+        open={confirmCancel}
+        title={t('settings:account.cancelTitle')}
+        message={t('settings:account.cancelBody')}
+        confirmLabel={t('settings:account.cancelConfirm')}
+        cancelLabel={t('common:actions.cancel')}
+        onConfirm={() => {
+          setConfirmCancel(false)
+          model.subscription.cancel()
+        }}
+        onCancel={() => setConfirmCancel(false)}
       />
     </SectionShell>
   )

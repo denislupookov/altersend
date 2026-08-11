@@ -49,7 +49,11 @@ export async function abandon(ctx: PurchaseContext, reserved: ReservedCode): Pro
   if (status?.active) {
     ctx.dispatch({
       type: 'purchased',
-      account: { code: reserved.code, validUntil: status.validUntil ?? null }
+      account: {
+        code: reserved.code,
+        validUntil: status.validUntil ?? null,
+        provider: status.provider
+      }
     })
     await ctx.syncToken()
     return
@@ -69,7 +73,7 @@ async function creditFromStore(ctx: PurchaseContext, code: string): Promise<Acco
 
 async function settle(ctx: PurchaseContext, code: string): Promise<void> {
   const credited = await creditFromStore(ctx, code)
-  const account = { code, validUntil: credited?.validUntil ?? null }
+  const account = { code, validUntil: credited?.validUntil ?? null, provider: credited?.provider }
 
   if (!credited?.active) {
     ctx.dispatch({ type: 'awaitingApproval', account })
@@ -142,7 +146,11 @@ export async function restoreFromStore(ctx: PurchaseContext): Promise<RestoreOut
     return 'notMoved'
   }
 
-  const account = { code: reserved.code, validUntil: status.validUntil ?? null }
+  const account = {
+    code: reserved.code,
+    validUntil: status.validUntil ?? null,
+    provider: status.provider
+  }
 
   ctx.dispatch(
     reserved.fresh ? { type: 'purchased', account, rotated: true } : { type: 'activated', account }

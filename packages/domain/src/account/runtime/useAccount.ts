@@ -44,6 +44,11 @@ interface AccountStoreActions {
 interface AccountSubscriptionActions {
   logOut(): void
   manage(): void
+  cancel(): void
+  managedByStore: boolean
+  cancelling: boolean
+  endsAt: string | null
+  canManage: boolean
 }
 
 export interface AccountModel {
@@ -86,7 +91,10 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   const creditPurchase = useCallback(
     async (code: string, status: AccountStatus) => {
       pending.current = null
-      dispatch({ type: 'purchased', account: { code, validUntil: status.validUntil ?? null } })
+      dispatch({
+        type: 'purchased',
+        account: { code, validUntil: status.validUntil ?? null, provider: status.provider }
+      })
       await syncToken()
     },
     [syncToken]
@@ -158,7 +166,10 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
         }
 
         if (status.active) {
-          dispatch({ type: 'activated', account: { code, validUntil: status.validUntil ?? null } })
+          dispatch({
+            type: 'activated',
+            account: { code, validUntil: status.validUntil ?? null, provider: status.provider }
+          })
           return
         }
 
@@ -286,7 +297,10 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
         }
 
         await storage.write(code)
-        dispatch({ type: 'activated', account: { code, validUntil: status.validUntil ?? null } })
+        dispatch({
+          type: 'activated',
+          account: { code, validUntil: status.validUntil ?? null, provider: status.provider }
+        })
         await syncToken()
 
         return true
@@ -294,19 +308,66 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
     [client, run, session.entry, storage, syncToken]
   )
 
+  const managedByStore = session.account?.provider === 'revenuecat'
+  const [billing, setBilling] = useState<{
+    cancelling: boolean
+    endsAt: string | null
+    loaded: boolean
+  }>({ cancelling: false, endsAt: null, loaded: false })
+
+  const activeCode = session.phase === 'active' ? session.account?.code : undefined
+  const latestCode = useRef(activeCode)
+  latestCode.current = activeCode
+
+  const readBilling = useCallback(async () => {
+    setBilling({ cancelling: false, endsAt: null, loaded: false })
+
+    if (!activeCode) return
+    if (managedByStore) {
+      setBilling({ cancelling: false, endsAt: null, loaded: true })
+      return
+    }
+
+    const state = await client.subscription(activeCode).catch((err) => {
+      warn('subscription lookup failed', err)
+      return null
+    })
+
+    if (activeCode !== latestCode.current) return
+
+    setBilling({
+      cancelling: state?.cancelling ?? false,
+      endsAt: state?.endsAt ?? null,
+      loaded: state !== null
+    })
+  }, [activeCode, client, managedByStore])
+
+  useEffect(() => {
+    readBilling()
+  }, [readBilling])
+
   const manage = useCallback(() => {
     run(async () => {
       if (!session.account) return false
 
-      const storeUrl = purchases ? await purchases.managementUrl() : null
-      const url = storeUrl ?? (await client.portal(session.account.code))
-
+      const url = managedByStore && purchases ? await purchases.managementUrl() : null
       if (!url) return false
+
       await openUrl(assertHttpsUrl(url, 'manage'))
+      return true
+    })
+  }, [managedByStore, openUrl, purchases, run, session.account])
+
+  const cancel = useCallback(() => {
+    run(async () => {
+      if (!session.account) return false
+
+      await client.cancel(session.account.code)
+      await readBilling()
 
       return true
     })
-  }, [client, openUrl, purchases, run, session.account])
+  }, [client, readBilling, run, session.account])
 
   const logOut = useCallback(() => {
     run(async () => {
@@ -317,8 +378,16 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   }, [forget, run])
 
   const subscription = useMemo<AccountSubscriptionActions>(
-    () => ({ logOut, manage }),
-    [logOut, manage]
+    () => ({
+      logOut,
+      manage,
+      cancel,
+      managedByStore,
+      cancelling: billing.cancelling,
+      endsAt: billing.endsAt,
+      canManage: billing.loaded && !billing.cancelling
+    }),
+    [billing.cancelling, billing.endsAt, billing.loaded, cancel, logOut, manage, managedByStore]
   )
 
   const setEntry = useCallback(

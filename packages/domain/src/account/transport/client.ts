@@ -14,15 +14,24 @@ interface NewAccount {
   active: boolean
 }
 
+export type PaymentProvider = 'stripe' | 'revenuecat'
+
 export interface AccountStatus {
   exists: boolean
   active: boolean
   validUntil?: string
+  provider?: PaymentProvider | null
 }
 
 interface AccountToken {
   token: string
   expiresAt: number
+}
+
+export interface SubscriptionState {
+  provider: PaymentProvider | null
+  cancelling: boolean
+  endsAt: string | null
 }
 
 interface AccountDeletion {
@@ -43,6 +52,8 @@ export interface AccountClient {
   syncStore(code: string): Promise<AccountStatus>
   checkout(code: string, plan: BillingPlan): Promise<string>
   portal(code: string): Promise<string>
+  subscription(code: string): Promise<SubscriptionState>
+  cancel(code: string): Promise<void>
   remove(code: string): Promise<AccountDeletion>
   token(code: string): Promise<AccountToken | null>
 }
@@ -127,6 +138,12 @@ export function createAccountClient(baseUrl: string): AccountClient {
     async portal(code) {
       const { url } = await post<{ url: string }>('/api/pro/portal', { code })
       return url
+    },
+
+    subscription: (code) => post<SubscriptionState>('/api/pro/subscription', { code }),
+
+    async cancel(code) {
+      await post<{ cancelled: boolean }>('/api/pro/cancel', { code })
     },
 
     remove: (code) => send<AccountDeletion>(baseUrl, '/api/pro/account', 'DELETE', { code }),

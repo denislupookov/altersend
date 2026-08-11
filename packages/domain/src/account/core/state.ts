@@ -30,6 +30,7 @@ export function accountErrorKey(error: AccountError | null): string | null {
 export interface AccountState {
   code: string
   validUntil: string | null
+  provider?: 'stripe' | 'revenuecat' | null
 }
 
 export interface AccountSession {
