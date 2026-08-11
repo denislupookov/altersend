@@ -2,6 +2,7 @@ import { app, BrowserWindow, screen, shell } from 'electron'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { isLinux } from 'which-runtime'
+import { forgetPickedPaths } from './pathAccess.js'
 import { applyThemeSource, loadThemeSource, windowBackgroundColor } from './theme.js'
 import type { PearRuntimeInstance } from './runtime.js'
 
@@ -82,9 +83,11 @@ export async function createMainWindow(pear: PearRuntimeInstance) {
   pear.updater.on('updating', onUpdating)
   pear.updater.on('updated', onUpdated)
 
+  const senderId = win.webContents.id
   win.on('closed', () => {
     pear.updater.removeListener('updating', onUpdating)
     pear.updater.removeListener('updated', onUpdated)
+    forgetPickedPaths(senderId)
   })
 
   const devServerUrl = !app.isPackaged ? process.env.PEAR_DEV_SERVER_URL : undefined
@@ -104,4 +107,16 @@ export async function createMainWindow(pear: PearRuntimeInstance) {
   if (shouldOpenDevTools) win.webContents.openDevTools({ mode: 'detach' })
 
   return win
+}
+
+export async function showOrCreateMainWindow(pear: PearRuntimeInstance): Promise<void> {
+  const existing = BrowserWindow.getAllWindows().find((win) => !win.isDestroyed())
+  if (!existing) {
+    await createMainWindow(pear)
+    return
+  }
+
+  if (existing.isMinimized()) existing.restore()
+  existing.show()
+  existing.focus()
 }

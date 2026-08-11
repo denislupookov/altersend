@@ -83,7 +83,7 @@ const cmd = command(
   sloppy({ flags: true, args: true })
 )
 
-const cliArgs = (app.isPackaged ? process.argv.slice(1) : process.argv.slice(2)).filter(
+export const cliArgs = (app.isPackaged ? process.argv.slice(1) : process.argv.slice(2)).filter(
   (arg) => arg !== '--no-sandbox'
 )
 cmd.parse(cliArgs)

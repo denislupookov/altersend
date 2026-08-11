@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   AppearancePicker,
   Button,
@@ -30,7 +30,7 @@ function truncatePath(folder: string): string {
 }
 
 export function GeneralSection() {
-  const { t } = useTranslation(['settings', 'errors'])
+  const { t } = useTranslation(['settings', 'errors', 'common'])
   const { theme, themePreference, setThemePreference } = useTheme()
   const c = theme.colors
   const toast = useToast()
@@ -44,12 +44,35 @@ export function GeneralSection() {
   const [folder, setFolder] = useState<string | null>(null)
   const [askEveryTime, setAsk] = useState(isAskEveryTime)
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
+  const [shareExtension, setShareExtension] = useState<ShareExtensionState>('unknown')
+  const awaitingSettingsVisit = useRef(false)
 
   useEffect(() => {
     bridgeApi
       .getDownloadFolder()
       .then(setFolder)
       .catch((error) => console.error('GeneralSection: could not load download folder', error))
+  }, [])
+
+  useEffect(() => {
+    if (bridgeApi.platform() !== 'darwin') return
+
+    const check = () => {
+      bridgeApi
+        .shareExtensionState()
+        .then(setShareExtension)
+        .catch((error) => console.error('GeneralSection: could not read share menu state', error))
+    }
+
+    const recheckAfterSettingsVisit = () => {
+      if (!awaitingSettingsVisit.current) return
+      awaitingSettingsVisit.current = false
+      check()
+    }
+
+    check()
+    window.addEventListener('focus', recheckAfterSettingsVisit)
+    return () => window.removeEventListener('focus', recheckAfterSettingsVisit)
   }, [])
 
   const handleChangeFolder = async () => {
@@ -65,6 +88,13 @@ export function GeneralSection() {
   const handleAutoSaveToggle = (next: boolean) => {
     setAsk(!next)
     setAskEveryTime(!next)
+  }
+
+  const handleShareMenuToggle = () => {
+    awaitingSettingsVisit.current = true
+    bridgeApi
+      .openShareSettings()
+      .catch((error) => console.error('GeneralSection: could not open share settings', error))
   }
 
   const handleCrashToggle = (next: boolean) => {
@@ -116,6 +146,22 @@ export function GeneralSection() {
             />
           )}
         </div>
+
+        {shareExtension !== 'unknown' && (
+          <LinkRow
+            standalone
+            compact
+            label={t('settings:shareMenu.label')}
+            subtitle={t('settings:shareMenu.description')}
+            trailing={
+              <ToggleSwitch
+                checked={shareExtension === 'enabled'}
+                onChange={handleShareMenuToggle}
+                aria-label={t('settings:shareMenu.label')}
+              />
+            }
+          />
+        )}
 
         <LinkRow
           standalone

@@ -97,6 +97,18 @@ export const bridgeApi = {
   onDeepLink(cb: (url: string) => void) {
     return requireBridge().onDeepLink(cb)
   },
+  onExternalFiles(cb: (files: PickedFile[]) => void) {
+    return requireBridge().onExternalFiles(cb)
+  },
+  externalFilesReady() {
+    return requireBridge().externalFilesReady()
+  },
+  shareExtensionState() {
+    return requireBridge().shareExtensionState()
+  },
+  openShareSettings() {
+    return requireBridge().openShareSettings()
+  },
   onRuntimeUpdated(cb: () => void) {
     return requireBridge().onRuntimeUpdated(cb)
   },

@@ -177,5 +177,9 @@
     "featurePriority": "Prioridade quando o retransmissor está ocupado",
     "featureWebCap": "Transferência via retransmissor, link web",
     "featureAppCap": "Transferência via retransmissor, app para app"
+  },
+  "shareMenu": {
+    "label": "Menu Compartilhar",
+    "description": "Adicione o AlterSend ao menu Compartilhar do macOS"
   }
 }

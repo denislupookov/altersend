@@ -177,5 +177,9 @@
     "featurePriority": "Priority when the relay is busy",
     "featureWebCap": "Relayed transfer, web link",
     "featureAppCap": "Relayed transfer, app to app"
+  },
+  "shareMenu": {
+    "label": "Share menu",
+    "description": "Add AlterSend to the macOS Share menu"
   }
 }

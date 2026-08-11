@@ -21,6 +21,35 @@ export function mergeSelectedFiles(
   return Array.from(merged.values())
 }
 
+export function fileUriToPath(uri: string): string {
+  if (!uri.startsWith('file://')) return uri
+  const stripped = uri.slice('file://'.length)
+  try {
+    return decodeURIComponent(stripped)
+  } catch {
+    return stripped
+  }
+}
+
+export interface ExternalFileDescriptor {
+  path: string
+  name?: string | null
+  size?: number | null
+  relativePath?: string
+}
+
+export function toSelectedFiles(files: ExternalFileDescriptor[]): SelectedFile[] {
+  return files.map((file) => {
+    const filePath = fileUriToPath(file.path)
+    return {
+      name: file.name ?? filePath.split(/[\\/]/).pop() ?? 'file',
+      path: filePath,
+      size: file.size ?? undefined,
+      relativePath: file.relativePath
+    }
+  })
+}
+
 export function normalizeSelectedFiles(
   filesOrData: Array<File | BrowserFileLike>,
   getPathForFile: (file: File) => string

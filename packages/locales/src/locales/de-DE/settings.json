@@ -177,5 +177,9 @@
     "featurePriority": "Vorrang, wenn das Relay ausgelastet ist",
     "featureWebCap": "Übertragung über Relay, Weblink",
     "featureAppCap": "Übertragung über Relay, App zu App"
+  },
+  "shareMenu": {
+    "label": "Teilen-Menü",
+    "description": "AlterSend zum Teilen-Menü von macOS hinzufügen"
   }
 }

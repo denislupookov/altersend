@@ -100,6 +100,16 @@ async function dirSize(dir) {
 let packagerConfig = {
   icon: path.join(__dirname, 'build/icon'),
   protocols: [{ name: appName, schemes: ['altersend'] }],
+  extendInfo: {
+    CFBundleDocumentTypes: [
+      {
+        CFBundleTypeName: 'All files',
+        CFBundleTypeRole: 'Viewer',
+        LSHandlerRank: 'Alternate',
+        LSItemContentTypes: ['public.item']
+      }
+    ]
+  },
   derefSymlinks: true,
   ignore: [
     /(^|\/)node_modules\/react-native[^/]*(\/|$)/,

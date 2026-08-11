@@ -177,5 +177,9 @@
     "featurePriority": "リレー混雑時の優先処理",
     "featureWebCap": "リレー経由の転送（ウェブリンク）",
     "featureAppCap": "リレー経由の転送（アプリ間）"
+  },
+  "shareMenu": {
+    "label": "共有メニュー",
+    "description": "macOS の共有メニューに AlterSend を追加します"
   }
 }

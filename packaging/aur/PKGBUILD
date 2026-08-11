@@ -45,9 +45,10 @@ EOF
 Type=Application
 Name=AlterSend
 Comment=Private peer-to-peer file transfer
-Exec=altersend
+Exec=altersend %U
 Icon=altersend
 Categories=Network;FileTransfer;
+MimeType=application/octet-stream;inode/directory;x-scheme-handler/altersend;
 StartupNotify=true
 Terminal=false
 StartupWMClass=altersend
