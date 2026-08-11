@@ -81,7 +81,9 @@
     "failedPickPhotos": "写真の選択に失敗しました"
   },
   "hints": {
-    "keepOpen": "アプリを閉じると転送はキャンセルされます。"
+    "keepOpen": "アプリを閉じると転送はキャンセルされます。",
+    "stayInApp": "参加があるまでアプリを開いたままに。",
+    "stayUntilDone": "転送が終わるまでアプリを開いたままに。"
   },
   "preparing": {
     "uploadedCount_one": "{{count}} 個中 {{completed}} 個のファイルをアップロード済み",

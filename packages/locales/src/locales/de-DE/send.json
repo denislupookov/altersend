@@ -81,7 +81,9 @@
     "failedPickPhotos": "Fotos konnten nicht ausgewählt werden"
   },
   "hints": {
-    "keepOpen": "Durch das Schließen der App wird die Übertragung abgebrochen."
+    "keepOpen": "Durch das Schließen der App wird die Übertragung abgebrochen.",
+    "stayInApp": "In der App bleiben, bis jemand beitritt.",
+    "stayUntilDone": "In der App bleiben, bis die Übertragung endet."
   },
   "preparing": {
     "uploadedCount_one": "{{completed}} von {{count}} Datei hochgeladen",

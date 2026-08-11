@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
+import { Platform, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import {
   buildShareInvite,
@@ -132,9 +132,11 @@ export function ShareView() {
               <Text style={[styles.statusTitle, { color: c.colorTextPrimary }]}>
                 {t('send:status.waitingForJoin')}
               </Text>
-              <Text style={[styles.statusCaption, { color: c.colorTextMuted }]} numberOfLines={1}>
-                {t('send:hints.keepOpen')}
-              </Text>
+              {Platform.OS === 'ios' && (
+                <Text style={[styles.statusCaption, { color: c.colorTextMuted }]} numberOfLines={1}>
+                  {t('send:hints.stayInApp')}
+                </Text>
+              )}
             </View>
           </View>
         )}

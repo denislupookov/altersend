@@ -7,13 +7,19 @@ import { ConfirmDialog, Layout } from '@/src/components'
 import { useLeaveSessionConfirm } from '@/src/hooks/useLeaveSessionConfirm'
 import { ShareView } from '@/src/transfer/send'
 
+const IOS_CONTINUED_TASK_VERSION = 26
+
+const sustainsBackgroundTransfer =
+  Platform.OS !== 'ios' ||
+  Number.parseInt(String(Platform.Version), 10) >= IOS_CONTINUED_TASK_VERSION
+
 export default function SendShareScreen() {
   const { t } = useTranslation(['send', 'common'])
   const draftPhase = useTransferStore((s) => s.draftPhase)
   const connectionState = useTransferStore((s) => s.connectionState)
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
   const copy = getSendPageCopy(t, step)
-  const description = step === 'receiver_connected' ? t('send:hints.keepOpen') : copy.description
+  const needsStayHint = step === 'receiver_connected' && !sustainsBackgroundTransfer
 
   const handleBack = useCallback(() => {
     clearSenderFlow()
@@ -23,7 +29,7 @@ export default function SendShareScreen() {
   return (
     <Layout
       title={copy.title}
-      description={description}
+      description={needsStayHint ? t('send:hints.stayUntilDone') : copy.description}
       hasNativeHeader
       noScroll
       footer={

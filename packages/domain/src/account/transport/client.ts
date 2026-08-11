@@ -14,7 +14,7 @@ interface NewAccount {
   active: boolean
 }
 
-export type PaymentProvider = 'stripe' | 'revenuecat'
+type PaymentProvider = 'stripe' | 'revenuecat'
 
 export interface AccountStatus {
   exists: boolean
@@ -28,7 +28,7 @@ interface AccountToken {
   expiresAt: number
 }
 
-export interface SubscriptionState {
+interface SubscriptionState {
   provider: PaymentProvider | null
   cancelling: boolean
   endsAt: string | null

@@ -5,8 +5,8 @@
       "description": "Ein Gerät sendet, das andere empfängt. Ein kurzer Code verbindet sie, sodass Dateien direkt gestreamt werden können."
     },
     "keepOpen": {
-      "title": "Lassen Sie beide Apps geöffnet.",
-      "description": "Dateien werden direkt zwischen Geräten gestreamt – es gibt keine Cloud. Wenn Sie die App schließen oder im Hintergrund laufen lassen, wird die Übertragung abgebrochen."
+      "title": "Lassen Sie beide Apps laufen.",
+      "description": "Dateien werden direkt zwischen Geräten gestreamt – es gibt keine Cloud. Wenn Sie die App beenden, wird die Übertragung abgebrochen."
     },
     "encrypted": {
       "title": "Ende-zu-Ende verschlüsselt.",

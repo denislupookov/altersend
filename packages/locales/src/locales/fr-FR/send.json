@@ -81,7 +81,9 @@
     "failedPickPhotos": "Échec de la sélection des photos"
   },
   "hints": {
-    "keepOpen": "La fermeture de l'application annule le transfert."
+    "keepOpen": "La fermeture de l'application annule le transfert.",
+    "stayInApp": "Restez dans l'app jusqu'à la connexion.",
+    "stayUntilDone": "Restez dans l'app jusqu'à la fin du transfert."
   },
   "preparing": {
     "uploadedCount_one": "{{completed}} fichier sur {{count}} téléversé",

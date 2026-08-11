@@ -81,7 +81,9 @@
     "failedPickPhotos": "No se pudieron seleccionar las fotos"
   },
   "hints": {
-    "keepOpen": "Cerrar la aplicación cancela la transferencia."
+    "keepOpen": "Cerrar la aplicación cancela la transferencia.",
+    "stayInApp": "Permanezca en la app hasta la conexión.",
+    "stayUntilDone": "Permanezca en la app hasta que termine la transferencia."
   },
   "preparing": {
     "uploadedCount_one": "{{completed}} de {{count}} archivo subido",

@@ -5,8 +5,8 @@
       "description": "Um dispositivo envia, o outro recebe. Um código simples os conecta para que os arquivos possam ser transferidos diretamente."
     },
     "keepOpen": {
-      "title": "Mantenha os dois aplicativos abertos.",
-      "description": "Os arquivos são transferidos diretamente entre os dispositivos — sem uso de nuvem. Fechar ou colocar o aplicativo em segundo plano cancelará a transferência."
+      "title": "Mantenha os dois aplicativos ativos.",
+      "description": "Os arquivos são transferidos diretamente entre os dispositivos — sem uso de nuvem. Fechar o aplicativo cancelará a transferência."
     },
     "encrypted": {
       "title": "Criptografado de ponta a ponta.",

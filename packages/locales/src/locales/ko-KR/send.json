@@ -81,7 +81,9 @@
     "failedPickPhotos": "사진을 선택하지 못했습니다."
   },
   "hints": {
-    "keepOpen": "앱을 닫으면 전송이 취소됩니다."
+    "keepOpen": "앱을 닫으면 전송이 취소됩니다.",
+    "stayInApp": "참여할 때까지 앱에 머물러 주세요.",
+    "stayUntilDone": "전송이 끝날 때까지 앱에 머물러 주세요."
   },
   "preparing": {
     "uploadedCount_one": "{{count}}개 중 {{completed}}개 파일 업로드됨",

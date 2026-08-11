@@ -81,7 +81,9 @@
     "failedPickPhotos": "Failed to pick photos"
   },
   "hints": {
-    "keepOpen": "Closing the app cancels the transfer."
+    "keepOpen": "Closing the app cancels the transfer.",
+    "stayInApp": "Stay in the app until someone joins.",
+    "stayUntilDone": "Stay in the app until the transfer finishes."
   },
   "preparing": {
     "uploadedCount_one": "{{completed}} of {{count}} file uploaded",

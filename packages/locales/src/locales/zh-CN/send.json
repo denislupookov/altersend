@@ -81,7 +81,9 @@
     "failedPickPhotos": "无法选择照片"
   },
   "hints": {
-    "keepOpen": "关闭应用程序会取消传输。"
+    "keepOpen": "关闭应用程序会取消传输。",
+    "stayInApp": "请停留在应用中，直到有人加入。",
+    "stayUntilDone": "请停留在应用中，直到传输完成。"
   },
   "preparing": {
     "uploadedCount_one": "已上传 {{count}} 个文件中的 {{completed}} 个",

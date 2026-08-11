@@ -5,8 +5,8 @@
       "description": "Un dispositivo invia, l'altro riceve. Un codice breve li collega in modo che i file possano essere trasmessi direttamente in streaming."
     },
     "keepOpen": {
-      "title": "Mantieni aperte entrambe le app.",
-      "description": "I file vengono trasmessi direttamente tra i dispositivi: non esiste il cloud. La chiusura o l'inserimento in background dell'app annullerà il trasferimento."
+      "title": "Mantieni attive entrambe le app.",
+      "description": "I file vengono trasmessi direttamente tra i dispositivi: non esiste il cloud. La chiusura dell'app annullerà il trasferimento."
     },
     "encrypted": {
       "title": "Crittografato end-to-end.",
