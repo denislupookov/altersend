@@ -25,14 +25,14 @@ declare module 'react' {
   }
 }
 
-interface PickedFile {
-  path: string
-  name: string
-  size?: number
-  relativePath?: string
-}
-
 declare global {
+  interface PickedFile {
+    path: string
+    name: string
+    size: number
+    relativePath?: string
+  }
+
   type DownloadFileRequest = import('@altersend/core').DownloadFileRequest
   type DownloadFilesReply = import('@altersend/core').DownloadFilesReply
   type DisconnectReply = import('@altersend/core').DisconnectReply
@@ -54,6 +54,8 @@ declare global {
     : never
 
   type PickMode = 'files' | 'folders' | 'combined'
+
+  type ShareExtensionState = 'enabled' | 'disabled' | 'unknown'
 
   interface Bridge {
     pkg: () => { version: string }
@@ -79,6 +81,10 @@ declare global {
     saveAccountCode: (contents: string, defaultName: string) => Promise<string | null>
     appRestart: () => Promise<unknown>
     onDeepLink: (cb: (url: string) => void) => () => void
+    onExternalFiles: (cb: (files: PickedFile[]) => void) => () => void
+    externalFilesReady: () => Promise<PickedFile[]>
+    shareExtensionState: () => Promise<ShareExtensionState>
+    openShareSettings: () => Promise<void>
     onRuntimeUpdated: (cb: () => void) => () => void
     showInFolder: (filePath: string) => Promise<void>
     openFile: (filePath: string) => Promise<string>

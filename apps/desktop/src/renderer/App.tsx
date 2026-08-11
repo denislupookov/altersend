@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   clearSession,
   dismissInvite,
+  getLeaveSessionMessage,
   joinSession,
   useSimulatedLoading,
   useTransferStore
@@ -18,6 +19,7 @@ import {
   UpdateBanner
 } from './components'
 import { isOnboardingCompleted, markOnboardingCompleted } from './lifecycle/onboardingStorage'
+import { useExternalFiles } from './lifecycle/useExternalFiles'
 import { useUpdateReady } from './lifecycle/useUpdateReady'
 import { BridgeUnavailablePage, LoadingPage, OnboardingPage, TransferPage } from './pages'
 
@@ -38,6 +40,7 @@ export default function App() {
   const progress = useSimulatedLoading()
   const role = useTransferStore((s) => s.role)
   const updateReady = useUpdateReady()
+  const externalFiles = useExternalFiles(() => setActiveTab('send'))
 
   const switchTab = (next: TransferTab, onSwitched?: () => void): void => {
     if (next === activeTab) {
@@ -45,14 +48,7 @@ export default function App() {
       return
     }
     if (role !== null) {
-      setPendingSwitch({
-        tab: next,
-        message:
-          role === 'sender'
-            ? t('common:confirm.leaveShareSession')
-            : t('common:confirm.leaveReceiveSession'),
-        onSwitched
-      })
+      setPendingSwitch({ tab: next, message: getLeaveSessionMessage(t, role), onSwitched })
       return
     }
     setActiveTab(next)
@@ -122,6 +118,15 @@ export default function App() {
         cancelLabel={t('common:actions.cancel')}
         onConfirm={confirmSwitchTab}
         onCancel={() => setPendingSwitch(null)}
+      />
+      <ConfirmDialog
+        open={externalFiles.pending}
+        title={t('common:actions.endSession')}
+        message={getLeaveSessionMessage(t, role)}
+        confirmLabel={t('common:actions.continue')}
+        cancelLabel={t('common:actions.cancel')}
+        onConfirm={externalFiles.confirm}
+        onCancel={externalFiles.cancel}
       />
     </ToastProvider>
   )

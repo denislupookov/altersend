@@ -177,5 +177,9 @@
     "featurePriority": "Prioridad cuando el relé está saturado",
     "featureWebCap": "Transferencia por relé, enlace web",
     "featureAppCap": "Transferencia por relé, app a app"
+  },
+  "shareMenu": {
+    "label": "Menú Compartir",
+    "description": "Agrega AlterSend al menú Compartir de macOS"
   }
 }

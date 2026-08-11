@@ -177,5 +177,9 @@
     "featurePriority": "中继繁忙时优先",
     "featureWebCap": "经中继传输（网页链接）",
     "featureAppCap": "经中继传输（应用之间）"
+  },
+  "shareMenu": {
+    "label": "共享菜单",
+    "description": "将 AlterSend 添加到 macOS 共享菜单"
   }
 }

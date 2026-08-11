@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigation } from 'expo-router'
 import { usePreventRemove } from 'expo-router/react-navigation'
-import { useTransferStore } from '@altersend/domain'
+import { getLeaveSessionMessage, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import type { ConfirmDialogProps } from '@/src/components/ConfirmDialog'
 
@@ -25,11 +25,7 @@ export function useLeaveSessionConfirm(onLeave: () => void) {
       return
     }
 
-    setMessage(
-      role === 'sender'
-        ? t('common:confirm.leaveShareSession')
-        : t('common:confirm.leaveReceiveSession')
-    )
+    setMessage(getLeaveSessionMessage(t, role))
     setOpen(true)
   })
 

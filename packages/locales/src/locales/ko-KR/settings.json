@@ -177,5 +177,9 @@
     "featurePriority": "릴레이가 혼잡할 때 우선 처리",
     "featureWebCap": "릴레이 전송, 웹 링크",
     "featureAppCap": "릴레이 전송, 앱 간"
+  },
+  "shareMenu": {
+    "label": "공유 메뉴",
+    "description": "macOS 공유 메뉴에 AlterSend를 추가합니다"
   }
 }

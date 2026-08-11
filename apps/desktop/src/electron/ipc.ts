@@ -8,9 +8,12 @@ import {
   type OpenDialogOptions
 } from 'electron'
 import { isMac } from 'which-runtime'
-import { readdir, stat } from 'fs/promises'
 import path from 'path'
 import { isPathSafe, type TransferMethod } from '@altersend/core'
+import { takeQueuedExternalFiles } from './externalFiles.js'
+import { expandPaths } from './fileScan.js'
+import { assertAllowedPath, recordPickedPath } from './pathAccess.js'
+import { openShareSettings, readShareExtensionState } from './shareExtension.js'
 import {
   clearAccountCode,
   getDownloadFolder,
@@ -24,95 +27,6 @@ import {
 import { setThemeSource, type ThemeSource } from './theme.js'
 import type { DesktopRuntime } from './runtime.js'
 import { setReportingEnabled } from './sentry.js'
-
-const pickedPaths = new Map<number, Set<string>>()
-
-function recordPickedPath(senderId: number, p: string) {
-  if (!pickedPaths.has(senderId)) pickedPaths.set(senderId, new Set())
-  pickedPaths.get(senderId)!.add(p)
-}
-
-function isUnder(filePath: string, dir: string): boolean {
-  const rel = path.relative(dir, filePath)
-  if (rel === '') return true
-  if (path.isAbsolute(rel)) return false
-  return rel !== '..' && !rel.startsWith(`..${path.sep}`)
-}
-
-async function isAllowedPath(senderId: number, filePath: string): Promise<boolean> {
-  for (const p of pickedPaths.get(senderId) ?? []) {
-    if (isUnder(filePath, p)) return true
-  }
-
-  const folder = await getDownloadFolder()
-  return folder ? isUnder(filePath, folder) : false
-}
-
-async function assertAllowedPath(
-  evt: Electron.IpcMainInvokeEvent,
-  filePath: string
-): Promise<void> {
-  if (!isPathSafe(filePath)) throw new Error('Refused: path failed safety check')
-  if (!(await isAllowedPath(evt.sender.id, filePath))) {
-    throw new Error('Refused: path not from a user-approved dialog')
-  }
-}
-
-interface PickedFile {
-  path: string
-  name: string
-  size: number
-  relativePath?: string
-}
-
-const FOLDER_SCAN_CONCURRENCY = 16
-
-function createLimit(max: number) {
-  let active = 0
-  const queue: (() => void)[] = []
-  const next = () => {
-    if (active >= max) return
-    const run = queue.shift()
-    if (!run) return
-    active++
-    run()
-  }
-
-  return <T>(task: () => Promise<T>): Promise<T> =>
-    new Promise<T>((resolve, reject) => {
-      queue.push(() => {
-        task()
-          .then(resolve, reject)
-          .finally(() => {
-            active--
-            next()
-          })
-      })
-      next()
-    })
-}
-
-async function collectFolderFiles(rootDir: string): Promise<PickedFile[]> {
-  const files: PickedFile[] = []
-  const limit = createLimit(FOLDER_SCAN_CONCURRENCY)
-  const walk = async (absDir: string, relDir: string): Promise<void> => {
-    const entries = await limit(() => readdir(absDir, { withFileTypes: true }))
-    await Promise.all(
-      entries.map(async (entry) => {
-        const abs = path.join(absDir, entry.name)
-        const rel = `${relDir}/${entry.name}`
-        if (entry.isDirectory()) {
-          await walk(abs, rel)
-        } else if (entry.isFile()) {
-          const fileStats = await limit(() => stat(abs))
-          files.push({ path: abs, name: entry.name, size: fileStats.size, relativePath: rel })
-        }
-      })
-    )
-  }
-  await walk(rootDir, path.basename(rootDir))
-  return files
-}
 
 const PICK_PROPERTIES: Record<PickMode, OpenDialogOptions['properties']> = {
   files: ['openFile', 'multiSelections'],
@@ -175,19 +89,16 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
     }
 
     const id = evt.sender.id
-    const picked: PickedFile[] = []
-    for (const filePath of result.filePaths) {
-      recordPickedPath(id, filePath)
-      const fileStats = await stat(filePath)
-      if (fileStats.isDirectory()) {
-        picked.push(...(await collectFolderFiles(filePath)))
-      } else {
-        picked.push({ path: filePath, name: path.basename(filePath), size: fileStats.size })
-      }
-    }
+    for (const filePath of result.filePaths) recordPickedPath(id, filePath)
 
-    return picked
+    return expandPaths(result.filePaths)
   })
+
+  ipcMain.handle('app:externalFilesReady', (evt) => takeQueuedExternalFiles(evt.sender))
+
+  ipcMain.handle('app:shareExtensionState', () => readShareExtensionState())
+
+  ipcMain.handle('app:openShareSettings', () => openShareSettings())
 
   ipcMain.handle('app:pickSaveFile', async (evt, defaultName: string) => {
     if (!isPathSafe(defaultName) || path.basename(defaultName) !== defaultName) {

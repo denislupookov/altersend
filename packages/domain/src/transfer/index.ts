@@ -3,9 +3,13 @@ export * from './reducer'
 export * from './errors'
 export * from './store'
 export * from './commands'
+export * from './externalFiles'
+export * from './useExternalFileHandoff'
+export * from './sessionUi'
 export {
   bindTransferApi,
   loadPeers,
+  whenTransferReady,
   type TransferApi,
   type BindTransferApiOptions,
   type ErrorHandler

@@ -226,6 +226,11 @@ function dispatchStatusEvent(event: StatusEvent): void {
 }
 
 let unbindCurrent: (() => void) | null = null
+let bootSettled: Promise<void> = Promise.resolve()
+
+export function whenTransferReady(): Promise<void> {
+  return bootSettled
+}
 
 /**
  * Wires a platform `TransferApi` into the store: subscribes to worklet events,
@@ -242,7 +247,7 @@ export function bindTransferApi(
   errorHandler = options.onError ?? null
   const off = impl.onTransferEvent(dispatchRendererEvent)
 
-  void impl
+  bootSettled = impl
     .startP2P()
     .then(() => {
       dispatchToTransferStore({ type: 'booted' })

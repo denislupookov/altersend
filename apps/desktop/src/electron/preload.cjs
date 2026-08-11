@@ -52,6 +52,14 @@ contextBridge.exposeInMainWorld('bridge', {
     ipcRenderer.on('app:deep-link', listener)
     return () => ipcRenderer.removeListener('app:deep-link', listener)
   },
+  onExternalFiles: (cb) => {
+    const listener = (_evt, files) => cb(files)
+    ipcRenderer.on('app:external-files', listener)
+    return () => ipcRenderer.removeListener('app:external-files', listener)
+  },
+  externalFilesReady: () => ipcRenderer.invoke('app:externalFilesReady'),
+  shareExtensionState: () => ipcRenderer.invoke('app:shareExtensionState'),
+  openShareSettings: () => ipcRenderer.invoke('app:openShareSettings'),
   onRuntimeUpdated: (cb) => {
     const listener = () => cb()
     ipcRenderer.on('runtime:updated', listener)

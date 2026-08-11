@@ -7,6 +7,7 @@ import {
   addSelectedFiles,
   createTextSnippet,
   formatTextSnippetPreview,
+  fileUriToPath,
   removeSelectedFile,
   useTransferStore,
   type SelectedFile,
@@ -26,16 +27,6 @@ import {
 } from '@altersend/components'
 import { MessageSquareIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-
-function uriToFilePath(uri: string): string {
-  if (!uri.startsWith('file://')) return uri
-  const stripped = uri.slice('file://'.length)
-  try {
-    return decodeURIComponent(stripped)
-  } catch {
-    return stripped
-  }
-}
 
 export function SelectFilesView() {
   const { t } = useTranslation(['send', 'common'])
@@ -63,7 +54,7 @@ export function SelectFilesView() {
 
       const normalizedFiles: SelectedFile[] = result.assets.map((asset) => ({
         name: asset.name,
-        path: uriToFilePath(asset.uri),
+        path: fileUriToPath(asset.uri),
         size: asset.size,
         isTemporary: true
       }))
@@ -91,7 +82,7 @@ export function SelectFilesView() {
 
       const normalizedFiles: SelectedFile[] = result.assets.map((asset) => ({
         name: asset.fileName ?? asset.uri.split('/').pop() ?? 'photo',
-        path: uriToFilePath(asset.uri),
+        path: fileUriToPath(asset.uri),
         size: asset.fileSize,
         isTemporary: true
       }))

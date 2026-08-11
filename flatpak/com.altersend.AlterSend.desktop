@@ -2,9 +2,10 @@
 Type=Application
 Name=AlterSend
 Comment=Peer-to-peer file transfer
-Exec=altersend
+Exec=altersend %U
 Icon=com.altersend.AlterSend
 Categories=Network;
+MimeType=application/octet-stream;inode/directory;x-scheme-handler/altersend;
 StartupNotify=true
 Terminal=false
 StartupWMClass=altersend
