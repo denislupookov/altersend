@@ -85,7 +85,7 @@ export function Settings({ version }: { version: string }) {
       closeLabel={t('common:actions.close')}
       open={open}
       title={t('settings:title')}
-      width={820}
+      size='panel'
       onClose={() => setOpen(false)}
     >
       <div className='flex h-[560px] border-t border-border-primary'>

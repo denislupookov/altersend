@@ -11,8 +11,8 @@ export const styles = css.create({
     minWidth: 0,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderRadius: tokens.radiusLg,
-    padding: tokens.space3,
+    borderRadius: tokens.radiusControl,
+    paddingBlock: tokens.space2,
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: fontTokens.fontFamilySans,
@@ -29,32 +29,26 @@ export const styles = css.create({
     transitionTimingFunction: 'ease'
   },
   sm: {
-    paddingTop: tokens.space3,
-    paddingBottom: tokens.space3,
-    paddingLeft: 22,
-    paddingRight: 22,
+    minHeight: tokens.space10,
+    paddingInline: tokens.space5,
     fontSize: tokens.fontSizeMd
   },
   md: {
-    paddingTop: tokens.space4,
-    paddingBottom: tokens.space4,
-    paddingLeft: 26,
-    paddingRight: 26,
+    minHeight: tokens.space11,
+    paddingInline: tokens.space6,
     fontSize: tokens.fontSizeBase
   },
   lg: {
-    paddingTop: tokens.space35,
-    paddingBottom: tokens.space35,
-    paddingLeft: tokens.space4,
-    paddingRight: tokens.space4,
+    minHeight: tokens.space12,
+    paddingInline: tokens.space6,
     gap: tokens.space2,
     fontSize: tokens.fontSizeLg
   },
   stack: {
     flexDirection: 'column',
     gap: tokens.space2,
-    paddingLeft: tokens.space2,
-    paddingRight: tokens.space2
+    paddingBlock: tokens.space3,
+    paddingInline: tokens.space2
   },
   stackText: {
     whiteSpace: 'normal'
@@ -63,25 +57,19 @@ export const styles = css.create({
     width: '100%'
   },
   iconOnlySm: {
-    paddingTop: tokens.space2,
-    paddingBottom: tokens.space2,
-    paddingLeft: tokens.space15,
-    paddingRight: tokens.space15,
-    borderRadius: tokens.radiusSm
+    minWidth: tokens.space8,
+    minHeight: tokens.space8,
+    paddingInline: 0
   },
   iconOnlyMd: {
-    paddingTop: tokens.space25,
-    paddingBottom: tokens.space25,
-    paddingLeft: tokens.space25,
-    paddingRight: tokens.space25,
-    borderRadius: tokens.radiusMd
+    minWidth: tokens.space9,
+    minHeight: tokens.space9,
+    paddingInline: 0
   },
   iconOnlyLg: {
-    paddingTop: tokens.space3,
-    paddingBottom: tokens.space3,
-    paddingLeft: tokens.space25,
-    paddingRight: tokens.space25,
-    borderRadius: tokens.radiusLg
+    minWidth: tokens.space10,
+    minHeight: tokens.space10,
+    paddingInline: 0
   },
   primary: {
     backgroundColor: tokens.colorTextPrimary,

@@ -64,5 +64,5 @@ export function BottomSheet({
 
 const styles = StyleSheet.create({
   body: { paddingBottom: 44, gap: 16 },
-  header: { paddingHorizontal: 20, paddingTop: 12 }
+  header: { paddingHorizontal: 16, paddingTop: 12 }
 })

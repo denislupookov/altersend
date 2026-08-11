@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { ArrowLeftIcon, CloseIcon } from '../../icons'
+import { widthForSize } from './sizes'
 import type { ModalProps } from './types'
 
 const MODAL_Z_INDEX = 60
@@ -9,13 +10,13 @@ let scrollLocks = 0
 let overflowBeforeLock = ''
 
 const iconButton =
-  'inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-[8px] border-none bg-transparent p-0 text-text-muted transition-colors hover:bg-surface-primary hover:text-text-primary'
+  'inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-sm border-none bg-transparent p-0 text-text-muted transition-colors hover:bg-surface-primary hover:text-text-primary'
 
 export function Modal({
   open,
   title,
   subtitle,
-  width = 440,
+  size = 'md',
   closeLabel,
   backLabel,
   onClose,
@@ -65,9 +66,12 @@ export function Modal({
       }}
     >
       <div
-        className='flex max-w-full flex-col overflow-hidden rounded-[16px] border border-border-primary bg-background shadow-[0_32px_64px_color-mix(in_oklab,var(--as-color-scrim)_50%,transparent)]'
+        className='flex max-w-full flex-col overflow-hidden rounded-2xl border border-border-primary bg-background shadow-[0_32px_64px_color-mix(in_oklab,var(--as-color-scrim)_50%,transparent)]'
         onClick={(event) => event.stopPropagation()}
-        style={{ width, animation: 'as-scale-in 240ms cubic-bezier(0.16, 1, 0.3, 1)' }}
+        style={{
+          width: widthForSize[size],
+          animation: 'as-scale-in 240ms cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
       >
         {(title || onBack) && (
           <div className='flex items-center gap-2 px-4 pb-3 pt-4'>

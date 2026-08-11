@@ -14,6 +14,7 @@ export const darkTheme: Theme = {
     colorSurfaceTertiary: '#3a414e',
     colorSurfaceHover: '#434b58',
     colorSurfaceAccent: '#e7eaf0',
+    colorTabIndicator: '#434b58',
     colorBorderPrimary: '#282d35',
     colorBorderStrong: '#3d4551',
     colorTextPrimary: '#e7eaf0',

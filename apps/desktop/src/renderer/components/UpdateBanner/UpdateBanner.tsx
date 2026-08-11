@@ -23,7 +23,7 @@ export function UpdateBanner({ ready }: { ready: boolean }) {
     <Modal
       closeLabel={t('common:actions.close')}
       open={ready && !dismissed}
-      width={420}
+      size='sm'
       onClose={() => setDismissed(true)}
     >
       <div className='flex flex-col items-center px-6 pb-1 pt-6 text-center'>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Animated, StyleSheet, View, type LayoutChangeEvent } from 'react-native'
-import { useTheme } from '../../theme'
+import { radius, useTheme } from '../../theme'
 
 interface TabIndicatorProps {
   activeIndex: number
@@ -38,7 +38,7 @@ export function TabIndicator({ activeIndex, count, stretch }: TabIndicatorProps)
           styles.pill,
           {
             width: `${100 / count}%`,
-            backgroundColor: theme.colors.colorSurfaceSecondary,
+            backgroundColor: theme.colors.colorTabIndicator,
             transform: [{ translateX }]
           }
         ]}
@@ -49,5 +49,5 @@ export function TabIndicator({ activeIndex, count, stretch }: TabIndicatorProps)
 
 const styles = StyleSheet.create({
   layer: { position: 'absolute', top: 4, left: 4, right: 4, bottom: 4 },
-  pill: { position: 'absolute', top: 0, bottom: 0, borderRadius: 8 }
+  pill: { position: 'absolute', top: 0, bottom: 0, borderRadius: radius.radiusSm }
 })

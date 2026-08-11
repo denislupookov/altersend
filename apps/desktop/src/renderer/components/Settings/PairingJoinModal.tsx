@@ -40,12 +40,12 @@ export function PairingJoinModal({ open, isLoading, onClose, onJoin }: PairingJo
       closeLabel={t('common:actions.close')}
       open={open}
       title={t('settings:pairing.enterCode')}
-      width={636}
+      size='lg'
       onClose={onClose}
     >
       <div className='px-4 pb-2'>
         <Input
-          label={t('settings:pairing.codeLabel')}
+          aria-label={t('settings:pairing.codeLabel')}
           placeholder={t('settings:pairing.codePlaceholder')}
           value={value}
           disabled={isLoading}

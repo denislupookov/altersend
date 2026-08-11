@@ -18,9 +18,7 @@
   },
   "relay": {
     "label": "Use relay when direct connection fails",
-    "description": "When two devices can't connect directly (for example both on a VPN), the transfer is routed through AlterSend's relay. Files stay end-to-end encrypted.",
-    "contact": "Need a dedicated relay or higher limits?",
-    "fairUse": "The relay has limits on transfer size and how many transfers can run at once."
+    "description": "When devices can't connect directly, transfers are routed through AlterSend's relay. Files stay end-to-end encrypted."
   },
   "rows": {
     "feedback": "Feedback",
@@ -30,7 +28,6 @@
     "discordHint": "Join the community",
     "github": "GitHub",
     "sponsor": "Support AlterSend",
-    "contact": "Contact us",
     "privacyPolicy": "Privacy policy",
     "privacyPolicyHint": "How AlterSend handles your data",
     "terms": "Terms of service",

@@ -91,7 +91,7 @@ export default function DevicesScreen() {
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    gap: 10,
+    gap: 6,
     paddingBottom: 16
   },
   emptyState: {

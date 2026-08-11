@@ -102,7 +102,7 @@ export function Select({
         aria-haspopup='listbox'
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
-        className='flex w-full cursor-pointer appearance-none items-center justify-between gap-3 rounded-[10px] border border-border-primary bg-background-subtle py-3 pl-4 pr-3 text-left text-[13px] text-text-primary transition-colors hover:border-border-strong focus:border-border-strong focus:outline-none'
+        className='flex w-full cursor-pointer appearance-none items-center justify-between gap-3 rounded-lg border border-border-primary bg-background-subtle py-3 pl-4 pr-3 text-left text-[13px] text-text-primary transition-colors hover:border-border-strong focus:border-border-strong focus:outline-none'
         onClick={() => {
           if (open) setOpen(false)
           else openListbox()
@@ -125,7 +125,7 @@ export function Select({
           id={listboxId}
           role='listbox'
           aria-label={ariaLabel}
-          className='absolute left-0 right-0 top-[calc(100%+6px)] z-50 max-h-[220px] overflow-y-auto rounded-[10px] border border-border-primary bg-surface-primary p-1 shadow-xl'
+          className='absolute left-0 right-0 top-[calc(100%+6px)] z-50 max-h-[220px] overflow-y-auto rounded-2xl border border-border-primary bg-surface-primary p-1 shadow-xl'
         >
           {options.map((option, index) => {
             const selected = option.value === value
@@ -137,7 +137,7 @@ export function Select({
                 type='button'
                 role='option'
                 aria-selected={selected}
-                className={`flex w-full appearance-none items-center rounded-[8px] border-0 bg-transparent px-3 py-2 text-left text-[13px] transition-colors ${
+                className={`flex w-full appearance-none items-center rounded-md border-0 bg-transparent px-3 py-2 text-left text-[13px] transition-colors ${
                   selected || highlighted
                     ? 'bg-surface-secondary text-text-primary'
                     : 'text-text-secondary hover:bg-surface-secondary hover:text-text-primary'

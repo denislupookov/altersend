@@ -124,6 +124,6 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth
   },
   waitingText: { fontSize: 15, fontWeight: '600' },
-  linkBlock: { gap: 10, paddingHorizontal: 20 },
+  linkBlock: { gap: 10, paddingHorizontal: 16 },
   linkLabel: { fontSize: 14, fontWeight: '500' }
 })

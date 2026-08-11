@@ -7,11 +7,8 @@ export const styles = css.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: tokens.colorBorderPrimary,
-    borderRadius: tokens.radiusLg,
+    borderRadius: tokens.radius2xl,
     backgroundColor: tokens.colorBackgroundSubtle
-  },
-  sectionCompact: {
-    borderRadius: tokens.radiusMd
   },
   header: {
     display: 'flex',

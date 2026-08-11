@@ -70,7 +70,7 @@ export const styles = css.create({
     width: '20px',
     height: '20px',
     flexShrink: 0,
-    borderRadius: '100px',
+    borderRadius: tokens.radiusFull,
     backgroundColor: tokens.colorControlKnob,
     transitionProperty: 'transform',
     transitionDuration: '150ms',

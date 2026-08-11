@@ -28,11 +28,12 @@ export function DeviceRenameModal({
       closeLabel={t('common:actions.close')}
       open={open}
       title={t('settings:pairing.renameDevice')}
+      size='lg'
       onClose={onClose}
     >
       <div className='px-4 pb-2'>
         <Input
-          label={t('settings:pairing.nameLabel')}
+          aria-label={t('settings:pairing.nameLabel')}
           placeholder={t('settings:pairing.namePlaceholder')}
           value={value}
           disabled={isSaving}

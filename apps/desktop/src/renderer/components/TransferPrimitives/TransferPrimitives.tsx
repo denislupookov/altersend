@@ -71,7 +71,7 @@ export function TransferStatusPanel({
   loading = false
 }: TransferStatusPanelProps) {
   return (
-    <div className='w-full rounded-[12px] border border-border-primary bg-background-subtle px-4 py-4'>
+    <div className='w-full rounded-2xl border border-border-primary bg-background-subtle px-4 py-4'>
       <div className='flex items-start gap-3'>
         {loading ? (
           <span className='mt-0.5 shrink-0 text-info'>

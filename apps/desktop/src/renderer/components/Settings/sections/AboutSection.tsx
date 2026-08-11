@@ -44,9 +44,7 @@ export function AboutSection({ version }: { version: string }) {
           <MenuItem
             isLast
             iconSize={36}
-            icon={
-              <img src={logo} alt='' aria-hidden className='h-9 w-9 rounded-[10px] object-cover' />
-            }
+            icon={<img src={logo} alt='' aria-hidden className='h-9 w-9 rounded-md object-cover' />}
             label='AlterSend'
             value={`v${version}`}
           />

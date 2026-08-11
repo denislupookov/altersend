@@ -1,47 +1,49 @@
-import { readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readFileSync, writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = join(__dirname, '..');
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const root = join(__dirname, '..')
 
-const sourcePath = join(root, 'src', 'theme', 'tokens.json');
-const tokens = JSON.parse(readFileSync(sourcePath, 'utf8'));
-const { colors, space, radius, fontSize, fontWeight, lineHeight, fontFamily, fontFamilyNative } = tokens;
+const sourcePath = join(root, 'src', 'theme', 'tokens.json')
+const tokens = JSON.parse(readFileSync(sourcePath, 'utf8'))
+const {
+  colors,
+  space,
+  radius,
+  modalWidth,
+  fontSize,
+  fontWeight,
+  lineHeight,
+  fontFamily,
+  fontFamilyNative
+} = tokens
 
 function toCssValue(value) {
-  return typeof value === 'number' ? `${value}px` : value;
+  return typeof value === 'number' ? `${value}px` : value
 }
 
 function toJsValue(value) {
-  return typeof value === 'number' ? String(value) : JSON.stringify(value);
+  return typeof value === 'number' ? String(value) : JSON.stringify(value)
 }
 
 function kebab(key) {
-  return key
-    .replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)
-    .replace(/(\d+)(?=[a-z])/g, '-$1');
+  return key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`).replace(/(\d+)(?=[a-z])/g, '-$1')
 }
 
-const header = `// AUTO-GENERATED — do not edit directly.\n// Source: src/theme/tokens.json  |  Generator: scripts/generate-tokens.mjs\n// Run \`npm run generate-tokens\` to update.\n`;
-const darkColorEntries = Object.entries(colors.dark);
-const lightColorEntries = Object.entries(colors.light);
-const spaceEntries = Object.entries(space);
-const radiusEntries = Object.entries(radius);
-const fontSizeEntries = Object.entries(fontSize);
-const fontWeightEntries = Object.entries(fontWeight);
-const lineHeightEntries = Object.entries(lineHeight);
-const fontFamilyEntries = Object.entries(fontFamily);
+const header = `// AUTO-GENERATED — do not edit directly.\n// Source: src/theme/tokens.json  |  Generator: scripts/generate-tokens.mjs\n// Run \`npm run generate-tokens\` to update.\n`
+const darkColorEntries = Object.entries(colors.dark)
+const lightColorEntries = Object.entries(colors.light)
+const spaceEntries = Object.entries(space)
+const radiusEntries = Object.entries(radius)
+const modalWidthEntries = Object.entries(modalWidth)
+const fontSizeEntries = Object.entries(fontSize)
+const fontWeightEntries = Object.entries(fontWeight)
+const lineHeightEntries = Object.entries(lineHeight)
+const fontFamilyEntries = Object.entries(fontFamily)
 
-const scaleEntriesAsCss = [
-  ...spaceEntries,
-  ...radiusEntries,
-  ...fontSizeEntries,
-];
-const scaleEntriesAsString = [
-  ...fontWeightEntries,
-  ...lineHeightEntries,
-];
+const scaleEntriesAsCss = [...spaceEntries, ...radiusEntries, ...fontSizeEntries]
+const scaleEntriesAsString = [...fontWeightEntries, ...lineHeightEntries]
 
 const tokensCssTs = `${header}
 import { css } from 'react-strict-dom';
@@ -58,7 +60,7 @@ ${fontFamilyEntries.map(([key, value]) => `  ${key}: ${JSON.stringify(value)},`)
 
 export type Tokens = typeof tokens;
 export type FontTokens = typeof fontTokens;
-`;
+`
 
 const tokensCssNativeTs = `${header}
 import { Platform } from 'react-native';
@@ -93,7 +95,7 @@ export const fontTokens = css.defineVars({
 
 export type Tokens = typeof tokens;
 export type FontTokens = typeof fontTokens;
-`;
+`
 
 const tokensRawTs = `${header}
 export const rawTokens = {
@@ -111,6 +113,9 @@ ${spaceEntries.map(([key, value]) => `    ${key}: ${toJsValue(value)},`).join('\
   radius: {
 ${radiusEntries.map(([key, value]) => `    ${key}: ${toJsValue(value)},`).join('\n')}
   },
+  modalWidth: {
+${modalWidthEntries.map(([key, value]) => `    ${key}: ${toJsValue(value)},`).join('\n')}
+  },
   fontSize: {
 ${fontSizeEntries.map(([key, value]) => `    ${key}: ${toJsValue(value)},`).join('\n')}
   },
@@ -126,7 +131,7 @@ ${fontFamilyEntries.map(([key, value]) => `    ${key}: ${JSON.stringify(value)},
 } as const;
 
 export type RawTokens = typeof rawTokens;
-`;
+`
 
 const darkThemeTs = `${header}
 import type { Theme } from '../types';
@@ -136,7 +141,7 @@ export const darkTheme: Theme = {
 ${darkColorEntries.map(([key, value]) => `    ${key}: '${value}',`).join('\n')}
   },
 };
-`;
+`
 
 const lightThemeTs = `${header}
 import type { Theme } from '../types';
@@ -146,7 +151,7 @@ export const lightTheme: Theme = {
 ${lightColorEntries.map(([key, value]) => `    ${key}: '${value}',`).join('\n')}
   },
 };
-`;
+`
 
 const darkThemeCssTs = `${header}
 import { css } from 'react-strict-dom';
@@ -155,7 +160,7 @@ import { tokens } from '../tokens.css';
 export const darkThemeStyle = css.createTheme(tokens, {
 ${darkColorEntries.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).join('\n')}
 });
-`;
+`
 
 const lightThemeCssTs = `${header}
 import { css } from 'react-strict-dom';
@@ -164,7 +169,7 @@ import { tokens } from '../tokens.css';
 export const lightThemeStyle = css.createTheme(tokens, {
 ${lightColorEntries.map(([key, value]) => `  ${key}: '${toCssValue(value)}',`).join('\n')}
 });
-`;
+`
 
 const tailwindThemeCss = `/* AUTO-GENERATED — do not edit directly. */
 /* Source: src/theme/tokens.json  |  Generator: scripts/generate-tokens.mjs */
@@ -184,7 +189,7 @@ ${fontFamilyEntries.map(([key, value]) => `  --as-${kebab(key)}: ${value};`).joi
 [data-theme='light'] {
 ${lightColorEntries.map(([key, value]) => `  --as-${kebab(key)}: ${value};`).join('\n')}
 }
-`;
+`
 
 const files = [
   ['src/theme/tokens.css.ts', tokensCssTs],
@@ -194,9 +199,9 @@ const files = [
   ['src/theme/themes/light.ts', lightThemeTs],
   ['src/theme/themes/dark.css.ts', darkThemeCssTs],
   ['src/theme/themes/light.css.ts', lightThemeCssTs],
-  ['src/theme/tailwind-theme.css', tailwindThemeCss],
-];
+  ['src/theme/tailwind-theme.css', tailwindThemeCss]
+]
 
 for (const [relativePath, content] of files) {
-  writeFileSync(join(root, relativePath), content, 'utf8');
+  writeFileSync(join(root, relativePath), content, 'utf8')
 }

@@ -12,6 +12,7 @@
   --as-color-surface-tertiary: #3a414e;
   --as-color-surface-hover: #434b58;
   --as-color-surface-accent: #e7eaf0;
+  --as-color-tab-indicator: #434b58;
   --as-color-border-primary: #282d35;
   --as-color-border-strong: #3d4551;
   --as-color-text-primary: #e7eaf0;
@@ -63,6 +64,7 @@
   --as-radius-lg: 12px;
   --as-radius-xl: 14px;
   --as-radius-2xl: 16px;
+  --as-radius-control: 12px;
   --as-radius-full: 999px;
   --as-font-size-xs: 11px;
   --as-font-size-sm: 12px;
@@ -93,6 +95,7 @@
   --as-color-surface-tertiary: #d4d4d4;
   --as-color-surface-hover: #eeeeee;
   --as-color-surface-accent: #171717;
+  --as-color-tab-indicator: #ffffff;
   --as-color-border-primary: #e5e5e5;
   --as-color-border-strong: #c9c9c9;
   --as-color-text-primary: #171717;

@@ -7,6 +7,7 @@ export interface ThemeColors {
   colorSurfaceTertiary: string
   colorSurfaceHover: string
   colorSurfaceAccent: string
+  colorTabIndicator: string
   colorBorderPrimary: string
   colorBorderStrong: string
   colorTextPrimary: string

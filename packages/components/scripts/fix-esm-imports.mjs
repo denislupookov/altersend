@@ -1,7 +1,8 @@
 import { cp, readdir, readFile, stat, writeFile } from 'node:fs/promises'
 
 const distRoot = new URL('../dist/', import.meta.url)
-const importExportPattern = /((?:import|export)\s+(?:[^'\"]*?\s+from\s+)?)(['\"])(\.\.?(?:\/[^'\"]+)+)(\2)/g
+const importExportPattern =
+  /((?:import|export)\s+(?:[^'\"]*?\s+from\s+)?)(['\"])(\.\.?(?:\/[^'\"]+)+)(\2)/g
 
 const MODULE_EXTENSIONS = new Set(['.js', '.mjs', '.cjs', '.json'])
 
@@ -15,9 +16,12 @@ function withJsExtension(specifier) {
 
 async function rewriteFile(filePath) {
   const original = await readFile(filePath, 'utf8')
-  const rewritten = original.replace(importExportPattern, (full, prefix, quote, specifier, suffix) => {
-    return `${prefix}${quote}${withJsExtension(specifier)}${suffix}`
-  })
+  const rewritten = original.replace(
+    importExportPattern,
+    (full, prefix, quote, specifier, suffix) => {
+      return `${prefix}${quote}${withJsExtension(specifier)}${suffix}`
+    }
+  )
 
   if (rewritten !== original) {
     await writeFile(filePath, rewritten)

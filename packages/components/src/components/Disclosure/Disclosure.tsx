@@ -28,7 +28,7 @@ export function Disclosure({
   const chevronSize = compact ? 14 : 16
 
   return (
-    <html.section style={[styles.section, compact && styles.sectionCompact]}>
+    <html.section style={styles.section}>
       <html.div
         aria-expanded={expanded}
         onClick={onToggle}

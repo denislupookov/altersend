@@ -27,7 +27,7 @@ export function PairingQrModal({ open, topic, onClose }: PairingQrModalProps) {
       closeLabel={t('common:actions.close')}
       open={open}
       title={t('settings:pairing.showQrCode')}
-      width={636}
+      size='lg'
       onClose={onClose}
     >
       <div className='flex justify-center px-4 pb-2 pt-1'>

@@ -18,9 +18,7 @@
   },
   "relay": {
     "label": "Utiliser un relais en cas d’échec de la connexion directe",
-    "description": "Quand deux appareils ne peuvent pas se connecter directement (par exemple tous deux sur un VPN), le transfert passe par le relais d'AlterSend. Les fichiers restent chiffrés de bout en bout.",
-    "contact": "Besoin d’un relais dédié ou de limites plus élevées ?",
-    "fairUse": "Le relais impose des limites sur la taille des transferts et sur le nombre de transferts simultanés."
+    "description": "Quand les appareils ne peuvent pas se connecter directement, le transfert passe par le relais d'AlterSend. Les fichiers restent chiffrés de bout en bout."
   },
   "rows": {
     "feedback": "Commentaires",
@@ -30,7 +28,6 @@
     "discordHint": "Rejoignez la communauté",
     "github": "GitHub",
     "sponsor": "Soutenir AlterSend",
-    "contact": "Contactez-nous",
     "privacyPolicy": "Politique de confidentialité",
     "privacyPolicyHint": "Comment AlterSend gère vos données",
     "terms": "Conditions d'utilisation",

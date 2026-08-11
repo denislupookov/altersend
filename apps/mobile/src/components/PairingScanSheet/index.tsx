@@ -318,6 +318,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 12
   },
-  actions: { gap: 10, paddingHorizontal: 20 },
+  actions: { gap: 10, paddingHorizontal: 16 },
   statusText: { fontSize: 15, fontWeight: '600' }
 })

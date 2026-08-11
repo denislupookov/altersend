@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   AppearancePicker,
   Button,
+  LinkCard,
   LinkRow,
   SYSTEM_THEME_PREFERENCE,
   ThemeType,
@@ -115,7 +116,7 @@ export function GeneralSection() {
   return (
     <SectionShell title={t('settings:sections.general')}>
       <div className='flex flex-col gap-2.5'>
-        <div className='overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle'>
+        <LinkCard>
           <LinkRow
             compact
             isLast={askEveryTime}
@@ -145,36 +146,37 @@ export function GeneralSection() {
               }
             />
           )}
-        </div>
+        </LinkCard>
 
-        {shareExtension !== 'unknown' && (
+        <LinkCard>
+          {shareExtension !== 'unknown' && (
+            <LinkRow
+              compact
+              label={t('settings:shareMenu.label')}
+              subtitle={t('settings:shareMenu.description')}
+              trailing={
+                <ToggleSwitch
+                  checked={shareExtension === 'enabled'}
+                  onChange={handleShareMenuToggle}
+                  aria-label={t('settings:shareMenu.label')}
+                />
+              }
+            />
+          )}
+
           <LinkRow
-            standalone
             compact
-            label={t('settings:shareMenu.label')}
-            subtitle={t('settings:shareMenu.description')}
+            isLast
+            label={t('settings:crashReports.label')}
             trailing={
               <ToggleSwitch
-                checked={shareExtension === 'enabled'}
-                onChange={handleShareMenuToggle}
-                aria-label={t('settings:shareMenu.label')}
+                checked={crashReporting}
+                onChange={handleCrashToggle}
+                aria-label={t('settings:crashReports.label')}
               />
             }
           />
-        )}
-
-        <LinkRow
-          standalone
-          compact
-          label={t('settings:crashReports.label')}
-          trailing={
-            <ToggleSwitch
-              checked={crashReporting}
-              onChange={handleCrashToggle}
-              aria-label={t('settings:crashReports.label')}
-            />
-          }
-        />
+        </LinkCard>
 
         <div className='mt-3 flex flex-col gap-2.5'>
           <h3 className='m-0 text-[16px] font-semibold text-text-primary'>

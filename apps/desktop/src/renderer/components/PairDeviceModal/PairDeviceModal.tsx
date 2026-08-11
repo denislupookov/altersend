@@ -16,7 +16,7 @@ export function PairDeviceModal({ open, onPair, onSkip }: PairDeviceModalProps) 
       closeLabel={t('common:actions.close')}
       open={open}
       title={t('settings:pairPrompt.title')}
-      width={560}
+      size='lg'
       onClose={onSkip}
     >
       <div className='flex flex-col items-center px-6 pb-2 pt-9 text-center'>

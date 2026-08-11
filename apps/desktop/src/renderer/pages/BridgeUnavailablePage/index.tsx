@@ -10,7 +10,7 @@ export default function BridgeUnavailablePage() {
 
       <section className='flex min-h-0 flex-1 flex-col px-6 pb-6 pt-2 max-[640px]:px-4'>
         <div className='mx-auto flex h-full w-full max-w-[920px] flex-1 flex-col justify-center'>
-          <div className='rounded-[10px] border border-border-primary bg-surface-primary px-4 py-4'>
+          <div className='rounded-2xl border border-border-primary bg-surface-primary px-4 py-4'>
             <h1 className='m-0 text-[14px] font-medium'>{t('errors:bridgeUnavailable.title')}</h1>
             <p className='mt-1 text-[13px] leading-5 text-text-secondary'>
               {t('errors:bridgeUnavailable.description')}

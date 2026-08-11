@@ -17,7 +17,7 @@ export const styles = css.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: tokens.colorBorderPrimary,
-    borderRadius: tokens.radiusLg,
+    borderRadius: tokens.radius2xl,
     overflow: 'hidden',
     backgroundColor: tokens.colorBackgroundSubtle
   }

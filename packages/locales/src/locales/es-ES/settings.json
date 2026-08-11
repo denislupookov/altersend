@@ -18,9 +18,7 @@
   },
   "relay": {
     "label": "Usar relé cuando falle la conexión directa",
-    "description": "Cuando dos dispositivos no pueden conectarse directamente (por ejemplo, ambos con VPN), la transferencia se enruta a través del relé de AlterSend. Los archivos siguen cifrados de extremo a extremo.",
-    "contact": "¿Necesitas un relé dedicado o límites más altos?",
-    "fairUse": "El relé tiene límites en el tamaño de las transferencias y en cuántas pueden ejecutarse a la vez."
+    "description": "Cuando los dispositivos no pueden conectarse directamente, la transferencia se enruta a través del relé de AlterSend. Los archivos siguen cifrados de extremo a extremo."
   },
   "rows": {
     "feedback": "Comentarios",
@@ -30,7 +28,6 @@
     "discordHint": "Únete a la comunidad",
     "github": "GitHub",
     "sponsor": "Apoyar AlterSend",
-    "contact": "Contáctenos",
     "privacyPolicy": "Política de privacidad",
     "privacyPolicyHint": "Cómo AlterSend maneja tus datos",
     "terms": "Términos de servicio",

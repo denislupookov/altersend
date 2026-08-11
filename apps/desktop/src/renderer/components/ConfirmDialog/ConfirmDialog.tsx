@@ -22,7 +22,7 @@ export function ConfirmDialog({
   onCancel
 }: ConfirmDialogProps) {
   return (
-    <Modal closeLabel={cancelLabel} open={open} title={title} width={400} onClose={onCancel}>
+    <Modal closeLabel={cancelLabel} open={open} title={title} size='sm' onClose={onCancel}>
       {message ? (
         <div className='px-4 pb-1'>
           <p className='m-0 text-[14px] leading-relaxed text-text-muted'>{message}</p>

@@ -42,7 +42,7 @@ export const styles = css.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: tokens.colorBorderPrimary,
-    borderRadius: tokens.radiusMd,
+    borderRadius: tokens.radius2xl,
     backgroundColor: tokens.colorBackgroundSubtle,
     transitionDuration: '160ms',
     transitionProperty: 'background-color, border-color',

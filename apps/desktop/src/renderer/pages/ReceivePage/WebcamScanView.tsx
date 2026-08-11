@@ -213,7 +213,7 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
         type='file'
       />
       {blocked ? (
-        <div className='mx-auto w-full max-w-[400px] rounded-[16px] border border-border-primary bg-background-subtle p-5'>
+        <div className='mx-auto w-full max-w-[400px] rounded-2xl border border-border-primary bg-background-subtle p-5'>
           <span className='block text-[15px] font-semibold text-text-primary'>{blocked.title}</span>
           <p className='m-0 mt-1.5 text-[13px] leading-relaxed text-text-muted'>{blocked.hint}</p>
           <div className='mt-4 flex flex-wrap items-center gap-2.5'>
@@ -230,7 +230,7 @@ export function WebcamScanView({ onCancel }: WebcamScanViewProps) {
         </div>
       ) : (
         <div className='flex w-full flex-col gap-5 sm:flex-row sm:items-start'>
-          <div className='relative aspect-square w-full max-w-[380px] shrink-0 overflow-hidden rounded-[16px] border border-border-primary bg-scrim'>
+          <div className='relative aspect-square w-full max-w-[380px] shrink-0 overflow-hidden rounded-2xl border border-border-primary bg-scrim'>
             <video ref={videoRef} className='h-full w-full object-cover' muted playsInline />
 
             {state === 'scanning' ? (

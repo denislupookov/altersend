@@ -16,6 +16,7 @@
   --radius-lg: var(--as-radius-lg);
   --radius-xl: var(--as-radius-xl);
   --radius-2xl: var(--as-radius-2xl);
+  --radius-control: var(--as-radius-control);
   --radius-full: var(--as-radius-full);
 
   --text-xs: var(--as-font-size-xs);

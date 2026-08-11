@@ -14,6 +14,7 @@ export const lightThemeStyle = css.createTheme(tokens, {
   colorSurfaceTertiary: '#d4d4d4',
   colorSurfaceHover: '#eeeeee',
   colorSurfaceAccent: '#171717',
+  colorTabIndicator: '#ffffff',
   colorBorderPrimary: '#e5e5e5',
   colorBorderStrong: '#c9c9c9',
   colorTextPrimary: '#171717',

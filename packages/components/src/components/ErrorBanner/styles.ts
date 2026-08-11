@@ -7,7 +7,7 @@ export const styles = css.create({
     paddingBottom: tokens.space3,
     paddingLeft: tokens.space4,
     paddingRight: tokens.space4,
-    borderRadius: tokens.radiusSm,
+    borderRadius: tokens.radius2xl,
     borderWidth: 1,
     borderColor: tokens.colorDanger,
     backgroundColor: tokens.colorDangerSubtle

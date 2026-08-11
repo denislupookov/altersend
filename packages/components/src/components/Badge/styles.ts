@@ -11,7 +11,7 @@ export const styles = css.create({
     paddingInline: tokens.space25,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderRadius: 7,
+    borderRadius: tokens.radiusSm,
     fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeSm,
     fontWeight: tokens.fontWeightMedium,

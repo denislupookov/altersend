@@ -1,14 +1,15 @@
 import { Modal as RNModal, Pressable, StyleSheet, Text, View } from 'react-native'
 import { ArrowLeftIcon, CloseIcon } from '../../icons'
-import { useTheme } from '../../theme'
+import { radius, useTheme } from '../../theme'
 import { withAlpha } from '../../theme/withAlpha'
+import { widthForSize } from './sizes'
 import type { ModalProps } from './types'
 
 export function Modal({
   open,
   title,
   subtitle,
-  width = 440,
+  size = 'md',
   closeLabel,
   backLabel,
   onClose,
@@ -27,7 +28,7 @@ export function Modal({
           style={[
             styles.panel,
             {
-              maxWidth: width,
+              maxWidth: widthForSize[size],
               backgroundColor: theme.colors.colorBackground,
               borderColor: theme.colors.colorBorderPrimary
             }
@@ -65,7 +66,7 @@ export function Modal({
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  panel: { width: '100%', borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
+  panel: { width: '100%', borderRadius: radius.radius2xl, borderWidth: 1, overflow: 'hidden' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

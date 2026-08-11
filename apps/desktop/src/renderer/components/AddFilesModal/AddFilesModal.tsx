@@ -18,7 +18,7 @@ export function AddFilesModal({ open, onClose, onSelect }: AddFilesModalProps) {
       closeLabel={t('common:actions.close')}
       open={open}
       title={t('send:dropzone.addTitle')}
-      width={460}
+      size='md'
       onClose={onClose}
     >
       <div className='flex flex-col gap-2 px-4 pb-4'>

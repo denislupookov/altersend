@@ -19,7 +19,7 @@ interface LayoutProps {
   onMenuPress?: () => void
 }
 
-const SCREEN_PADDING = 20
+const SCREEN_PADDING = 16
 
 export const Layout = ({
   title,

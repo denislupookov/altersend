@@ -60,5 +60,5 @@ export function DeviceRenameSheet({
 
 const styles = StyleSheet.create({
   sheet: { paddingBottom: 58, gap: 24 },
-  form: { gap: 22, paddingHorizontal: 20 }
+  form: { gap: 22, paddingHorizontal: 16 }
 })

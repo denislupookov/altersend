@@ -54,12 +54,14 @@ export const styles = css.create({
     overflow: 'hidden'
   },
   halfStart: {
+    display: 'flex',
     position: 'absolute',
     insetBlock: 0,
     insetInlineStart: 0,
     width: '200%'
   },
   halfEnd: {
+    display: 'flex',
     position: 'absolute',
     insetBlock: 0,
     insetInlineEnd: 0,

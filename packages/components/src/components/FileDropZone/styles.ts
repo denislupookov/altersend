@@ -59,7 +59,7 @@ export const styles = css.create({
     justifyContent: 'center',
     width: 50,
     height: 50,
-    borderRadius: 13,
+    borderRadius: tokens.radiusLg,
     backgroundColor: tokens.colorSurfacePrimary,
     color: tokens.colorTextMuted,
     transitionDuration: '180ms',

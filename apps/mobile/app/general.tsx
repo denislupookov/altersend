@@ -48,8 +48,8 @@ export default function GeneralScreen() {
 
   return (
     <Layout hasNativeHeader>
-      <View style={styles.container}>
-        <View style={[styles.card, cardStyle]}>
+      <View style={[styles.card, cardStyle]}>
+        <View style={styles.row}>
           <ToggleSwitch
             checked={mediaToPhotos}
             onChange={handleMediaToggle}
@@ -57,7 +57,8 @@ export default function GeneralScreen() {
             description={t(MEDIA_DESTINATION_KEYS.description)}
           />
         </View>
-        <View style={[styles.card, cardStyle]}>
+        <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
+        <View style={styles.row}>
           <ToggleSwitch
             checked={crashReporting}
             onChange={handleCrashReportingToggle}
@@ -71,14 +72,17 @@ export default function GeneralScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 10
-  },
   card: {
     borderRadius: 16,
     borderWidth: 1,
-    overflow: 'hidden',
+    overflow: 'hidden'
+  },
+  row: {
     paddingHorizontal: 16,
     paddingVertical: 13
+  },
+  divider: {
+    height: 1,
+    marginLeft: 16
   }
 })

@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     marginTop: 28
   },
   brandRow: {
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4
   },
   footer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingBottom: 36,
     gap: 18
   }

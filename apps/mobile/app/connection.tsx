@@ -1,8 +1,7 @@
-import { Linking, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { useState } from 'react'
-import { ExternalLink, ToggleSwitch, useTheme } from '@altersend/components'
+import { ToggleSwitch, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
-import { websiteUrl } from '@altersend/domain'
 import { Layout } from '@/src/components'
 import { Text } from '@/src/components/ThemedText'
 import { isRelayEnabled, setRelayEnabledStorage } from '@/src/lifecycle/relayStorage'
@@ -34,16 +33,12 @@ export default function ConnectionScreen() {
           checked={relay}
           onChange={handleRelayToggle}
           label={t('settings:relay.label')}
-          description={t('settings:relay.description')}
         />
       </View>
       <View style={styles.info}>
         <Text style={[styles.infoLine, { color: theme.colors.colorTextMuted }]}>
-          {t('settings:relay.fairUse')} {t('settings:relay.contact')}
+          {t('settings:relay.description')}
         </Text>
-        <ExternalLink href={websiteUrl} onPress={() => Linking.openURL(websiteUrl).catch(() => {})}>
-          {t('settings:rows.contact')}
-        </ExternalLink>
       </View>
     </Layout>
   )
@@ -60,8 +55,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13
   },
   info: {
-    marginTop: 16,
-    gap: 6
+    marginTop: 16
   },
   infoLine: {
     fontSize: 13,

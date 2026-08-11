@@ -88,7 +88,7 @@ const pressedIconColor: Partial<
 
 const spinnerSize: Record<ButtonSize, number> = { sm: 12, md: 14, lg: 16 }
 
-const iconOnlyPadding: Record<ButtonSize, (typeof styles)[keyof typeof styles]> = {
+const iconOnlySize: Record<ButtonSize, (typeof styles)[keyof typeof styles]> = {
   sm: styles.iconOnlySm,
   md: styles.iconOnlyMd,
   lg: styles.iconOnlyLg
@@ -142,7 +142,7 @@ export function Button({
       style={[
         styles.base,
         styles[size],
-        iconOnly && iconOnlyPadding[size],
+        iconOnly && iconOnlySize[size],
         styles[variant],
         pill && styles.pill,
         stack && styles.stack,

@@ -38,7 +38,7 @@ export function Popover({ trigger, children, align = 'right', variant = 'menu' }
 
   const menuClass =
     variant === 'menu'
-      ? 'min-w-[180px] overflow-hidden rounded-[10px] border border-border-primary bg-background-subtle p-1 shadow-[0_8px_24px_color-mix(in_oklab,var(--as-color-scrim)_35%,transparent)]'
+      ? 'min-w-[180px] overflow-hidden rounded-2xl border border-border-primary bg-background-subtle p-1 shadow-[0_8px_24px_color-mix(in_oklab,var(--as-color-scrim)_35%,transparent)]'
       : 'rounded-2xl shadow-lg'
 
   const posStyle: React.CSSProperties = anchorRect

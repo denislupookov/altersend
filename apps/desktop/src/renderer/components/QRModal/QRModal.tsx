@@ -20,11 +20,11 @@ export function QRModal({ topic, open, onClose }: QRModalProps) {
       open={open}
       title={t('send:connection.scanToConnect')}
       subtitle={t('send:connection.qrModalDescription')}
-      width={400}
+      size='sm'
       onClose={onClose}
     >
       <div className='flex justify-center px-4 pb-4 pt-3'>
-        <div className='overflow-hidden rounded-[12px]'>
+        <div className='overflow-hidden rounded-lg'>
           <QRCode
             imageLabel={t('send:connection.qrCodeLabel')}
             loadingLabel={t('send:connection.generating')}

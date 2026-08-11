@@ -18,9 +18,7 @@
   },
   "relay": {
     "label": "直連失敗時使用中繼",
-    "description": "當兩台裝置無法直接連線時（例如都在使用 VPN），傳輸會透過 AlterSend 的中繼進行。檔案仍維持端對端加密。",
-    "contact": "需要專用中繼或更高的額度？",
-    "fairUse": "中繼對傳輸大小和同時進行的傳輸數量有限制。"
+    "description": "當裝置無法直接連線時，傳輸會透過 AlterSend 的中繼進行。檔案仍維持端對端加密。"
   },
   "rows": {
     "feedback": "意見回饋",
@@ -30,7 +28,6 @@
     "discordHint": "加入社區",
     "github": "GitHub",
     "sponsor": "支持 AlterSend",
-    "contact": "聯絡我們",
     "privacyPolicy": "隱私權政策",
     "privacyPolicyHint": "AlterSend 如何處理您的數據",
     "terms": "服務條款",

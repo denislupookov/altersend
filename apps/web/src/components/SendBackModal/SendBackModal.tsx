@@ -16,7 +16,7 @@ export function SendBackModal({ open, onClose }: SendBackModalProps) {
   const { label, Icon } = useDownloadCta()
 
   return (
-    <Modal open={open} onClose={onClose} width={420} closeLabel={t('common:actions.close')}>
+    <Modal open={open} onClose={onClose} size='sm' closeLabel={t('common:actions.close')}>
       <div className='flex flex-col items-center px-6 pb-7 pt-6 text-center'>
         <Badge pill tone='success' icon={<CheckIcon size={14} color={theme.colors.colorSuccess} />}>
           {t('web:download.allDownloaded')}
