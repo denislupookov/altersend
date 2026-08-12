@@ -372,6 +372,10 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   private serve(message: DownloadRequest, session: PeerSession): void {
+    if (!this.authedPeers.has(session.peerKey)) {
+      console.warn('TransferOrchestrator: refused download from unauthenticated peer')
+      return
+    }
     if (!session.drive) return
     session.drive
       .serve(message.fileId, message.fileName, this.storage.sender.localPath(message.fileId))

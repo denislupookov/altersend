@@ -99,7 +99,7 @@ The DHT **discovery topic** is only a hash — observable on the network, and (f
 
 The sender sends a random `challenge` nonce; the receiver must reply with `topicProof(joinCode, nonce)` — a BLAKE2b hash of the code + nonce (`worklet/transfer/topic-auth.ts`). The join code never crosses the wire.
 
-A valid proof releases the offers (even if late); a wrong proof drops the connection. A peer silent past 10 s isn't dropped — it's flagged **"Update to connect"** (`peer-unauthenticated`) and can still auth late (`peer-authenticated` clears it), so a busy sender never aborts a legit receiver. Receiving from an older sender is unaffected — a receiver only answers a challenge, never requires one.
+A valid proof releases the offers (even if late) and is required to serve a file — `serve()` refuses a download request from an unauthenticated peer, so reaching the topic is not enough even if a file id leaks. A wrong proof drops the connection. A peer silent past 10 s isn't dropped — it's flagged **"Update to connect"** (`peer-unauthenticated`) and can still auth late (`peer-authenticated` clears it), so a busy sender never aborts a legit receiver. Receiving from an older sender is unaffected — a receiver only answers a challenge, never requires one.
 
 ## Relay fallback
 

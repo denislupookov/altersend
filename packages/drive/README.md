@@ -28,15 +28,17 @@ For a non-disk source, pass your own reader/writer to `SenderSession` /
 ```
 start    { transferId, name, size, chunkSize }   sender → receiver
 need     { indices }                              receiver → sender
-<chunk>  header{ index, hash } + bytes            sender → receiver
-complete { fileHash }                             sender → receiver
+<chunk>  header{ index } + bytes                  sender → receiver
+complete { }                                      sender → receiver
 ack      { savedTo }                              receiver → sender
 cancel   { reason? }                              either
 ```
 
 Chunk size is derived from file size, so both sides compute the same geometry
-from `start`. Each chunk carries a blake2b hash, verified on arrival. `fileHash`
-hashes the chunk hashes; the receiver checks it on resume.
+from `start`. The engine verifies geometry only — it does not hash content, so a
+receiver cannot detect a peer serving the wrong bytes. That is fine while the
+only source is the authenticated sender; a seeder would need a commitment the
+receiver can check independently.
 
 ## Interfaces
 
