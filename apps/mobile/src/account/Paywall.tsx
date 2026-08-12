@@ -14,7 +14,7 @@ import { Text } from '@/src/components/ThemedText'
 import { purchasesReady } from '@/src/lifecycle/purchases'
 import { HEADER_TOP, SCREEN_PADDING } from './constants'
 import { PlanCellValue } from './PlanCellValue'
-import { successTap } from './haptics'
+import { successTap } from '@/src/haptics'
 import type { AccountPhaseProps } from './types'
 
 const PRO_COLUMN_WIDTH = 80

@@ -6,7 +6,7 @@ import { useTranslation } from '@altersend/locales'
 import { ConfirmDialog, Layout } from '@/src/components'
 import { Text } from '@/src/components/ThemedText'
 import { DismissRow } from './DismissRow'
-import { successTap } from './haptics'
+import { successTap } from '@/src/haptics'
 import { useCopyAccountCode } from './useCopyAccountCode'
 import type { AccountPhaseProps } from './types'
 

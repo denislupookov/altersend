@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router'
 import { ConfirmDialog, Layout } from '@/src/components'
 import { useToast } from '@/src/components/Toast'
 import { useAccountModel } from '@/src/account'
-import { selectionTap } from '@/src/account/haptics'
+import { selectionTap } from '@/src/haptics'
 import { useCopyAccountCode } from '@/src/account/useCopyAccountCode'
 
 export default function SubscriptionScreen() {

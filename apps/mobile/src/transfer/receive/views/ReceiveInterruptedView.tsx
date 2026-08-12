@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import type { IncomingFileOffer } from '@altersend/core'
 import { LinkRow, useTheme, withAlpha } from '@altersend/components'
@@ -6,6 +6,7 @@ import { CloseIcon } from '@altersend/components/icons'
 import { getOfferKey, type DownloadItemState } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { IllustrationLayout } from '@/src/components'
+import { errorTap } from '@/src/haptics'
 import { OpenAction, getFileMeta } from '../utils/fileRowUtils'
 import MissingFilesSvg from '../../../../../../assets/missing-files.svg'
 import { Text } from '@/src/components/ThemedText'
@@ -32,6 +33,10 @@ export function ReceiveInterruptedView({
 }: PropsWithChildren<ReceiveInterruptedViewProps>) {
   const { t } = useTranslation(['receive', 'common'])
   const { theme } = useTheme()
+
+  useEffect(() => {
+    errorTap()
+  }, [])
 
   const completedCount = incomingFileOffers.filter(
     (file) => downloadStates[getOfferKey(file)]?.status === 'completed'

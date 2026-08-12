@@ -4,6 +4,7 @@ import { Button } from '@altersend/components'
 import { clearSenderFlow, getSendPageCopy, getSendStep, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { ConfirmDialog, Layout } from '@/src/components'
+import { mediumTap } from '@/src/haptics'
 import { useLeaveSessionConfirm } from '@/src/hooks/useLeaveSessionConfirm'
 import { ShareView } from '@/src/transfer/send'
 
@@ -21,10 +22,11 @@ export default function SendShareScreen() {
   const copy = getSendPageCopy(t, step)
   const needsStayHint = step === 'receiver_connected' && !sustainsBackgroundTransfer
 
-  const handleBack = useCallback(() => {
+  const handleEndSession = useCallback(() => {
+    mediumTap()
     clearSenderFlow()
   }, [])
-  const { leaveDialog } = useLeaveSessionConfirm(handleBack)
+  const { leaveDialog } = useLeaveSessionConfirm(handleEndSession)
 
   return (
     <Layout
@@ -34,7 +36,7 @@ export default function SendShareScreen() {
       noScroll
       footer={
         <View style={{ marginBottom: Platform.OS === 'android' ? 20 : 0 }}>
-          <Button onClick={clearSenderFlow} size='lg' variant='secondary' width='full'>
+          <Button onClick={handleEndSession} size='lg' variant='secondary' width='full'>
             {t('common:actions.endSession')}
           </Button>
         </View>

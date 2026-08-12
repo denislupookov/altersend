@@ -1,6 +1,6 @@
 import * as Clipboard from 'expo-clipboard'
 import { formatAccountCode, useCopiedFlag } from '@altersend/domain'
-import { impactTap } from './haptics'
+import { lightTap } from '@/src/haptics'
 
 const COPY_ID = 'account-code'
 
@@ -19,7 +19,7 @@ export function useCopyAccountCode(code: string | undefined, onCopied?: () => vo
 
     flashCopied(COPY_ID)
     onCopied?.()
-    await impactTap()
+    lightTap()
 
     return true
   }

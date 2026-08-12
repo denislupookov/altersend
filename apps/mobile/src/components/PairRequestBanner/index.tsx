@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Button, useTheme } from '@altersend/components'
 import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
 import { rememberVote, usePairingSessionStore, useTransferStore } from '@altersend/domain'
+import { lightTap } from '@/src/haptics'
 import { Text } from '@/src/components/ThemedText'
 
 export function PairRequestBanner() {
@@ -23,6 +24,10 @@ export function PairRequestBanner() {
   }, [request])
 
   const visible = Boolean(request && !responded && !isPairing)
+
+  useEffect(() => {
+    if (visible) lightTap()
+  }, [visible])
 
   // Guarded against double-firing: onDismiss (iOS swipe) also fires after a programmatic
   // close, so without the ref a tap on Pair would be followed by a stray 'no' vote.

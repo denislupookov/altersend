@@ -8,7 +8,7 @@ import { HeroBackdrop, Layout } from '@/src/components'
 import { IconButton } from '@/src/components/IconButton'
 import { Text } from '@/src/components/ThemedText'
 import { HEADER_TOP } from './constants'
-import { selectionTap, successTap } from './haptics'
+import { selectionTap, successTap } from '@/src/haptics'
 import type { AccountPhaseProps } from './types'
 
 export function CodeEntry({ model, errorText, onDismiss }: AccountPhaseProps) {

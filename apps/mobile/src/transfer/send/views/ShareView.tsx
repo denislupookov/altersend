@@ -26,6 +26,7 @@ import {
 import { useTranslation } from '@altersend/locales'
 import { useRouter } from 'expo-router'
 import { useToast } from '@/src/components/Toast'
+import { mediumTap, successTap } from '@/src/haptics'
 import { ConfirmDialog, DeviceActionsSheet, DeviceRenameSheet } from '@/src/components'
 import { useDeviceRename } from '@/src/pairing/useDeviceRename'
 import { useDeviceRemove } from '@/src/pairing/useDeviceRemove'
@@ -52,6 +53,7 @@ export function ShareView() {
       }),
     onPeerPaired: (peer) =>
       toast.show({ title: t('send:status.pairedToast', { name: peer.name }), durationMs: 2500 }),
+    onPeerDownloaded: successTap,
     onInviteFailed: (peer) =>
       toast.show({
         title: t('send:status.inviteFailedToast', { name: peer.name }),
@@ -255,8 +257,10 @@ export function ShareView() {
               <LinkCard>
                 {vm.devices.map((row, index) => {
                   const isLast = index === vm.devices.length - 1
-                  const openActions = () =>
+                  const openActions = () => {
+                    mediumTap()
                     setActionsTarget({ peerKey: row.peerKey, name: row.name })
+                  }
                   if (row.kind === 'connected') {
                     const Icon = row.deviceType ? deviceIcon(row.deviceType) : null
                     return (

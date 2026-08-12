@@ -7,6 +7,7 @@ import { useTranslation } from '@altersend/locales'
 import { useRouter } from 'expo-router'
 import { uriToPath } from '@/src/api/mobileApi'
 import { ConfirmDialog, Layout, IllustrationLayout } from '@/src/components'
+import { lightTap, mediumTap } from '@/src/haptics'
 import { useLeaveSessionConfirm } from '@/src/hooks/useLeaveSessionConfirm'
 import { ReceiveIncomingView, ReceiveReconnectingView } from '@/src/transfer/receive'
 import { useErrorToast } from '@/src/transfer/receive/utils/useErrorToast'
@@ -57,10 +58,14 @@ export default function ReceiveIncomingScreen() {
     }
   }, [step, router])
 
-  const handleEndSession = useCallback(() => {
+  const handleExit = useCallback(() => {
     void clearSession()
     exitToReceiveTab(router)
   }, [router])
+  const handleEndSession = useCallback(() => {
+    mediumTap()
+    handleExit()
+  }, [handleExit])
   const { leaveDialog } = useLeaveSessionConfirm(handleEndSession)
 
   const totalBytes = totals.totalBytes
@@ -75,8 +80,11 @@ export default function ReceiveIncomingScreen() {
 
   const handlePrimaryAction = async () => {
     try {
-      if (downloads.primaryAction === 'resume-all') await actions.resumeAll()
-      else if (downloads.primaryAction === 'download-all') {
+      if (downloads.primaryAction === 'resume-all') {
+        lightTap()
+        await actions.resumeAll()
+      } else if (downloads.primaryAction === 'download-all') {
+        lightTap()
         await actions.downloadInto(uriToPath(Paths.document.uri))
       }
     } catch (err) {
@@ -143,7 +151,7 @@ export default function ReceiveIncomingScreen() {
           illustration={<ConnectionLostSvg width='100%' height='100%' />}
           aspectRatio={800 / 430}
           footer={
-            <Button onClick={handleEndSession} size='lg' variant='primary' width='full'>
+            <Button onClick={handleExit} size='lg' variant='primary' width='full'>
               {t('receive:actions.backToHome')}
             </Button>
           }

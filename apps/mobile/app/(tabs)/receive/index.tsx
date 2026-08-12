@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import * as Haptics from 'expo-haptics'
 import { Button } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import { useFocusEffect, useRouter } from 'expo-router'
@@ -19,6 +18,7 @@ import {
   openCompletedFile
 } from '@/src/transfer/receive'
 import { useErrorToast } from '@/src/transfer/receive/utils/useErrorToast'
+import { errorTap, mediumTap } from '@/src/haptics'
 import { Layout } from '@/src/components'
 
 export default function ReceiveScreen() {
@@ -55,7 +55,7 @@ export default function ReceiveScreen() {
     setShowValidation(true)
     if (!isValidJoinCode) {
       if (trimmedJoinCode.length > 0) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {})
+        errorTap()
       }
       return
     }
@@ -99,10 +99,15 @@ export default function ReceiveScreen() {
   const copy = getReceivePageCopy(t, step, downloadableFileCount, textCount, totals.totalBytes)
   const title = step === 'join' ? t('receive:page.tabTitle') : copy.title
 
+  const handleEndSession = () => {
+    if (step !== 'interrupted') mediumTap()
+    clearSession()
+  }
+
   const footer =
     step === 'join' ? undefined : (
       <Button
-        onClick={clearSession}
+        onClick={handleEndSession}
         size='lg'
         variant={step === 'interrupted' ? 'primary' : 'secondary'}
         width='full'

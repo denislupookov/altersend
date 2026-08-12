@@ -17,7 +17,7 @@ import {
 } from '../transfer/commands'
 import { useTransferStore } from '../transfer/store'
 import { applyPairState, getActivePeerProgress, getPeerListEntries } from './peerListUi'
-import type { PairState, PeerListEntryWithPair } from './peerListUi'
+import type { PairState, PeerListEntry, PeerListEntryWithPair } from './peerListUi'
 import type { Translate } from '../i18n'
 import { useCopiedFlag } from '../useCopiedFlag'
 
@@ -198,6 +198,7 @@ function toInviteAction(st: InviteStatus | undefined): OfflineDeviceRow['action'
 export interface ShareViewModelCallbacks {
   onPeerJoined?: (peer: ConnectedDeviceRow) => void
   onPeerPaired?: (peer: ConnectedDeviceRow) => void
+  onPeerDownloaded?: (peer: ConnectedDeviceRow) => void
   onInviteFailed?: (peer: OfflineDeviceRow) => void
   onPeerOutdated?: () => void
 }
@@ -366,6 +367,17 @@ export function useShareViewModel(
     }
     prevPairActionsRef.current = new Map(connectedRows.map((row) => [row.peerKey, row.action]))
   }, [connectedRows])
+  const prevPeerStatusesRef = useRef<Map<string, PeerListEntry['status']>>(new Map())
+  useEffect(() => {
+    for (const entry of peerEntries) {
+      const prevStatus = prevPeerStatusesRef.current.get(entry.peerKey)
+      if (prevStatus && prevStatus !== 'downloaded' && entry.status === 'downloaded') {
+        const row = connectedRowsRef.current.find((r) => r.peerKey === entry.peerKey)
+        if (row) callbacksRef.current.onPeerDownloaded?.(row)
+      }
+    }
+    prevPeerStatusesRef.current = new Map(peerEntries.map((e) => [e.peerKey, e.status]))
+  }, [peerEntries])
 
   const pair = (peerKey: string) => {
     if (transferId) requestPair(transferId, peerKey)

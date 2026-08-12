@@ -4,6 +4,7 @@ import { useTranslation } from '@altersend/locales'
 import { useRouter } from 'expo-router'
 import { clearSession } from '@altersend/domain'
 import { mobileApi } from '@/src/api/mobileApi'
+import { successTap } from '@/src/haptics'
 import { Layout } from '@/src/components'
 import { ReceiveCompleteView } from '@/src/transfer/receive'
 import { exitToReceiveTab } from '@/src/transfer/receive/utils/exitToReceiveTab'
@@ -12,6 +13,7 @@ export default function ReceiveCompleteScreen() {
   const router = useRouter()
 
   useEffect(() => {
+    successTap()
     void mobileApi.worker.closePeers().catch((err) => {
       console.warn('ReceiveCompleteScreen: closePeers failed', err)
     })

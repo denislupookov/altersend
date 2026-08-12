@@ -10,8 +10,16 @@ import {
   useReceiveDownloads
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
+import { lightTap } from '@/src/haptics'
 import { openCompletedFile } from '../utils/openCompletedFile'
 import { Text } from '@/src/components/ThemedText'
+
+function withTap<Args extends unknown[]>(action: (...args: Args) => void) {
+  return (...args: Args) => {
+    lightTap()
+    action(...args)
+  }
+}
 
 export function ReceiveIncomingView() {
   const { t } = useTranslation(['receive', 'common', 'errors'])
@@ -24,6 +32,7 @@ export function ReceiveIncomingView() {
   const copyText = (id: string, content: string) => {
     void Clipboard.setStringAsync(content)
     flashCopied(id)
+    lightTap()
   }
 
   if (!downloads.hasFiles && downloads.textOffers.length === 0) {
@@ -50,11 +59,11 @@ export function ReceiveIncomingView() {
               labelsFor={(display) => getDownloadRowLabels(t, display)}
               transferActive={downloads.isDownloading}
               isFirst={index === 0}
-              onResume={actions.resumeFile}
-              onPause={actions.pauseFile}
+              onResume={withTap(actions.resumeFile)}
+              onPause={withTap(actions.pauseFile)}
               onOpen={(offer) => openCompletedFile(getOfferKey(offer))}
-              onPauseFolder={actions.pauseFolder}
-              onResumeFolder={actions.resumeFolder}
+              onPauseFolder={withTap(actions.pauseFolder)}
+              onResumeFolder={withTap(actions.resumeFolder)}
             />
           ))}
         </RowGroup>
