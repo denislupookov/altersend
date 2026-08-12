@@ -64,7 +64,7 @@
           }
         ]
       },
-      "associatedDomains": ["applinks:altersend.com"]
+      "associatedDomains": ["applinks:altersend.com", "applinks:app.altersend.com"]
     },
     "android": {
       "adaptiveIcon": {
@@ -96,6 +96,11 @@
             {
               "scheme": "https",
               "host": "altersend.com",
+              "pathPrefix": "/r"
+            },
+            {
+              "scheme": "https",
+              "host": "app.altersend.com",
               "pathPrefix": "/r"
             }
           ],
