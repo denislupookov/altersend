@@ -14,7 +14,7 @@ function evaluate(): WatchdogKey {
   const state = transferStore.getState()
   const shouldWatch = getAppActive() && state.role === 'receiver' && state.peerCount === 0
   const timeoutMs =
-    state.isReconnecting || state.incomingFileOffers.length > 0
+    state.incomingFileOffers.length > 0 && !state.isReconnecting
       ? RECONNECT_TIMEOUT_MS
       : INITIAL_CONNECT_TIMEOUT_MS
   return { shouldWatch, timeoutMs }

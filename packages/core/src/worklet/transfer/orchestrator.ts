@@ -723,8 +723,8 @@ export class TransferOrchestrator implements TransferRPC {
       await tryAsyncWithin('discovery.stop (suspend)', LIFECYCLE_TEARDOWN_TIMEOUT_MS, () =>
         this.discovery.stop()
       )
-      await tryAsyncWithin('swarm.endSession (suspend)', LIFECYCLE_TEARDOWN_TIMEOUT_MS, () =>
-        this.swarm.endSession()
+      await tryAsyncWithin('swarm.suspendTransport (suspend)', LIFECYCLE_TEARDOWN_TIMEOUT_MS, () =>
+        this.swarm.suspendTransport()
       )
     })
   }
@@ -737,6 +737,8 @@ export class TransferOrchestrator implements TransferRPC {
       this.discovery.start()
 
       if (!this.currentTopic) return
+
+      this.sendStatus('joined', { peers: this.swarm.peerCount })
 
       try {
         await this.swarm.join(this.currentTopic)

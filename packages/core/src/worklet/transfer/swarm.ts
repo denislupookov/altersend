@@ -168,8 +168,7 @@ export class TransferSwarm {
     })
   }
 
-  async endSession(): Promise<void> {
-    this.hostedTopicHex = null
+  async suspendTransport(): Promise<void> {
     this.joinedAny = false
 
     for (const [conn, session] of this.peerSessions) {
@@ -190,6 +189,11 @@ export class TransferSwarm {
         console.warn('TransferSwarm: old swarm destroy failed', err)
       }
     }
+  }
+
+  async endSession(): Promise<void> {
+    this.hostedTopicHex = null
+    await this.suspendTransport()
   }
 
   async join(topicHex: string): Promise<void> {
