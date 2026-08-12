@@ -4,6 +4,7 @@ import { usePressState } from '../../hooks/usePressState'
 import { useTheme } from '../../theme'
 import { Spinner } from '../Spinner'
 import { Tooltip, type TooltipSide } from '../Tooltip'
+import { pressTransition } from './pressTransition'
 import { styles } from './styles'
 
 type ButtonElementProps = Parameters<typeof html.button>[0]
@@ -141,6 +142,7 @@ export function Button({
       type={type}
       style={[
         styles.base,
+        pressTransition,
         styles[size],
         iconOnly && iconOnlySize[size],
         styles[variant],
@@ -148,6 +150,7 @@ export function Button({
         stack && styles.stack,
         width === 'full' && styles.full,
         (showPressed || showHover) && pressedStyle[variant],
+        showPressed && styles.pressedScale,
         isDisabled && !loading && (variant === 'ghost' ? styles.disabledGhost : styles.disabled)
       ]}
     >

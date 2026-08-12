@@ -24,9 +24,20 @@ export const styles = css.create({
     whiteSpace: 'nowrap',
     cursor: 'pointer',
     userSelect: 'none',
+    transform: 'scale(1)'
+  },
+  transitionWeb: {
     transitionDuration: '160ms',
-    transitionProperty: 'background-color, border-color, color, box-shadow, opacity',
+    transitionProperty: 'background-color, border-color, color, box-shadow, opacity, transform',
     transitionTimingFunction: 'ease'
+  },
+  transitionNative: {
+    transitionDuration: '160ms',
+    transitionProperty: 'transform, opacity',
+    transitionTimingFunction: 'ease'
+  },
+  pressedScale: {
+    transform: 'scale(0.97)'
   },
   sm: {
     minHeight: tokens.space10,

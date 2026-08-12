@@ -66,7 +66,7 @@ export default function OnboardingPage({ onFinish }: OnboardingPageProps) {
           <SegmentedProgress count={onboardingSlides.length} activeIndex={index} />
         </div>
 
-        <Button onClick={next} size='lg' variant='light'>
+        <Button onClick={next} size='md' variant='light'>
           {isLast ? t('common:actions.getStarted') : t('common:actions.continue')}
         </Button>
       </div>
