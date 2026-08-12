@@ -38,6 +38,7 @@ import { useAlterSendFonts } from '../src/theme/useAlterSendFonts'
 import { startAppStateBridge } from '../src/lifecycle/appStateBridge'
 import { startBackgroundTransferService } from '../src/lifecycle/backgroundTransferService'
 import { startDeepLinkHandler } from '../src/lifecycle/deepLinkHandler'
+import { DeepLinkGate } from '../src/lifecycle/DeepLinkGate'
 import { getSavedLocalePreference } from '../src/lifecycle/localePreferenceStorage'
 import {
   getSavedThemePreference,
@@ -234,6 +235,7 @@ function AppShell() {
               <AccountProvider>
                 <ShareIntentHandler />
                 <ThemedStack />
+                <DeepLinkGate />
                 <UpdateBanner />
                 <PairRequestBanner />
                 <InviteBanner />

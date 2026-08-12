@@ -10,18 +10,31 @@ import {
 
 let started = false
 let subscription: { remove(): void } | null = null
+let routerReady = false
+let pendingPairCode: string | null = null
 
 export function startDeepLinkHandler(): () => void {
   if (started) return teardown
   started = true
 
-  void Linking.getInitialURL().then((url) => {
-    if (url) handleUrl(url)
-  })
+  Linking.getInitialURL()
+    .then((url) => {
+      if (url) handleUrl(url)
+    })
+    .catch(() => {})
 
   subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url))
 
   return teardown
+}
+
+export function markRouterReady(): void {
+  if (routerReady) return
+  routerReady = true
+
+  const code = pendingPairCode
+  pendingPairCode = null
+  if (code) openPairing(code)
 }
 
 const ALLOWED_SCHEMES = ['altersend://', 'com.altersend.mobile://']
@@ -37,11 +50,7 @@ function handleUrl(url: string): void {
   if (!code) return
 
   if (isPairUrl(url)) {
-    try {
-      router.navigate({ pathname: '/devices', params: { pairCode: code } })
-    } catch (err) {
-      console.warn('deepLinkHandler: pair navigate failed', err)
-    }
+    openPairing(code)
     return
   }
 
@@ -50,19 +59,29 @@ function handleUrl(url: string): void {
     return
   }
 
-  try {
-    router.navigate('/receive')
-  } catch (err) {
-    console.warn('deepLinkHandler: navigate failed', err)
-  }
-  void joinSession(code).catch((err) => {
+  joinSession(code).catch((err) => {
     console.warn('deepLinkHandler: joinSession failed', err)
   })
+}
+
+function openPairing(code: string): void {
+  if (!routerReady) {
+    pendingPairCode = code
+    return
+  }
+
+  try {
+    router.navigate({ pathname: '/devices', params: { pairCode: code } })
+  } catch (err) {
+    console.warn('deepLinkHandler: pair navigate failed', err)
+  }
 }
 
 function teardown(): void {
   if (!started) return
   started = false
+  routerReady = false
+  pendingPairCode = null
   if (subscription) {
     subscription.remove()
     subscription = null
