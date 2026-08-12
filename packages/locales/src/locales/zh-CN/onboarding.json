@@ -1,17 +1,17 @@
 {
   "slides": {
-    "direct": {
-      "title": "直接在设备之间传输文件。",
-      "description": "一台设备发送，另一台设备接收。一个简短的代码将它们连接起来，以便文件可以直接流式传输。"
+    "privacy": {
+      "title": "把任何东西私密地发给任何人",
+      "description": "文件在你的设备上加密，直接送达接收方",
+      "link": "阅读隐私政策"
     },
-    "keepOpen": {
-      "title": "保持两个应用程序运行。",
-      "description": "文件直接在设备之间传输——没有云。关闭应用程序将取消传输。"
+    "pair": {
+      "title": "与任何设备配对",
+      "description": "iPhone、Android、Mac、Windows 配对一次，之后轻点即可发送"
     },
-    "encrypted": {
-      "title": "端到端加密。",
-      "description": "没有服务器，没有副本，没有中间方。您的文件会在您和接收方之间直接传输。",
-      "link": "阅读我们的隐私政策"
+    "link": {
+      "title": "分享传输链接",
+      "description": "发送一个链接，对方直接在浏览器里下载"
     }
   }
 }

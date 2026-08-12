@@ -1,17 +1,17 @@
 {
   "slides": {
-    "direct": {
-      "title": "Files, directly between devices.",
-      "description": "One device sends, the other receives. A short code connects them so files can stream directly."
-    },
-    "keepOpen": {
-      "title": "Keep both apps running.",
-      "description": "Files stream directly between devices — there is no cloud. Quitting the app cancels the transfer."
-    },
-    "encrypted": {
-      "title": "End-to-end encrypted.",
-      "description": "No servers, no copies, no middlemen. Your files travel peer-to-peer between you and the recipient.",
+    "privacy": {
+      "title": "Send anything to anyone privately",
+      "description": "Files are encrypted on your device and travel straight to whoever you send them to",
       "link": "Read our privacy policy"
+    },
+    "pair": {
+      "title": "Pair with any device",
+      "description": "Pair once across iPhone, Android, Mac and Windows, then send with a tap"
+    },
+    "link": {
+      "title": "Share a link to your transfer",
+      "description": "Send a link and they download straight from their browser"
     }
   }
 }

@@ -83,13 +83,6 @@
     "copyShareLabel": "Copia e condividi il codice di invito",
     "pasteCodeLabel": "Incolla codice di invito"
   },
-  "pairPrompt": {
-    "title": "Configura i tuoi dispositivi",
-    "heading": "Salta il codice la prossima volta",
-    "body": "Accoppia un dispositivo che usi spesso e invia all’istante, senza scansionare o digitare un codice ogni volta.",
-    "pairButton": "Accoppia un dispositivo",
-    "skip": "Salta per ora"
-  },
   "downloads": {
     "title": "Download",
     "autoSaveLabel": "Salva i file in una cartella",

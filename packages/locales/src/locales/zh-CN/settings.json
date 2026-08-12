@@ -83,13 +83,6 @@
     "copyShareLabel": "复制并分享邀请码",
     "pasteCodeLabel": "粘贴邀请码"
   },
-  "pairPrompt": {
-    "title": "设置你的设备",
-    "heading": "下次免代码",
-    "body": "配对常用设备，即可即时发送 — 无需每次扫描或输入代码。",
-    "pairButton": "配对设备",
-    "skip": "暂时跳过"
-  },
   "downloads": {
     "title": "下载",
     "autoSaveLabel": "保存到文件夹",

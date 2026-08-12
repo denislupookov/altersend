@@ -83,13 +83,6 @@
     "copyShareLabel": "초대 코드 복사 및 공유",
     "pasteCodeLabel": "초대 코드 붙여넣기"
   },
-  "pairPrompt": {
-    "title": "기기 설정",
-    "heading": "다음엔 코드 없이",
-    "body": "자주 쓰는 기기를 페어링하면 매번 코드를 스캔하거나 입력하지 않고 바로 보낼 수 있습니다.",
-    "pairButton": "기기 페어링",
-    "skip": "나중에"
-  },
   "downloads": {
     "title": "다운로드",
     "autoSaveLabel": "폴더에 저장",

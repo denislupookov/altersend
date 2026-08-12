@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { View } from 'react-native'
 import { Button, ErrorBanner } from '@altersend/components'
 import { SendIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { Layout, PairDeviceSheet } from '@/src/components'
-import { consumePairPromptPending } from '@/src/onboarding/pairPromptSignal'
+import { Layout } from '@/src/components'
 import { SelectFilesView } from '@/src/transfer/send'
 import { usePathname, useRouter } from 'expo-router'
 import {
@@ -55,7 +54,6 @@ export default function SendSelectScreen() {
   const draftPhase = useTransferStore((s) => s.draftPhase)
   const connectionState = useTransferStore((s) => s.connectionState)
   const router = useRouter()
-  const [pairPromptOpen, setPairPromptOpen] = useState(() => consumePairPromptPending())
 
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
   const copy = getSendPageCopy(t, step)
@@ -92,14 +90,6 @@ export default function SendSelectScreen() {
       >
         <SelectFilesView />
       </Layout>
-      <PairDeviceSheet
-        open={pairPromptOpen}
-        onPair={() => {
-          setPairPromptOpen(false)
-          router.push('/devices')
-        }}
-        onClose={() => setPairPromptOpen(false)}
-      />
     </View>
   )
 }

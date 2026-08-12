@@ -83,13 +83,6 @@
     "copyShareLabel": "複製並分享邀請碼",
     "pasteCodeLabel": "貼上邀請碼"
   },
-  "pairPrompt": {
-    "title": "設定你的裝置",
-    "heading": "下次免代碼",
-    "body": "配對常用裝置即可即時傳送 — 無需每次掃描或輸入代碼。",
-    "pairButton": "配對裝置",
-    "skip": "暫時跳過"
-  },
   "downloads": {
     "title": "下載",
     "autoSaveLabel": "儲存至資料夾",

@@ -83,13 +83,6 @@
     "copyShareLabel": "Einladungscode kopieren und teilen",
     "pasteCodeLabel": "Einladungscode einfügen"
   },
-  "pairPrompt": {
-    "title": "Geräte einrichten",
-    "heading": "Nächstes Mal ohne Code",
-    "body": "Koppeln Sie ein häufig genutztes Gerät und senden Sie sofort – ohne jedes Mal einen Code zu scannen oder einzugeben.",
-    "pairButton": "Gerät koppeln",
-    "skip": "Vorerst überspringen"
-  },
   "downloads": {
     "title": "Downloads",
     "autoSaveLabel": "Dateien in einem Ordner speichern",

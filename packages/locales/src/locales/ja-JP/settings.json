@@ -83,13 +83,6 @@
     "copyShareLabel": "招待コードをコピーして共有",
     "pasteCodeLabel": "招待コードを貼り付け"
   },
-  "pairPrompt": {
-    "title": "デバイスを設定",
-    "heading": "次回はコード不要",
-    "body": "よく使うデバイスをペアリングすれば、毎回コードをスキャンしたり入力したりせずにすぐ送れます。",
-    "pairButton": "デバイスをペアリング",
-    "skip": "今はスキップ"
-  },
   "downloads": {
     "title": "ダウンロード",
     "autoSaveLabel": "フォルダに保存する",

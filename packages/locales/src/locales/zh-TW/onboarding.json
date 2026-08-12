@@ -1,17 +1,17 @@
 {
   "slides": {
-    "direct": {
-      "title": "直接在裝置之間傳輸檔案。",
-      "description": "一台裝置傳送，另一台裝置接收。短代碼會連接兩台裝置，讓檔案可以直接串流傳輸。"
+    "privacy": {
+      "title": "把任何東西私密地傳給任何人",
+      "description": "檔案在你的裝置上加密，直接送達接收方",
+      "link": "閱讀隱私權政策"
     },
-    "keepOpen": {
-      "title": "保持兩個應用程式執行。",
-      "description": "檔案直接在裝置之間傳輸－沒有雲端。關閉應用程式將取消傳輸。"
+    "pair": {
+      "title": "與任何裝置配對",
+      "description": "iPhone、Android、Mac、Windows 配對一次，之後輕點即可傳送"
     },
-    "encrypted": {
-      "title": "端對端加密。",
-      "description": "沒有伺服器、沒有副本、沒有中介。您的檔案會在您和接收方之間直接傳輸。",
-      "link": "閱讀我們的隱私權政策"
+    "link": {
+      "title": "分享傳輸連結",
+      "description": "傳送一個連結，對方直接在瀏覽器裡下載"
     }
   }
 }

@@ -1,12 +1,11 @@
-import { useRef, useState } from 'react'
-import { Button, ExternalLink, PaginationDots, useTheme } from '@altersend/components'
-import { onboardingSlides, type OnboardingSlide, type OnboardingSlideKind } from '@altersend/domain'
+import { useCallback, useRef, useState } from 'react'
+import { Button, SegmentedProgress, ThemeType, useTheme } from '@altersend/components'
+import { onboardingSlides, type OnboardingSlide } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { useRouter } from 'expo-router'
 import {
   FlatList,
   Image,
-  Linking,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   StyleSheet,
@@ -14,38 +13,31 @@ import {
   useWindowDimensions
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { OnboardingIllustration } from '@/src/onboarding/OnboardingIllustration'
+import { SlideView } from '@/src/onboarding/SlideView'
 import { markOnboardingCompleted } from '@/src/onboarding/onboardingStorage'
-import { markPairPromptPending } from '@/src/onboarding/pairPromptSignal'
 import { requestNotificationPermission } from '@/src/lifecycle/notificationPermission'
-import brandLogo from '@/assets/images/brand-logo.png'
-import { Text } from '@/src/components/ThemedText'
+import logoOnLight from '../../../assets/altersend-logo-dark.png'
+import logoOnDark from '../../../assets/altersend-logo.png'
 
-function getSlideKey(kind: OnboardingSlideKind) {
-  switch (kind) {
-    case 'pairing':
-      return 'direct'
-    case 'keep-open':
-      return 'keepOpen'
-    case 'privacy':
-      return 'encrypted'
-  }
-}
+const MAX_HERO_HEIGHT = 190
+const HERO_HEIGHT_RATIO = 0.24
 
 export default function OnboardingScreen() {
-  const { t } = useTranslation(['onboarding', 'common'])
-  const { theme } = useTheme()
+  const { t } = useTranslation(['common'])
+  const { theme, themeType } = useTheme()
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const { width } = useWindowDimensions()
-  const [index, setIndex] = useState(0)
+  const { width, height } = useWindowDimensions()
+  const [progress, setProgress] = useState(0)
   const listRef = useRef<FlatList<OnboardingSlide>>(null)
 
+  const index = Math.round(progress)
   const isLast = index === onboardingSlides.length - 1
+  const brandLogo = themeType === ThemeType.Light ? logoOnLight : logoOnDark
+  const heroHeight = Math.min(MAX_HERO_HEIGHT, height * HERO_HEIGHT_RATIO)
 
   const finish = () => {
     markOnboardingCompleted()
-    markPairPromptPending()
     requestNotificationPermission().catch((err: unknown) => {
       console.warn('onboarding: notification permission request failed', err)
     })
@@ -60,10 +52,16 @@ export default function OnboardingScreen() {
     listRef.current?.scrollToIndex({ index: index + 1, animated: true })
   }
 
-  const onMomentumEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / width)
-    if (nextIndex !== index) setIndex(nextIndex)
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setProgress(event.nativeEvent.contentOffset.x / width)
   }
+
+  const renderItem = useCallback(
+    ({ item }: { item: OnboardingSlide }) => (
+      <SlideView slide={item} width={width} heroHeight={heroHeight} />
+    ),
+    [width, heroHeight]
+  )
 
   return (
     <View
@@ -71,81 +69,41 @@ export default function OnboardingScreen() {
         styles.screen,
         {
           backgroundColor: theme.colors.colorBackground,
-          paddingTop: insets.top + 4,
+          paddingTop: insets.top + 30,
           paddingBottom: Math.max(insets.bottom, 12)
         }
       ]}
     >
       <View style={styles.header}>
-        <View style={styles.brandRow}>
-          <Image source={brandLogo} style={styles.brandLogo} resizeMode='contain' />
-          <Text style={[styles.brandWordmark, { color: theme.colors.colorTextPrimary }]}>
-            AlterSend
-          </Text>
-        </View>
-        <View pointerEvents={isLast ? 'none' : 'auto'} style={{ opacity: isLast ? 0 : 1 }}>
-          <Button onClick={finish} size='sm' variant='ghost'>
-            {t('common:actions.skip')}
-          </Button>
-        </View>
+        <Image source={brandLogo} style={styles.brandLogo} resizeMode='contain' />
       </View>
 
       <FlatList
         ref={listRef}
         data={onboardingSlides}
         keyExtractor={(item) => item.kind}
-        renderItem={({ item }) => <Slide slide={item} width={width} />}
+        renderItem={renderItem}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={onMomentumEnd}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
         style={styles.pager}
       />
 
       <View style={styles.footer}>
-        <PaginationDots count={onboardingSlides.length} activeIndex={index} />
+        <View style={styles.progress}>
+          <SegmentedProgress
+            count={onboardingSlides.length}
+            activeIndex={index}
+            progress={progress}
+          />
+        </View>
         <Button onClick={next} size='lg' variant='light' width='full'>
           {isLast ? t('common:actions.getStarted') : t('common:actions.continue')}
         </Button>
       </View>
-    </View>
-  )
-}
-
-function Slide({ slide, width }: { slide: OnboardingSlide; width: number }) {
-  const { t } = useTranslation(['onboarding'])
-  const { theme } = useTheme()
-  const slideKey = getSlideKey(slide.kind)
-
-  return (
-    <View style={[styles.slide, { width }]}>
-      <View style={styles.heroWrap}>
-        <SlideHero slide={slide} />
-      </View>
-
-      <Text style={[styles.title, { color: theme.colors.colorTextPrimary }]}>
-        {t(`onboarding:slides.${slideKey}.title`)}
-      </Text>
-      <Text style={[styles.subtitle, { color: theme.colors.colorTextSecondary }]}>
-        {t(`onboarding:slides.${slideKey}.description`)}
-      </Text>
-
-      {slide.link ? (
-        <View style={styles.linkButton}>
-          <ExternalLink href={slide.link.url} onPress={() => void Linking.openURL(slide.link!.url)}>
-            {t('onboarding:slides.encrypted.link')}
-          </ExternalLink>
-        </View>
-      ) : null}
-    </View>
-  )
-}
-
-function SlideHero({ slide }: { slide: OnboardingSlide }) {
-  return (
-    <View style={styles.illustrationWrap}>
-      <OnboardingIllustration kind={slide.kind} />
     </View>
   )
 }
@@ -155,69 +113,24 @@ const styles = StyleSheet.create({
     flex: 1
   },
   header: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginTop: 28
-  },
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10
+    paddingHorizontal: 20
   },
   brandLogo: {
-    width: 32,
-    height: 32
-  },
-  brandWordmark: {
-    fontSize: 22,
-    fontWeight: '700',
-    letterSpacing: -0.3
+    width: 148,
+    height: 36
   },
   pager: {
     flex: 1
   },
-  slide: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 28
-  },
-  heroWrap: {
-    height: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12
-  },
-  illustrationWrap: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: -1.2,
-    textAlign: 'center',
-    maxWidth: 320,
-    lineHeight: 32
-  },
-  subtitle: {
-    marginTop: 12,
-    fontSize: 14,
-    lineHeight: 22,
-    textAlign: 'center',
-    maxWidth: 320
-  },
-  linkButton: {
-    position: 'absolute',
-    bottom: 16,
-    paddingVertical: 6,
-    paddingHorizontal: 4
+  progress: {
+    alignSelf: 'center',
+    width: '32%'
   },
   footer: {
-    paddingHorizontal: 16,
-    paddingBottom: 36,
-    gap: 18
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 20,
+    gap: 20
   }
 })

@@ -99,13 +99,6 @@
     "copyShareLabel": "Copy and share invite code",
     "pasteCodeLabel": "Paste invite code"
   },
-  "pairPrompt": {
-    "title": "Set up your devices",
-    "heading": "Skip the code next time",
-    "body": "Pair a device you use often and send to it instantly — no code to scan or type each time.",
-    "pairButton": "Pair a Device",
-    "skip": "Skip for now"
-  },
   "account": {
     "title": "Your subscription",
     "paywallLead": "Bigger transfers and priority on the relay.",

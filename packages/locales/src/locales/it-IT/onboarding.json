@@ -1,17 +1,17 @@
 {
   "slides": {
-    "direct": {
-      "title": "File, direttamente tra i dispositivi.",
-      "description": "Un dispositivo invia, l'altro riceve. Un codice breve li collega in modo che i file possano essere trasmessi direttamente in streaming."
+    "privacy": {
+      "title": "Invia qualsiasi cosa a chiunque, in privato",
+      "description": "I file vengono cifrati sul tuo dispositivo e arrivano direttamente a chi li invii",
+      "link": "Leggi la nostra informativa sulla privacy"
     },
-    "keepOpen": {
-      "title": "Mantieni attive entrambe le app.",
-      "description": "I file vengono trasmessi direttamente tra i dispositivi: non esiste il cloud. La chiusura dell'app annullerà il trasferimento."
+    "pair": {
+      "title": "Associati a qualsiasi dispositivo",
+      "description": "Associa una volta tra iPhone, Android, Mac e Windows, poi invia con un tocco"
     },
-    "encrypted": {
-      "title": "Crittografato end-to-end.",
-      "description": "Nessun server, nessuna copia, nessun intermediario. I tuoi file vengono trasferiti direttamente tra te e il destinatario.",
-      "link": "Leggi la nostra politica sulla privacy"
+    "link": {
+      "title": "Condividi un link al trasferimento",
+      "description": "Invia un link e scaricano direttamente dal loro browser"
     }
   }
 }

@@ -1,17 +1,17 @@
 {
   "slides": {
-    "direct": {
-      "title": "Fichiers, directement entre appareils.",
-      "description": "Un appareil envoie, l'autre reçoit. Un code court les connecte afin que les fichiers puissent être diffusés directement."
-    },
-    "keepOpen": {
-      "title": "Gardez les deux applications actives.",
-      "description": "Les fichiers sont diffusés directement entre les appareils – il n’y a pas de cloud. La fermeture de l'application annulera le transfert."
-    },
-    "encrypted": {
-      "title": "Chiffré de bout en bout.",
-      "description": "Pas de serveurs, pas de copies, pas d'intermédiaires. Vos fichiers sont transférés directement entre vous et le destinataire.",
+    "privacy": {
+      "title": "Envoyez n'importe quoi à n'importe qui, en privé",
+      "description": "Les fichiers sont chiffrés sur votre appareil et vont directement à la personne concernée",
       "link": "Lire notre politique de confidentialité"
+    },
+    "pair": {
+      "title": "Appairez-vous à n'importe quel appareil",
+      "description": "Appairez une fois entre iPhone, Android, Mac et Windows, puis envoyez d'un geste"
+    },
+    "link": {
+      "title": "Partagez un lien vers le transfert",
+      "description": "Envoyez un lien et ils téléchargent directement depuis leur navigateur"
     }
   }
 }

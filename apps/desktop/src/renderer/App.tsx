@@ -12,8 +12,6 @@ import { bridgeApi, hasBridge } from './api/bridgeApi'
 import {
   ConfirmDialog,
   InviteBanner,
-  openSettingsPanel,
-  PairDeviceModal,
   PairRequestBanner,
   ToastProvider,
   UpdateBanner
@@ -34,7 +32,6 @@ interface PendingTabSwitch {
 export default function App() {
   const { t } = useTranslation(['common'])
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingCompleted())
-  const [showPairPrompt, setShowPairPrompt] = useState(false)
   const [activeTab, setActiveTab] = useState<TransferTab>('send')
   const [pendingSwitch, setPendingSwitch] = useState<PendingTabSwitch | null>(null)
   const progress = useSimulatedLoading()
@@ -81,7 +78,6 @@ export default function App() {
           onFinish={() => {
             markOnboardingCompleted()
             setShowOnboarding(false)
-            setShowPairPrompt(true)
           }}
         />
         <UpdateBanner ready={updateReady} />
@@ -102,14 +98,6 @@ export default function App() {
         }}
       />
       <UpdateBanner ready={updateReady} />
-      <PairDeviceModal
-        open={showPairPrompt}
-        onPair={() => {
-          setShowPairPrompt(false)
-          openSettingsPanel('devices')
-        }}
-        onSkip={() => setShowPairPrompt(false)}
-      />
       <ConfirmDialog
         open={pendingSwitch !== null}
         title={t('common:actions.endSession')}

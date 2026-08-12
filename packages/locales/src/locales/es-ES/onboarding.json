@@ -1,17 +1,17 @@
 {
   "slides": {
-    "direct": {
-      "title": "Archivos, directamente entre dispositivos.",
-      "description": "Un dispositivo envía, el otro recibe. Un código corto los conecta para que los archivos puedan transmitirse directamente."
+    "privacy": {
+      "title": "Envía lo que sea a quien sea, en privado",
+      "description": "Los archivos se cifran en tu dispositivo y van directo a quien se los envías",
+      "link": "Leer nuestra política de privacidad"
     },
-    "keepOpen": {
-      "title": "Mantenga ambas aplicaciones activas.",
-      "description": "Los archivos se transmiten directamente entre dispositivos: no hay nube. Cerrar la aplicación cancelará la transferencia."
+    "pair": {
+      "title": "Vincúlate con cualquier dispositivo",
+      "description": "Vincula una vez entre iPhone, Android, Mac y Windows, y luego envía con un toque"
     },
-    "encrypted": {
-      "title": "Cifrado de extremo a extremo.",
-      "description": "Sin servidores, sin copias, sin intermediarios. Tus archivos viajan directamente entre tú y el destinatario.",
-      "link": "Lea nuestra política de privacidad"
+    "link": {
+      "title": "Comparte un enlace de la transferencia",
+      "description": "Envía un enlace y lo descargan directamente desde su navegador"
     }
   }
 }

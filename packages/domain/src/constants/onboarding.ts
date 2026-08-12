@@ -1,6 +1,6 @@
 import { privacyPolicyUrl } from './links'
 
-export type OnboardingSlideKind = 'pairing' | 'keep-open' | 'privacy'
+export type OnboardingSlideKind = 'privacy' | 'pair' | 'link'
 
 export interface OnboardingSlideLink {
   url: string
@@ -13,13 +13,13 @@ export interface OnboardingSlide {
 
 export const onboardingSlides: OnboardingSlide[] = [
   {
-    kind: 'pairing'
+    kind: 'privacy'
   },
   {
-    kind: 'keep-open'
+    kind: 'pair'
   },
   {
-    kind: 'privacy',
+    kind: 'link',
     link: { url: privacyPolicyUrl }
   }
 ]

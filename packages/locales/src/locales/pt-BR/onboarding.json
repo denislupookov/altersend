@@ -1,17 +1,17 @@
 {
   "slides": {
-    "direct": {
-      "title": "Arquivos, diretamente entre dispositivos.",
-      "description": "Um dispositivo envia, o outro recebe. Um código simples os conecta para que os arquivos possam ser transferidos diretamente."
+    "privacy": {
+      "title": "Envie qualquer coisa para qualquer pessoa, com privacidade",
+      "description": "Os arquivos são criptografados no seu dispositivo e vão direto para quem você envia",
+      "link": "Ler nossa política de privacidade"
     },
-    "keepOpen": {
-      "title": "Mantenha os dois aplicativos ativos.",
-      "description": "Os arquivos são transferidos diretamente entre os dispositivos — sem uso de nuvem. Fechar o aplicativo cancelará a transferência."
+    "pair": {
+      "title": "Pareie com qualquer dispositivo",
+      "description": "Pareie uma vez entre iPhone, Android, Mac e Windows e depois envie com um toque"
     },
-    "encrypted": {
-      "title": "Criptografado de ponta a ponta.",
-      "description": "Sem servidores, sem cópias, sem intermediários. Seus arquivos vão diretamente de você para o destinatário.",
-      "link": "Leia nossa política de privacidade"
+    "link": {
+      "title": "Compartilhe um link da transferência",
+      "description": "Envie um link e eles baixam direto pelo navegador"
     }
   }
 }

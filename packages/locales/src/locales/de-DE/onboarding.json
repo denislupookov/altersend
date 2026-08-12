@@ -1,17 +1,17 @@
 {
   "slides": {
-    "direct": {
-      "title": "Dateien direkt zwischen Geräten.",
-      "description": "Ein Gerät sendet, das andere empfängt. Ein kurzer Code verbindet sie, sodass Dateien direkt gestreamt werden können."
+    "privacy": {
+      "title": "Sende alles an jeden, privat",
+      "description": "Dateien werden auf deinem Gerät verschlüsselt und gehen direkt an die Person, der du sie sendest",
+      "link": "Datenschutzerklärung lesen"
     },
-    "keepOpen": {
-      "title": "Lassen Sie beide Apps laufen.",
-      "description": "Dateien werden direkt zwischen Geräten gestreamt – es gibt keine Cloud. Wenn Sie die App beenden, wird die Übertragung abgebrochen."
+    "pair": {
+      "title": "Koppele dich mit jedem Gerät",
+      "description": "Koppele einmal über iPhone, Android, Mac und Windows und sende danach mit einem Tippen"
     },
-    "encrypted": {
-      "title": "Ende-zu-Ende verschlüsselt.",
-      "description": "Keine Server, keine Kopien, keine Zwischenhändler. Ihre Dateien werden direkt zwischen Ihnen und dem Empfänger übertragen.",
-      "link": "Lesen Sie unsere Datenschutzbestimmungen"
+    "link": {
+      "title": "Teile einen Link zur Übertragung",
+      "description": "Sende einen Link und sie laden direkt im Browser herunter"
     }
   }
 }
