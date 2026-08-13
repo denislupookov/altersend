@@ -2,6 +2,7 @@ export type * from '../../../../packages/core/src/worklet/rpc/protocol'
 export type * from '../../../../packages/core/src/worklet/rpc/events'
 export type * from '../../../../packages/core/src/worklet/transfer/control-channel'
 export type { RememberedPeer } from '../../../../packages/core/src/worklet/peers/remembered-peer'
+export { isValidHexKey } from '../../../../packages/core/src/worklet/transfer/utils'
 
 export const TRANSFER_ERROR_CODES = {
   peerUnreachable: 'peer_unreachable',

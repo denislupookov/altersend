@@ -26,11 +26,7 @@ import { bridgeApi, hasBridge } from './api/bridgeApi'
 import { startDeepLinkHandler } from './lifecycle/deepLinkHandler'
 import { initSentry, captureException } from './sentry'
 import { isCrashReportingEnabled } from './lifecycle/crashReportingStorage'
-import {
-  getCustomRelay,
-  getCustomRelayFallback,
-  isRelayEnabled
-} from './lifecycle/relayStorage'
+import { getCustomRelay, getCustomRelayFallback, isRelayEnabled } from './lifecycle/relayStorage'
 import { startAccountSync } from './lifecycle/account'
 import { getSavedLocalePreference } from './lifecycle/localePreferenceStorage'
 import { getSavedThemePreference, setSavedThemePreference } from './lifecycle/themeStorage'

@@ -29,12 +29,9 @@ export function Input({
 }: InputProps) {
   const generatedId = useId()
   const inputId = id ?? generatedId
-  const descriptionId = description ? `${inputId}-description` : undefined
-  const errorId = error ? `${inputId}-error` : undefined
-  const describedBy =
-    [descriptionId, errorId]
-      .filter((value): value is string => typeof value === 'string')
-      .join(' ') || undefined
+  const hintId = `${inputId}-hint`
+  const hasHint = Boolean(error || success || description)
+  const describedBy = hasHint ? hintId : undefined
   const hasError = Boolean(error)
   const useWrapper = Boolean(icon || trailing)
 
@@ -53,15 +50,21 @@ export function Input({
   const renderHint = () => {
     if (error) {
       return (
-        <html.p id={errorId} style={[styles.hint, styles.error]}>
+        <html.p id={hintId} role='alert' style={[styles.hint, styles.error]}>
           {error}
         </html.p>
       )
     }
-    if (success) return <html.p style={[styles.hint, styles.success]}>{success}</html.p>
+    if (success) {
+      return (
+        <html.p id={hintId} role='status' style={[styles.hint, styles.success]}>
+          {success}
+        </html.p>
+      )
+    }
     if (description) {
       return (
-        <html.p id={descriptionId} style={styles.hint}>
+        <html.p id={hintId} style={styles.hint}>
           {description}
         </html.p>
       )

@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { html } from 'react-strict-dom'
 import { usePressState } from '../../hooks/usePressState'
 import { styles } from './styles'
@@ -28,12 +29,13 @@ export function RadioOptionRow<T extends string>({
 }: RadioOptionRowProps<T>) {
   const { isPressed, pressHandlers } = usePressState()
   const pressed = isPressed && !disabled
+  const descriptionId = useId()
 
   return (
     <html.button
       role='radio'
       aria-checked={selected}
-      aria-label={option.label}
+      aria-describedby={option.description ? descriptionId : undefined}
       tabIndex={tabIndex}
       disabled={disabled}
       ref={setRef}
@@ -65,7 +67,9 @@ export function RadioOptionRow<T extends string>({
         <html.span style={styles.label}>{option.label}</html.span>
       </html.div>
       {option.description ? (
-        <html.span style={styles.description}>{option.description}</html.span>
+        <html.span id={descriptionId} style={styles.description}>
+          {option.description}
+        </html.span>
       ) : null}
     </html.button>
   )

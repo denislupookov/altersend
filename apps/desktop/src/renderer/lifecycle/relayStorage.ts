@@ -16,7 +16,7 @@ export function isRelayEnabled(): boolean {
   }
 }
 
-export function setRelayEnabledStorage(value: boolean): void {
+function setRelayEnabledStorage(value: boolean): void {
   try {
     window.localStorage.setItem(KEY, value ? '1' : '0')
   } catch {}
@@ -32,7 +32,7 @@ export function getCustomRelay(): CustomRelayInput | null {
   }
 }
 
-export function setCustomRelayStorage(value: CustomRelayInput | null): void {
+function setCustomRelayStorage(value: CustomRelayInput | null): void {
   try {
     if (value) window.localStorage.setItem(CUSTOM_KEY, formatCustomRelayString(value))
     else window.localStorage.removeItem(CUSTOM_KEY)
@@ -49,7 +49,7 @@ export function getCustomRelayFallback(): boolean {
   }
 }
 
-export function setCustomRelayFallbackStorage(value: boolean): void {
+function setCustomRelayFallbackStorage(value: boolean): void {
   try {
     window.localStorage.setItem(FALLBACK_KEY, value ? '1' : '0')
   } catch {}

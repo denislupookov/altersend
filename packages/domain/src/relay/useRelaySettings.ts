@@ -156,7 +156,7 @@ export function useRelaySettings({ storage, send, testConnection }: UseRelaySett
     const previous = fallback
     setFallbackState(next)
 
-    if (!applied) {
+    if (!applied || selected === 'off') {
       storage.writeFallback(next)
       return
     }
