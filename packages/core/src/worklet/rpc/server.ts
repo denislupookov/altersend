@@ -18,7 +18,7 @@ function toError(err: unknown) {
 }
 
 export function runsWithoutWaiting(method: TransferMethod): boolean {
-  return method === 'pauseDownload'
+  return method === 'pauseDownload' || method === 'testCustomRelay'
 }
 
 export function isFileTransfer(method: TransferMethod): boolean {

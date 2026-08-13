@@ -17,8 +17,42 @@
     "description": "Share anonymous crash data to help improve AlterSend"
   },
   "relay": {
-    "label": "Use relay when direct connection fails",
-    "description": "When devices can't connect directly, transfers are routed through AlterSend's relay. Files stay end-to-end encrypted."
+    "mode": {
+      "altersend": {
+        "label": "AlterSend relay",
+        "caption": "When a direct connection fails, the transfer falls back to AlterSend's relay. Files stay end-to-end encrypted."
+      },
+      "custom": {
+        "label": "Self-hosted relay",
+        "caption": "Use your own relay server instead of AlterSend's."
+      },
+      "off": {
+        "label": "No relay",
+        "caption": "Direct connections only. Transfers can fail when both devices are behind strict NATs."
+      }
+    },
+    "selfhost": {
+      "label": "Relay code",
+      "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
+      "invalid": "That doesn't look like a relay code",
+      "failed": "Couldn't apply the relay — try again",
+      "description": "Printed when your relay starts. Set it on every device you transfer with.",
+      "fallback": {
+        "title": "Fallback",
+        "stay": {
+          "label": "Stay on my relay",
+          "caption": "If your relay is unreachable, the transfer waits."
+        },
+        "altersend": {
+          "label": "Use AlterSend's relay if needed",
+          "caption": "Keeps transfers working when your relay is down."
+        }
+      },
+      "testOk": "Relay reachable ({{ms}} ms)",
+      "apply": "Save and test",
+      "unreachable": "Couldn't reach the relay",
+      "clear": "Remove relay"
+    }
   },
   "downloads": {
     "title": "Downloads",

@@ -17,8 +17,42 @@
     "description": "Compartilhe dados anônimos de falhas para ajudar a melhorar o AlterSend"
   },
   "relay": {
-    "label": "Usar retransmissor quando a conexão direta falhar",
-    "description": "Quando os dispositivos não conseguem se conectar diretamente, a transferência é roteada pelo retransmissor da AlterSend. Os arquivos permanecem criptografados de ponta a ponta."
+    "mode": {
+      "altersend": {
+        "label": "Retransmissor da AlterSend",
+        "caption": "Quando a conexão direta falha, a transferência passa pelo retransmissor da AlterSend. Os arquivos permanecem criptografados de ponta a ponta."
+      },
+      "custom": {
+        "label": "Retransmissor auto-hospedado",
+        "caption": "Use o seu próprio servidor retransmissor em vez do da AlterSend."
+      },
+      "off": {
+        "label": "Sem retransmissor",
+        "caption": "Somente conexões diretas. As transferências podem falhar se os dois dispositivos estiverem atrás de NATs restritivos."
+      }
+    },
+    "selfhost": {
+      "label": "Código do retransmissor",
+      "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
+      "invalid": "Isso não parece um código de retransmissor",
+      "failed": "Não foi possível aplicar o retransmissor — tente novamente",
+      "description": "Exibido quando seu retransmissor inicia. Configure-o em cada dispositivo com o qual você transfere.",
+      "fallback": {
+        "title": "Reserva",
+        "stay": {
+          "label": "Ficar no meu retransmissor",
+          "caption": "Se o seu retransmissor estiver inacessível, a transferência aguarda."
+        },
+        "altersend": {
+          "label": "Usar o retransmissor da AlterSend se preciso",
+          "caption": "As transferências continuam se o seu retransmissor cair."
+        }
+      },
+      "testOk": "Retransmissor acessível ({{ms}} ms)",
+      "apply": "Salvar e testar",
+      "unreachable": "Não foi possível conectar ao retransmissor",
+      "clear": "Remover retransmissor"
+    }
   },
   "rows": {
     "feedback": "Feedback",

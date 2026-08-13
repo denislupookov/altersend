@@ -27,6 +27,7 @@ import type {
   RenamePeerInput,
   SetRelayConfigInput,
   SetRelayConfigReply,
+  TestCustomRelayReply,
   ShareFileRequest,
   ShareFilesReply,
   TransferRPC
@@ -73,6 +74,8 @@ import { RecognitionCoordinator } from '../peers/recognition-coordinator'
 import { DiscoveryCoordinator } from '../peers/discovery'
 import { PairingCoordinator } from '../peers/pairing-coordinator'
 import { configureRelay, relayConfigSummary, setRelaySending } from '../relay/config'
+import { applyCustomRelay } from '../relay/conf'
+import { testCustomRelayConnection } from '../relay/testConnection'
 import { upgradeWebRelay } from '../relay/upgradeWebRelay'
 
 function createTransferId(): string {
@@ -704,9 +707,18 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   async setRelayConfig(input: SetRelayConfigInput): Promise<SetRelayConfigReply> {
-    configureRelay({ enabled: input.enabled, proToken: input.proToken })
+    configureRelay({
+      enabled: input.enabled,
+      proToken: input.proToken,
+      customFallback: input.customRelayFallback
+    })
+    if (input.customRelay !== undefined) applyCustomRelay(input.customRelay)
     const { enabled, keyCount } = relayConfigSummary()
     return { enabled, keyCount }
+  }
+
+  testCustomRelay(): Promise<TestCustomRelayReply> {
+    return testCustomRelayConnection()
   }
 
   private enqueueLifecycle(op: () => Promise<void>): Promise<void> {

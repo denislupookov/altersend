@@ -17,8 +17,42 @@
     "description": "Condividi dati anonimi sugli arresti anomali per contribuire a migliorare AlterSend"
   },
   "relay": {
-    "label": "Usa il relay quando la connessione diretta non riesce",
-    "description": "Quando i dispositivi non riescono a connettersi direttamente, il trasferimento passa attraverso il relay di AlterSend. I file restano cifrati end-to-end."
+    "mode": {
+      "altersend": {
+        "label": "Relay AlterSend",
+        "caption": "Quando la connessione diretta non riesce, il trasferimento passa dal relay di AlterSend. I file restano cifrati end-to-end."
+      },
+      "custom": {
+        "label": "Relay self-hosted",
+        "caption": "Usa il tuo server relay invece di quello di AlterSend."
+      },
+      "off": {
+        "label": "Nessun relay",
+        "caption": "Solo connessioni dirette. I trasferimenti possono fallire se entrambi i dispositivi sono dietro NAT restrittivi."
+      }
+    },
+    "selfhost": {
+      "label": "Codice del relay",
+      "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
+      "invalid": "Non sembra un codice relay",
+      "failed": "Impossibile applicare il relay: riprova",
+      "description": "Mostrato all'avvio del tuo relay. Impostalo su ogni dispositivo con cui trasferisci.",
+      "fallback": {
+        "title": "Riserva",
+        "stay": {
+          "label": "Resta sul mio relay",
+          "caption": "Se il tuo relay non è raggiungibile, il trasferimento attende."
+        },
+        "altersend": {
+          "label": "Usa il relay di AlterSend se serve",
+          "caption": "I trasferimenti continuano se il tuo relay non funziona."
+        }
+      },
+      "testOk": "Relay raggiungibile ({{ms}} ms)",
+      "apply": "Salva e prova",
+      "unreachable": "Relay non raggiungibile",
+      "clear": "Rimuovi il relay"
+    }
   },
   "rows": {
     "feedback": "Segnalazioni",

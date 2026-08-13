@@ -54,6 +54,7 @@ const identicalValueAllowList = new Set([
 const identicalKeyAllowList = new Set([
   'common.files.count_one',
   'settings.account.codePlaceholder',
+  'settings.relay.selfhost.placeholder',
   'common.files.text',
   'common.files.items_one',
   'common.labels.desktop',

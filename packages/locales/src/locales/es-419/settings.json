@@ -17,8 +17,42 @@
     "description": "Comparte datos anónimos sobre fallos para ayudar a mejorar AlterSend"
   },
   "relay": {
-    "label": "Usar relé cuando falle la conexión directa",
-    "description": "Cuando los dispositivos no pueden conectarse directamente, la transferencia se enruta a través del relé de AlterSend. Los archivos siguen cifrados de extremo a extremo."
+    "mode": {
+      "altersend": {
+        "label": "Relé de AlterSend",
+        "caption": "Cuando falla la conexión directa, la transferencia pasa por el relé de AlterSend. Los archivos siguen cifrados de extremo a extremo."
+      },
+      "custom": {
+        "label": "Relé autoalojado",
+        "caption": "Usa tu propio servidor de relé en lugar del de AlterSend."
+      },
+      "off": {
+        "label": "Sin relé",
+        "caption": "Solo conexiones directas. Las transferencias pueden fallar si ambos dispositivos están detrás de NAT estrictos."
+      }
+    },
+    "selfhost": {
+      "label": "Código del relé",
+      "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
+      "invalid": "Eso no parece un código de relé",
+      "failed": "No se pudo aplicar el relé; inténtalo de nuevo",
+      "description": "Se muestra al iniciar tu relé. Configúralo en cada dispositivo con el que transfieras.",
+      "fallback": {
+        "title": "Respaldo",
+        "stay": {
+          "label": "Quedarse en mi relé",
+          "caption": "Si tu relé no está disponible, la transferencia espera."
+        },
+        "altersend": {
+          "label": "Usar el relé de AlterSend si hace falta",
+          "caption": "Las transferencias siguen funcionando si tu relé falla."
+        }
+      },
+      "testOk": "Relé accesible ({{ms}} ms)",
+      "apply": "Guardar y probar",
+      "unreachable": "No se pudo conectar con el relé",
+      "clear": "Quitar relé"
+    }
   },
   "rows": {
     "feedback": "Comentarios",

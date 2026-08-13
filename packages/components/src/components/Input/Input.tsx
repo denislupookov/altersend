@@ -7,6 +7,7 @@ type InputElementProps = Parameters<typeof html.input>[0]
 export interface InputProps extends Omit<InputElementProps, 'style'> {
   description?: string
   error?: string
+  success?: string
   filled?: boolean
   icon?: ReactNode
   label?: string
@@ -17,6 +18,7 @@ export interface InputProps extends Omit<InputElementProps, 'style'> {
 export function Input({
   description,
   error,
+  success,
   filled = false,
   icon,
   id,
@@ -27,12 +29,9 @@ export function Input({
 }: InputProps) {
   const generatedId = useId()
   const inputId = id ?? generatedId
-  const descriptionId = description ? `${inputId}-description` : undefined
-  const errorId = error ? `${inputId}-error` : undefined
-  const describedBy =
-    [descriptionId, errorId]
-      .filter((value): value is string => typeof value === 'string')
-      .join(' ') || undefined
+  const hintId = `${inputId}-hint`
+  const hasHint = Boolean(error || success || description)
+  const describedBy = hasHint ? hintId : undefined
   const hasError = Boolean(error)
   const useWrapper = Boolean(icon || trailing)
 
@@ -47,6 +46,31 @@ export function Input({
     filled && styles.filled,
     hasError && styles.iconWrapperInvalid
   ]
+
+  const renderHint = () => {
+    if (error) {
+      return (
+        <html.p id={hintId} role='alert' style={[styles.hint, styles.error]}>
+          {error}
+        </html.p>
+      )
+    }
+    if (success) {
+      return (
+        <html.p id={hintId} role='status' style={[styles.hint, styles.success]}>
+          {success}
+        </html.p>
+      )
+    }
+    if (description) {
+      return (
+        <html.p id={hintId} style={styles.hint}>
+          {description}
+        </html.p>
+      )
+    }
+    return null
+  }
 
   return (
     <html.div style={styles.root}>
@@ -78,15 +102,7 @@ export function Input({
         />
       )}
 
-      {error ? (
-        <html.p id={errorId} style={[styles.hint, styles.error]}>
-          {error}
-        </html.p>
-      ) : description ? (
-        <html.p id={descriptionId} style={styles.hint}>
-          {description}
-        </html.p>
-      ) : null}
+      {renderHint()}
     </html.div>
   )
 }

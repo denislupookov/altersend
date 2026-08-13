@@ -17,8 +17,42 @@
     "description": "Teilen Sie anonyme Absturzdaten, um AlterSend zu verbessern"
   },
   "relay": {
-    "label": "Relay verwenden, wenn keine direkte Verbindung möglich ist",
-    "description": "Wenn sich Geräte nicht direkt verbinden können, wird die Übertragung über das Relay von AlterSend geleitet. Dateien bleiben Ende-zu-Ende-verschlüsselt."
+    "mode": {
+      "altersend": {
+        "label": "AlterSend-Relay",
+        "caption": "Wenn keine direkte Verbindung möglich ist, läuft die Übertragung über das Relay von AlterSend. Dateien bleiben Ende-zu-Ende-verschlüsselt."
+      },
+      "custom": {
+        "label": "Selbst gehostetes Relay",
+        "caption": "Eigenen Relay-Server statt dem von AlterSend verwenden."
+      },
+      "off": {
+        "label": "Kein Relay",
+        "caption": "Nur direkte Verbindungen. Übertragungen können fehlschlagen, wenn beide Geräte hinter strikten NATs sind."
+      }
+    },
+    "selfhost": {
+      "label": "Relay-Code",
+      "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
+      "invalid": "Das sieht nicht nach einem Relay-Code aus",
+      "failed": "Relay konnte nicht übernommen werden – bitte erneut versuchen",
+      "description": "Wird beim Start deines Relays angezeigt. Richte es auf jedem Gerät ein, mit dem du überträgst.",
+      "fallback": {
+        "title": "Ausweichverhalten",
+        "stay": {
+          "label": "Bei meinem Relay bleiben",
+          "caption": "Ist dein Relay nicht erreichbar, wartet die Übertragung."
+        },
+        "altersend": {
+          "label": "Bei Bedarf AlterSend-Relay nutzen",
+          "caption": "Übertragungen laufen weiter, wenn dein Relay ausfällt."
+        }
+      },
+      "testOk": "Relay erreichbar ({{ms}} ms)",
+      "apply": "Speichern und testen",
+      "unreachable": "Relay nicht erreichbar",
+      "clear": "Relay entfernen"
+    }
   },
   "rows": {
     "feedback": "Rückmeldung",

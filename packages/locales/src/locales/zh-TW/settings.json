@@ -17,8 +17,42 @@
     "description": "共享匿名崩潰資料以幫助改進AlterSend"
   },
   "relay": {
-    "label": "直連失敗時使用中繼",
-    "description": "當裝置無法直接連線時，傳輸會透過 AlterSend 的中繼進行。檔案仍維持端對端加密。"
+    "mode": {
+      "altersend": {
+        "label": "AlterSend 中繼",
+        "caption": "當直連失敗時，傳輸會透過 AlterSend 的中繼進行。檔案仍維持端對端加密。"
+      },
+      "custom": {
+        "label": "自架中繼",
+        "caption": "使用你自己的中繼伺服器，而不是 AlterSend 的。"
+      },
+      "off": {
+        "label": "不使用中繼",
+        "caption": "僅使用直連。當兩台裝置都位於嚴格的 NAT 之後時，傳輸可能失敗。"
+      }
+    },
+    "selfhost": {
+      "label": "中繼代碼",
+      "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
+      "invalid": "這看起來不像中繼代碼",
+      "failed": "無法套用中繼，請重試",
+      "description": "在中繼啟動時顯示。在每台參與傳輸的裝置上都進行設定。",
+      "fallback": {
+        "title": "備援方案",
+        "stay": {
+          "label": "只用我的中繼",
+          "caption": "如果無法連上你的中繼，傳輸將等待。"
+        },
+        "altersend": {
+          "label": "必要時使用 AlterSend 中繼",
+          "caption": "你的中繼無法使用時，傳輸仍能繼續。"
+        }
+      },
+      "testOk": "中繼可連上（{{ms}} ms）",
+      "apply": "儲存並測試",
+      "unreachable": "無法連上中繼",
+      "clear": "移除中繼"
+    }
   },
   "rows": {
     "feedback": "意見回饋",

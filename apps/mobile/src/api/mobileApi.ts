@@ -13,7 +13,7 @@ import { Directory, Paths } from 'expo-file-system'
 import * as SecureStore from 'expo-secure-store'
 import { AppState, Platform, type AppStateStatus } from 'react-native'
 import { Worklet } from 'react-native-bare-kit'
-import { isRelayEnabled } from '../lifecycle/relayStorage'
+import { getCustomRelay, getCustomRelayFallback, isRelayEnabled } from '../lifecycle/relayStorage'
 
 const STORAGE_ROOT_DIRNAME = 'altersend'
 const IDENTITY_ROOT_DIRNAME = 'altersend-identity'
@@ -133,6 +133,14 @@ class MobileApi {
 
       await client.ready
       await initDeviceKeychain(client)
+      await client
+        .setRelayConfig({
+          enabled: isRelayEnabled(),
+          customRelay: getCustomRelay(),
+          customRelayFallback: getCustomRelayFallback()
+        })
+        .catch((err: unknown) => console.warn('mobileApi: relay config not applied', err))
+
       this.client = client
     })().catch(async (error: unknown) => {
       const failure = error instanceof Error ? error : new Error(String(error))

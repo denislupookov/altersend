@@ -81,6 +81,10 @@ export const styles = css.create({
     color: tokens.colorDanger,
     fontWeight: tokens.fontWeightMedium
   },
+  success: {
+    color: tokens.colorSuccess,
+    fontWeight: tokens.fontWeightMedium
+  },
   iconWrapper: {
     display: 'flex',
     flexDirection: 'row',
