@@ -7,6 +7,7 @@ type InputElementProps = Parameters<typeof html.input>[0]
 export interface InputProps extends Omit<InputElementProps, 'style'> {
   description?: string
   error?: string
+  success?: string
   filled?: boolean
   icon?: ReactNode
   label?: string
@@ -17,6 +18,7 @@ export interface InputProps extends Omit<InputElementProps, 'style'> {
 export function Input({
   description,
   error,
+  success,
   filled = false,
   icon,
   id,
@@ -48,6 +50,25 @@ export function Input({
     hasError && styles.iconWrapperInvalid
   ]
 
+  const renderHint = () => {
+    if (error) {
+      return (
+        <html.p id={errorId} style={[styles.hint, styles.error]}>
+          {error}
+        </html.p>
+      )
+    }
+    if (success) return <html.p style={[styles.hint, styles.success]}>{success}</html.p>
+    if (description) {
+      return (
+        <html.p id={descriptionId} style={styles.hint}>
+          {description}
+        </html.p>
+      )
+    }
+    return null
+  }
+
   return (
     <html.div style={styles.root}>
       {label ? (
@@ -78,15 +99,7 @@ export function Input({
         />
       )}
 
-      {error ? (
-        <html.p id={errorId} style={[styles.hint, styles.error]}>
-          {error}
-        </html.p>
-      ) : description ? (
-        <html.p id={descriptionId} style={styles.hint}>
-          {description}
-        </html.p>
-      ) : null}
+      {renderHint()}
     </html.div>
   )
 }

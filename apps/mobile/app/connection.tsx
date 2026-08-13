@@ -1,64 +1,52 @@
-import { StyleSheet, View } from 'react-native'
-import { useState } from 'react'
-import { ToggleSwitch, useTheme } from '@altersend/components'
+import { useMemo } from 'react'
+import { Button, RelaySettingsCard } from '@altersend/components'
+import { ClipboardIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
+import {
+  relayErrorText,
+  relaySettingsLabels,
+  relayTestText,
+  useRelaySettings
+} from '@altersend/domain'
 import { Layout } from '@/src/components'
-import { Text } from '@/src/components/ThemedText'
-import { isRelayEnabled, setRelayEnabledStorage } from '@/src/lifecycle/relayStorage'
+import { relayStoragePort } from '@/src/lifecycle/relayStorage'
+import { usePasteFromClipboard } from '@/src/hooks/usePasteFromClipboard'
 import { mobileApi } from '@/src/api/mobileApi'
 
 export default function ConnectionScreen() {
-  const { t } = useTranslation(['settings'])
-  const { theme } = useTheme()
-  const [relay, setRelay] = useState(isRelayEnabled)
+  const { t } = useTranslation(['settings', 'common'])
+  const form = useRelaySettings({
+    storage: relayStoragePort,
+    send: (input) => mobileApi.worker.setRelayConfig(input),
+    testConnection: () => mobileApi.worker.testCustomRelay()
+  })
 
-  const handleRelayToggle = (value: boolean) => {
-    setRelay(value)
-    setRelayEnabledStorage(value)
-    mobileApi.worker.setRelayConfig({ enabled: value }).catch(() => {
-      setRelay(!value)
-      setRelayEnabledStorage(!value)
-    })
-  }
+  const labels = useMemo(() => relaySettingsLabels(t), [t])
 
-  const cardStyle = {
-    backgroundColor: theme.colors.colorBackgroundSubtle,
-    borderColor: theme.colors.colorBorderPrimary
-  }
+  const paste = usePasteFromClipboard(form.setCode)
 
   return (
     <Layout hasNativeHeader>
-      <View style={[styles.card, styles.cardPad, cardStyle]}>
-        <ToggleSwitch
-          checked={relay}
-          onChange={handleRelayToggle}
-          label={t('settings:relay.label')}
-        />
-      </View>
-      <View style={styles.info}>
-        <Text style={[styles.infoLine, { color: theme.colors.colorTextMuted }]}>
-          {t('settings:relay.description')}
-        </Text>
-      </View>
+      <RelaySettingsCard
+        form={form}
+        labels={labels}
+        iconSize={18}
+        autoCapitalize='none'
+        autoComplete='off'
+        spellCheck={false}
+        errorText={relayErrorText(t, form.error)}
+        successText={relayTestText(t, form.testState, form.testMs)}
+        pasteAction={
+          <Button
+            variant='ghost'
+            size='sm'
+            iconOnly
+            aria-label={t('common:actions.paste')}
+            icon={<ClipboardIcon size={18} />}
+            onClick={paste}
+          />
+        }
+      />
     </Layout>
   )
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: 'hidden'
-  },
-  cardPad: {
-    paddingHorizontal: 16,
-    paddingVertical: 13
-  },
-  info: {
-    marginTop: 16
-  },
-  infoLine: {
-    fontSize: 13,
-    lineHeight: 19
-  }
-})

@@ -16,7 +16,8 @@ export const API = {
     joinPairing: 14,
     setRelayConfig: 15,
     pauseDownload: 16,
-    renamePeer: 17
+    renamePeer: 17,
+    testCustomRelay: 18
   },
   channels: {
     event: 100,

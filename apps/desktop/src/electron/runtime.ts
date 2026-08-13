@@ -289,7 +289,10 @@ export function createDesktopRuntime({ broadcast }: { broadcast: Broadcast }): D
 
     const runtime = getWorker(specifier)
     if (method === 'setRelayConfig') {
-      rememberedRelayConfig = args[0] as typeof rememberedRelayConfig
+      rememberedRelayConfig = {
+        ...rememberedRelayConfig,
+        ...(args[0] as NonNullable<typeof rememberedRelayConfig>)
+      }
     }
     return (runtime.client[method] as (...a: unknown[]) => Promise<unknown>)(...args)
   }

@@ -17,8 +17,42 @@
     "description": "共享匿名崩溃数据以帮助改进AlterSend"
   },
   "relay": {
-    "label": "直连失败时使用中继",
-    "description": "当设备无法直接连接时，传输会通过 AlterSend 的中继进行。文件仍保持端到端加密。"
+    "mode": {
+      "altersend": {
+        "label": "AlterSend 中继",
+        "caption": "当直连失败时，传输会通过 AlterSend 的中继进行。文件仍保持端到端加密。"
+      },
+      "custom": {
+        "label": "自托管中继",
+        "caption": "使用你自己的中继服务器，而不是 AlterSend 的。"
+      },
+      "off": {
+        "label": "不使用中继",
+        "caption": "仅使用直连。当两台设备都位于严格的 NAT 之后时，传输可能失败。"
+      }
+    },
+    "selfhost": {
+      "label": "中继代码",
+      "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
+      "invalid": "这看起来不像中继代码",
+      "failed": "无法应用中继，请重试",
+      "description": "在中继启动时显示。在每台参与传输的设备上都进行设置。",
+      "fallback": {
+        "title": "备用方案",
+        "stay": {
+          "label": "只用我的中继",
+          "caption": "如果无法连接你的中继，传输将等待。"
+        },
+        "altersend": {
+          "label": "必要时使用 AlterSend 中继",
+          "caption": "你的中继不可用时，传输仍能继续。"
+        }
+      },
+      "testOk": "中继可达（{{ms}} ms）",
+      "apply": "保存并测试",
+      "unreachable": "无法连接到中继",
+      "clear": "移除中继"
+    }
   },
   "rows": {
     "feedback": "反馈",

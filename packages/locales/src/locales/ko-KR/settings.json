@@ -17,8 +17,42 @@
     "description": "AlterSend 개선을 위해 익명 충돌 데이터 공유"
   },
   "relay": {
-    "label": "직접 연결이 실패하면 릴레이 사용",
-    "description": "기기가 직접 연결할 수 없을 때 전송이 AlterSend 릴레이를 통해 이루어집니다. 파일은 종단 간 암호화가 유지됩니다."
+    "mode": {
+      "altersend": {
+        "label": "AlterSend 릴레이",
+        "caption": "직접 연결이 실패하면 전송이 AlterSend 릴레이를 통해 이루어집니다. 파일은 종단 간 암호화가 유지됩니다."
+      },
+      "custom": {
+        "label": "셀프 호스팅 릴레이",
+        "caption": "AlterSend 대신 내 릴레이 서버를 사용합니다."
+      },
+      "off": {
+        "label": "릴레이 없음",
+        "caption": "직접 연결만 사용합니다. 두 기기가 모두 엄격한 NAT 뒤에 있으면 전송이 실패할 수 있습니다."
+      }
+    },
+    "selfhost": {
+      "label": "릴레이 코드",
+      "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
+      "invalid": "릴레이 코드가 아닌 것 같습니다",
+      "failed": "릴레이를 적용하지 못했습니다. 다시 시도해 주세요",
+      "description": "릴레이 시작 시 표시됩니다. 전송할 모든 기기에서 설정하세요.",
+      "fallback": {
+        "title": "대체 동작",
+        "stay": {
+          "label": "내 릴레이만 사용",
+          "caption": "릴레이에 연결할 수 없으면 전송이 대기합니다."
+        },
+        "altersend": {
+          "label": "필요하면 AlterSend 릴레이 사용",
+          "caption": "릴레이가 중단돼도 전송이 계속됩니다."
+        }
+      },
+      "testOk": "릴레이 연결 성공 ({{ms}} ms)",
+      "apply": "저장 후 테스트",
+      "unreachable": "릴레이에 연결할 수 없습니다",
+      "clear": "릴레이 제거"
+    }
   },
   "rows": {
     "feedback": "피드백",

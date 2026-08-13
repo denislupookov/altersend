@@ -5,10 +5,13 @@ export type {
   TransferWorkerProcess
 } from './client/worker-client'
 
-export { isPathSafe } from './worklet/transfer/utils'
+export { isPathSafe, isValidHexKey } from './worklet/transfer/utils'
 
 export { API } from './worklet/rpc/protocol'
 export type {
+  CustomRelayInput,
+  SetRelayConfigInput,
+  TestCustomRelayReply,
   TransferRPC,
   TransferMethod,
   TransferRole,

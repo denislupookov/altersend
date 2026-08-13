@@ -1,6 +1,5 @@
-import { useRef } from 'react'
 import { html } from 'react-strict-dom'
-import { isRadioActivationKey, nextRadioIndex } from '../../a11y/nextRadioIndex'
+import { useRovingRadio } from '../../a11y/useRovingRadio'
 import { CheckIcon } from '../../icons'
 import { MenuGroup } from '../Menu'
 import {
@@ -20,10 +19,6 @@ const { light, dark } = rawTokens.colors
 type DivElementProps = Parameters<typeof html.div>[0]
 type TileKeyboardEvent = Parameters<NonNullable<DivElementProps['onKeyDown']>>[0] & {
   preventDefault?: () => void
-}
-
-interface FocusableElement {
-  focus(): void
 }
 
 interface PreviewPalette {
@@ -46,22 +41,7 @@ export interface AppearancePickerProps {
 
 export function AppearancePicker({ value, labels, onChange, title }: AppearancePickerProps) {
   const { theme } = useTheme()
-  const optionRefs = useRef<(FocusableElement | null)[]>([])
-
-  const handleKeyDown = (event: TileKeyboardEvent, index: number) => {
-    if (isRadioActivationKey(event.key)) {
-      event.preventDefault?.()
-      onChange(THEME_PREFERENCE_OPTIONS[index])
-      return
-    }
-
-    const next = nextRadioIndex(event.key, index, THEME_PREFERENCE_OPTIONS.length)
-    if (next === null) return
-
-    event.preventDefault?.()
-    onChange(THEME_PREFERENCE_OPTIONS[next])
-    optionRefs.current[next]?.focus()
-  }
+  const { setRef, handleKeyDown } = useRovingRadio(THEME_PREFERENCE_OPTIONS, onChange)
 
   return (
     <MenuGroup title={title}>
@@ -76,9 +56,7 @@ export function AppearancePicker({ value, labels, onChange, title }: AppearanceP
               aria-checked={selected}
               onClick={() => onChange(option)}
               onKeyDown={(event) => handleKeyDown(event as TileKeyboardEvent, index)}
-              ref={(element) => {
-                optionRefs.current[index] = element as FocusableElement | null
-              }}
+              ref={setRef(index)}
               role='radio'
               style={[styles.tile, selected && styles.tileSelected]}
               tabIndex={selected ? 0 : -1}

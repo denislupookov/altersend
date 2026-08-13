@@ -17,8 +17,42 @@
     "description": "Partagez des données anonymes sur les accidents pour contribuer à améliorer AlterSend"
   },
   "relay": {
-    "label": "Utiliser un relais en cas d’échec de la connexion directe",
-    "description": "Quand les appareils ne peuvent pas se connecter directement, le transfert passe par le relais d'AlterSend. Les fichiers restent chiffrés de bout en bout."
+    "mode": {
+      "altersend": {
+        "label": "Relais AlterSend",
+        "caption": "Quand la connexion directe échoue, le transfert passe par le relais d'AlterSend. Les fichiers restent chiffrés de bout en bout."
+      },
+      "custom": {
+        "label": "Relais auto-hébergé",
+        "caption": "Utilisez votre propre serveur relais au lieu de celui d'AlterSend."
+      },
+      "off": {
+        "label": "Aucun relais",
+        "caption": "Connexions directes uniquement. Les transferts peuvent échouer si les deux appareils sont derrière des NAT stricts."
+      }
+    },
+    "selfhost": {
+      "label": "Code du relais",
+      "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
+      "invalid": "Cela ne ressemble pas à un code de relais",
+      "failed": "Impossible d'appliquer le relais — réessayez",
+      "description": "Affiché au démarrage de votre relais. Configurez-le sur chaque appareil avec lequel vous transférez.",
+      "fallback": {
+        "title": "Repli",
+        "stay": {
+          "label": "Rester sur mon relais",
+          "caption": "Si votre relais est injoignable, le transfert attend."
+        },
+        "altersend": {
+          "label": "Utiliser le relais d'AlterSend si besoin",
+          "caption": "Les transferts continuent si votre relais est en panne."
+        }
+      },
+      "testOk": "Relais joignable ({{ms}} ms)",
+      "apply": "Enregistrer et tester",
+      "unreachable": "Relais injoignable",
+      "clear": "Retirer le relais"
+    }
   },
   "rows": {
     "feedback": "Commentaires",

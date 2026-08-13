@@ -1,24 +1,13 @@
 import b4a from 'b4a'
-import DHT from 'hyperdht'
+import type DHT from 'hyperdht'
+import { acquireDht, releaseDht } from './dht'
 import { configureRelay, registerRelayLoader, relayConfigSummary } from './config'
 import { isValidHexKey } from '../transfer/utils'
+import type { CustomRelayInput } from '../rpc/protocol'
 
 const MAX_ATTEMPTS = 3
 const RETRY_DELAY_MS = 5000
-
-let pubkey: Uint8Array | null = null
-let loaded = false
-let inFlight = false
-let activeDht: DHT | null = null
-
-export function startRelayConf(pubkeyHex: string | undefined): void {
-  if (!pubkeyHex || pubkey) return
-
-  pubkey = b4a.from(pubkeyHex, 'hex')
-  registerRelayLoader(() => ensureRelayConf())
-
-  if (relayConfigSummary().enabled) ensureRelayConf()
-}
+const READY_TIMEOUT_MS = 8000
 
 interface RelayRecordEntry {
   key: string
@@ -26,9 +15,9 @@ interface RelayRecordEntry {
   utc?: number
 }
 
-function recordUtcOffset(entry: RelayRecordEntry): number | undefined {
-  if (typeof entry.utc === 'number' && Number.isFinite(entry.utc)) return entry.utc
-  return undefined
+function toRelayInput(entry: RelayRecordEntry) {
+  const utc = typeof entry.utc === 'number' && Number.isFinite(entry.utc) ? entry.utc : undefined
+  return { keyHex: entry.key, host: entry.host, utcOffset: utc }
 }
 
 function isValidEntry(entry: unknown): entry is RelayRecordEntry {
@@ -44,100 +33,154 @@ function isValidEntry(entry: unknown): entry is RelayRecordEntry {
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
-const READY_TIMEOUT_MS = 8000
+type ApplyRecord = (relays: RelayRecordEntry[], web: RelayRecordEntry[]) => void
 
-let readyResolve: (() => void) | null = null
-let readyPromise: Promise<void> | null = null
+interface ConfSource {
+  ensure(): void
+  stop(): Promise<void>
+  pending(): Promise<void> | null
+}
 
-function settleReady(): void {
-  readyResolve?.()
-  readyResolve = null
+function createConfSource(pubkeyHex: string, label: string, apply: ApplyRecord): ConfSource {
+  const pubkey = b4a.from(pubkeyHex, 'hex')
+  let loaded = false
+  let stopped = false
+  let running: Promise<void> | null = null
+  let holdsLease = false
+
+  const warnUnresolved = () => console.warn(`[relay-conf] ${label}: no relays resolved`)
+
+  async function tryFetch(dht: DHT): Promise<boolean> {
+    try {
+      const record = await dht.mutableGet(pubkey, { latest: true })
+      if (stopped) return false
+      if (!record?.value) return false
+      const parsed = JSON.parse(b4a.toString(record.value, 'utf8')) as {
+        relays?: unknown
+        web?: unknown
+      }
+      if (
+        Array.isArray(parsed.relays) &&
+        parsed.relays.length > 0 &&
+        parsed.relays.every(isValidEntry)
+      ) {
+        const web = Array.isArray(parsed.web) ? parsed.web.filter(isValidEntry) : []
+        apply(parsed.relays as RelayRecordEntry[], web)
+        return true
+      }
+    } catch {
+      return false
+    }
+
+    return false
+  }
+
+  async function run(): Promise<void> {
+    try {
+      const dht = acquireDht()
+      holdsLease = true
+
+      for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        if (stopped) return
+        if (await tryFetch(dht)) {
+          loaded = true
+          return
+        }
+        if (attempt < MAX_ATTEMPTS - 1) await delay(RETRY_DELAY_MS)
+      }
+      warnUnresolved()
+    } finally {
+      if (holdsLease) {
+        holdsLease = false
+        await releaseDht()
+      }
+    }
+  }
+
+  return {
+    ensure: () => {
+      if (loaded || running || stopped) return
+      running = run()
+        .catch(warnUnresolved)
+        .finally(() => {
+          running = null
+        })
+    },
+    stop: () => {
+      stopped = true
+      if (!holdsLease) return Promise.resolve()
+      holdsLease = false
+      return releaseDht()
+    },
+    pending: () => running
+  }
+}
+
+let official: ConfSource | null = null
+let customOrg: ConfSource | null = null
+
+registerRelayLoader(() => {
+  official?.ensure()
+  customOrg?.ensure()
+})
+
+export function startRelayConf(pubkeyHex: string | undefined): void {
+  if (!pubkeyHex || official) return
+
+  official = createConfSource(pubkeyHex, 'official', (relays, web) => {
+    configureRelay({
+      relays: relays.map(toRelayInput),
+      webRelays: web.map((r) => ({ keyHex: r.key, host: r.host }))
+    })
+  })
+
+  if (relayConfigSummary().enabled) official.ensure()
+}
+
+export function applyCustomRelay(input: CustomRelayInput | null): void {
+  customOrg?.stop()
+  customOrg = null
+
+  const valid = !!input && isValidHexKey(input.keyHex)
+
+  if (valid && input.kind === 'relay') {
+    configureRelay({
+      customRelays: [{ keyHex: input.keyHex, host: input.host }],
+      customConfigured: true
+    })
+    return
+  }
+
+  if (valid && input.kind === 'org') {
+    configureRelay({ customRelays: [], customConfigured: true })
+    customOrg = createConfSource(input.keyHex, 'custom', (relays) => {
+      configureRelay({ customRelays: relays.map(toRelayInput) })
+    })
+    if (relayConfigSummary().enabled) customOrg.ensure()
+    return
+  }
+
+  configureRelay({ customRelays: [], customConfigured: false })
 }
 
 export function whenRelayConfReady(timeoutMs = READY_TIMEOUT_MS): Promise<void> {
-  if (loaded || !pubkey || !relayConfigSummary().enabled) return Promise.resolve()
-  if (!readyPromise) {
-    readyPromise = new Promise<void>((resolve) => {
-      readyResolve = resolve
-    })
-  }
-  return Promise.race([readyPromise, delay(timeoutMs)])
-}
+  if (!relayConfigSummary().enabled) return Promise.resolve()
 
-async function ensureRelayConf(): Promise<void> {
-  if (!pubkey || loaded || inFlight || !relayConfigSummary().enabled) return
+  const waits = [official?.pending(), customOrg?.pending()].filter(
+    (wait): wait is Promise<void> => !!wait
+  )
+  if (waits.length === 0) return Promise.resolve()
 
-  inFlight = true
-  const dht = new DHT()
-  activeDht = dht
+  let timer: ReturnType<typeof setTimeout> | null = null
+  const timeout = new Promise<void>((resolve) => {
+    timer = setTimeout(resolve, timeoutMs)
+  })
 
-  try {
-    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-      if (activeDht !== dht) return
-      if (await tryFetch(dht)) {
-        loaded = true
-        return
-      }
-      if (attempt < MAX_ATTEMPTS - 1) await delay(RETRY_DELAY_MS)
-    }
-    console.warn('[relay-conf] no relays configured, hole-punch only')
-  } finally {
-    activeDht = null
-    inFlight = false
-    settleReady()
-    try {
-      await dht.destroy()
-    } catch (err) {
-      console.warn(
-        '[relay-conf] dht.destroy failed',
-        err instanceof Error ? err.message : String(err)
-      )
-    }
-  }
-}
-
-async function tryFetch(dht: DHT): Promise<boolean> {
-  if (!pubkey) return false
-
-  try {
-    const record = await dht.mutableGet(pubkey, { latest: true })
-    if (!record?.value) return false
-    const parsed = JSON.parse(b4a.toString(record.value, 'utf8')) as {
-      relays?: unknown
-      web?: unknown
-    }
-    if (
-      Array.isArray(parsed.relays) &&
-      parsed.relays.length > 0 &&
-      parsed.relays.every(isValidEntry)
-    ) {
-      const relays = parsed.relays as RelayRecordEntry[]
-      const web = Array.isArray(parsed.web) ? parsed.web.filter(isValidEntry) : []
-      configureRelay({
-        relays: relays.map((r) => ({ keyHex: r.key, host: r.host, utcOffset: recordUtcOffset(r) })),
-        webRelays: web.map((r) => ({ keyHex: r.key, host: r.host }))
-      })
-      return true
-    }
-  } catch (err) {
-    console.warn('[relay-conf] fetch failed', err instanceof Error ? err.message : String(err))
-  }
-
-  return false
+  return Promise.race([Promise.all(waits).then(() => undefined), timeout]).finally(() => {
+    if (timer) clearTimeout(timer)
+  })
 }
 
 export async function stopRelayConf(): Promise<void> {
-  const dht = activeDht
-  activeDht = null
-
-  if (dht) {
-    try {
-      await dht.destroy()
-    } catch (err) {
-      console.warn(
-        '[relay-conf] dht.destroy failed',
-        err instanceof Error ? err.message : String(err)
-      )
-    }
-  }
+  await Promise.all([official?.stop(), customOrg?.stop()])
 }

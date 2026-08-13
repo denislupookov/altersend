@@ -114,14 +114,25 @@ export interface InitDeviceSecretReply {
   secretKey: string | null
 }
 
+export type CustomRelayInput =
+  | { kind: 'relay'; keyHex: string; host: string }
+  | { kind: 'org'; keyHex: string }
+
 export interface SetRelayConfigInput {
   enabled: boolean
   proToken?: string | null
+  customRelay?: CustomRelayInput | null
+  customRelayFallback?: boolean
 }
 
 export interface SetRelayConfigReply {
   enabled: boolean
   keyCount: number
+}
+
+export interface TestCustomRelayReply {
+  ok: boolean
+  ms?: number
 }
 
 export interface RPCErrorPayload {
@@ -176,6 +187,7 @@ export interface TransferRPC {
   hostPairing(): Promise<HostReply>
   joinPairing(topic: string): Promise<JoinReply>
   setRelayConfig(input: SetRelayConfigInput): Promise<SetRelayConfigReply>
+  testCustomRelay(): Promise<TestCustomRelayReply>
 }
 
 export class BadRequestError extends Error {
