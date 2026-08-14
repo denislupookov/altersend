@@ -13,7 +13,6 @@ export interface FileOffer {
   name: string
   path: string
   size: number
-  driveKey: string
   kind: 'file'
 }
 

@@ -37,8 +37,6 @@ export class PairingCoordinator {
     this.emit = deps.emit
     this.swarm = new TransferSwarm(
       {
-        onReady: () => Promise.resolve(),
-        onReplicate: () => {},
         onPeerConnected: (session) => this.onPeerConnected(session),
         onPeerDisconnected: (peerKey) => this.onPeerDisconnected(peerKey),
         onControlMessage: (message, session) => this.onControlMessage(message, session)

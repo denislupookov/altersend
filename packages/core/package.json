@@ -43,14 +43,10 @@
     "bare-tls": "^3.1.5",
     "bare-zlib": "^1.3.4",
     "compact-encoding": "^2.19.0",
-    "corestore": "^7.9.1",
     "hypercore-crypto": "^3.6.1",
     "hyperdb": "^6.7.0",
     "hyperdht": "^6.32.0",
-    "hyperdrive": "^13.3.0",
     "hyperswarm": "^4.17.0",
-    "localdrive": "^2.2.0",
-    "mirror-drive": "^1.14.1",
     "protomux": "^3.7.0"
   },
   "devDependencies": {

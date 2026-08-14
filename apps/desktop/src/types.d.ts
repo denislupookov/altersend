@@ -1,7 +1,5 @@
 declare module 'hyperswarm'
 declare module 'hypercore-crypto'
-declare module 'hyperdrive'
-declare module 'corestore'
 declare module 'b4a'
 declare module 'pear-runtime'
 declare module 'which-runtime'

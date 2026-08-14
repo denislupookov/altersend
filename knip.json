@@ -41,9 +41,7 @@
       "ignoreDependencies": [
         "b4a",
         "bare-rpc",
-        "corestore",
         "hypercore-crypto",
-        "hyperdrive",
         "hyperswarm",
         "pear-runtime-updater",
         "@electron-forge/maker-dmg",

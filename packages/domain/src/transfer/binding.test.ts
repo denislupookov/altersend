@@ -13,7 +13,6 @@ const OFFER = {
   name: 'a.bin',
   path: 'a.bin',
   size: 1000,
-  driveKey: 'drive-1',
   kind: 'file'
 } as const
 

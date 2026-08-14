@@ -1,4 +1,3 @@
-import type Corestore from 'corestore'
 import {
   receiveFile,
   discardPartial,
@@ -18,7 +17,6 @@ import {
   withDisplayName
 } from './utils'
 import { fileExists } from './fs-utils'
-import { LegacyHyperdriveDownloader } from './legacy/downloader'
 import type { DownloadFileRequest, DownloadFileResult } from '../rpc/protocol'
 import {
   DownloadReporter,
@@ -38,21 +36,16 @@ function toMessage(error: unknown): string {
 }
 
 export class TransferReceiver {
-  private readonly legacy: LegacyHyperdriveDownloader
   private readonly partials = new Map<string, PartialDownload>()
   private readonly active = new Map<string, AbortController>()
   private readonly queued = new Set<string>()
   private readonly paused = new Set<string>()
 
-  constructor(driveStore: Corestore) {
-    this.legacy = new LegacyHyperdriveDownloader(driveStore)
-  }
-
   async downloadFiles(
     files: DownloadFileRequest[],
     callbacks: DownloaderCallbacks,
-    signal?: AbortLike,
-    driveFor?: (file: DownloadFileRequest) => Promise<DriveChannel | null>
+    driveFor: (file: DownloadFileRequest) => Promise<DriveChannel>,
+    signal?: AbortLike
   ): Promise<DownloadFileResult[]> {
     const results: DownloadFileResult[] = []
     for (const file of files) {
@@ -111,15 +104,10 @@ export class TransferReceiver {
       const releaseOuter = onAbort(signal, () => perFile.abort())
 
       try {
-        const channel = (await driveFor?.(file)) ?? null
-        record(
-          channel
-            ? await this.downloadViaDrive(file, targetPath, callbacks, channel, perFile.signal)
-            : await this.legacy.download(file, targetPath, callbacks, perFile.signal)
-        )
+        const channel = await driveFor(file)
+        record(await this.downloadViaDrive(file, targetPath, callbacks, channel, perFile.signal))
       } catch (error) {
         const cancelled = error instanceof Error && error.name === 'AbortError'
-        if (!cancelled) await this.legacy.evictDrive(file.driveKey)
 
         record(
           new DownloadReporter({
@@ -247,7 +235,6 @@ export class TransferReceiver {
     this.queued.clear()
     this.paused.clear()
     await this.discardPartials()
-    await this.legacy.closeAll()
   }
 
   async destroy(): Promise<void> {

@@ -196,7 +196,7 @@ Desktop and mobile share translation catalogs through `@altersend/locales`, curr
 
 ### Tech stack
 
-[Electron](https://electronjs.org) · [React Native](https://reactnative.dev) · [Expo](https://expo.dev) · [Bare](https://bare.pears.com) · [Hyperswarm](https://github.com/holepunchto/hyperswarm) · [Protomux](https://github.com/holepunchto/protomux) · [Hyperdrive](https://github.com/holepunchto/hyperdrive) · [React Strict DOM](https://github.com/facebook/react-strict-dom) · [Tailwind](https://tailwindcss.com) · [Zustand](https://github.com/pmndrs/zustand)
+[Electron](https://electronjs.org) · [React Native](https://reactnative.dev) · [Expo](https://expo.dev) · [Bare](https://bare.pears.com) · [Hyperswarm](https://github.com/holepunchto/hyperswarm) · [Protomux](https://github.com/holepunchto/protomux) · [React Strict DOM](https://github.com/facebook/react-strict-dom) · [Tailwind](https://tailwindcss.com) · [Zustand](https://github.com/pmndrs/zustand)
 
 ### Crash reporting
 

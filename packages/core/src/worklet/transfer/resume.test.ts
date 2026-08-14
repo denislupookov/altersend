@@ -4,7 +4,6 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import SecretStream from '@hyperswarm/secret-stream'
 import { Duplex } from 'streamx'
-import type Corestore from 'corestore'
 import type { PeerSocket } from 'hyperswarm'
 import { PeerDrive } from './drive'
 import { TransferReceiver } from './receiver'
@@ -28,17 +27,6 @@ function socketPair(): [PeerSocket, PeerSocket] {
     new SecretStream(true, a) as unknown as PeerSocket,
     new SecretStream(false, b) as unknown as PeerSocket
   ]
-}
-
-function unusableStore(): Corestore {
-  return new Proxy(
-    {},
-    {
-      get(_target, prop) {
-        throw new Error(`Corestore.${String(prop)} was used on a drive-only transfer`)
-      }
-    }
-  ) as unknown as Corestore
 }
 
 function collect(): { callbacks: DownloaderCallbacks; errors: DownloadLifecycleEvent[] } {
@@ -72,14 +60,13 @@ describe('drive resume through TransferReceiver', () => {
     const request: DownloadFileRequest = {
       transferId: 't1',
       fileId: 'f1',
-      driveKey: 'a'.repeat(64),
       path: '/in.bin',
       name: 'in.bin',
       size: input.length,
       targetPath: join(dir, 'out.bin')
     }
 
-    const receiver = new TransferReceiver(unusableStore())
+    const receiver = new TransferReceiver()
 
     const attempt = async (abortAfterFirstChunk: boolean) => {
       const [socketA, socketB] = socketPair()
@@ -103,8 +90,8 @@ describe('drive resume through TransferReceiver', () => {
       const [result] = await receiver.downloadFiles(
         [request],
         callbacks,
-        controller.signal,
-        async () => receiverSide.session(request.fileId)
+        async () => receiverSide.session(request.fileId),
+        controller.signal
       )
       return { result, errors, receivedBytes }
     }
@@ -138,14 +125,13 @@ describe('pausing one download', () => {
     const request: DownloadFileRequest = {
       transferId: 't1',
       fileId: 'f1',
-      driveKey: 'a'.repeat(64),
       path: '/in.bin',
       name: 'in.bin',
       size: input.length,
       targetPath: dst
     }
 
-    const receiver = new TransferReceiver(unusableStore())
+    const receiver = new TransferReceiver()
 
     const run = async (pauseOnFirstChunk: boolean) => {
       const [socketA, socketB] = socketPair()
@@ -163,7 +149,7 @@ describe('pausing one download', () => {
         callbacks.onFileProgress = () => receiver.pause(request.fileId)
       }
 
-      const [result] = await receiver.downloadFiles([request], callbacks, undefined, async () =>
+      const [result] = await receiver.downloadFiles([request], callbacks, async () =>
         receiverSide.session(request.fileId)
       )
       return { result, errors }
@@ -212,7 +198,7 @@ describe('target naming', () => {
         .serve(request.fileId, 'in.bin', src)
         .catch((err) => console.error('test setup failed', err))
     }
-    const [result] = await receiver.downloadFiles([request], callbacks, undefined, async () =>
+    const [result] = await receiver.downloadFiles([request], callbacks, async () =>
       receiverSide.session(request.fileId)
     )
     return result
@@ -221,7 +207,6 @@ describe('target naming', () => {
   const baseRequest = (dst: string): DownloadFileRequest => ({
     transferId: 't1',
     fileId: 'f1',
-    driveKey: 'a'.repeat(64),
     path: '/in.bin',
     name: 'in.bin',
     size: 64,
@@ -235,7 +220,7 @@ describe('target naming', () => {
     const dst = join(dir, 'out.bin')
     await writeFile(`${dst}.part`, new Uint8Array(999))
 
-    const result = await download(new TransferReceiver(unusableStore()), baseRequest(dst), src)
+    const result = await download(new TransferReceiver(), baseRequest(dst), src)
     expect(result.ok).toBe(true)
     expect(result.savedTo).toBe(dst)
     expect(Buffer.from(await readFile(dst))).toEqual(Buffer.from(new Uint8Array(64).fill(6)))
@@ -249,7 +234,7 @@ describe('target naming', () => {
     const dst = join(dir, 'out.bin')
     await writeFile(dst, 'PRE-EXISTING')
 
-    const result = await download(new TransferReceiver(unusableStore()), baseRequest(dst), src)
+    const result = await download(new TransferReceiver(), baseRequest(dst), src)
     expect(result.ok).toBe(true)
     expect(result.savedTo).toBe(join(dir, 'out (1).bin'))
     expect(await readFile(dst, 'utf8')).toBe('PRE-EXISTING')
@@ -265,7 +250,6 @@ describe('pausing a file that has not started yet', () => {
     const make = (id: string): DownloadFileRequest => ({
       transferId: 't1',
       fileId: id,
-      driveKey: 'a'.repeat(64),
       path: '/in.bin',
       name: `${id}.bin`,
       size: 4 * 1024 * 1024,
@@ -277,7 +261,7 @@ describe('pausing a file that has not started yet', () => {
     const receiverSide = PeerDrive.create(socketB)!
     await senderSide.supported
 
-    const receiver = new TransferReceiver(unusableStore())
+    const receiver = new TransferReceiver()
     const started: string[] = []
     const { callbacks } = collect()
     callbacks.onFileStart = (event) => {
@@ -293,7 +277,6 @@ describe('pausing a file that has not started yet', () => {
     const results = await receiver.downloadFiles(
       [make('f1'), make('f2')],
       callbacks,
-      undefined,
       async (file) => receiverSide.session(file.fileId)
     )
 

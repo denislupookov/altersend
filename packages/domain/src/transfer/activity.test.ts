@@ -17,7 +17,6 @@ const offer = (id: string, size = 1000): IncomingFileOffer => ({
   name: `${id}.bin`,
   path: `/files/${id}.bin`,
   size,
-  driveKey: 'drive-1',
   kind: 'file'
 })
 

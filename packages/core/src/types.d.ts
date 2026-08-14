@@ -39,71 +39,6 @@ declare module 'hyperdb' {
   export default HyperDB
 }
 
-declare module 'corestore' {
-  export default class Corestore {
-    constructor(storage: string)
-    namespace(name: string): Corestore
-    replicate(socket: unknown, opts?: { live?: boolean }): unknown
-    close(): Promise<void>
-  }
-}
-
-declare module 'hyperdrive' {
-  import Corestore from 'corestore'
-
-  export interface HyperdriveBlobInfo {
-    byteLength: number
-  }
-  export interface HyperdriveEntry {
-    value?: { blob?: HyperdriveBlobInfo } | null
-  }
-  export interface HyperdriveDownload {
-    done(): Promise<void>
-    destroy(): void
-  }
-
-  export default class Hyperdrive {
-    constructor(corestore: Corestore, key?: Uint8Array)
-    ready(): Promise<void>
-    readonly writable: boolean
-    readonly key: Uint8Array
-    readonly core?: { writable: boolean }
-    entry(path: string): Promise<HyperdriveEntry | null>
-    update(opts?: { wait?: boolean }): Promise<void>
-    close(): Promise<void>
-    download(path: string): HyperdriveDownload
-    // Returns a Readable (not just a ReadableStream) so callers can destroy() on abort.
-    createReadStream(path: string): import('stream').Readable
-  }
-}
-
-declare module 'localdrive' {
-  export interface LocaldriveBlobInfo {
-    byteLength: number
-  }
-  export interface LocaldriveEntry {
-    value?: { blob?: LocaldriveBlobInfo } | null
-  }
-
-  export default class Localdrive {
-    constructor(dir: string)
-    ready(): Promise<void>
-    entry(path: string): Promise<LocaldriveEntry | null>
-    close(): Promise<void>
-    createWriteStream(path: string): import('stream').Writable
-  }
-}
-
-declare module 'mirror-drive' {
-  interface DriveLike {
-    entry(path: string): Promise<unknown>
-  }
-  export default class MirrorDrive {
-    constructor(source: DriveLike, dest: DriveLike, opts?: { entries?: string[]; prune?: boolean })
-    done(): Promise<void>
-  }
-}
-
 declare module 'hyperswarm' {
   import { EventEmitter } from 'events'
 
@@ -225,6 +160,10 @@ declare module 'bare-fs' {
   interface MkdirOptions {
     recursive?: boolean
   }
+  interface Stats {
+    size: number
+    isFile(): boolean
+  }
 
   export function rmSync(path: string, opts?: RmOptions): void
   export function readFileSync(path: string, encoding: BufferEncoding): string
@@ -240,6 +179,7 @@ declare module 'bare-fs' {
     writeFile(path: string, data: string, encoding: BufferEncoding): Promise<void>
     rename(from: string, to: string): Promise<void>
     mkdir(path: string, opts?: MkdirOptions): Promise<void>
+    stat(path: string): Promise<Stats>
   }
 
   const _default: {

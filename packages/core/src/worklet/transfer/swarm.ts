@@ -20,8 +20,6 @@ export interface PeerSession {
 }
 
 export interface TransferSwarmCallbacks {
-  onReady: () => Promise<void>
-  onReplicate: (socket: PeerSocket) => void
   onPeerConnected: (session: PeerSession) => void
   onPeerDisconnected: (peerKey: string | null, remainingCount: number) => void
   onControlMessage: (message: PeerControlMessage, session: PeerSession) => void
@@ -79,10 +77,6 @@ export class TransferSwarm {
 
   private async handleConnection(socket: PeerSocket, info: PeerInfo): Promise<void> {
     const peerKey = b4a.toString(info.publicKey, 'hex')
-
-    await this.callbacks.onReady()
-
-    this.callbacks.onReplicate(socket)
 
     let session: PeerSession | null = null
     const controlChannel = PeerControlChannel.create(socket, (message) => {

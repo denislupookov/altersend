@@ -26,7 +26,6 @@ export type { DeviceSecretInit }
 export interface DownloadFileRequest {
   transferId: string
   fileId: string
-  driveKey: string
   path: string
   name?: string
   size?: number

@@ -563,7 +563,6 @@ export function createSingleDownloadRequest(
   return {
     transferId: file.transferId,
     fileId: file.id,
-    driveKey: file.driveKey,
     path: file.path,
     name: file.name,
     size: file.size,
@@ -581,7 +580,6 @@ export function createDirectoryDownloadRequests(
     .map((file) => ({
       transferId: file.transferId,
       fileId: file.id,
-      driveKey: file.driveKey,
       path: file.path,
       name: file.name,
       size: file.size,

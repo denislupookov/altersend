@@ -30,7 +30,6 @@ function offer(path: string, overrides: Partial<FileOffer> = {}): FileOffer {
     name,
     path,
     size: 100,
-    driveKey: 'd1',
     ...overrides
   }
 }

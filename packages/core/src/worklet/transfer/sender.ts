@@ -1,9 +1,6 @@
 import crypto from 'hypercore-crypto'
 import fs from 'bare-fs'
-import Localdrive from 'localdrive'
-import type Hyperdrive from 'hyperdrive'
-import { getDirname, getFileName, toRelativePath, toSafeFileName } from './utils'
-import { LegacyPeerStaging } from './legacy/staging'
+import { getFileName, toRelativePath, toSafeFileName } from './utils'
 import type { FileOffer } from './control-channel'
 
 export interface ScannedFile {
@@ -11,10 +8,8 @@ export interface ScannedFile {
   displayName: string
   inputPath: string
   sourcePath: string
-  sourceDrive: Localdrive
   size: number
   isTemporary?: boolean
-  alreadyStaged?: boolean
 }
 
 export interface ScanResult {
@@ -27,41 +22,34 @@ function createFileId(): string {
   return crypto.randomBytes(12).toString('hex')
 }
 
-function resolveSource(
+function resolveRelativePath(
   path: string,
   requestedRelativePath: string | undefined,
   fileName: string
-): { root: string; relativePath: string } {
+): string {
   const normalizedPath = path.replace(/\\/g, '/')
   const relativePath = toRelativePath(requestedRelativePath ?? fileName)
-  const suffix = `/${relativePath}`
 
-  if (relativePath && normalizedPath.endsWith(suffix)) {
-    return {
-      root: normalizedPath.slice(0, normalizedPath.length - suffix.length) || '/',
-      relativePath
-    }
+  if (relativePath && normalizedPath.endsWith(`/${relativePath}`)) return relativePath
+  return fileName
+}
+
+async function readableSize(path: string): Promise<number | null> {
+  try {
+    const stats = await fs.promises.stat(path)
+    return stats.isFile() ? stats.size : null
+  } catch (err) {
+    console.warn(`TransferSender: cannot stat ${path}`, err)
+    return null
   }
-
-  return { root: getDirname(path), relativePath: fileName }
 }
 
 export class TransferSender {
-  readonly legacy: LegacyPeerStaging
-  private readonly scanDrives: Set<Localdrive> = new Set()
   private readonly sourcePaths = new Map<string, string>()
   private readonly temporaryPaths = new Set<string>()
 
-  constructor(drive: Hyperdrive) {
-    this.legacy = new LegacyPeerStaging(drive)
-  }
-
   localPath(fileId: string): string | null {
     return this.sourcePaths.get(fileId) ?? null
-  }
-
-  get driveKey(): string {
-    return this.legacy.driveKey
   }
 
   async scanFiles(
@@ -71,52 +59,22 @@ export class TransferSender {
     const errors: string[] = []
     let totalBytes = 0
 
-    const driveByDir = new Map<string, Localdrive>()
-
     for (const req of requests) {
-      const path = req.path
-      const fileName = getFileName(path)
+      const fileName = getFileName(req.path)
       const displayName = req.name ? toSafeFileName(req.name, fileName) : fileName
-      const { root, relativePath } = resolveSource(path, req.relativePath, fileName)
-      const sourcePath = `/${relativePath}`
-      let sourceDrive = driveByDir.get(root)
-      if (!sourceDrive) {
-        sourceDrive = new Localdrive(root)
-        driveByDir.set(root, sourceDrive)
-        this.scanDrives.add(sourceDrive)
-        await sourceDrive.ready()
-      }
-      const entry = await sourceDrive.entry(sourcePath)
+      const size = await readableSize(req.path)
 
-      if (!entry?.value?.blob) {
-        const existingEntry = await this.legacy.stagedEntry(sourcePath)
-        if (existingEntry?.value?.blob) {
-          const size = existingEntry.value.blob.byteLength
-          totalBytes += size
-          files.push({
-            fileName,
-            displayName,
-            inputPath: path,
-            sourcePath,
-            sourceDrive,
-            size,
-            isTemporary: req.isTemporary,
-            alreadyStaged: true
-          })
-          continue
-        }
+      if (size === null) {
         errors.push(`Could not read file: ${fileName}`)
         continue
       }
 
-      const size = entry.value.blob.byteLength
       totalBytes += size
       files.push({
         fileName,
         displayName,
-        inputPath: path,
-        sourcePath,
-        sourceDrive,
+        inputPath: req.path,
+        sourcePath: `/${resolveRelativePath(req.path, req.relativePath, fileName)}`,
         size,
         isTemporary: req.isTemporary
       })
@@ -125,24 +83,10 @@ export class TransferSender {
     return { files, totalBytes, errors }
   }
 
-  async closeSourceDrives(): Promise<void> {
-    const drives = Array.from(this.scanDrives)
-    this.scanDrives.clear()
-    for (const drive of drives) {
-      try {
-        await drive.close()
-      } catch (err) {
-        console.warn('TransferSender: close source drive failed', err)
-      }
-    }
-  }
-
   buildOffers(files: ScannedFile[], transferId: string): FileOffer[] {
-    this.legacy.setPendingFiles(files)
-
     return files.map((file) => {
       const id = createFileId()
-      if (!file.alreadyStaged) this.sourcePaths.set(id, file.inputPath)
+      this.sourcePaths.set(id, file.inputPath)
       if (file.isTemporary) this.temporaryPaths.add(file.inputPath)
       return {
         id,
@@ -150,20 +94,13 @@ export class TransferSender {
         name: file.displayName,
         path: file.sourcePath,
         size: file.size,
-        driveKey: this.driveKey,
         kind: 'file'
       }
     })
   }
 
-  stageForLegacyPeers(onStaging: (file: ScannedFile) => void, signal?: AbortSignal): Promise<void> {
-    return this.legacy.stage(onStaging, () => this.closeSourceDrives(), signal)
-  }
-
   async reset(): Promise<void> {
     this.sourcePaths.clear()
-    this.legacy.reset()
-    await this.closeSourceDrives()
 
     const temporaries = Array.from(this.temporaryPaths)
     this.temporaryPaths.clear()

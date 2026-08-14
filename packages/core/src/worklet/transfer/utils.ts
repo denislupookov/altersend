@@ -109,16 +109,3 @@ export function onAbort(signal: AbortLike | undefined, abort: () => void): () =>
   signal.addEventListener('abort', abort)
   return () => signal.removeEventListener('abort', abort)
 }
-
-export function getChunkSize(chunk: unknown): number {
-  if (typeof chunk === 'string') return Buffer.byteLength(chunk)
-  if (
-    chunk &&
-    typeof chunk === 'object' &&
-    'byteLength' in chunk &&
-    typeof (chunk as { byteLength: unknown }).byteLength === 'number'
-  ) {
-    return (chunk as { byteLength: number }).byteLength
-  }
-  return 0
-}

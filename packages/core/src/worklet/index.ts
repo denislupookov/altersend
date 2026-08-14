@@ -82,7 +82,7 @@ if (relayKeyArg || relayEnabledArg) {
   })
 }
 
-const orchestrator = new TransferOrchestrator(sendTransferEvent, storageRoot, identityRoot, {
+const orchestrator = new TransferOrchestrator(sendTransferEvent, identityRoot, {
   displayName,
   deviceType
 })

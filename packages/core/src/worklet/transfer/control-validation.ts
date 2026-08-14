@@ -53,7 +53,6 @@ function isValidFileOffer(x: unknown): x is FileOffer {
     isSafeFileName(o.name) &&
     isBoundedString(o.path, MAX_PATH_LEN) &&
     isNonNegativeInteger(o.size) &&
-    isBoundedString(o.driveKey, MAX_ID_LEN) &&
     o.kind === 'file'
   )
 }
