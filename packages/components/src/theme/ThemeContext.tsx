@@ -43,6 +43,8 @@ function getFontThemeStyle(fontFamily: FontFamilyKey) {
   return fontThemeStyles[fontFamily] ?? fontThemeStyles[DEFAULT_FONT_FAMILY_KEY]
 }
 
+const THEME_ROOT_ID = 'as-theme-root'
+
 const FONT_CUSTOM_PROPERTIES = [
   '--as-font-family-sans',
   '--as-font-family-display',
@@ -145,6 +147,18 @@ export function ThemeProvider({
 
   useEffect(() => applyDocumentTheme(themeType), [themeType])
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+
+    const themeRoot = document.getElementById(THEME_ROOT_ID)
+    if (!themeRoot) return
+
+    const themeClasses = Array.from(themeRoot.classList)
+    document.body.classList.add(...themeClasses)
+
+    return () => document.body.classList.remove(...themeClasses)
+  }, [themeStyle, fontThemeStyle])
+
   const setThemePreference = (next: ThemePreference) => {
     setThemePreferenceState(next)
     onPreferenceChange?.(next)
@@ -163,6 +177,7 @@ export function ThemeProvider({
     >
       <html.div
         data-theme={themeType}
+        id={THEME_ROOT_ID}
         style={[themeStyle, fontThemeStyle, fontRootStyle] as unknown as HtmlDivStyle}
       >
         <html.div style={styles.root}>{children}</html.div>

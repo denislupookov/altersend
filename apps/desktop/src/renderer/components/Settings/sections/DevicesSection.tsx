@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { createPortal } from 'react-dom'
 import { Button, LinkRow, ListItem, useTheme } from '@altersend/components'
 import {
   ClipboardIcon,
@@ -168,50 +167,38 @@ export function DevicesSection() {
         </div>
       )}
 
-      {createPortal(
-        <PairingQrModal open={qrOpen} topic={pairingTopic} onClose={() => setQrOpen(false)} />,
-        document.body
-      )}
-      {createPortal(
-        <PairingJoinModal
-          open={joinOpen}
-          isLoading={isJoining || isJoinWaiting}
-          onClose={() => setJoinOpen(false)}
-          onJoin={join}
-        />,
-        document.body
-      )}
-      {createPortal(
-        <DeviceRenameModal
-          open={renameTarget !== null}
-          initialName={renameTarget?.name ?? ''}
-          onClose={() => setRenameTarget(null)}
-          onRename={async (name) => {
-            if (!renameTarget) return false
-            const renamed = await renamePeer(renameTarget.peerKey, name)
-            toast.show(
-              renamed
-                ? { title: t('settings:pairing.deviceRenamed') }
-                : { title: t('settings:pairing.renameFailed'), variant: 'error' }
-            )
-            return renamed
-          }}
-        />,
-        document.body
-      )}
-      {createPortal(
-        <ConfirmDialog
-          open={removeTarget !== null}
-          title={t('settings:pairing.removeConfirmTitle', { name: removeTarget?.name ?? '' })}
-          message={t('settings:pairing.removeConfirmMessage')}
-          confirmLabel={t('settings:pairing.removeDevice')}
-          cancelLabel={t('common:actions.cancel')}
-          destructive
-          onConfirm={removeDevice}
-          onCancel={() => setRemoveTarget(null)}
-        />,
-        document.body
-      )}
+      <PairingQrModal open={qrOpen} topic={pairingTopic} onClose={() => setQrOpen(false)} />
+      <PairingJoinModal
+        open={joinOpen}
+        isLoading={isJoining || isJoinWaiting}
+        onClose={() => setJoinOpen(false)}
+        onJoin={join}
+      />
+      <DeviceRenameModal
+        open={renameTarget !== null}
+        initialName={renameTarget?.name ?? ''}
+        onClose={() => setRenameTarget(null)}
+        onRename={async (name) => {
+          if (!renameTarget) return false
+          const renamed = await renamePeer(renameTarget.peerKey, name)
+          toast.show(
+            renamed
+              ? { title: t('settings:pairing.deviceRenamed') }
+              : { title: t('settings:pairing.renameFailed'), variant: 'error' }
+          )
+          return renamed
+        }}
+      />
+      <ConfirmDialog
+        open={removeTarget !== null}
+        title={t('settings:pairing.removeConfirmTitle', { name: removeTarget?.name ?? '' })}
+        message={t('settings:pairing.removeConfirmMessage')}
+        confirmLabel={t('settings:pairing.removeDevice')}
+        cancelLabel={t('common:actions.cancel')}
+        destructive
+        onConfirm={removeDevice}
+        onCancel={() => setRemoveTarget(null)}
+      />
     </SectionShell>
   )
 }
