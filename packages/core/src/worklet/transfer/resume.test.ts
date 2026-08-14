@@ -171,8 +171,11 @@ describe('command scheduling', () => {
   it('lets pause run without waiting, and queues transfers separately', async () => {
     const { runsWithoutWaiting, isFileTransfer } = await import('../rpc/server')
 
-    expect(runsWithoutWaiting('pauseDownload')).toBe(true)
     expect(isFileTransfer('downloadFiles')).toBe(true)
+
+    for (const method of ['pauseDownload', 'inviteDevice', 'respondToInvite'] as const) {
+      expect(runsWithoutWaiting(method)).toBe(true)
+    }
 
     for (const method of ['shareFiles', 'disconnect', 'closePeers', 'peersList'] as const) {
       expect(runsWithoutWaiting(method)).toBe(false)

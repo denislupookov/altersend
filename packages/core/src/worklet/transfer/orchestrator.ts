@@ -626,6 +626,7 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   abortInFlight(): void {
+    this.discovery.cancelWaiters()
     for (const session of this.swarm.sessions) session.drive?.cancel()
     for (const controller of this.inflight) controller.abort()
   }

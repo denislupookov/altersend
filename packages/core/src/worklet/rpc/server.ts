@@ -17,8 +17,15 @@ function toError(err: unknown) {
   return err instanceof Error ? err : new Error('Unknown worker error')
 }
 
+const IMMEDIATE_METHODS = new Set<TransferMethod>([
+  'pauseDownload',
+  'testCustomRelay',
+  'inviteDevice',
+  'respondToInvite'
+])
+
 export function runsWithoutWaiting(method: TransferMethod): boolean {
-  return method === 'pauseDownload' || method === 'testCustomRelay'
+  return IMMEDIATE_METHODS.has(method)
 }
 
 export function isFileTransfer(method: TransferMethod): boolean {

@@ -180,8 +180,7 @@ export class DiscoveryCoordinator {
     } catch {}
   }
 
-  async stop(): Promise<void> {
-    this.starting = null
+  cancelWaiters(): void {
     for (const waiters of this.sessionWaiters.values()) {
       for (const waiter of waiters) {
         clearTimeout(waiter.timer)
@@ -189,6 +188,11 @@ export class DiscoveryCoordinator {
       }
     }
     this.sessionWaiters.clear()
+  }
+
+  async stop(): Promise<void> {
+    this.starting = null
+    this.cancelWaiters()
     for (const { socket } of this.sessions.values()) {
       try {
         socket.destroy()

@@ -174,6 +174,19 @@ describe('DiscoveryCoordinator', () => {
     }
   })
 
+  it('cancelWaiters() resolves pending invites without tearing down the swarm', async () => {
+    const peer = makePeer()
+    const { coordinator, destroy } = setup([peer])
+    await coordinator.start()
+
+    const invitePromise = coordinator.invite(peer.remoteDevicePubkey, hex(crypto.randomBytes(32)))
+    await flush()
+
+    coordinator.cancelWaiters()
+    expect(await invitePromise).toEqual({ delivered: false })
+    expect(destroy).not.toHaveBeenCalled()
+  })
+
   it('stop() drains pending invites and tears down the swarm', async () => {
     const peer = makePeer()
     const { coordinator, destroy } = setup([peer])
