@@ -29,6 +29,7 @@ export interface RelaySettingsCardProps {
   errorText?: string
   successText?: string
   pasteAction?: ReactNode
+  onOpenSetupGuide?(): void
   autoCapitalize?: InputProps['autoCapitalize']
   autoComplete?: InputProps['autoComplete']
   spellCheck?: InputProps['spellCheck']

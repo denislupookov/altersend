@@ -36,7 +36,7 @@
       "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
       "invalid": "Eso no parece un código de relé",
       "failed": "No se pudo aplicar el relé; inténtalo de nuevo",
-      "description": "Se muestra al iniciar tu relé. Configúralo en cada dispositivo con el que transfieras.",
+      "description": "Tu relé muestra un código al iniciarse.",
       "fallback": {
         "title": "Respaldo",
         "stay": {
@@ -51,7 +51,8 @@
       "testOk": "Relé accesible ({{ms}} ms)",
       "apply": "Guardar y probar",
       "unreachable": "No se pudo conectar con el relé",
-      "clear": "Quitar relé"
+      "clear": "Quitar relé",
+      "setupGuide": "Cómo configurar uno"
     }
   },
   "rows": {

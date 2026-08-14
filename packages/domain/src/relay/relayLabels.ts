@@ -17,6 +17,7 @@ export interface RelaySettingsLabels {
   fallbackTitle: string
   fallbackStay: RelayModeLabel
   fallbackAltersend: RelayModeLabel
+  setupGuide: string
   commitFailed: string
 }
 
@@ -47,6 +48,7 @@ export function relaySettingsLabels(t: Translate): RelaySettingsLabels {
       label: t('settings:relay.selfhost.fallback.altersend.label'),
       caption: t('settings:relay.selfhost.fallback.altersend.caption')
     },
+    setupGuide: t('settings:relay.selfhost.setupGuide'),
     commitFailed: t('settings:relay.selfhost.failed')
   }
 }

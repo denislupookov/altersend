@@ -36,7 +36,7 @@
       "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
       "invalid": "That doesn't look like a relay code",
       "failed": "Couldn't apply the relay — try again",
-      "description": "Printed when your relay starts. Set it on every device you transfer with.",
+      "description": "Your relay prints a code when it starts.",
       "fallback": {
         "title": "Fallback",
         "stay": {
@@ -51,7 +51,8 @@
       "testOk": "Relay reachable ({{ms}} ms)",
       "apply": "Save and test",
       "unreachable": "Couldn't reach the relay",
-      "clear": "Remove relay"
+      "clear": "Remove relay",
+      "setupGuide": "How to set one up"
     }
   },
   "rows": {

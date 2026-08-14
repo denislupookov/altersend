@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Linking } from 'react-native'
 import { Button, RelaySettingsCard } from '@altersend/components'
 import { ClipboardIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
@@ -6,6 +7,7 @@ import {
   relayErrorText,
   relaySettingsLabels,
   relayTestText,
+  selfHostSetupUrl,
   useRelaySettings
 } from '@altersend/domain'
 import { Layout } from '@/src/components'
@@ -36,6 +38,11 @@ export default function ConnectionScreen() {
         spellCheck={false}
         errorText={relayErrorText(t, form.error)}
         successText={relayTestText(t, form.testState, form.testMs)}
+        onOpenSetupGuide={() => {
+          Linking.openURL(selfHostSetupUrl).catch((err: unknown) => {
+            console.warn('[relay] could not open setup guide', err)
+          })
+        }}
         pasteAction={
           <Button
             variant='ghost'

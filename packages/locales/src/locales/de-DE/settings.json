@@ -36,7 +36,7 @@
       "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
       "invalid": "Das sieht nicht nach einem Relay-Code aus",
       "failed": "Relay konnte nicht übernommen werden – bitte erneut versuchen",
-      "description": "Wird beim Start deines Relays angezeigt. Richte es auf jedem Gerät ein, mit dem du überträgst.",
+      "description": "Dein Relay zeigt beim Start einen Code an.",
       "fallback": {
         "title": "Ausweichverhalten",
         "stay": {
@@ -51,7 +51,8 @@
       "testOk": "Relay erreichbar ({{ms}} ms)",
       "apply": "Speichern und testen",
       "unreachable": "Relay nicht erreichbar",
-      "clear": "Relay entfernen"
+      "clear": "Relay entfernen",
+      "setupGuide": "So richtest du eins ein"
     }
   },
   "rows": {

@@ -5,6 +5,7 @@ import {
   relayErrorText,
   relaySettingsLabels,
   relayTestText,
+  selfHostSetupUrl,
   useRelaySettings
 } from '@altersend/domain'
 import { bridgeApi } from '../../../api/bridgeApi'
@@ -28,6 +29,11 @@ export function ConnectionSection() {
         labels={labels}
         errorText={relayErrorText(t, form.error)}
         successText={relayTestText(t, form.testState, form.testMs)}
+        onOpenSetupGuide={() => {
+          bridgeApi.openExternalUrl(selfHostSetupUrl).catch((err: unknown) => {
+            console.warn('[relay] could not open setup guide', err)
+          })
+        }}
       />
     </SectionShell>
   )

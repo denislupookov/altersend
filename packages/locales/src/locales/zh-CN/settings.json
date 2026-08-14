@@ -36,7 +36,7 @@
       "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
       "invalid": "这看起来不像中继代码",
       "failed": "无法应用中继，请重试",
-      "description": "在中继启动时显示。在每台参与传输的设备上都进行设置。",
+      "description": "中继启动时会显示一个代码。",
       "fallback": {
         "title": "备用方案",
         "stay": {
@@ -51,7 +51,8 @@
       "testOk": "中继可达（{{ms}} ms）",
       "apply": "保存并测试",
       "unreachable": "无法连接到中继",
-      "clear": "移除中继"
+      "clear": "移除中继",
+      "setupGuide": "如何搭建"
     }
   },
   "rows": {

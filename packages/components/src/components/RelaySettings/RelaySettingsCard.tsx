@@ -2,6 +2,7 @@ import { html } from 'react-strict-dom'
 import { CloseIcon, SendIcon } from '../../icons'
 import { Button } from '../Button'
 import { Input } from '../Input'
+import { ExternalLink } from '../ExternalLink'
 import { RadioGroup } from '../Radio'
 import type { RadioOption } from '../Radio'
 import { styles } from './styles'
@@ -18,6 +19,7 @@ export function RelaySettingsCard({
   errorText,
   successText,
   pasteAction,
+  onOpenSetupGuide,
   autoCapitalize,
   autoComplete,
   spellCheck,
@@ -72,7 +74,15 @@ export function RelaySettingsCard({
   const customPanel = (
     <>
       <html.p style={styles.title}>{labels.selfhostTitle}</html.p>
-      <html.p style={styles.description}>{labels.selfhostDescription}</html.p>
+      <html.p style={styles.description}>
+        {labels.selfhostDescription}
+        {onOpenSetupGuide ? (
+          <>
+            {' '}
+            <ExternalLink onPress={onOpenSetupGuide}>{labels.setupGuide}</ExternalLink>
+          </>
+        ) : null}
+      </html.p>
       <html.div style={styles.field}>
         <Input
           mono

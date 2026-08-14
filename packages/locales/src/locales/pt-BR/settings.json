@@ -36,7 +36,7 @@
       "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
       "invalid": "Isso não parece um código de retransmissor",
       "failed": "Não foi possível aplicar o retransmissor — tente novamente",
-      "description": "Exibido quando seu retransmissor inicia. Configure-o em cada dispositivo com o qual você transfere.",
+      "description": "Seu retransmissor mostra um código ao iniciar.",
       "fallback": {
         "title": "Reserva",
         "stay": {
@@ -51,7 +51,8 @@
       "testOk": "Retransmissor acessível ({{ms}} ms)",
       "apply": "Salvar e testar",
       "unreachable": "Não foi possível conectar ao retransmissor",
-      "clear": "Remover retransmissor"
+      "clear": "Remover retransmissor",
+      "setupGuide": "Como configurar um"
     }
   },
   "rows": {
