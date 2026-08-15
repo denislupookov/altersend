@@ -75,6 +75,35 @@
     "updateNow": "Update now",
     "notNow": "Not now"
   },
+  "whatsNew": {
+    "heading": "What's new in AlterSend {{version}}",
+    "subtitle_one": "One thing worth knowing.",
+    "subtitle_other": "{{count}} things worth knowing.",
+    "releases": {
+      "v2_0_0": {
+        "pro": {
+          "title": "Pro plan",
+          "description": "Unlimited relayed transfers, no account."
+        },
+        "relay": {
+          "title": "Custom relay",
+          "description": "Route through a relay you host yourself."
+        },
+        "background": {
+          "title": "Background transfers",
+          "description": "Keeps sending after you leave the app."
+        },
+        "share": {
+          "title": "Share from any app",
+          "description": "Send straight from the system share menu."
+        },
+        "lightMode": {
+          "title": "Light theme",
+          "description": "Follows your system, or pin it in Settings."
+        }
+      }
+    }
+  },
   "status": {
     "connected": "Connected",
     "wantsToSend": "wants to send you {{label}}{{size}}",

@@ -75,6 +75,35 @@
     "updateNow": "Jetzt aktualisieren",
     "notNow": "Später"
   },
+  "whatsNew": {
+    "heading": "Neu in AlterSend {{version}}",
+    "subtitle_one": "Eine Sache, die du wissen solltest.",
+    "subtitle_other": "{{count}} Dinge, die du wissen solltest.",
+    "releases": {
+      "v2_0_0": {
+        "pro": {
+          "title": "Pro-Abo",
+          "description": "Unbegrenzte Relay-Übertragungen, ohne Konto."
+        },
+        "relay": {
+          "title": "Eigenes Relay",
+          "description": "Über ein Relay laufen, das du selbst betreibst."
+        },
+        "background": {
+          "title": "Übertragungen im Hintergrund",
+          "description": "Sendet weiter, auch wenn du die App verlässt."
+        },
+        "share": {
+          "title": "Teilen aus jeder App",
+          "description": "Direkt aus dem Teilen-Menü des Systems senden."
+        },
+        "lightMode": {
+          "title": "Helles Design",
+          "description": "Folgt dem System oder wird fest eingestellt."
+        }
+      }
+    }
+  },
   "status": {
     "connected": "Verbunden",
     "wantsToSend": "möchte dir {{label}}{{size}} senden",

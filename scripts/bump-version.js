@@ -21,7 +21,7 @@ const packages = [
   'packages/locales/package.json',
   'packages/domain/package.json',
   'packages/components/package.json',
-  'packages/drive/package.json',
+  'packages/drive/package.json'
 ]
 
 const internalPackages = [
@@ -29,7 +29,7 @@ const internalPackages = [
   '@altersend/locales',
   '@altersend/domain',
   '@altersend/components',
-  '@altersend/drive',
+  '@altersend/drive'
 ]
 
 for (const rel of packages) {
@@ -58,5 +58,12 @@ console.log('bumped apps/mobile/app.json')
 // Sync package-lock.json so `npm ci` (CI) stays in lockstep with the new versions.
 console.log('updating package-lock.json…')
 execSync('npm install --package-lock-only', { cwd: root, stdio: 'inherit' })
+
+const releaseNotesPath = resolve(root, 'packages/domain/src/whatsNew/releaseNotes.ts')
+if (!readFileSync(releaseNotesPath, 'utf8').includes(`version: '${version}'`)) {
+  console.warn(
+    `\nwarning: no What's New entry for ${version} — add one in packages/domain/src/whatsNew/releaseNotes.ts or the update ships silently`
+  )
+}
 
 console.log(`\nversion → ${version}`)

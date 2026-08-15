@@ -75,6 +75,35 @@
     "updateNow": "Aggiorna ora",
     "notNow": "Non ora"
   },
+  "whatsNew": {
+    "heading": "Novità di AlterSend {{version}}",
+    "subtitle_one": "Una cosa da sapere.",
+    "subtitle_other": "{{count}} cose da sapere.",
+    "releases": {
+      "v2_0_0": {
+        "pro": {
+          "title": "Piano Pro",
+          "description": "Trasferimenti via relay illimitati, senza account."
+        },
+        "relay": {
+          "title": "Relay personalizzato",
+          "description": "Passa da un relay ospitato da te."
+        },
+        "background": {
+          "title": "Trasferimenti in background",
+          "description": "Continua anche se esci dall'app."
+        },
+        "share": {
+          "title": "Condivisione da altre app",
+          "description": "Invia dal menu di condivisione del sistema."
+        },
+        "lightMode": {
+          "title": "Tema chiaro",
+          "description": "Segue il sistema, o lo fissi nelle impostazioni."
+        }
+      }
+    }
+  },
   "status": {
     "connected": "Connesso",
     "wantsToSend": "vuole inviarti {{label}}{{size}}",

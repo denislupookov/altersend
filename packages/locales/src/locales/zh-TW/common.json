@@ -75,6 +75,35 @@
     "updateNow": "立即更新",
     "notNow": "稍後再說"
   },
+  "whatsNew": {
+    "heading": "AlterSend {{version}} 全新功能",
+    "subtitle_one": "有 1 件事值得了解。",
+    "subtitle_other": "有 {{count}} 件事值得了解。",
+    "releases": {
+      "v2_0_0": {
+        "pro": {
+          "title": "Pro 方案",
+          "description": "中繼傳輸不限量，不需帳號。"
+        },
+        "relay": {
+          "title": "自訂中繼",
+          "description": "經由你自行運行的中繼。"
+        },
+        "background": {
+          "title": "背景傳輸",
+          "description": "離開應用程式後仍繼續傳送。"
+        },
+        "share": {
+          "title": "從任何應用程式分享",
+          "description": "直接從系統分享選單傳送。"
+        },
+        "lightMode": {
+          "title": "淺色主題",
+          "description": "跟隨系統，也可在設定中固定。"
+        }
+      }
+    }
+  },
   "status": {
     "connected": "已連線",
     "wantsToSend": "想要傳送 {{label}}{{size}} 給你",

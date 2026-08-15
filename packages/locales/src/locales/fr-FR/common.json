@@ -75,6 +75,35 @@
     "updateNow": "Mettre à jour",
     "notNow": "Plus tard"
   },
+  "whatsNew": {
+    "heading": "Nouveautés d'AlterSend {{version}}",
+    "subtitle_one": "Une chose à savoir.",
+    "subtitle_other": "{{count}} choses à savoir.",
+    "releases": {
+      "v2_0_0": {
+        "pro": {
+          "title": "Abonnement Pro",
+          "description": "Transferts relayés illimités, sans compte."
+        },
+        "relay": {
+          "title": "Relais personnalisé",
+          "description": "Passez par un relais que vous hébergez."
+        },
+        "background": {
+          "title": "Transferts en arrière-plan",
+          "description": "Continue même après avoir quitté l'app."
+        },
+        "share": {
+          "title": "Partage depuis toute app",
+          "description": "Envoyez depuis le menu de partage du système."
+        },
+        "lightMode": {
+          "title": "Thème clair",
+          "description": "Suit le système, ou fixez-le dans les réglages."
+        }
+      }
+    }
+  },
   "status": {
     "connected": "Connecté",
     "wantsToSend": "veut vous envoyer {{label}}{{size}}",

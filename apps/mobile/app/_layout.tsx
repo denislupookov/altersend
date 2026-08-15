@@ -12,7 +12,8 @@ import {
   startDownloadRetryEffect,
   startPeerWatchdog,
   useSimulatedLoading,
-  useSubscriptionStore
+  useSubscriptionStore,
+  useWhatsNew
 } from '@altersend/domain'
 import {
   getLocaleFontFamily,
@@ -21,6 +22,7 @@ import {
   resolveLocalePreference,
   useTranslation
 } from '@altersend/locales'
+import Constants from 'expo-constants'
 import { Stack } from 'expo-router'
 import { Platform, StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
@@ -46,9 +48,11 @@ import {
   setSavedThemePreference
 } from '../src/lifecycle/themePreferenceStorage'
 import { isRelayEnabled } from '../src/lifecycle/relayStorage'
+import { whatsNewStorage } from '../src/lifecycle/whatsNewStorage'
+import { isOnboardingCompleted } from '../src/onboarding/onboardingStorage'
 import { startAccountSync, syncAccountToken } from '../src/lifecycle/account'
 import { watchEntitlement } from '../src/lifecycle/purchases'
-import { UpgradeButton } from '@/src/components'
+import { UpgradeButton, WhatsNewModal } from '@/src/components'
 import { getMobileSystemLocales } from '../src/lifecycle/systemLocale'
 import { ShareIntentHandler } from '../src/lifecycle/ShareIntentHandler'
 import { startDownloadRoutingEffect } from '../src/transfer/receive'
@@ -216,6 +220,11 @@ function AppShell() {
   const language = i18n.resolvedLanguage ?? i18n.language
   const locale = isSupportedLocaleCode(language) ? language : 'en-US'
   const fontFamily = getLocaleFontFamily(locale)
+  const whatsNew = useWhatsNew({
+    version: Constants.expoConfig?.version ?? '',
+    storage: whatsNewStorage,
+    isReturningUser: isOnboardingCompleted
+  })
 
   return (
     <SafeAreaProvider>
@@ -237,6 +246,11 @@ function AppShell() {
                 <ThemedStack />
                 <DeepLinkGate />
                 <UpdateBanner />
+                <WhatsNewModal
+                  open={whatsNew.release !== null}
+                  release={whatsNew.release}
+                  onClose={whatsNew.dismiss}
+                />
                 <PairRequestBanner />
                 <InviteBanner />
               </AccountProvider>

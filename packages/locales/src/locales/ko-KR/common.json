@@ -75,6 +75,35 @@
     "updateNow": "지금 업데이트",
     "notNow": "나중에"
   },
+  "whatsNew": {
+    "heading": "AlterSend {{version}}의 새로운 기능",
+    "subtitle_one": "알아 두면 좋은 한 가지.",
+    "subtitle_other": "알아 두면 좋은 {{count}}가지.",
+    "releases": {
+      "v2_0_0": {
+        "pro": {
+          "title": "Pro 요금제",
+          "description": "릴레이 전송 무제한, 계정 없이."
+        },
+        "relay": {
+          "title": "사용자 릴레이",
+          "description": "직접 운영하는 릴레이를 거칩니다."
+        },
+        "background": {
+          "title": "백그라운드 전송",
+          "description": "앱을 나가도 계속 전송합니다."
+        },
+        "share": {
+          "title": "다른 앱에서 공유",
+          "description": "시스템 공유 메뉴에서 바로 보냅니다."
+        },
+        "lightMode": {
+          "title": "라이트 테마",
+          "description": "시스템을 따르거나 설정에서 고정합니다."
+        }
+      }
+    }
+  },
   "status": {
     "connected": "연결됨",
     "wantsToSend": "님이 {{label}}{{size}}을 보내려고 합니다",

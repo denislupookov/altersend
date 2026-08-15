@@ -5,7 +5,8 @@ import {
   getLeaveSessionMessage,
   joinSession,
   useSimulatedLoading,
-  useTransferStore
+  useTransferStore,
+  useWhatsNew
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi, hasBridge } from './api/bridgeApi'
@@ -14,11 +15,13 @@ import {
   InviteBanner,
   PairRequestBanner,
   ToastProvider,
-  UpdateBanner
+  UpdateBanner,
+  WhatsNewModal
 } from './components'
 import { isOnboardingCompleted, markOnboardingCompleted } from './lifecycle/onboardingStorage'
 import { useExternalFiles } from './lifecycle/useExternalFiles'
 import { useUpdateReady } from './lifecycle/useUpdateReady'
+import { whatsNewStorage } from './lifecycle/whatsNewStorage'
 import { BridgeUnavailablePage, LoadingPage, OnboardingPage, TransferPage } from './pages'
 
 type TransferTab = 'send' | 'receive'
@@ -34,9 +37,15 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingCompleted())
   const [activeTab, setActiveTab] = useState<TransferTab>('send')
   const [pendingSwitch, setPendingSwitch] = useState<PendingTabSwitch | null>(null)
+  const [version] = useState(() => (hasBridge() ? bridgeApi.pkg().version : ''))
   const progress = useSimulatedLoading()
   const role = useTransferStore((s) => s.role)
   const updateReady = useUpdateReady()
+  const whatsNew = useWhatsNew({
+    version,
+    storage: whatsNewStorage,
+    isReturningUser: isOnboardingCompleted
+  })
   const externalFiles = useExternalFiles(() => setActiveTab('send'))
 
   const switchTab = (next: TransferTab, onSwitched?: () => void): void => {
@@ -69,8 +78,6 @@ export default function App() {
     return <BridgeUnavailablePage />
   }
 
-  const version = bridgeApi.pkg().version
-
   if (showOnboarding) {
     return (
       <>
@@ -98,6 +105,12 @@ export default function App() {
         }}
       />
       <UpdateBanner ready={updateReady} />
+      <WhatsNewModal
+        open={whatsNew.release !== null && !updateReady}
+        release={whatsNew.release}
+        version={version}
+        onClose={whatsNew.dismiss}
+      />
       <ConfirmDialog
         open={pendingSwitch !== null}
         title={t('common:actions.endSession')}

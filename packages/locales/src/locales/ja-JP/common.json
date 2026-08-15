@@ -75,6 +75,35 @@
     "updateNow": "今すぐ更新",
     "notNow": "後で"
   },
+  "whatsNew": {
+    "heading": "AlterSend {{version}} の新機能",
+    "subtitle_one": "知っておきたいことが 1 つ。",
+    "subtitle_other": "知っておきたいことが {{count}} つ。",
+    "releases": {
+      "v2_0_0": {
+        "pro": {
+          "title": "Pro プラン",
+          "description": "リレー転送が無制限、アカウント不要。"
+        },
+        "relay": {
+          "title": "カスタムリレー",
+          "description": "自分で運用するリレーを経由できます。"
+        },
+        "background": {
+          "title": "バックグラウンド転送",
+          "description": "アプリを離れても送信を続けます。"
+        },
+        "share": {
+          "title": "どのアプリからでも共有",
+          "description": "システムの共有メニューからそのまま送信。"
+        },
+        "lightMode": {
+          "title": "ライトテーマ",
+          "description": "システムに追従し、設定で固定も可能。"
+        }
+      }
+    }
+  },
   "status": {
     "connected": "接続済み",
     "wantsToSend": "が{{label}}{{size}}を送信しようとしています",

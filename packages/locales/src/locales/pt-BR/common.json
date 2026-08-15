@@ -75,6 +75,35 @@
     "updateNow": "Atualizar agora",
     "notNow": "Agora não"
   },
+  "whatsNew": {
+    "heading": "Novidades do AlterSend {{version}}",
+    "subtitle_one": "Uma coisa para saber.",
+    "subtitle_other": "{{count}} coisas para saber.",
+    "releases": {
+      "v2_0_0": {
+        "pro": {
+          "title": "Plano Pro",
+          "description": "Transferências por relay ilimitadas, sem conta."
+        },
+        "relay": {
+          "title": "Relay próprio",
+          "description": "Passe por um relay hospedado por você."
+        },
+        "background": {
+          "title": "Transferências em segundo plano",
+          "description": "Continua enviando mesmo se você sair do app."
+        },
+        "share": {
+          "title": "Compartilhar de qualquer app",
+          "description": "Envie pelo menu de compartilhamento do sistema."
+        },
+        "lightMode": {
+          "title": "Tema claro",
+          "description": "Segue o sistema, ou você fixa nas configurações."
+        }
+      }
+    }
+  },
   "status": {
     "connected": "Conectado",
     "wantsToSend": "quer enviar {{label}}{{size}} para você",

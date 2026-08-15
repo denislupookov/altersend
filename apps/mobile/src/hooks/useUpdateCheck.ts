@@ -1,6 +1,7 @@
 import Constants from 'expo-constants'
 import { Directory, File, Paths } from 'expo-file-system'
 import { useCallback, useEffect, useState } from 'react'
+import { isNewerVersion } from '@altersend/domain'
 
 const CACHE_DIR = 'altersend'
 const CACHE_FILE = 'update-check.json'
@@ -12,23 +13,6 @@ interface CacheEntry {
   version: string
   fetchedAt: number
   dismissedVersion?: string
-}
-
-function parseParts(version: string): number[] {
-  return version
-    .replace(/[^0-9.]/g, '')
-    .split('.')
-    .map(Number)
-}
-
-function isNewer(current: string, latest: string): boolean {
-  const cur = parseParts(current)
-  const lat = parseParts(latest)
-  for (let i = 0; i < Math.max(cur.length, lat.length); i++) {
-    if ((lat[i] ?? 0) > (cur[i] ?? 0)) return true
-    if ((lat[i] ?? 0) < (cur[i] ?? 0)) return false
-  }
-  return false
 }
 
 function getCacheFile(): File | null {
@@ -130,7 +114,7 @@ export function useUpdateCheck(): { needsUpdate: boolean; dismiss: () => void } 
     !!current &&
     !!entry &&
     entry.dismissedVersion !== entry.version &&
-    isNewer(current, entry.version)
+    isNewerVersion(entry.version, current)
 
   return { needsUpdate, dismiss }
 }
