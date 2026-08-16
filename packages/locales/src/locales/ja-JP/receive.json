@@ -23,12 +23,13 @@
     },
     "reconnecting": {
       "title": "再接続中",
-      "description": "セッションに再接続しています。リンクが復旧するとファイルを再び利用できます。",
-      "panelDescription": "接続が切れました。セッションに再参加しています…"
+      "description": "セッションに再接続しています。リンクが復旧するとファイルを再び利用できます。"
     },
     "interrupted": {
-      "title": "転送未完了",
-      "description": "すべてのファイルが届く前に送信側が退出しました。"
+      "title": "転送未完了"
+    },
+    "senderEnded": {
+      "title": "セッション終了"
     },
     "handshake": {
       "title": "接続処理中",
@@ -135,7 +136,6 @@
     "saved": "保存済み",
     "savedToLocation": "{{location}} に保存済み",
     "receivedProgress": "{{count}} 個中 {{completed}} 個受信済み",
-    "senderLeftBeforeFinishing": "完了前に送信者が退出しました。",
     "filesSaved_one": "{{count}} 個のファイルを保存済み",
     "filesSaved_other": "{{count}} 個のファイルを保存済み"
   }

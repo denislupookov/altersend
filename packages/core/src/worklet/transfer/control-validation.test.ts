@@ -265,6 +265,13 @@ describe('isValidControlMessage', () => {
     })
   })
 
+  describe('session-end', () => {
+    it('accepts a bare goodbye on the current protocol only', () => {
+      expect(isValidControlMessage({ ...base, type: 'session-end' })).toBe(true)
+      expect(isValidControlMessage({ protocolVersion: 0, type: 'session-end' })).toBe(false)
+    })
+  })
+
   describe('challenge / auth', () => {
     const nonce = 'ab'.repeat(32)
     const proof = 'cd'.repeat(32)

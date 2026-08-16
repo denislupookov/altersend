@@ -34,6 +34,7 @@ export interface DownloadRowProps {
   rateLabelFor: (rate: TransferRate | undefined) => string | undefined
   labelsFor: (display: DownloadRowDisplay) => DownloadRowLabels
   transferActive: boolean
+  inert?: boolean
   isFirst?: boolean
   compact?: boolean
   standalone?: boolean
@@ -53,6 +54,7 @@ type RowPresentation = Pick<
   | 'rateLabelFor'
   | 'labelsFor'
   | 'transferActive'
+  | 'inert'
   | 'isFirst'
   | 'compact'
   | 'standalone'
@@ -100,6 +102,7 @@ function FileRow({
   rateLabelFor,
   labelsFor,
   transferActive,
+  inert = false,
   isFirst = false,
   compact = false,
   standalone = false,
@@ -111,7 +114,8 @@ function FileRow({
   const state = states[key]
   const display = getDownloadRowDisplay(offer, state, transferActive, rateLabelFor(rates[key]))
   const labels = labelsFor(display)
-  const action = getDownloadRowAction(display, state)
+  const rowAction = getDownloadRowAction(display, state)
+  const action = inert && rowAction?.kind !== 'open' ? null : rowAction
 
   return (
     <LinkRow
@@ -145,6 +149,7 @@ function FolderRow({
   rateLabelFor,
   labelsFor,
   transferActive,
+  inert = false,
   isFirst = false,
   compact = false,
   standalone = false,
@@ -162,7 +167,7 @@ function FolderRow({
     rateLabelFor(getFolderTransferRate(folder.offers, states, rates))
   )
   const labels = labelsFor(display)
-  const action = getFolderRowAction(folder.offers, states)
+  const action = inert ? null : getFolderRowAction(folder.offers, states)
 
   return (
     <>
@@ -208,6 +213,7 @@ function FolderRow({
               rateLabelFor={rateLabelFor}
               labelsFor={labelsFor}
               transferActive={transferActive}
+              inert={inert}
               onResume={onResume}
               onPause={onPause}
               onOpen={onOpen}

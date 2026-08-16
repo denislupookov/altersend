@@ -23,12 +23,13 @@
     },
     "reconnecting": {
       "title": "Reconnecting",
-      "description": "Reconnecting to the session. Files will be available again as soon as the link is restored.",
-      "panelDescription": "Connection dropped. Rejoining the session…"
+      "description": "Reconnecting to the session. Files will be available again as soon as the link is restored."
     },
     "interrupted": {
-      "title": "Transfer incomplete",
-      "description": "The sender left before all files arrived."
+      "title": "Transfer incomplete"
+    },
+    "senderEnded": {
+      "title": "Session ended"
     },
     "handshake": {
       "title": "Connection in progress",
@@ -135,7 +136,6 @@
     "saved": "saved",
     "savedToLocation": "saved to {{location}}",
     "receivedProgress": "{{completed}} of {{count}} received",
-    "senderLeftBeforeFinishing": "The sender left before finishing.",
     "filesSaved_one": "{{count}} file saved",
     "filesSaved_other": "{{count}} files saved"
   }

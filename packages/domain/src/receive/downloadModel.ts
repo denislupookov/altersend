@@ -618,11 +618,13 @@ export function getPrimaryDownloadLabel(
 
 export function getDownloadRowLabels(
   t: (key: string, vars?: Record<string, unknown>) => string,
-  row: DownloadRowDisplay
+  row: DownloadRowDisplay,
+  pendingLabel?: string
 ): DownloadRowLabels {
   const key = getDownloadStatusKey(row)
+  const status = pendingLabel && !row.isCompleted ? pendingLabel : undefined
   return {
-    status: key ? t(key, { percent: row.percent }) : undefined,
+    status: status ?? (key ? t(key, { percent: row.percent }) : undefined),
     resume: t('receive:actions.resume'),
     pause: t('receive:actions.stop'),
     open: t('receive:actions.open')

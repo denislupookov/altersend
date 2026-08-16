@@ -8,6 +8,7 @@ import {
   getFolderTransferRate,
   getDownloadRowAction,
   getDownloadRowDisplay,
+  getDownloadRowLabels,
   getActiveDownloadProgress,
   isResumable,
   canStopDownload,
@@ -632,5 +633,21 @@ describe('getFolderTransferRate', () => {
     )
     expect(rate.bytesPerSecond).toBe(100)
     expect(rate.etaSeconds).toBe(1)
+  })
+})
+
+describe('getDownloadRowLabels', () => {
+  const t = (key: string) => key
+
+  it('applies the pending label to everything except a saved file', () => {
+    const paused = getDownloadRowDisplay(offer('/a.png'), {
+      status: 'failed',
+      bytesTransferred: 40,
+      totalBytes: 100,
+      resumable: true
+    })
+    const saved = getDownloadRowDisplay(offer('/a.png'), state('completed', 100))
+    expect(getDownloadRowLabels(t, paused, "Didn't arrive").status).toBe("Didn't arrive")
+    expect(getDownloadRowLabels(t, saved, "Didn't arrive").status).toBe('receive:status.saved')
   })
 })

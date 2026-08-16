@@ -23,12 +23,13 @@
     },
     "reconnecting": {
       "title": "Reconnexion",
-      "description": "Reconnexion à la session. Les fichiers seront à nouveau disponibles dès que le lien sera rétabli.",
-      "panelDescription": "Connexion interrompue. Reconnexion à la session…"
+      "description": "Reconnexion à la session. Les fichiers seront à nouveau disponibles dès que le lien sera rétabli."
     },
     "interrupted": {
-      "title": "Transfert incomplet",
-      "description": "L'expéditeur est parti avant l'arrivée de tous les fichiers."
+      "title": "Transfert incomplet"
+    },
+    "senderEnded": {
+      "title": "Séance terminée"
     },
     "handshake": {
       "title": "Connexion en cours",
@@ -135,7 +136,6 @@
     "saved": "enregistré",
     "savedToLocation": "enregistré dans {{location}}",
     "receivedProgress": "{{completed}} sur {{count}} reçus",
-    "senderLeftBeforeFinishing": "L'expéditeur est parti avant la fin.",
     "filesSaved_one": "{{count}} fichier enregistré",
     "filesSaved_other": "{{count}} fichiers enregistrés"
   }

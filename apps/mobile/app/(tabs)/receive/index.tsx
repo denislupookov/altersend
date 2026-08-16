@@ -7,6 +7,7 @@ import {
   getDisplayError,
   getReceivePageCopy,
   getReceiveStep,
+  isSessionOverStep,
   useReceiveDownloads,
   useTransferStore
 } from '@altersend/domain'
@@ -14,8 +15,7 @@ import { clearSession, joinSession } from '@altersend/domain'
 import {
   ReceiveConnectingView,
   ReceiveInterruptedView,
-  ReceiveJoinView,
-  openCompletedFile
+  ReceiveJoinView
 } from '@/src/transfer/receive'
 import { useErrorToast } from '@/src/transfer/receive/utils/useErrorToast'
 import { errorTap, mediumTap } from '@/src/haptics'
@@ -27,9 +27,10 @@ export default function ReceiveScreen() {
   const errorCode = useTransferStore((s) => s.errorCode)
   const role = useTransferStore((s) => s.role)
   const isReconnecting = useTransferStore((s) => s.isReconnecting)
+  const reconnectExhausted = useTransferStore((s) => s.reconnectExhausted)
+  const sessionEndedByPeer = useTransferStore((s) => s.sessionEndedByPeer)
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const peerCount = useTransferStore((s) => s.peerCount)
-  const receiveDownloadStates = useTransferStore((s) => s.receiveDownloadStates)
 
   const [joinCode, setJoinCode] = useState('')
   const [showValidation, setShowValidation] = useState(false)
@@ -76,7 +77,9 @@ export default function ReceiveScreen() {
     allDownloadsCompleted: allDownloaded,
     role,
     peerCount,
-    isReconnecting
+    isReconnecting,
+    reconnectExhausted,
+    sessionEndedByPeer
   })
 
   useFocusEffect(
@@ -99,8 +102,10 @@ export default function ReceiveScreen() {
   const copy = getReceivePageCopy(t, step, downloadableFileCount, textCount, totals.totalBytes)
   const title = step === 'join' ? t('receive:page.tabTitle') : copy.title
 
+  const isSessionOver = isSessionOverStep(step)
+
   const handleEndSession = () => {
-    if (step !== 'interrupted') mediumTap()
+    if (!isSessionOver) mediumTap()
     clearSession()
   }
 
@@ -109,15 +114,15 @@ export default function ReceiveScreen() {
       <Button
         onClick={handleEndSession}
         size='lg'
-        variant={step === 'interrupted' ? 'primary' : 'secondary'}
+        variant={isSessionOver ? 'primary' : 'secondary'}
         width='full'
       >
-        {step === 'interrupted' ? t('common:actions.done') : t('common:actions.endSession')}
+        {isSessionOver ? t('common:actions.done') : t('common:actions.endSession')}
       </Button>
     )
 
   const displayError = getDisplayError(t, errorCode)
-  useErrorToast(step === 'interrupted' ? null : displayError, t('receive:errors.transferIssue'))
+  useErrorToast(isSessionOver ? null : displayError, t('receive:errors.transferIssue'))
 
   if (step === 'join') {
     return (
@@ -138,17 +143,8 @@ export default function ReceiveScreen() {
     return <ReceiveConnectingView title={title} description={copy.description} footer={footer} />
   }
 
-  if (step === 'interrupted') {
-    return (
-      <ReceiveInterruptedView
-        title={title}
-        description={copy.description}
-        footer={footer}
-        incomingFileOffers={incomingFileOffers}
-        downloadStates={receiveDownloadStates}
-        onOpenFile={openCompletedFile}
-      />
-    )
+  if (isSessionOver) {
+    return <ReceiveInterruptedView title={title} description={copy.description} footer={footer} />
   }
 
   return <ReceiveConnectingView title={title} description={copy.description} footer={footer} />

@@ -189,6 +189,8 @@ function dispatchStatusEvent(event: StatusEvent): void {
     case 'peer-disconnected':
       if (event.peer) dispatchToTransferStore({ type: 'peer_left', peerKey: event.peer })
       return
+    case 'peer-session-ended':
+      return dispatchToTransferStore({ type: 'peer_session_ended', peerKey: event.peer })
     case 'connection-type':
       if (event.connectionType && event.peer) {
         dispatchToTransferStore({

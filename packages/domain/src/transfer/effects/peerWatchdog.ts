@@ -12,11 +12,12 @@ interface WatchdogKey {
 
 function evaluate(): WatchdogKey {
   const state = transferStore.getState()
-  const shouldWatch = getAppActive() && state.role === 'receiver' && state.peerCount === 0
+  const hasOffers = state.incomingFileOffers.length > 0
+  const settled = hasOffers && (state.sessionEndedByPeer || state.reconnectExhausted)
+  const shouldWatch =
+    getAppActive() && state.role === 'receiver' && state.peerCount === 0 && !settled
   const timeoutMs =
-    state.incomingFileOffers.length > 0 && !state.isReconnecting
-      ? RECONNECT_TIMEOUT_MS
-      : INITIAL_CONNECT_TIMEOUT_MS
+    hasOffers && !state.isReconnecting ? RECONNECT_TIMEOUT_MS : INITIAL_CONNECT_TIMEOUT_MS
   return { shouldWatch, timeoutMs }
 }
 
@@ -37,13 +38,14 @@ function applyKey(key: WatchdogKey): void {
   }
   if (!key.shouldWatch) return
   timer = setTimeout(() => {
+    const keepSessionState = transferStore.getState().incomingFileOffers.length > 0
     dispatchToTransferStore({ type: 'peer_unreachable' })
 
-    getTransferApi()
-      .worker.disconnect()
-      .catch((err: unknown) => {
-        reportError('peerWatchdog.disconnect', err)
-      })
+    const { worker } = getTransferApi()
+    const teardown = keepSessionState ? worker.closePeers() : worker.disconnect()
+    teardown.catch((err: unknown) => {
+      reportError('peerWatchdog.teardown', err)
+    })
   }, key.timeoutMs)
 }
 

@@ -143,6 +143,7 @@ describe('transferSessionReducer — peer_unreachable', () => {
     })
     const next = apply(state, { type: 'peer_unreachable' })
     expect(next.isReconnecting).toBe(false)
+    expect(next.reconnectExhausted).toBe(true)
     expect(next.role).toBe('receiver')
     expect(next.incomingFileOffers).toHaveLength(1)
   })
@@ -155,6 +156,39 @@ describe('transferSessionReducer — peer_unreachable', () => {
     expect(next.topic).toBe('')
     expect(next.errorCode).toBe(TRANSFER_ERROR_CODES.peerUnreachable)
     expect(next.errorMessage).toBeNull()
+  })
+})
+
+describe('transferSessionReducer — peer_session_ended', () => {
+  it('settles only on the transfer peer goodbye', () => {
+    const state = make({
+      role: 'receiver',
+      transferPeerKey: 'sender-key',
+      isReconnecting: true,
+      incomingFileOffers: [offer('a', 'a.txt')]
+    })
+    expect(apply(state, { type: 'peer_session_ended', peerKey: 'another-receiver' })).toBe(state)
+    const next = apply(state, { type: 'peer_session_ended', peerKey: 'sender-key' })
+    expect(next.sessionEndedByPeer).toBe(true)
+    expect(next.isReconnecting).toBe(false)
+  })
+
+  it('stays settled until the sender re-offers its files', () => {
+    const settled = make({
+      role: 'receiver',
+      reconnectExhausted: true,
+      sessionEndedByPeer: true,
+      incomingFileOffers: [offer('a', 'a.txt')]
+    })
+    const afterPeer = apply(settled, { type: 'status_changed', state: 'peer-connected', peers: 1 })
+    expect(afterPeer.sessionEndedByPeer).toBe(true)
+    const afterOffer = apply(settled, {
+      type: 'transfer_ready',
+      files: [offer('a', 'a.txt')],
+      peer: 'sender-key'
+    })
+    expect(afterOffer.sessionEndedByPeer).toBe(false)
+    expect(afterOffer.reconnectExhausted).toBe(false)
   })
 })
 

@@ -4,6 +4,7 @@ import type { DeviceType } from '../identity/device-type'
 export type TransferStatus =
   | 'peer-connected'
   | 'peer-disconnected'
+  | 'peer-session-ended'
   | 'sharing'
   | 'downloading'
   | 'download-progress'
