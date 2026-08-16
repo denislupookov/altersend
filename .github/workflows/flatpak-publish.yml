@@ -1,0 +1,217 @@
+name: Flatpak Publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'flatpak/**'
+      - '.github/workflows/flatpak-publish.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: "flatpak-publish"
+  cancel-in-progress: true
+
+env:
+  AWS_CLI_VERSION: "2.36.14"
+  AWS_DEFAULT_REGION: auto
+  R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+
+jobs:
+  build-flatpak:
+    if: github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        variant:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+      fail-fast: false
+    runs-on: ${{ matrix.variant.runner }}
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+    timeout-minutes: 60
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@401fe28a8384095fc1531b9d320b292f0ee45adb # v6
+        with:
+          manifest-path: flatpak/com.altersend.AlterSend.yaml
+          cache-key: flatpak-builder-${{ matrix.variant.arch }}-${{ hashFiles('flatpak/com.altersend.AlterSend.yaml', 'flatpak/node-modules.json') }}
+          arch: ${{ matrix.variant.arch }}
+          build-bundle: true
+          bundle: altersend.flatpak
+          repository-name: flathub
+          repository-url: https://flathub.org/repo/flathub.flatpakrepo
+
+  publish-flatpak:
+    # NOTE for Denis — before this workflow will run in the upstream repo, configure the following
+    # GitHub Actions secrets in Settings → Secrets and variables → Actions:
+    #   R2_ACCOUNT_ID          — Cloudflare R2 account ID
+    #   R2_ACCESS_KEY_ID       — R2 API token (Access Key ID)
+    #   R2_SECRET_ACCESS_KEY   — R2 API token (Secret Access Key)
+    #   FLATPAK_GPG_PRIVATE_KEY — ASCII-armored GPG private key used to sign the OSTree repo
+    # Also update the S3 bucket name "altersend-flatpak" (line ~113) and the Url/Icon in the
+    # .flatpakrepo block below if they differ from the self-hosted setup.
+    needs: build-flatpak
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+    timeout-minutes: 60
+    permissions:
+      contents: read
+
+    steps:
+      - name: Cache AWS CLI
+        id: cache-aws
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: /usr/local/aws-cli
+          key: aws-cli-${{ env.AWS_CLI_VERSION }}
+
+      - name: Install AWS CLI
+        if: steps.cache-aws.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          # To update: bump AWS_CLI_VERSION in the top-level env and update the SHA256.
+          AWS_CLI_SHA256="43b34875482244039716cc3725d1f60e7d47ef3cfb2a19e114759a46db24dc30"
+
+          curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip" \
+            -o awscliv2.zip
+          echo "${AWS_CLI_SHA256}  awscliv2.zip" | sha256sum --check
+
+          unzip -q awscliv2.zip
+          ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+          rm -rf awscliv2.zip aws/
+
+      - name: Add AWS CLI to PATH (cache restore)
+        if: steps.cache-aws.outputs.cache-hit == 'true'
+        shell: bash
+        run: |
+          mkdir -p /usr/local/bin
+          ln -sf /usr/local/aws-cli/v2/current/bin/aws /usr/local/bin/aws
+
+      - name: Configure AWS CLI
+        shell: bash
+        run: |
+          # Increase concurrency — OSTree repos contain thousands of small files.
+          aws configure set default.s3.max_concurrent_requests 100
+          aws configure set default.s3.max_queue_size 10000
+
+      - name: Download existing OSTree repo from R2 for delta updates
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          mkdir -p repo
+
+          # Suppress NoSuchBucket on first run; re-raise all other errors.
+          sync_err=$(aws s3 sync s3://altersend-flatpak/ repo/ \
+            --endpoint-url "$R2_ENDPOINT" \
+            --no-progress 2>&1) || {
+            if echo "$sync_err" | grep -q "NoSuchBucket"; then
+              echo "Bucket not found — initializing fresh repository."
+            else
+              echo "$sync_err" >&2
+              exit 1
+            fi
+          }
+
+      - name: Clean and verify OSTree repo
+        shell: bash
+        run: |
+          if [ -f repo/config ]; then
+            echo "Validating existing OSTree repository..."
+            mkdir -p repo/refs/remotes repo/refs/mirrors repo/objects
+            ostree fsck --repo=repo || { echo "OSTree fsck failed — repo is corrupt. Reinitializing from scratch."; rm -rf repo; }
+          else
+            echo "Repository exists but is not an OSTree repository (yet). Cleaning up so flatpak-builder can initialize it."
+            rm -rf repo && echo "Cleaned up non-OSTree directory."
+          fi
+          
+          # Initialize OSTree repo if it doesn't exist
+          if [ ! -f repo/config ]; then
+            ostree init --mode=archive-z2 --repo=repo
+          fi
+
+      - name: Download x86_64 bundle artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: altersend-x86_64.flatpak
+          path: bundle-x86_64
+
+      - name: Download aarch64 bundle artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: altersend-aarch64.flatpak
+          path: bundle-aarch64
+
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v6
+        with:
+          gpg_private_key: ${{ secrets.FLATPAK_GPG_PRIVATE_KEY }}
+          # Uncomment and add secret if your key has a passphrase:
+          # passphrase: ${{ secrets.FLATPAK_GPG_PASSPHRASE }}
+
+      - name: Import bundles into OSTree repo
+        shell: bash
+        env:
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+        run: |
+          flatpak build-import-bundle --gpg-sign="$GPG_FINGERPRINT" repo bundle-x86_64/altersend.flatpak
+          flatpak build-import-bundle --gpg-sign="$GPG_FINGERPRINT" repo bundle-aarch64/altersend.flatpak
+
+          # Re-sign all refs so old commits (e.g. Locale) use the current key.
+          flatpak build-sign --gpg-sign="$GPG_FINGERPRINT" repo com.altersend.AlterSend || true
+          flatpak build-sign --gpg-sign="$GPG_FINGERPRINT" repo com.altersend.AlterSend.Locale || true
+          flatpak build-sign --gpg-sign="$GPG_FINGERPRINT" repo com.altersend.AlterSend.Debug || true
+
+      - name: Sign OSTree Repository & Generate .flatpakrepo
+        shell: bash
+        env:
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+        run: |
+          flatpak build-update-repo --generate-static-deltas --gpg-sign="$GPG_FINGERPRINT" repo
+          gpg --armor --export "$GPG_FINGERPRINT" > repo/altersend.gpg
+          GPG_B64=$(gpg --export "$GPG_FINGERPRINT" | base64 | tr -d '\n')
+
+          {
+            echo '[Flatpak Repo]'
+            echo 'Title=AlterSend'
+            # NOTE for Denis: update Url to the production self-hosted domain (e.g. https://altersend.com/flatpak/)
+            # and verify Icon URL points to the correct upstream asset before merging.
+            echo 'Url=https://riftrogue.tech/'
+            echo 'Homepage=https://altersend.com/'
+            echo 'Comment=AlterSend Official Flatpak Repository'
+            echo 'Description=Peer-to-peer file transfer'
+            echo 'Icon=https://raw.githubusercontent.com/denislupookov/altersend/main/assets/01-logo-icon-logo-icon-512x512.png'
+            echo "GPGKey=${GPG_B64}"
+          } > repo/altersend.flatpakrepo
+
+      - name: Upload to Cloudflare R2
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          # Guard: fsck before upload. --delete is safe — next run restores consistency.
+          ostree fsck --repo=repo
+
+          aws s3 sync repo/ s3://altersend-flatpak/ \
+            --endpoint-url "$R2_ENDPOINT" \
+            --no-progress \
+            --delete
+
