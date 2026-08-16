@@ -35,10 +35,11 @@ def main():
                 new_version = data.get('version', '?')
                 if existing_version != new_version:
                     print(
-                        f"WARNING: version conflict for '{new_path}': "
-                        f"keeping {existing_version}, dropping {new_version} from '{path}'",
+                        f"ERROR: version conflict for '{new_path}': "
+                        f"{existing_version} (existing) vs {new_version} from '{path}'",
                         file=sys.stderr
                     )
+                    sys.exit(1)
 
     lockfile['packages'] = flattened_packages
 
