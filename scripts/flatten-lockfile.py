@@ -30,6 +30,15 @@ def main():
             new_path = 'node_modules/' + parts[-1]
             if new_path not in flattened_packages:
                 flattened_packages[new_path] = data
+            else:
+                existing_version = flattened_packages[new_path].get('version', '?')
+                new_version = data.get('version', '?')
+                if existing_version != new_version:
+                    print(
+                        f"WARNING: version conflict for '{new_path}': "
+                        f"keeping {existing_version}, dropping {new_version} from '{path}'",
+                        file=sys.stderr
+                    )
 
     lockfile['packages'] = flattened_packages
 

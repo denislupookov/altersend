@@ -6,12 +6,14 @@ on:
       - main
     paths:
       - 'flatpak/**'
+      - 'apps/desktop/**'
+      - 'packages/**'
       - '.github/workflows/flatpak-publish.yml'
   workflow_dispatch:
 
 concurrency:
   group: "flatpak-publish"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   AWS_CLI_VERSION: "2.36.14"
@@ -191,9 +193,11 @@ jobs:
           {
             echo '[Flatpak Repo]'
             echo 'Title=AlterSend'
-            # NOTE for Denis: update Url to the production self-hosted domain (e.g. https://altersend.com/flatpak/)
-            # and verify Icon URL points to the correct upstream asset before merging.
-            echo 'Url=https://riftrogue.tech/'
+            # NOTE for Denis: set Url to where Flatpak clients will fetch updates from. Two options:
+            #   1. R2 public URL  — enable "Public access" on the R2 bucket and paste the r2.dev URL here.
+            #   2. Custom domain  — point flatpak.altersend.com (or similar) at the R2 bucket via Cloudflare,
+            #      then use that domain here. Either way the URL must serve the OSTree repo files publicly.
+            echo 'Url=https://flatpak.altersend.com/'
             echo 'Homepage=https://altersend.com/'
             echo 'Comment=AlterSend Official Flatpak Repository'
             echo 'Description=Peer-to-peer file transfer'
