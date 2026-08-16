@@ -187,6 +187,8 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
       const v = x as { cid?: unknown; host?: unknown }
       return isBoundedString(v.cid, MAX_ID_LEN) && isBoundedString(v.host, MAX_ID_LEN)
     }
+    case 'session-end':
+      return true
     default:
       return false
   }

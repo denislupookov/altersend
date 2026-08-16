@@ -8,6 +8,7 @@ export type ReceiveStep =
   | 'incoming_transfer'
   | 'reconnecting'
   | 'interrupted'
+  | 'session_ended'
   | 'completed'
 
 export interface ReceivePageCopy {
@@ -21,6 +22,8 @@ interface ReceiveStepInput {
   role: TransferRole | null
   peerCount: number
   isReconnecting?: boolean
+  reconnectExhausted?: boolean
+  sessionEndedByPeer?: boolean
 }
 
 export function getReceiveStep({
@@ -28,7 +31,9 @@ export function getReceiveStep({
   allDownloadsCompleted,
   role,
   peerCount,
-  isReconnecting = false
+  isReconnecting = false,
+  reconnectExhausted = false,
+  sessionEndedByPeer = false
 }: ReceiveStepInput): ReceiveStep {
   if (hasIncomingFiles && allDownloadsCompleted) {
     return 'completed'
@@ -38,12 +43,16 @@ export function getReceiveStep({
     return 'join'
   }
 
-  if (hasIncomingFiles && isReconnecting) {
-    return 'reconnecting'
+  if (hasIncomingFiles && sessionEndedByPeer) {
+    return 'session_ended'
   }
 
-  if (hasIncomingFiles && peerCount === 0) {
+  if (hasIncomingFiles && reconnectExhausted) {
     return 'interrupted'
+  }
+
+  if (hasIncomingFiles && (isReconnecting || peerCount === 0)) {
+    return 'reconnecting'
   }
 
   if (hasIncomingFiles) {
@@ -51,6 +60,10 @@ export function getReceiveStep({
   }
 
   return 'connecting'
+}
+
+export function isSessionOverStep(step: ReceiveStep): boolean {
+  return step === 'interrupted' || step === 'session_ended'
 }
 
 export function getReceivePageCopy(
@@ -101,25 +114,13 @@ export function getReceivePageCopy(
     case 'interrupted':
       return {
         title: t('receive:page.interrupted.title'),
-        description: t('receive:page.interrupted.description')
+        description: ''
       }
-    default: {
-      const exhaustiveCheck: never = step
-      return exhaustiveCheck
-    }
-  }
-}
-
-export function isConnectedStep(step: ReceiveStep): boolean {
-  switch (step) {
-    case 'incoming_transfer':
-    case 'completed':
-    case 'reconnecting':
-    case 'interrupted':
-      return true
-    case 'join':
-    case 'connecting':
-      return false
+    case 'session_ended':
+      return {
+        title: t('receive:page.senderEnded.title'),
+        description: ''
+      }
     default: {
       const exhaustiveCheck: never = step
       return exhaustiveCheck

@@ -132,6 +132,10 @@ interface WebRelayConnection {
   host: string
 }
 
+interface SessionEnd {
+  type: 'session-end'
+}
+
 export type PeerControlMessage =
   | TransferStart
   | TransferReady
@@ -148,6 +152,7 @@ export type PeerControlMessage =
   | TopicChallenge
   | TopicAuth
   | WebRelayConnection
+  | SessionEnd
 
 type PeerControlHandler = (message: PeerControlMessage) => void
 

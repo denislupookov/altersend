@@ -23,12 +23,13 @@
     },
     "reconnecting": {
       "title": "Reconectando",
-      "description": "Reconectando-se à sessão. Os arquivos estarão disponíveis novamente assim que o link for restaurado.",
-      "panelDescription": "Conexão interrompida. Reentrando na sessão…"
+      "description": "Reconectando-se à sessão. Os arquivos estarão disponíveis novamente assim que o link for restaurado."
     },
     "interrupted": {
-      "title": "Transferência incompleta",
-      "description": "O remetente saiu antes que todos os arquivos chegassem."
+      "title": "Transferência incompleta"
+    },
+    "senderEnded": {
+      "title": "Sessão encerrada"
     },
     "handshake": {
       "title": "Conexão em andamento",
@@ -135,7 +136,6 @@
     "saved": "salvo",
     "savedToLocation": "salvo em {{location}}",
     "receivedProgress": "{{completed}} de {{count}} recebidos",
-    "senderLeftBeforeFinishing": "O remetente saiu antes de terminar.",
     "filesSaved_one": "{{count}} arquivo salvo",
     "filesSaved_other": "{{count}} arquivos salvos"
   }

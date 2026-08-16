@@ -23,12 +23,13 @@
     },
     "reconnecting": {
       "title": "重新连接",
-      "description": "重新连接到会话。链接恢复后，文件将再次可用。",
-      "panelDescription": "连接已断开。正在重新加入会话…"
+      "description": "重新连接到会话。链接恢复后，文件将再次可用。"
     },
     "interrupted": {
-      "title": "传输不完整",
-      "description": "发件人在所有文件到达之前离开。"
+      "title": "传输不完整"
+    },
+    "senderEnded": {
+      "title": "会话已结束"
     },
     "handshake": {
       "title": "连接正在进行中",
@@ -135,7 +136,6 @@
     "saved": "已保存",
     "savedToLocation": "已保存到 {{location}}",
     "receivedProgress": "已接收 {{count}} 个中的 {{completed}} 个",
-    "senderLeftBeforeFinishing": "发送者在完成前离开了。",
     "filesSaved_one": "已保存 {{count}} 个文件",
     "filesSaved_other": "已保存 {{count}} 个文件"
   }

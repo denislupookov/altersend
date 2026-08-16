@@ -36,6 +36,8 @@ export const initialTransferSessionState: TransferSessionState = {
   role: null,
   peerCount: 0,
   isReconnecting: false,
+  reconnectExhausted: false,
+  sessionEndedByPeer: false,
   incomingFileOffers: [],
   receiveDownloadStates: {},
   selectedFiles: [],
@@ -105,6 +107,8 @@ function endSession(state: TransferSessionState): TransferSessionState {
     ...state,
     role: null,
     isReconnecting: false,
+    reconnectExhausted: false,
+    sessionEndedByPeer: false,
     incomingFileOffers: [],
     receiveDownloadStates: {},
     selectedFiles: [],
@@ -195,6 +199,13 @@ export function transferSessionReducer(
       return unflagPeer(state, 'outdatedPeers', action.peer)
     case 'reconnecting':
       return { ...state, isReconnecting: true }
+    case 'peer_session_ended': {
+      if (state.role !== 'receiver') return state
+      const fromAnotherPeer =
+        !!state.transferPeerKey && !!action.peerKey && state.transferPeerKey !== action.peerKey
+      if (fromAnotherPeer) return state
+      return { ...state, isReconnecting: false, sessionEndedByPeer: true }
+    }
     case 'clear_session':
       return endSession(state)
     case 'join_failed':
@@ -302,6 +313,9 @@ export function transferSessionReducer(
       return {
         ...state,
         role: 'receiver',
+        isReconnecting: false,
+        reconnectExhausted: false,
+        sessionEndedByPeer: false,
         incomingFileOffers: [],
         receiveDownloadStates: {},
         selectedFiles: [],
@@ -325,6 +339,9 @@ export function transferSessionReducer(
       const transferPeerKey = action.peer ?? state.transferPeerKey
       return {
         ...state,
+        isReconnecting: false,
+        reconnectExhausted: false,
+        sessionEndedByPeer: false,
         incomingFileOffers,
         receiveDownloadStates: createDownloadStateMap(
           state.receiveDownloadStates,
@@ -397,7 +414,7 @@ export function transferSessionReducer(
       }
     case 'peer_unreachable':
       if (state.incomingFileOffers.length > 0) {
-        return { ...state, isReconnecting: false }
+        return { ...state, isReconnecting: false, reconnectExhausted: true }
       }
       return {
         ...state,

@@ -21,7 +21,12 @@ function withTap<Args extends unknown[]>(action: (...args: Args) => void) {
   }
 }
 
-export function ReceiveIncomingView() {
+interface ReceiveIncomingViewProps {
+  pendingLabel?: string
+  hideFilesTitle?: boolean
+}
+
+export function ReceiveIncomingView({ pendingLabel, hideFilesTitle }: ReceiveIncomingViewProps) {
   const { t } = useTranslation(['receive', 'common', 'errors'])
   const { theme } = useTheme()
   const c = theme.colors
@@ -48,7 +53,7 @@ export function ReceiveIncomingView() {
   return (
     <View style={styles.container}>
       {downloads.hasFiles ? (
-        <RowGroup title={t('common:files.files')}>
+        <RowGroup title={hideFilesTitle ? undefined : t('common:files.files')}>
           {downloads.rows.map((row, index) => (
             <DownloadRow
               key={rowKey(row)}
@@ -56,8 +61,9 @@ export function ReceiveIncomingView() {
               states={downloads.states}
               rates={downloads.rates}
               rateLabelFor={(rate) => formatTransferRate(rate, t)}
-              labelsFor={(display) => getDownloadRowLabels(t, display)}
+              labelsFor={(display) => getDownloadRowLabels(t, display, pendingLabel)}
               transferActive={downloads.isDownloading}
+              inert={pendingLabel !== undefined}
               isFirst={index === 0}
               onResume={withTap(actions.resumeFile)}
               onPause={withTap(actions.pauseFile)}

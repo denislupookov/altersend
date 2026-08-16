@@ -67,6 +67,8 @@ export interface TransferSessionState {
   role: TransferRole | null
   peerCount: number
   isReconnecting: boolean
+  reconnectExhausted: boolean
+  sessionEndedByPeer: boolean
   incomingFileOffers: IncomingFileOffer[]
   receiveDownloadStates: Record<string, DownloadItemState>
   selectedFiles: SelectedFile[]
@@ -122,6 +124,7 @@ export type TransferAction =
   | { type: 'transfer_ready'; files: IncomingFileOffer[]; peer?: string }
   | { type: 'reconnecting' }
   | { type: 'peer_unreachable' }
+  | { type: 'peer_session_ended'; peerKey?: string }
   | { type: 'remember_confirmed'; peerKey: string; displayName: string }
   | { type: 'remember_declined'; peerKey: string }
   | { type: 'remember_requested'; request: IncomingPairRequest }

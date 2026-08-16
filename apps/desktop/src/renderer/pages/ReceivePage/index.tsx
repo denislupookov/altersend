@@ -1,18 +1,18 @@
-import { Button } from '@altersend/components'
+import { Button, Spinner } from '@altersend/components'
 import { InfoIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { TransferStatusPanel, TransferCardFrame } from '../../components'
+import { TransferActionGroup, TransferStatusPanel, TransferCardFrame } from '../../components'
 import { openSettingsPanel } from '../../components/Settings'
 import { ReceiveCompleteView } from './ReceiveCompleteView'
 import { ReceiveConnectedView } from './ReceiveConnectedView'
-import { ReceiveDisconnectedView } from './ReceiveDisconnectedView'
+import { ReceiveFileList } from './ReceiveFileList'
 import { ReceiveJoinView } from './ReceiveJoinView'
 
 import {
   clearSession,
   getReceivePageCopy,
   getReceiveStep,
-  isConnectedStep,
+  isSessionOverStep,
   useReceiveDownloads,
   useTransferStore
 } from '@altersend/domain'
@@ -22,6 +22,9 @@ export default function ReceivePage() {
   const role = useTransferStore((s) => s.role)
   const peerCount = useTransferStore((s) => s.peerCount)
   const connectionType = useTransferStore((s) => s.connectionType)
+  const isReconnecting = useTransferStore((s) => s.isReconnecting)
+  const reconnectExhausted = useTransferStore((s) => s.reconnectExhausted)
+  const sessionEndedByPeer = useTransferStore((s) => s.sessionEndedByPeer)
 
   const { totals, fileOffers, textOffers, allDownloaded } = useReceiveDownloads()
   const fileCount = fileOffers.length
@@ -31,7 +34,10 @@ export default function ReceivePage() {
     hasIncomingFiles: fileCount + textCount > 0,
     allDownloadsCompleted: allDownloaded,
     role,
-    peerCount
+    peerCount,
+    isReconnecting,
+    reconnectExhausted,
+    sessionEndedByPeer
   })
 
   const { title, description } = getReceivePageCopy(
@@ -43,19 +49,18 @@ export default function ReceivePage() {
   )
 
   const isRelay = connectionType === 'relay'
-  const connectedBadge =
-    isConnectedStep(step) && step !== 'completed' && step !== 'interrupted' ? (
-      <div
-        onClick={isRelay ? () => openSettingsPanel('connection') : undefined}
-        className={`inline-flex items-center gap-1.5 rounded-full bg-success/12 px-2.5 py-1 text-[12px] font-semibold text-success ${
-          isRelay ? 'cursor-pointer transition-opacity hover:opacity-80' : ''
-        }`}
-      >
-        <span className='h-2 w-2 shrink-0 rounded-full bg-success' />
-        {isRelay ? t('common:status.connectedViaRelay') : t('common:status.connected')}
-        {isRelay ? <InfoIcon size={13} /> : null}
-      </div>
-    ) : undefined
+  const connectedBadge = (
+    <div
+      onClick={isRelay ? () => openSettingsPanel('connection') : undefined}
+      className={`inline-flex items-center gap-1.5 rounded-full bg-success/12 px-2.5 py-1 text-[12px] font-semibold text-success ${
+        isRelay ? 'cursor-pointer transition-opacity hover:opacity-80' : ''
+      }`}
+    >
+      <span className='h-2 w-2 shrink-0 rounded-full bg-success' />
+      {isRelay ? t('common:status.connectedViaRelay') : t('common:status.connected')}
+      {isRelay ? <InfoIcon size={13} /> : null}
+    </div>
+  )
 
   function renderView() {
     if (step === 'join') {
@@ -72,15 +77,35 @@ export default function ReceivePage() {
       )
     }
 
-    if (step === 'interrupted') {
-      return <ReceiveDisconnectedView />
+    if (isSessionOverStep(step)) {
+      return (
+        <ReceiveFileList
+          hideFilesTitle
+          pendingLabel={t('receive:errors.didntArrive')}
+          footer={
+            <Button onClick={clearSession} size='sm' variant='primary'>
+              {t('common:actions.done')}
+            </Button>
+          }
+        />
+      )
     }
 
-    if (isConnectedStep(step)) {
-      return <ReceiveConnectedView />
+    if (step === 'reconnecting') {
+      return (
+        <ReceiveFileList
+          hideFilesTitle
+          pendingLabel={t('receive:status.waiting')}
+          footer={
+            <Button onClick={clearSession} size='sm' variant='secondary'>
+              {t('common:actions.endSession')}
+            </Button>
+          }
+        />
+      )
     }
 
-    return null
+    return <ReceiveConnectedView />
   }
 
   if (step === 'completed') {
@@ -89,18 +114,19 @@ export default function ReceivePage() {
 
   const footer =
     step === 'connecting' ? (
-      <div className='flex items-center justify-end gap-2.5'>
+      <TransferActionGroup>
         <Button onClick={clearSession} size='sm' variant='secondary'>
           {t('common:actions.endSession')}
         </Button>
-      </div>
+      </TransferActionGroup>
     ) : undefined
 
   return (
     <TransferCardFrame
       description={step === 'join' ? '' : description}
       title={title}
-      badge={connectedBadge}
+      badge={step === 'incoming_transfer' ? connectedBadge : undefined}
+      headerRight={step === 'reconnecting' ? <Spinner size={18} /> : undefined}
       footer={footer}
     >
       {renderView()}

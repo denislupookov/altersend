@@ -102,7 +102,7 @@ UI ────────────► commands ──► dispatchToTransfer
 **Receive-specific helpers**
 
 - `getOfferKey`, `getDownloadTotals`, `createSingleDownloadRequest`, `createDirectoryDownloadRequests`, `applyDownloadRouted`.
-- `getReceivePageCopy`, `getReceiveStep`, `isConnectedStep` — receive-page view-model helpers.
+- `getReceivePageCopy`, `getReceiveStep`, `isSessionOverStep` — receive-page view-model helpers.
 
 **Send-specific helpers**
 

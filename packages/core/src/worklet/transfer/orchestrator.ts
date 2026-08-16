@@ -105,6 +105,7 @@ function tryAsyncWithin(label: string, ms: number, op: () => Promise<unknown>): 
 
 const AUTH_TIMEOUT_MS = 10000
 const LIFECYCLE_TEARDOWN_TIMEOUT_MS = 5000
+const SESSION_END_FLUSH_MS = 150
 
 export class TransferOrchestrator implements TransferRPC {
   private readonly emitIPC: (message: TransferIPCMessage | PeerControlMessage) => void
@@ -314,6 +315,10 @@ export class TransferOrchestrator implements TransferRPC {
       upgradeWebRelay(message.cid, message.host).catch((err) => {
         console.warn('[pro] web relay upgrade rejected', err instanceof Error ? err.message : err)
       })
+      return
+    }
+    if (message.type === 'session-end') {
+      this.sendStatus('peer-session-ended', { peer: session.peerKey })
       return
     }
     if (message.type === 'recognition') {
@@ -631,8 +636,22 @@ export class TransferOrchestrator implements TransferRPC {
     for (const controller of this.inflight) controller.abort()
   }
 
+  private async announceSessionEnd(): Promise<void> {
+    const sessions = this.swarm.sessions
+    if (sessions.length === 0) return
+    for (const session of sessions) {
+      try {
+        session.controlChannel.send({ type: 'session-end' })
+      } catch (err) {
+        console.warn('TransferOrchestrator: session-end send failed', err)
+      }
+    }
+    await new Promise((resolve) => setTimeout(resolve, SESSION_END_FLUSH_MS))
+  }
+
   async disconnect(): Promise<DisconnectReply> {
     this.suspended = true
+    await this.announceSessionEnd()
     this.abortInFlight()
     this.recognition.reset()
     this.remember.reset()
@@ -655,6 +674,7 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   async closePeers(): Promise<void> {
+    await this.announceSessionEnd()
     this.abortInFlight()
     this.recognition.reset()
     this.remember.reset()

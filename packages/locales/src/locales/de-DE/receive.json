@@ -23,12 +23,13 @@
     },
     "reconnecting": {
       "title": "Wieder verbinden",
-      "description": "Erneute Verbindung zur Sitzung. Sobald die Verknüpfung wiederhergestellt ist, stehen die Dateien wieder zur Verfügung.",
-      "panelDescription": "Verbindung unterbrochen. Sitzung wird wieder betreten…"
+      "description": "Erneute Verbindung zur Sitzung. Sobald die Verknüpfung wiederhergestellt ist, stehen die Dateien wieder zur Verfügung."
     },
     "interrupted": {
-      "title": "Übertragung unvollständig",
-      "description": "Der Absender ist gegangen, bevor alle Dateien angekommen sind."
+      "title": "Übertragung unvollständig"
+    },
+    "senderEnded": {
+      "title": "Sitzung beendet"
     },
     "handshake": {
       "title": "Verbindung läuft",
@@ -135,7 +136,6 @@
     "saved": "gespeichert",
     "savedToLocation": "gespeichert in {{location}}",
     "receivedProgress": "{{completed}} von {{count}} empfangen",
-    "senderLeftBeforeFinishing": "Der Sender hat die Sitzung vor dem Abschluss verlassen.",
     "filesSaved_one": "{{count}} Datei gespeichert",
     "filesSaved_other": "{{count}} Dateien gespeichert"
   }

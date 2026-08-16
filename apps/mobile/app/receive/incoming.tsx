@@ -9,7 +9,11 @@ import { uriToPath } from '@/src/api/mobileApi'
 import { ConfirmDialog, Layout, IllustrationLayout } from '@/src/components'
 import { lightTap, mediumTap } from '@/src/haptics'
 import { useLeaveSessionConfirm } from '@/src/hooks/useLeaveSessionConfirm'
-import { ReceiveIncomingView, ReceiveReconnectingView } from '@/src/transfer/receive'
+import {
+  ReceiveIncomingView,
+  ReceiveInterruptedView,
+  ReceiveReconnectingView
+} from '@/src/transfer/receive'
 import { useErrorToast } from '@/src/transfer/receive/utils/useErrorToast'
 import { exitToReceiveTab } from '@/src/transfer/receive/utils/exitToReceiveTab'
 import ConnectionLostSvg from '../../../../assets/connection-lost.svg'
@@ -18,6 +22,7 @@ import {
   getPrimaryDownloadLabel,
   getReceivePageCopy,
   getReceiveStep,
+  isSessionOverStep,
   useReceiveActions,
   useReceiveDownloads,
   useTransferStore
@@ -36,10 +41,10 @@ export default function ReceiveIncomingScreen() {
   const peerCount = useTransferStore((s) => s.peerCount)
   const connectionType = useTransferStore((s) => s.connectionType)
   const isReconnecting = useTransferStore((s) => s.isReconnecting)
+  const reconnectExhausted = useTransferStore((s) => s.reconnectExhausted)
+  const sessionEndedByPeer = useTransferStore((s) => s.sessionEndedByPeer)
   const errorCode = useTransferStore((s) => s.errorCode)
   const displayError = getDisplayError(t, errorCode)
-
-  useErrorToast(displayError, t('receive:errors.transferIssue'))
 
   const { totals, fileOffers, allDownloaded } = downloads
   const hasIncomingFiles = incomingFileOffers.length > 0
@@ -49,8 +54,12 @@ export default function ReceiveIncomingScreen() {
     allDownloadsCompleted: allDownloaded,
     role,
     peerCount,
-    isReconnecting
+    isReconnecting,
+    reconnectExhausted,
+    sessionEndedByPeer
   })
+
+  useErrorToast(isSessionOverStep(step) ? null : displayError, t('receive:errors.transferIssue'))
 
   useEffect(() => {
     if (step === 'completed') {
@@ -140,6 +149,21 @@ export default function ReceiveIncomingScreen() {
 
     if (step === 'completed') {
       return null
+    }
+
+    if (isSessionOverStep(step)) {
+      return (
+        <ReceiveInterruptedView
+          title={title}
+          description={description}
+          hasNativeHeader
+          footer={
+            <Button onClick={handleExit} size='lg' variant='primary' width='full'>
+              {t('receive:actions.backToHome')}
+            </Button>
+          }
+        />
+      )
     }
 
     if (step !== 'incoming_transfer') {
