@@ -61,7 +61,7 @@ jobs:
     #   R2_ACCESS_KEY_ID       — R2 API token (Access Key ID)
     #   R2_SECRET_ACCESS_KEY   — R2 API token (Secret Access Key)
     #   FLATPAK_GPG_PRIVATE_KEY — ASCII-armored GPG private key used to sign the OSTree repo
-    # Also update the S3 bucket name "altersend-flatpak" (line ~113) and the Url/Icon in the
+    # Also update the R2 bucket name "altersend-flatpak" (line ~113) and the Url/Icon in the
     # .flatpakrepo block below if they differ from the self-hosted setup.
     needs: build-flatpak
     runs-on: ubuntu-24.04
