@@ -1,14 +1,6 @@
 name: Flatpak Publish
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'flatpak/**'
-      - 'apps/desktop/**'
-      - 'packages/**'
-      - '.github/workflows/flatpak-publish.yml'
   workflow_dispatch:
 
 concurrency:
@@ -22,7 +14,6 @@ env:
 
 jobs:
   build-flatpak:
-    if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
         variant:
