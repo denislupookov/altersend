@@ -9,7 +9,6 @@ export const styles = css.create({
   },
   heading: {
     margin: 0,
-    paddingInline: tokens.space4,
     color: tokens.colorTextMuted,
     fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeLg,
