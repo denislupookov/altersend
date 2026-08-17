@@ -1,6 +1,6 @@
 {
   "name": "@altersend/drive",
-  "version": "1.8.0",
+  "version": "2.0.0",
   "type": "module",
   "main": "./dist/native.js",
   "types": "./dist/native.d.ts",

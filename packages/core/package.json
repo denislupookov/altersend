@@ -1,6 +1,6 @@
 {
   "name": "@altersend/core",
-  "version": "1.8.0",
+  "version": "2.0.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -30,7 +30,7 @@
     "schema": "node schema/build.cjs"
   },
   "dependencies": {
-    "@altersend/drive": "1.8.0",
+    "@altersend/drive": "2.0.0",
     "b4a": "^1.8.0",
     "bare-buffer": "^3.6.0",
     "bare-crypto": "^1.14.0",

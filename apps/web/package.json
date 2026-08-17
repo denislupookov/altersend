@@ -1,6 +1,6 @@
 {
   "name": "@altersend/web",
-  "version": "1.8.0",
+  "version": "2.0.0",
   "description": "Browser receiver for AlterSend — no install, end-to-end encrypted.",
   "license": "Apache-2.0",
   "author": "AlterSend",
@@ -14,9 +14,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@altersend/components": "1.8.0",
-    "@altersend/drive": "1.8.0",
-    "@altersend/locales": "1.8.0",
+    "@altersend/components": "2.0.0",
+    "@altersend/drive": "2.0.0",
+    "@altersend/locales": "2.0.0",
     "@hyperswarm/dht-relay": "^0.4.3",
     "@noble/curves": "^2.2.0",
     "b4a": "^1.8.1",

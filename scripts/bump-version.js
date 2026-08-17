@@ -17,6 +17,7 @@ const packages = [
   'package.json',
   'apps/desktop/package.json',
   'apps/mobile/package.json',
+  'apps/web/package.json',
   'packages/core/package.json',
   'packages/locales/package.json',
   'packages/domain/package.json',
