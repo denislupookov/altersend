@@ -28,7 +28,7 @@ export function ReceiveReconnectingView({
       description={description}
       footer={footer}
       hasNativeHeader={hasNativeHeader}
-      badge={<ActivityIndicator color={theme.colors.colorAccent} size='small' />}
+      titleAccessory={<ActivityIndicator color={theme.colors.colorAccent} size='small' />}
     >
       <ReceiveIncomingView hideFilesTitle pendingLabel={t('receive:status.waiting')} />
       {children}

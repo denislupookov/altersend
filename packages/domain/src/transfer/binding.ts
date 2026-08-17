@@ -1,4 +1,4 @@
-import { dispatchToTransferStore } from './store'
+import { dispatchToTransferStore, transferStore } from './store'
 import { getAppActive } from './effects/appActive'
 import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES } from './types'
@@ -189,8 +189,17 @@ function dispatchStatusEvent(event: StatusEvent): void {
     case 'peer-disconnected':
       if (event.peer) dispatchToTransferStore({ type: 'peer_left', peerKey: event.peer })
       return
-    case 'peer-session-ended':
-      return dispatchToTransferStore({ type: 'peer_session_ended', peerKey: event.peer })
+    case 'peer-session-ended': {
+      dispatchToTransferStore({ type: 'peer_session_ended', peerKey: event.peer })
+      if (transferStore.getState().sessionEndedByPeer) {
+        getTransferApi()
+          .worker.closePeers()
+          .catch((err: unknown) => {
+            reportError('sessionEnded.closePeers', err)
+          })
+      }
+      return
+    }
     case 'connection-type':
       if (event.connectionType && event.peer) {
         dispatchToTransferStore({

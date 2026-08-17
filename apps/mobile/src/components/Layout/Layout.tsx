@@ -11,6 +11,7 @@ interface LayoutProps {
   description?: string
   backdrop?: React.ReactElement
   badge?: React.ReactElement
+  titleAccessory?: React.ReactElement
   footer?: React.ReactElement
   hasNativeHeader?: boolean
   compactHeader?: boolean
@@ -26,6 +27,7 @@ export const Layout = ({
   description,
   backdrop,
   badge,
+  titleAccessory,
   footer,
   children,
   hasNativeHeader,
@@ -71,6 +73,7 @@ export const Layout = ({
           {badge ? <View style={styles.badgeSlot}>{badge}</View> : null}
           <View style={styles.titleRow}>
             <Text style={[styles.title, { color: theme.colors.colorTextPrimary }]}>{title}</Text>
+            {titleAccessory}
             {onMenuPress ? (
               <IconButton
                 icon='settings'

@@ -160,7 +160,7 @@ describe('transferSessionReducer — peer_unreachable', () => {
 })
 
 describe('transferSessionReducer — peer_session_ended', () => {
-  it('settles only on the transfer peer goodbye', () => {
+  it('settles only on the known transfer peer goodbye', () => {
     const state = make({
       role: 'receiver',
       transferPeerKey: 'sender-key',
@@ -168,6 +168,8 @@ describe('transferSessionReducer — peer_session_ended', () => {
       incomingFileOffers: [offer('a', 'a.txt')]
     })
     expect(apply(state, { type: 'peer_session_ended', peerKey: 'another-receiver' })).toBe(state)
+    const preOffer = make({ role: 'receiver' })
+    expect(apply(preOffer, { type: 'peer_session_ended', peerKey: 'sender-key' })).toBe(preOffer)
     const next = apply(state, { type: 'peer_session_ended', peerKey: 'sender-key' })
     expect(next.sessionEndedByPeer).toBe(true)
     expect(next.isReconnecting).toBe(false)

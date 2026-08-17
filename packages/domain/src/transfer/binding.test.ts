@@ -42,6 +42,7 @@ function terminalEvent(): RendererTransferEvent {
 
 let emit: (event: RendererTransferEvent) => void
 let unbind: () => void
+let closePeers: ReturnType<typeof vi.fn>
 
 function bytesInStore(): number {
   return transferStore.getState().receiveDownloadStates[FILE_ID]?.bytesTransferred ?? -1
@@ -53,8 +54,9 @@ beforeEach(() => {
     { ...initialTransferSessionState, role: 'receiver', incomingFileOffers: [OFFER] },
     true
   )
+  closePeers = vi.fn(() => Promise.resolve())
   unbind = bindTransferApi({
-    worker: { peersList: () => Promise.resolve([]) } as never,
+    worker: { peersList: () => Promise.resolve([]), closePeers } as never,
     startP2P: () => Promise.resolve(),
     onTransferEvent: (cb) => {
       emit = cb
@@ -136,5 +138,17 @@ describe('progress coalescing', () => {
     vi.advanceTimersByTime(1000)
 
     expect(bytesInStore()).toBe(-1)
+  })
+})
+
+describe('peer session ended', () => {
+  it('closes the worklet session for a settled receive but never for a sender', () => {
+    transferStore.setState({ transferPeerKey: 'p1' })
+    emit({ type: 'status', state: 'peer-session-ended', peer: 'p1' } as RendererTransferEvent)
+    expect(closePeers).toHaveBeenCalledTimes(1)
+
+    transferStore.setState({ ...initialTransferSessionState, role: 'sender' }, true)
+    emit({ type: 'status', state: 'peer-session-ended', peer: 'p1' } as RendererTransferEvent)
+    expect(closePeers).toHaveBeenCalledTimes(1)
   })
 })
