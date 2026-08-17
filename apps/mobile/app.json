@@ -18,21 +18,14 @@
       "bundleIdentifier": "com.altersend.mobile",
       "infoPlist": {
         "NSLocalNetworkUsageDescription": "AlterSend uses your local network to discover nearby devices for peer-to-peer file transfer.",
-        "NSBonjourServices": [
-          "_altersend._udp",
-          "_altersend._tcp"
-        ],
+        "NSBonjourServices": ["_altersend._udp", "_altersend._tcp"],
         "UIFileSharingEnabled": true,
         "LSSupportsOpeningDocumentsInPlace": true,
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleAllowMixedLocalizations": true,
         "UIViewControllerBasedStatusBarAppearance": true,
-        "UIBackgroundModes": [
-          "processing"
-        ],
-        "BGTaskSchedulerPermittedIdentifiers": [
-          "com.altersend.mobile.transfer"
-        ]
+        "UIBackgroundModes": ["processing"],
+        "BGTaskSchedulerPermittedIdentifiers": ["com.altersend.mobile.transfer"]
       },
       "privacyManifests": {
         "NSPrivacyTracking": false,
@@ -71,10 +64,7 @@
           }
         ]
       },
-      "associatedDomains": [
-        "applinks:altersend.com",
-        "applinks:app.altersend.com"
-      ]
+      "associatedDomains": ["applinks:altersend.com", "applinks:app.altersend.com"]
     },
     "android": {
       "adaptiveIcon": {
@@ -114,17 +104,12 @@
               "pathPrefix": "/r"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
     },
     "plugins": [
-      [
-        "expo-router"
-      ],
+      ["expo-router"],
       [
         "@sentry/react-native/expo",
         {
@@ -137,9 +122,7 @@
         {
           "android": {
             "minSdkVersion": 29,
-            "buildArchs": [
-              "arm64-v8a"
-            ],
+            "buildArchs": ["arm64-v8a"],
             "enableMinifyInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true
           }
@@ -172,9 +155,7 @@
             "NSExtensionActivationSupportsMovieWithMaxCount": 100,
             "NSExtensionActivationSupportsFileWithMaxCount": 100
           },
-          "androidIntentFilters": [
-            "*/*"
-          ]
+          "androidIntentFilters": ["*/*"]
         }
       ],
       [

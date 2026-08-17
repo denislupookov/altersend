@@ -383,7 +383,7 @@ export class TransferOrchestrator implements TransferRPC {
         return
       }
       const queue = this.pendingServes.get(session.peerKey) ?? []
-     
+
       if (queue.length >= MAX_FILES_PER_TRANSFER) return
       queue.push(message)
 
