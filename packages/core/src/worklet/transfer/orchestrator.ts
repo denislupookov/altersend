@@ -43,6 +43,7 @@ import {
   type TransferReady,
   type TransferStart
 } from './control-channel'
+import { MAX_FILES_PER_TRANSFER } from './control-validation'
 import { topicProof } from './topic-auth'
 import {
   createDownloadCompleteMessage,
@@ -117,10 +118,12 @@ export class TransferOrchestrator implements TransferRPC {
 
   private activeTransfer: TransferStart | null = null
   private activeTransferReady: TransferReady | null = null
+  private readonly pendingServes = new Map<string, DownloadRequest[]>()
   private readonly pendingNonce = new Map<string, string>()
   private readonly authedPeers = new Set<string>()
   private readonly authTimers = new Map<string, ReturnType<typeof setTimeout>>()
   private role: TransferRole | null = null
+  private interruptedDownloads: string[] = []
   private currentTopic: string | null = null
   private suspended: boolean = false
   private lifecycleQueue: Promise<unknown> = Promise.resolve()
@@ -282,6 +285,7 @@ export class TransferOrchestrator implements TransferRPC {
   private onPeerDisconnected(peerKey: string | null, remainingCount: number): void {
     if (peerKey) {
       this.pendingNonce.delete(peerKey)
+      this.pendingServes.delete(peerKey)
       this.authedPeers.delete(peerKey)
       this.clearAuthTimer(peerKey)
       this.recognition.onPeerDisconnected(peerKey)
@@ -374,7 +378,17 @@ export class TransferOrchestrator implements TransferRPC {
 
   private serve(message: DownloadRequest, session: PeerSession): void {
     if (!this.authedPeers.has(session.peerKey)) {
-      console.warn('TransferOrchestrator: refused download from unauthenticated peer')
+      if (!this.pendingNonce.has(session.peerKey)) {
+        console.warn('TransferOrchestrator: refused download from unauthenticated peer')
+        return
+      }
+      const queue = this.pendingServes.get(session.peerKey) ?? []
+     
+      if (queue.length >= MAX_FILES_PER_TRANSFER) return
+      queue.push(message)
+
+      this.pendingServes.set(session.peerKey, queue)
+
       return
     }
     if (!session.drive) return
@@ -588,6 +602,10 @@ export class TransferOrchestrator implements TransferRPC {
     this.authedPeers.add(session.peerKey)
     if (this.activeTransfer) session.controlChannel.send(this.activeTransfer)
     this.offerTo(session)
+
+    const queued = this.pendingServes.get(session.peerKey)
+    this.pendingServes.delete(session.peerKey)
+    for (const request of queued ?? []) this.serve(request, session)
   }
 
   private offerTo(session: PeerSession): void {
@@ -660,6 +678,8 @@ export class TransferOrchestrator implements TransferRPC {
       this.activeTransferReady = null
       this.currentTopic = null
       this.offerPeers.clear()
+      this.pendingServes.clear()
+      this.interruptedDownloads = []
 
       await this.swarm.endSession()
       await this.sender.reset()
@@ -680,6 +700,8 @@ export class TransferOrchestrator implements TransferRPC {
     this.remember.reset()
     this.currentTopic = null
     this.offerPeers.clear()
+    this.pendingServes.clear()
+    this.interruptedDownloads = []
     await this.swarm.endSession()
     await this.receiver.discardPartials()
   }
@@ -710,6 +732,7 @@ export class TransferOrchestrator implements TransferRPC {
       if (this.suspended) return
 
       this.suspended = true
+      this.interruptedDownloads = this.receiver.activeDownloadIds()
       this.abortInFlight()
       this.recognition.reset()
       this.remember.reset()
@@ -729,6 +752,12 @@ export class TransferOrchestrator implements TransferRPC {
 
       this.suspended = false
       this.discovery.start()
+
+      const interrupted = this.interruptedDownloads
+      this.interruptedDownloads = []
+      for (const fileId of interrupted) {
+        this.sendStatus('download-failed', { fileId, resumable: true, message: 'Interrupted' })
+      }
 
       if (!this.currentTopic) return
 
