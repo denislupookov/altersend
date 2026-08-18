@@ -1,11 +1,11 @@
 import { useEffect, useState, type ComponentType } from 'react'
 import {
+  CrownIcon,
   GlobeIcon,
   InfoIcon,
   LaptopIcon,
   MailIcon,
   SlidersHorizontalIcon,
-  ArrowUpCircleIcon,
   UserIcon,
   WaypointsIcon,
   type IconProps
@@ -105,7 +105,7 @@ export function Settings({ version }: { version: string }) {
               <div className='my-2 h-px bg-border-primary' />
 
               <ListItem
-                icon={<ArrowUpCircleIcon size={16} />}
+                icon={<CrownIcon size={16} />}
                 label={t('settings:account.upgradeToPro')}
                 active={section === 'account'}
                 onClick={() => setSection('account')}
