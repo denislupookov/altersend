@@ -39,7 +39,10 @@ export async function reserveCode(ctx: PurchaseContext): Promise<ReservedCode> {
 }
 
 export async function abandon(ctx: PurchaseContext, reserved: ReservedCode): Promise<void> {
-  if (!reserved.fresh) return
+  if (!reserved.fresh) {
+    ctx.dispatch({ type: 'showPaywall' })
+    return
+  }
 
   const status = await ctx.client.status(reserved.code).catch((err) => {
     warn('status check before discard failed', err)
@@ -94,6 +97,8 @@ export async function buyFromStore(
   if (!purchases) return false
 
   const { code } = reserved
+
+  ctx.dispatch({ type: 'upgrading', account: { code, validUntil: null } })
   await purchases.identify(code)
   const outcome = await purchases.buy(plan)
 

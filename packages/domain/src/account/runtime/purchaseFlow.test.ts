@@ -102,11 +102,19 @@ describe('restoreFromStore', () => {
 })
 
 describe('buyFromStore', () => {
+  it('leaves the paywall before the store sheet opens', async () => {
+    const { ctx, actions } = makeContext({ stored: 'kept-code' })
+
+    await buyFromStore(ctx, { code: 'kept-code', fresh: false }, 'monthly')
+
+    expect(actions[0]?.type).toBe('upgrading')
+  })
+
   it('waits for the entitlement instead of claiming success', async () => {
     const { ctx, actions, polled } = makeContext({ stored: 'kept-code', active: false })
 
     expect(await buyFromStore(ctx, { code: 'kept-code', fresh: false }, 'monthly')).toBe(true)
-    expect(actions.map((a) => a.type)).toEqual(['awaitingApproval'])
+    expect(actions.map((a) => a.type)).toEqual(['upgrading', 'awaitingApproval'])
     expect(polled).toEqual(['kept-code'])
   })
 
@@ -114,7 +122,7 @@ describe('buyFromStore', () => {
     const { ctx, actions, polled } = makeContext({ stored: 'kept-code' })
 
     expect(await buyFromStore(ctx, { code: 'kept-code', fresh: false }, 'monthly')).toBe(true)
-    expect(actions.map((a) => a.type)).toEqual(['purchased'])
+    expect(actions.map((a) => a.type)).toEqual(['upgrading', 'purchased'])
     expect(polled).toEqual([])
   })
 })
