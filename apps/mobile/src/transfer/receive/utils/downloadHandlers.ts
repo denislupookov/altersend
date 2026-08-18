@@ -111,17 +111,17 @@ export async function handleDownloadedFile(
   if (!permission.granted) {
     return { intended: 'photos', destination: 'filesystem', localPath }
   }
+  let created = true
   try {
     await Asset.create(toFilePath(localPath))
   } catch (err) {
+    created = false
     console.warn('handleDownloadedFile: media library save failed', err)
-    const fallback = await saveToFiles(localPath, fileName)
-    return { ...fallback, intended: 'photos' }
   }
 
   try {
     const original = new File(localPath)
-    if (original.exists) original.delete()
+    if (created && original.exists) original.delete()
   } catch (err) {
     console.warn('handleDownloadedFile: could not remove the private copy', err)
   }
