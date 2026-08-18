@@ -8,6 +8,7 @@ export {
   planComparisonRows,
   planLabel,
   planRows,
+  subscriptionSummary,
   type AccountPhase,
   type BillingPlan,
   type PlanCell,

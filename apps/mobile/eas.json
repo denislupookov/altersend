@@ -30,7 +30,7 @@
       "ios": {
         "ascAppId": "6772496271",
         "appleTeamId": "XSN9V8JZ75",
-        "ascApiKeyPath": "~/.secrets/altersend/apple-asc-api-key.p8",
+        "ascApiKeyPath": "/Users/denislupookov/.secrets/altersend/apple-asc-api-key.p8",
         "ascApiKeyId": "V4AH7QA3P7",
         "ascApiKeyIssuerId": "65e338f0-c0db-467e-a6c8-744d6e868ad0"
       }

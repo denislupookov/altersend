@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Linking, StyleSheet, View } from 'react-native'
+import { Linking, Platform, StyleSheet, View } from 'react-native'
 import { Button, ExternalLink, LinkRow, useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
 import {
@@ -20,6 +20,9 @@ import type { AccountPhaseProps } from './types'
 const PRO_COLUMN_WIDTH = 80
 const FREE_CHECK_SIZE = 15
 const PRO_CHECK_SIZE = 17
+
+const RENEWAL_KEY =
+  Platform.OS === 'ios' ? 'settings:account.renewalIos' : 'settings:account.renewalAndroid'
 
 function openExternalUrl(url: string) {
   Linking.openURL(url).catch((err) => console.warn('[account] could not open url', err))
@@ -78,6 +81,8 @@ export function Paywall({ model, errorText, onDismiss }: AccountPhaseProps) {
           {t('settings:rows.privacyPolicy')}
         </ExternalLink>
       </View>
+
+      <Text style={[styles.finePrint, { color: c.colorTextMuted }]}>{t(RENEWAL_KEY)}</Text>
     </View>
   )
 
@@ -206,6 +211,7 @@ const styles = StyleSheet.create({
   proChipLabel: { fontSize: 13, fontWeight: '600' },
   footer: { gap: 10 },
   note: { fontSize: 13, lineHeight: 18, textAlign: 'center' },
+  finePrint: { fontSize: 11, lineHeight: 15, textAlign: 'center' },
   error: { fontSize: 13, lineHeight: 18, marginTop: 12, textAlign: 'center' },
   legalLinks: {
     flexDirection: 'row',

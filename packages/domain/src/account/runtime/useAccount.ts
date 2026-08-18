@@ -10,6 +10,7 @@ import {
   type AccountPhase,
   type AccountState,
   type BillingPlan,
+  type PaymentProvider,
   type PlanPrices
 } from '../core'
 import type { AccountStorage, PurchaseAdapter } from '../ports'
@@ -49,6 +50,21 @@ interface AccountSubscriptionActions {
   cancelling: boolean
   endsAt: string | null
   canManage: boolean
+  canCancel: boolean
+}
+
+interface BillingState {
+  provider: PaymentProvider | null
+  cancelling: boolean
+  endsAt: string | null
+  loaded: boolean
+}
+
+const initialBilling: BillingState = {
+  provider: null,
+  cancelling: false,
+  endsAt: null,
+  loaded: false
 }
 
 export interface AccountModel {
@@ -251,8 +267,8 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
   }, [context, run])
 
   const store = useMemo<AccountStoreActions | undefined>(
-    () => (purchases && !storeUnavailable ? { restore } : undefined),
-    [purchases, restore, storeUnavailable]
+    () => (purchases ? { restore } : undefined),
+    [purchases, restore]
   )
 
   const retryUpgrade = useCallback(() => {
@@ -308,25 +324,16 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
     [client, run, session.entry, storage, syncToken]
   )
 
-  const managedByStore = session.account?.provider === 'revenuecat'
-  const [billing, setBilling] = useState<{
-    cancelling: boolean
-    endsAt: string | null
-    loaded: boolean
-  }>({ cancelling: false, endsAt: null, loaded: false })
+  const [billing, setBilling] = useState<BillingState>(initialBilling)
 
   const activeCode = session.phase === 'active' ? session.account?.code : undefined
   const latestCode = useRef(activeCode)
   latestCode.current = activeCode
 
   const readBilling = useCallback(async () => {
-    setBilling({ cancelling: false, endsAt: null, loaded: false })
+    setBilling(initialBilling)
 
     if (!activeCode) return
-    if (managedByStore) {
-      setBilling({ cancelling: false, endsAt: null, loaded: true })
-      return
-    }
 
     const state = await client.subscription(activeCode).catch((err) => {
       warn('subscription lookup failed', err)
@@ -336,11 +343,15 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
     if (activeCode !== latestCode.current) return
 
     setBilling({
+      provider: state?.provider ?? null,
       cancelling: state?.cancelling ?? false,
       endsAt: state?.endsAt ?? null,
       loaded: state !== null
     })
-  }, [activeCode, client, managedByStore])
+  }, [activeCode, client])
+
+  const provider = billing.loaded ? billing.provider : (session.account?.provider ?? null)
+  const managedByStore = provider === 'revenuecat'
 
   useEffect(() => {
     readBilling()
@@ -385,9 +396,20 @@ export function useAccount(adapter: AccountAdapter): AccountModel {
       managedByStore,
       cancelling: billing.cancelling,
       endsAt: billing.endsAt,
-      canManage: billing.loaded && !billing.cancelling
+      canManage: managedByStore && Boolean(purchases),
+      canCancel: provider === 'stripe' && billing.loaded && !billing.cancelling
     }),
-    [billing.cancelling, billing.endsAt, billing.loaded, cancel, logOut, manage, managedByStore]
+    [
+      billing.cancelling,
+      billing.endsAt,
+      billing.loaded,
+      cancel,
+      logOut,
+      manage,
+      managedByStore,
+      provider,
+      purchases
+    ]
   )
 
   const setEntry = useCallback(

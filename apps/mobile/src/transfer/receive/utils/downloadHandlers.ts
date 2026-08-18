@@ -1,6 +1,6 @@
 import { Platform } from 'react-native'
 import { File } from 'expo-file-system'
-import * as MediaLibrary from 'expo-media-library'
+import { Asset, requestPermissionsAsync } from 'expo-media-library'
 import type { SaveDestination } from '@altersend/domain'
 import { isMediaStoreAvailable, saveToDownloads } from '@/modules/media-store'
 import { isSaveMediaToPhotos } from '@/src/lifecycle/downloadPreferenceStorage'
@@ -107,13 +107,14 @@ export async function handleDownloadedFile(
     return saveToFiles(localPath, fileName)
   }
 
-  const permission = await MediaLibrary.requestPermissionsAsync(true)
+  const permission = await requestPermissionsAsync(true)
   if (!permission.granted) {
     return { intended: 'photos', destination: 'filesystem', localPath }
   }
   try {
-    await MediaLibrary.saveToLibraryAsync(toFilePath(localPath))
-  } catch {
+    await Asset.create(toFilePath(localPath))
+  } catch (err) {
+    console.warn('handleDownloadedFile: media library save failed', err)
     const fallback = await saveToFiles(localPath, fileName)
     return { ...fallback, intended: 'photos' }
   }
