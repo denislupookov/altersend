@@ -1,4 +1,4 @@
-import type { BillingPlan } from './billing'
+import type { BillingPlan, PaymentProvider } from './billing'
 
 export type AccountPhase = 'paywall' | 'entering' | 'waiting' | 'approval' | 'success' | 'active'
 
@@ -30,7 +30,7 @@ export function accountErrorKey(error: AccountError | null): string | null {
 export interface AccountState {
   code: string
   validUntil: string | null
-  provider?: 'stripe' | 'revenuecat' | null
+  provider?: PaymentProvider | null
 }
 
 export interface AccountSession {

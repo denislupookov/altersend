@@ -17,6 +17,7 @@ const packages = [
   'package.json',
   'apps/desktop/package.json',
   'apps/mobile/package.json',
+  'apps/web/package.json',
   'packages/core/package.json',
   'packages/locales/package.json',
   'packages/domain/package.json',
@@ -54,6 +55,9 @@ const appJson = JSON.parse(readFileSync(appJsonPath, 'utf8'))
 appJson.expo.version = version
 writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2) + '\n')
 console.log('bumped apps/mobile/app.json')
+
+const rewritten = [...packages.filter((rel) => rel !== 'package.json'), 'apps/mobile/app.json']
+execSync(`npx prettier --write ${rewritten.join(' ')}`, { cwd: root, stdio: 'inherit' })
 
 // Sync package-lock.json so `npm ci` (CI) stays in lockstep with the new versions.
 console.log('updating package-lock.json…')

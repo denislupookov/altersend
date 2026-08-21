@@ -169,6 +169,19 @@ export function LinkRow({
   const clampedProgressPercent =
     typeof progressPercent === 'number' ? Math.max(0, Math.min(100, progressPercent)) : undefined
 
+  const statusBadge = status ? (
+    <html.div style={styles.statusGroup}>
+      {status.tone === 'success' ? (
+        <CheckIcon size={14} color={theme.colors.colorSuccess} />
+      ) : (
+        <html.div style={[styles.statusDot, statusToneStyle[status.tone ?? 'muted']]} />
+      )}
+      <html.p style={[styles.statusLabel, statusLabelToneStyle[status.tone ?? 'muted']]}>
+        {status.label}
+      </html.p>
+    </html.div>
+  ) : null
+
   return (
     <>
       <html.div
@@ -218,40 +231,34 @@ export function LinkRow({
                   {label}
                 </html.p>
               )}
-              {rowSubtitle ? (
-                <html.p
-                  style={[
-                    styles.subtitle,
-                    subtitleToneStyle[subtitleTone],
-                    compact && styles.subtitleCompact,
-                    subtitleWrap && styles.subtitleWrap
-                  ]}
-                >
-                  {rowSubtitle}
-                </html.p>
-              ) : null}
             </html.div>
 
-            {status ? (
-              <html.div style={styles.statusColumn}>
-                <html.div style={styles.statusGroup}>
-                  {status.tone === 'success' ? (
-                    <CheckIcon size={14} color={theme.colors.colorSuccess} />
-                  ) : (
-                    <html.div style={[styles.statusDot, statusToneStyle[status.tone ?? 'muted']]} />
-                  )}
+            {status?.detail ? statusBadge : null}
+          </html.div>
+
+          {rowSubtitle || status ? (
+            <html.div style={styles.metaRow}>
+              <html.div style={styles.text}>
+                {rowSubtitle ? (
                   <html.p
-                    style={[styles.statusLabel, statusLabelToneStyle[status.tone ?? 'muted']]}
+                    style={[
+                      styles.subtitle,
+                      subtitleToneStyle[subtitleTone],
+                      compact && styles.subtitleCompact,
+                      subtitleWrap && styles.subtitleWrap
+                    ]}
                   >
-                    {status.label}
+                    {rowSubtitle}
                   </html.p>
-                </html.div>
-                {status.detail ? (
-                  <html.p style={styles.statusDetail}>{status.detail}</html.p>
                 ) : null}
               </html.div>
-            ) : null}
-          </html.div>
+              {status?.detail ? (
+                <html.p style={styles.statusDetail}>{status.detail}</html.p>
+              ) : (
+                statusBadge
+              )}
+            </html.div>
+          ) : null}
 
           {clampedProgressPercent !== undefined ? (
             <html.div style={styles.progressTrack}>

@@ -1,4 +1,4 @@
-import type { BillingPlan } from '../core'
+import type { BillingPlan, PaymentProvider } from '../core'
 import {
   AccountApiError,
   NETWORK_ERROR_STATUS,
@@ -13,8 +13,6 @@ interface NewAccount {
   validUntil: string
   active: boolean
 }
-
-type PaymentProvider = 'stripe' | 'revenuecat'
 
 export interface AccountStatus {
   exists: boolean
@@ -124,10 +122,18 @@ export function createAccountClient(baseUrl: string): AccountClient {
     },
 
     async syncStore(code) {
-      const result = await post<{ active: boolean; validUntil?: string }>('/api/revenuecat/sync', {
-        code
-      })
-      return { exists: true, active: result.active, validUntil: result.validUntil }
+      const result = await post<{
+        active: boolean
+        validUntil?: string
+        provider?: PaymentProvider | null
+      }>('/api/revenuecat/sync', { code })
+
+      return {
+        exists: true,
+        active: result.active,
+        validUntil: result.validUntil,
+        provider: result.provider
+      }
     },
 
     async checkout(code, plan) {

@@ -128,6 +128,7 @@ export const styles = css.create({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    lineClamp: 1,
     color: tokens.colorTextPrimary,
     fontFamily: fontTokens.fontFamilySans,
     fontSize: tokens.fontSizeBase,
@@ -171,13 +172,6 @@ export const styles = css.create({
   },
   subtitleInfo: {
     color: tokens.colorInfo
-  },
-  statusColumn: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    gap: tokens.space05,
-    flexShrink: 0
   },
   statusGroup: {
     display: 'flex',

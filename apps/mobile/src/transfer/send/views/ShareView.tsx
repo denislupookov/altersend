@@ -244,7 +244,7 @@ export function ShareView() {
         {vm.hasDevices && (
           <>
             <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionLabel, { color: c.colorTextSecondary }]}>
+              <Text style={[styles.sectionLabel, { color: c.colorTextMuted }]}>
                 {t('send:peer.devices')}
               </Text>
               {vm.connectedCount > 0 && (
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     marginBottom: 8
   },
-  sectionLabel: { fontSize: 11, fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase' },
+  sectionLabel: { fontSize: 13, fontWeight: '500' },
   sectionCount: { fontSize: 11.5, fontWeight: '500' },
   section: { marginBottom: 16 },
   filesWrap: { marginBottom: 24 },

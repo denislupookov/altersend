@@ -201,9 +201,8 @@ export function transferSessionReducer(
       return { ...state, isReconnecting: true }
     case 'peer_session_ended': {
       if (state.role !== 'receiver') return state
-      const fromAnotherPeer =
-        !!state.transferPeerKey && !!action.peerKey && state.transferPeerKey !== action.peerKey
-      if (fromAnotherPeer) return state
+      const fromTransferPeer = !!state.transferPeerKey && action.peerKey === state.transferPeerKey
+      if (!fromTransferPeer) return state
       return { ...state, isReconnecting: false, sessionEndedByPeer: true }
     }
     case 'clear_session':

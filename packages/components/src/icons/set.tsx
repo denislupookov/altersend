@@ -17,6 +17,7 @@ import {
   CloudUpload,
   Code,
   Copy,
+  Crown,
   Database,
   Download,
   File,
@@ -89,6 +90,7 @@ export const CodeIcon = adaptLucide(Code)
 export const ClipboardIcon = adaptLucide(Clipboard)
 export const ClipboardPasteIcon = adaptLucide(ClipboardPaste)
 export const CopyIcon = adaptLucide(Copy)
+export const CrownIcon = adaptLucide(Crown)
 export const DatabaseIcon = adaptLucide(Database)
 export const DownloadIcon = adaptLucide(Download)
 export const FileIcon = adaptLucide(File)

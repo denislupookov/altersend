@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native'
 import { AccountCodeCard, Button, MenuItem, Spinner, useTheme } from '@altersend/components'
 import { LogOutIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
-import { formatAccountCode } from '@altersend/domain'
+import { formatAccountCode, subscriptionSummary } from '@altersend/domain'
 import { useRouter } from 'expo-router'
 import { ConfirmDialog, Layout } from '@/src/components'
 import { useToast } from '@/src/components/Toast'
@@ -72,17 +72,22 @@ export default function SubscriptionScreen() {
       day: 'numeric'
     })
 
-  const planSummary =
-    model.subscription.cancelling && model.subscription.endsAt
-      ? t('settings:account.endsOn', { date: billingDate(model.subscription.endsAt) })
-      : account.validUntil
-        ? [
-            t('settings:account.untilDate', { date: billingDate(account.validUntil) }),
-            model.subscription.canManage ? t('settings:account.manageSubscription') : null
-          ]
-            .filter(Boolean)
-            .join(' · ')
-        : t('settings:account.manageSubscription')
+  const { canManage, canCancel, cancelling, endsAt } = model.subscription
+  const canOpen = canManage || canCancel
+
+  const openSubscription = () => {
+    if (canManage) {
+      model.subscription.manage()
+      return
+    }
+    setConfirmCancel(true)
+  }
+
+  const planSummary = subscriptionSummary(
+    { cancelling, endsAt, validUntil: account.validUntil, canOpen },
+    t,
+    billingDate
+  )
 
   return (
     <Layout hasNativeHeader footer={footer}>
@@ -111,16 +116,10 @@ export default function SubscriptionScreen() {
         <MenuItem
           isLast
           label={t('settings:account.subscriptionRow')}
-          value={planSummary}
-          chevron={model.subscription.canManage}
+          value={planSummary ?? undefined}
+          chevron={canOpen}
           disabled={model.busy}
-          onPress={
-            !model.subscription.canManage
-              ? undefined
-              : model.subscription.managedByStore
-                ? model.subscription.manage
-                : () => setConfirmCancel(true)
-          }
+          onPress={canOpen ? openSubscription : undefined}
         />
       </View>
 

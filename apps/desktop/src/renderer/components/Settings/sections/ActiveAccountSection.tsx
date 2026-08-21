@@ -3,7 +3,7 @@ import { AccountCodeCard, Button, LinkRow, Spinner } from '@altersend/components
 import { ChevronRightIcon } from '@altersend/components/icons'
 
 import { useTranslation } from '@altersend/locales'
-import { formatAccountCode, useCopiedFlag } from '@altersend/domain'
+import { formatAccountCode, subscriptionSummary, useCopiedFlag } from '@altersend/domain'
 import type { AccountModel } from '@altersend/domain'
 import { ConfirmDialog } from '../../ConfirmDialog'
 import { useToast } from '../../Toast'
@@ -51,17 +51,22 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
       year: 'numeric'
     })
 
-  const planSummary =
-    model.subscription.cancelling && model.subscription.endsAt
-      ? t('settings:account.endsOn', { date: billingDate(model.subscription.endsAt) })
-      : account.validUntil
-        ? [
-            t('settings:account.untilDate', { date: billingDate(account.validUntil) }),
-            model.subscription.canManage ? t('settings:account.manageSubscription') : null
-          ]
-            .filter(Boolean)
-            .join(' · ')
-        : t('settings:account.manageSubscription')
+  const { canManage, canCancel, cancelling, endsAt } = model.subscription
+  const canOpen = canManage || canCancel
+
+  const openSubscription = () => {
+    if (canManage) {
+      model.subscription.manage()
+      return
+    }
+    setConfirmCancel(true)
+  }
+
+  const planSummary = subscriptionSummary(
+    { cancelling, endsAt, validUntil: account.validUntil, canOpen },
+    t,
+    billingDate
+  )
 
   const footer = (
     <div className='flex items-center justify-end gap-2'>
@@ -101,16 +106,10 @@ export function ActiveAccountSection({ model }: { model: AccountModel }) {
           trailing={
             <div className='flex items-center gap-2'>
               <span className='text-[14px] text-text-muted'>{planSummary}</span>
-              {model.subscription.canManage ? <ChevronRightIcon size={14} /> : null}
+              {canOpen ? <ChevronRightIcon size={14} /> : null}
             </div>
           }
-          onPress={
-            !model.subscription.canManage
-              ? undefined
-              : model.subscription.managedByStore
-                ? model.subscription.manage
-                : () => setConfirmCancel(true)
-          }
+          onPress={canOpen ? openSubscription : undefined}
         />
       </div>
 
