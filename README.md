@@ -15,7 +15,7 @@ Files go directly between your devices — end-to-end encrypted, no accounts, no
 
   <br/>
 
-  <img src="assets/altersend-1.6.webp" alt="Sending a file from desktop to mobile with AlterSend" width="600" />
+  <img src="assets/altersend_demo.gif" alt="Sending a file from desktop to mobile with AlterSend" width="600" />
 
 </div>
 
@@ -46,9 +46,9 @@ Files go directly between your devices — end-to-end encrypted, no accounts, no
 
 ## About
 
-AlterSend is a free, open-source app for sending files directly between your devices — no cloud, no uploads, no size limits. Files transfer peer-to-peer and are end-to-end encrypted; nothing is ever stored on a server.
+AlterSend is a free, open-source app for sending files directly between your devices, with no cloud storage and no uploads. Files transfer P2P with no size limit and are end-to-end encrypted.
 
-Why use WeTransfer, Dropbox, or Google Drive when you can send files directly — instantly, privately, with no upload costs and no limits?
+Why use WeTransfer, Dropbox, or Google Drive when you can send files straight to the recipient, instantly and privately, with no upload step?
 
 ## Features
 
@@ -56,7 +56,7 @@ Why use WeTransfer, Dropbox, or Google Drive when you can send files directly �
 - **No cloud storage** — files go directly between devices; nothing is ever uploaded or stored on a server
 - **Receive in a browser** — recipients open a share link at [app.altersend.com](https://app.altersend.com) and download straight from the sender, no install
 - **End-to-end encrypted** — only your devices can read your files, always
-- **No file size limit** — send a 100 MB photo or 500 GB video archive, same experience
+- **No size limit P2P** — send a 100 MB photo or a 500 GB video archive, same experience
 - **Pair your devices** — pair a device once, then send to it without scanning or typing a code each time
 - **Cross-platform** — macOS, Windows, Linux, iOS, Android
 - **Works everywhere** — local network or across continents, same code path
