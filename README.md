@@ -15,7 +15,7 @@ Files go directly between your devices — end-to-end encrypted, no accounts, no
 
   <br/>
 
-  <img src="assets/altersend_demo.gif" alt="Sending a file from desktop to mobile with AlterSend" width="600" />
+  <img src="assets/altersend_demo.gif" alt="Sending a file from desktop to mobile with AlterSend" width="820" />
 
 </div>
 
