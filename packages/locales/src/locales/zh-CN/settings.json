@@ -73,6 +73,10 @@
   "pairing": {
     "pairNewDevice": "配对新设备",
     "pairedDevices": "已配对设备",
+    "autoAccept": {
+      "label": "自动接受已配对设备",
+      "description": "已配对设备可直接发起传输，无需确认。"
+    },
     "noPairedDevices": "暂无已配对设备",
     "noPairedDevicesHint": "配对设备即可无需代码发送。",
     "showQrCode": "显示二维码",

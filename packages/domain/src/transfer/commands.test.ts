@@ -1,12 +1,14 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest'
 import { bindTransferApi } from './binding'
-import { renamePeer } from './commands'
+import { acceptInvite, renamePeer } from './commands'
 import { initialTransferSessionState } from './reducer'
 import { transferStore } from './store'
 import type { TransferApi } from './binding'
+import type { IncomingInvite } from './types'
 import type { RememberedPeer, TransferRPC } from '@altersend/core'
 
 const KEY = 'a'.repeat(64)
+const TOPIC = 'b'.repeat(64)
 
 const peer = (displayName: string): RememberedPeer => ({
   remoteDevicePubkey: KEY,
@@ -94,5 +96,55 @@ describe('renamePeer', () => {
 
     expect(await renamePeer(KEY, '   ')).toBe(false)
     expect(transferStore.getState().peers[0].displayName).toBe('Phone')
+  })
+})
+
+describe('acceptInvite', () => {
+  const invite: IncomingInvite = {
+    remoteDevicePubkey: KEY,
+    displayName: 'Phone',
+    deviceType: 'laptop',
+    topic: TOPIC
+  }
+
+  function bindSessionWorker(calls: string[]): void {
+    bindWorker({
+      join: (topic: string) => {
+        calls.push(`join:${topic}`)
+        return Promise.resolve({ state: 'joined' as const })
+      },
+      disconnect: () => {
+        calls.push('disconnect')
+        return Promise.resolve({ state: 'disconnected' as const })
+      }
+    })
+  }
+
+  beforeEach(() => {
+    transferStore.setState({
+      ...initialTransferSessionState,
+      remember: { ...initialTransferSessionState.remember, incomingInvite: invite }
+    })
+  })
+
+  it('joins the invited topic and drops the prompt when idle', async () => {
+    const calls: string[] = []
+    bindSessionWorker(calls)
+
+    await acceptInvite(invite)
+
+    expect(calls).toEqual([`join:${TOPIC}`])
+    expect(transferStore.getState().remember.incomingInvite).toBeNull()
+    expect(transferStore.getState().role).toBe('receiver')
+  })
+
+  it('leaves the current session before joining, since the worklet allows only one', async () => {
+    const calls: string[] = []
+    bindSessionWorker(calls)
+    transferStore.setState({ role: 'receiver', connectionState: 'joining' })
+
+    await acceptInvite(invite)
+
+    expect(calls).toEqual(['disconnect', `join:${TOPIC}`])
   })
 })

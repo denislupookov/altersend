@@ -240,6 +240,12 @@ export const dismissInvite = (): void => {
   dispatchToTransferStore({ type: 'dismiss_invite' })
 }
 
+export const acceptInvite = async (invite: IncomingInvite): Promise<JoinReply> => {
+  dismissInvite()
+  if (transferStore.getState().role !== null) await clearSession()
+  return joinSession(invite.topic)
+}
+
 export const declineInvite = (invite: IncomingInvite): void => {
   dispatchToTransferStore({ type: 'dismiss_invite' })
 

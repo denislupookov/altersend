@@ -1,18 +1,17 @@
-import { useEffect, useState } from 'react'
 import { Modal, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Button, useTheme } from '@altersend/components'
 import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
 import {
-  declineInvite,
-  dismissInvite,
+  acceptInvite,
   formatFileSize,
   formatItemsCount,
-  joinSession,
-  useTransferStore
+  useIncomingInvite,
+  type IncomingInvite
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Text } from '@/src/components/ThemedText'
+import { autoAcceptStoragePort } from '@/src/lifecycle/autoAcceptStorage'
 import { useRouter } from 'expo-router'
 
 export function InviteBanner() {
@@ -21,27 +20,18 @@ export function InviteBanner() {
   const c = theme.colors
   const insets = useSafeAreaInsets()
   const router = useRouter()
-  const invite = useTransferStore((s) => s.remember.incomingInvite)
-  const [accepted, setAccepted] = useState(false)
 
-  useEffect(() => {
-    if (invite) setAccepted(false)
-  }, [invite])
-
-  const visible = Boolean(invite && !accepted)
-
-  const accept = () => {
-    if (!invite) return
-    setAccepted(true)
-    dismissInvite()
-    void joinSession(invite.topic)
+  const joinInvite = (incoming: IncomingInvite) => {
+    acceptInvite(incoming).catch((err) => console.warn('InviteBanner: acceptInvite failed', err))
     router.navigate('/receive')
   }
 
-  const decline = () => {
-    if (!invite) return
-    declineInvite(invite)
-  }
+  const { invite, accept, decline } = useIncomingInvite({
+    storage: autoAcceptStoragePort,
+    onAccept: joinInvite
+  })
+
+  const visible = invite !== null
 
   const Icon = invite ? deviceIcon(invite.deviceType) : null
 

@@ -73,6 +73,10 @@
   "pairing": {
     "pairNewDevice": "Neues Gerät koppeln",
     "pairedDevices": "Gekoppelte Geräte",
+    "autoAccept": {
+      "label": "Von gekoppelten Geräten automatisch annehmen",
+      "description": "Gekoppelte Geräte können Übertragungen ohne Nachfrage starten."
+    },
     "noPairedDevices": "Noch keine gekoppelten Geräte",
     "noPairedDevicesHint": "Koppeln Sie ein Gerät, um ohne Code zu senden.",
     "showQrCode": "QR-Code anzeigen",

@@ -1,25 +1,29 @@
-import { useEffect, useState } from 'react'
 import {
-  declineInvite,
   formatFileSize,
   formatItemsCount,
-  useTransferStore
+  useIncomingInvite,
+  type IncomingInvite
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Button } from '@altersend/components'
 import { CheckIcon, CloseIcon, deviceIcon } from '@altersend/components/icons'
+import { autoAcceptStoragePort } from '../../lifecycle/autoAcceptStorage'
 import { zLayer } from '../../zLayer'
 
-export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }) {
+interface InviteBannerProps {
+  onAccept: (invite: IncomingInvite) => void
+  onAutoAccept: (invite: IncomingInvite) => void
+}
+
+export function InviteBanner({ onAccept, onAutoAccept }: InviteBannerProps) {
   const { t } = useTranslation(['common'])
-  const invite = useTransferStore((s) => s.remember.incomingInvite)
-  const [accepted, setAccepted] = useState(false)
+  const { invite, accept, decline } = useIncomingInvite({
+    storage: autoAcceptStoragePort,
+    onAccept,
+    onAutoAccept
+  })
 
-  useEffect(() => {
-    if (invite) setAccepted(false)
-  }, [invite])
-
-  if (!invite || accepted) return null
+  if (!invite) return null
 
   const Icon = deviceIcon(invite.deviceType)
 
@@ -32,15 +36,6 @@ export function InviteBanner({ onAccept }: { onAccept: (topic: string) => void }
     : t('common:files.filesGeneric')
   const sizeLabel =
     fileCount > 0 && invite.totalSize != null ? ` · ${formatFileSize(invite.totalSize)}` : ''
-
-  const accept = () => {
-    setAccepted(true)
-    onAccept(invite.topic)
-  }
-
-  const decline = () => {
-    declineInvite(invite)
-  }
 
   return (
     <div

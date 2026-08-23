@@ -2,8 +2,10 @@ import { StyleSheet, View } from 'react-native'
 import { useCallback, useState } from 'react'
 import { useFocusEffect } from 'expo-router'
 import { ToggleSwitch, useTheme } from '@altersend/components'
+import { useAutoAcceptSetting } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { Layout } from '@/src/components'
+import { autoAcceptStoragePort } from '@/src/lifecycle/autoAcceptStorage'
 import {
   isCrashReportingEnabled,
   setCrashReportingEnabled
@@ -21,6 +23,7 @@ export default function GeneralScreen() {
   const c = theme.colors
   const [mediaToPhotos, setMediaToPhotos] = useState(isSaveMediaToPhotos)
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
+  const autoAccept = useAutoAcceptSetting(autoAcceptStoragePort)
 
   useFocusEffect(
     useCallback(() => {
@@ -55,6 +58,15 @@ export default function GeneralScreen() {
             onChange={handleMediaToggle}
             label={t(MEDIA_DESTINATION_KEYS.label)}
             description={t(MEDIA_DESTINATION_KEYS.description)}
+          />
+        </View>
+        <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />
+        <View style={styles.row}>
+          <ToggleSwitch
+            checked={autoAccept.enabled}
+            onChange={autoAccept.setEnabled}
+            label={t('settings:pairing.autoAccept.label')}
+            description={t('settings:pairing.autoAccept.description')}
           />
         </View>
         <View style={[styles.divider, { backgroundColor: c.colorBorderPrimary }]} />

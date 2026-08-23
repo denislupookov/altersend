@@ -73,6 +73,10 @@
   "pairing": {
     "pairNewDevice": "Emparejar nuevo dispositivo",
     "pairedDevices": "Dispositivos emparejados",
+    "autoAccept": {
+      "label": "Aceptar automáticamente de dispositivos emparejados",
+      "description": "Los dispositivos emparejados pueden iniciar transferencias sin preguntarte."
+    },
     "noPairedDevices": "Aún no hay dispositivos emparejados",
     "noPairedDevicesHint": "Empareja un dispositivo para enviar sin código.",
     "showQrCode": "Mostrar código QR",

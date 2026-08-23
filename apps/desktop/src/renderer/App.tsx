@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import {
+  acceptInvite,
   clearSession,
-  dismissInvite,
   getLeaveSessionMessage,
-  joinSession,
   useSimulatedLoading,
   useTransferStore,
-  useWhatsNew
+  useWhatsNew,
+  type IncomingInvite
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi, hasBridge } from './api/bridgeApi'
@@ -61,13 +61,18 @@ export default function App() {
     onSwitched?.()
   }
 
+  const joinInvite = (invite: IncomingInvite): void => {
+    acceptInvite(invite).catch((error) => console.error('App: acceptInvite failed', error))
+  }
+
   const confirmSwitchTab = () => {
     if (!pendingSwitch) return
     const { tab, onSwitched } = pendingSwitch
     setPendingSwitch(null)
-    clearSession().catch((error) => console.error('App: clearSession failed', error))
     setActiveTab(tab)
-    onSwitched?.()
+    clearSession()
+      .catch((error) => console.error('App: clearSession failed', error))
+      .then(() => onSwitched?.())
   }
 
   if (progress < 100) {
@@ -97,11 +102,10 @@ export default function App() {
       <TransferPage version={version} activeTab={activeTab} onTabChange={switchTab} />
       <PairRequestBanner />
       <InviteBanner
-        onAccept={(topic) => {
-          switchTab('receive', () => {
-            dismissInvite()
-            joinSession(topic).catch((error) => console.error('App: joinSession failed', error))
-          })
+        onAccept={(invite) => switchTab('receive', () => joinInvite(invite))}
+        onAutoAccept={(invite) => {
+          setActiveTab('receive')
+          joinInvite(invite)
         }}
       />
       <UpdateBanner ready={updateReady} />

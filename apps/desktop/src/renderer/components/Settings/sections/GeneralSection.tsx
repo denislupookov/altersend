@@ -10,8 +10,10 @@ import {
   useTheme
 } from '@altersend/components'
 import { FolderIcon } from '@altersend/components/icons'
+import { useAutoAcceptSetting } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../../api/bridgeApi'
+import { autoAcceptStoragePort } from '../../../lifecycle/autoAcceptStorage'
 import { useToast } from '../../Toast'
 import { closeSentry, initSentry } from '../../../sentry'
 import {
@@ -45,6 +47,7 @@ export function GeneralSection() {
   const [folder, setFolder] = useState<string | null>(null)
   const [askEveryTime, setAsk] = useState(isAskEveryTime)
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
+  const autoAccept = useAutoAcceptSetting(autoAcceptStoragePort)
   const [shareExtension, setShareExtension] = useState<ShareExtensionState>('unknown')
   const awaitingSettingsVisit = useRef(false)
 
@@ -149,6 +152,19 @@ export function GeneralSection() {
         </LinkCard>
 
         <LinkCard>
+          <LinkRow
+            compact
+            label={t('settings:pairing.autoAccept.label')}
+            subtitle={t('settings:pairing.autoAccept.description')}
+            trailing={
+              <ToggleSwitch
+                checked={autoAccept.enabled}
+                onChange={autoAccept.setEnabled}
+                aria-label={t('settings:pairing.autoAccept.label')}
+              />
+            }
+          />
+
           {shareExtension !== 'unknown' && (
             <LinkRow
               compact

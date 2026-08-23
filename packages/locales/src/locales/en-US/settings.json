@@ -89,6 +89,10 @@
   "pairing": {
     "pairNewDevice": "Pair new device",
     "pairedDevices": "Paired Devices",
+    "autoAccept": {
+      "label": "Auto-accept from paired devices",
+      "description": "Paired devices can start a transfer without asking."
+    },
     "noPairedDevices": "No paired devices yet",
     "noPairedDevicesHint": "Pair a device to send without a code.",
     "showQrCode": "Show QR Code",

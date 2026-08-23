@@ -73,6 +73,10 @@
   "pairing": {
     "pairNewDevice": "新しいデバイスをペアリング",
     "pairedDevices": "ペアリング済みデバイス",
+    "autoAccept": {
+      "label": "ペアリング済みデバイスから自動的に受け入れる",
+      "description": "ペアリング済みデバイスは確認なしで転送を開始できます。"
+    },
     "noPairedDevices": "ペアリング済みのデバイスはまだありません",
     "noPairedDevicesHint": "デバイスをペアリングすると、コードなしで送信できます。",
     "showQrCode": "QRコードを表示",

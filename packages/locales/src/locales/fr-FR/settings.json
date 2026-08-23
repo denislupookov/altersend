@@ -73,6 +73,10 @@
   "pairing": {
     "pairNewDevice": "Associer un nouvel appareil",
     "pairedDevices": "Appareils associés",
+    "autoAccept": {
+      "label": "Accepter automatiquement des appareils associés",
+      "description": "Les appareils associés peuvent lancer un transfert sans demander."
+    },
     "noPairedDevices": "Aucun appareil associé pour l’instant",
     "noPairedDevicesHint": "Associez un appareil pour envoyer sans code.",
     "showQrCode": "Afficher le code QR",
