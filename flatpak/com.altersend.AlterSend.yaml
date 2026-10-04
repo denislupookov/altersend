@@ -18,7 +18,6 @@ build-options:
     NPM_CONFIG_OFFLINE: "true"
     NPM_CONFIG_CACHE: "/run/build/altersend/flatpak-node/npm-cache"
     FLATPAK_BUILD: "1"
-    ELECTRON_BUILDER_CACHE: "/run/build/altersend/apps/desktop/.electron-dist"
 
 finish-args:
   - --share=network
@@ -27,13 +26,19 @@ finish-args:
   - --socket=fallback-x11
   - --device=all
   - --filesystem=~/.config/AlterSend:create
+  - --talk-name=org.freedesktop.secrets
+  - --talk-name=org.kde.kwalletd5
+  - --talk-name=org.kde.kwalletd6
 
 modules:
   - name: altersend
     buildsystem: simple
 
     build-commands:
-      - npm ci --ignore-scripts
+      - cp flatpak/package-lock.flatpak.json package-lock.json
+      - npm ci --ignore-scripts --no-audit --no-fund --legacy-peer-deps
+
+      - unzip -q apps/desktop/.electron-dist/electron-linux-*.zip -d apps/desktop/.electron-dist/
 
       - npm run build -w packages/drive
       - npm run build -w packages/core
@@ -46,10 +51,11 @@ modules:
       - |
         ARCH=$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/')
         (cd apps/desktop && ../../node_modules/.bin/electron-builder --linux --$ARCH --dir \
-          -c electron-builder.linux.json --publish never)
+          -c ../../flatpak/electron-builder.flatpak.json \
+          --publish never)
 
       - install -d /app/lib/AlterSend /app/bin
-      - cp -a apps/desktop/out/linux-unpacked/. /app/lib/AlterSend/
+      - cp -a apps/desktop/out/linux*unpacked/. /app/lib/AlterSend/
 
       - install -Dm755 altersend.sh /app/bin/altersend
 
@@ -72,7 +78,7 @@ modules:
         url: https://github.com/electron/electron/releases/download/v40.10.0/electron-v40.10.0-linux-x64.zip
         sha256: 35efe7401822e8d2e474e13788a6191362c7494dd1f7ae327b70087e0768a667
         dest: apps/desktop/.electron-dist
-        dest-filename: electron-v40.10.0-linux-x64.zip
+        dest-filename: electron-linux-x64.zip
         only-arches:
           - x86_64
 
@@ -80,6 +86,6 @@ modules:
         url: https://github.com/electron/electron/releases/download/v40.10.0/electron-v40.10.0-linux-arm64.zip
         sha256: cb4454ae64f00f43cef86f57d38eff9a6cef7b1e0690debc1dc81323f98e6e63
         dest: apps/desktop/.electron-dist
-        dest-filename: electron-v40.10.0-linux-arm64.zip
+        dest-filename: electron-linux-arm64.zip
         only-arches:
           - aarch64

@@ -1,0 +1,28 @@
+{
+  "appId": "com.altersend.desktop",
+  "electronVersion": "40.10.0",
+  "electronDist": ".electron-dist",
+  "icon": "build/icon.png",
+  "asar": false,
+  "directories": {
+    "output": "out"
+  },
+  "files": [
+    "dist/**/*",
+    "package.json",
+    "!dist/**/*.map",
+    "!**/node_modules/react-native/**",
+    "!**/node_modules/react-native-*/**",
+    "!**/node_modules/@react-native/**",
+    "!**/node_modules/@expo/**",
+    "!**/node_modules/expo-*/**"
+  ],
+  "linux": {
+    "executableName": "altersend",
+    "icon": "build/icon.png",
+    "artifactName": "${productName}-${arch}.${ext}",
+    "category": "Network;FileTransfer",
+    "mimeTypes": ["application/octet-stream", "inode/directory", "x-scheme-handler/altersend"]
+  },
+  "afterPack": "scripts/afterPack.cjs"
+}
