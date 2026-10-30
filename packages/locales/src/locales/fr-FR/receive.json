@@ -3,7 +3,7 @@
     "tabTitle": "Recevoir",
     "join": {
       "title": "Recevoir des fichiers",
-      "description": "Saisissez un code de connexion à 64 caractères de l'expéditeur pour diffuser ses fichiers.",
+      "description": "Saisissez un code de connexion à 64 caractères de l’expéditeur pour récupérer ses fichiers.",
       "mobileDescription": "Scannez ou importez le QR de l’expéditeur, ou collez son code de 64 caractères pour démarrer le transfert."
     },
     "connecting": {
@@ -28,7 +28,7 @@
       "title": "Transfert incomplet"
     },
     "senderEnded": {
-      "title": "Séance terminée"
+      "title": "Session terminée"
     },
     "handshake": {
       "title": "Connexion en cours",
@@ -36,7 +36,7 @@
     },
     "relayBusy": {
       "title": "Connexion toujours en cours…",
-      "description": "Le relais est saturé pour le moment, nous essayons donc une connexion directe. Cela peut prendre jusqu'à une minute.",
+      "description": "Le relais est saturé pour le moment, nous essayons donc une connexion directe. Cela peut prendre jusqu’à une minute.",
       "proOffer": "<pro>Passez à Pro</pro> pour être prioritaire sur le relais."
     },
     "sessionEnded": {
@@ -46,7 +46,7 @@
   },
   "panel": {
     "filesReadyTitle": "Fichiers prêts",
-    "filesReadyDescription": "L'expéditeur a partagé des fichiers. Passez-les en revue et démarrez chaque téléchargement lorsque vous êtes prêt.",
+    "filesReadyDescription": "L’expéditeur a partagé des fichiers. Passez-les en revue et démarrez chaque téléchargement lorsque vous êtes prêt.",
     "receivedFiles": "Fichiers reçus"
   },
   "form": {
@@ -57,15 +57,15 @@
   "actions": {
     "scanQr": "Scanner le code QR",
     "allowCamera": "Autoriser la caméra",
-    "downloadAll": "Téléchargez tout",
+    "downloadAll": "Tout télécharger",
     "view": "Voir",
     "play": "Lire",
-    "open": "Ouvert",
-    "scanQrHint": "Utilisez la webcam pour lire le QR de l'expéditeur",
+    "open": "Ouvrir",
+    "scanQrHint": "Utilisez la webcam pour lire le QR de l’expéditeur",
     "downloadingPercent": "Téléchargement {{percent}} %",
     "downloadAllWithSize": "Tout télécharger ({{size}})",
     "showInFinder": "Afficher dans le Finder",
-    "backToHome": "Retour à l'accueil",
+    "backToHome": "Retour à l’accueil",
     "viewPhotos": "Voir les photos",
     "scanOrImportQr": "Scanner ou importer le QR",
     "scanOrImportQrHintDesktop": "Utilisez la webcam ou importez une image QR enregistrée",
@@ -80,15 +80,15 @@
     "invalidCode": "Entrez un code hexadécimal valide de 64 caractères.",
     "invalidKey": "Entrez une clé hexadécimale valide de 64 caractères.",
     "joinFailed": "Impossible de rejoindre la session.",
-    "unreachable": "Impossible de joindre l'expéditeur. Vérifiez le code et réessayez.",
+    "unreachable": "Impossible de joindre l’expéditeur. Vérifiez le code et réessayez.",
     "unsupportedQrTitle": "Code QR non pris en charge",
     "unsupportedQrHint": "Scannez un code de connexion AlterSend.",
     "mobileJoinFailedTitle": "Impossible de rejoindre la session",
     "mobileJoinFailedHint": "Essayez de scanner à nouveau ou collez le code manuellement.",
     "cameraUnavailable": "Caméra indisponible.",
-    "cameraCouldNotStart": "La caméra n'a pas pu démarrer. Collez plutôt le code de connexion.",
+    "cameraCouldNotStart": "La caméra n’a pas pu démarrer. Collez plutôt le code de connexion.",
     "downloadFailed": "Échec",
-    "didntArrive": "Je ne suis pas arrivé",
+    "didntArrive": "N’est pas arrivé",
     "transferIssue": "Problème de transfert",
     "imageNoQrTitle": "Aucun code QR trouvé",
     "imageNoQrHint": "Choisissez une image contenant un code QR AlterSend.",
@@ -97,22 +97,22 @@
   },
   "camera": {
     "preparingTitle": "Préparation de la caméra",
-    "preparingDescription": "Vérifier l'accès à la caméra afin de pouvoir scanner le code QR de l'expéditeur.",
+    "preparingDescription": "Vérifier l’accès à la caméra afin de pouvoir scanner le code QR de l’expéditeur.",
     "accessNeededTitle": "Accès à la caméra nécessaire",
-    "accessNeededDescription": "Autoriser l'accès à la caméra pour scanner le code de connexion QR d'un expéditeur.",
+    "accessNeededDescription": "Autoriser l’accès à la caméra pour scanner le code de connexion QR d’un expéditeur.",
     "scanTitle": "Scanner le code QR",
     "scanDescription": "Centrez le code QR de l’expéditeur à l’intérieur du cadre. AlterSend se connectera automatiquement.",
-    "desktopHint": "Pointez le code QR de l’expéditeur vers la webcam: AlterSend se connecte automatiquement.",
+    "desktopHint": "Pointez le code QR de l’expéditeur vers la webcam : AlterSend se connecte automatiquement.",
     "blockedTitle": "Accès à la caméra bloqué",
-    "blockedHint": "Autorisez l'accès à la caméra pour AlterSend dans les paramètres de votre système, puis réessayez. Vous pouvez également coller le code à la place.",
+    "blockedHint": "Autorisez l’accès à la caméra pour AlterSend dans les paramètres de votre système, puis réessayez. Vous pouvez également coller le code à la place.",
     "noneTitle": "Aucune caméra trouvée",
-    "noneHint": "Connectez une webcam pour numériser ou collez plutôt le code de connexion.",
+    "noneHint": "Connectez une webcam pour scanner ou collez plutôt le code de connexion.",
     "unavailableTitle": "Caméra indisponible",
     "starting": "Démarrage de la caméra…",
-    "enableTitle": "Activer l'accès à la caméra",
-    "enableDescription": "Cela sert uniquement à scanner le QR code de l'expéditeur. Vous pouvez aussi revenir en arrière et coller le code manuellement.",
+    "enableTitle": "Activer l’accès à la caméra",
+    "enableDescription": "Cela sert uniquement à scanner le QR code de l’expéditeur. Vous pouvez aussi revenir en arrière et coller le code manuellement.",
     "usePastedCode": "Utiliser plutôt le code collé",
-    "joiningDescription": "Connexion à la session de l'expéditeur.",
+    "joiningDescription": "Connexion à la session de l’expéditeur.",
     "scanImportTitle": "Scanner ou importer le QR",
     "scanImportDescription": "Centrez le QR de l’expéditeur dans le cadre, ou importez une image enregistrée. AlterSend se connecte automatiquement.",
     "desktopImportHint": "Centrez le QR de l’expéditeur dans le cadre, ou importez une image enregistrée. AlterSend se connecte automatiquement.",
@@ -127,12 +127,12 @@
     "waiting": "En attente…",
     "downloadingPercent": "Téléchargement de {{percent}} %",
     "percent": "{{percent}} %",
-    "waitingForFiles": "En attente des fichiers de l'expéditeur…"
+    "waitingForFiles": "En attente des fichiers de l’expéditeur…"
   },
   "summary": {
     "receivedCount_one": "{{completed}} fichier sur {{count}} reçu",
     "receivedCount_other": "{{completed}} fichiers sur {{count}} reçus",
-    "savedToPhotos_one": "Enregistré dans les photos",
+    "savedToPhotos_one": "Enregistré dans Photos",
     "savedToPhotos_other": "{{count}} enregistrés dans Photos",
     "savedInFiles_one": "Enregistré dans Fichiers",
     "savedInFiles_other": "{{count}} enregistrés dans Fichiers",

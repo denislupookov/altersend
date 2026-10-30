@@ -60,7 +60,7 @@
     "downloadAll": "Alles herunterladen",
     "view": "Ansicht",
     "play": "Wiedergeben",
-    "open": "Offen",
+    "open": "Öffnen",
     "scanQrHint": "Lies den QR-Code des Senders mit der Webcam",
     "downloadingPercent": "Wird heruntergeladen {{percent}} %",
     "downloadAllWithSize": "Alle herunterladen ({{size}})",

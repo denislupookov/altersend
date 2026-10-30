@@ -1,13 +1,13 @@
 {
   "slides": {
     "privacy": {
-      "title": "Envoyez n'importe quoi à n'importe qui, en privé",
+      "title": "Envoyez n’importe quoi à n’importe qui, en privé",
       "description": "Les fichiers sont chiffrés sur votre appareil et vont directement à la personne concernée",
       "link": "Lire notre politique de confidentialité"
     },
     "pair": {
-      "title": "Appairez-vous à n'importe quel appareil",
-      "description": "Appairez une fois entre iPhone, Android, Mac et Windows, puis envoyez d'un geste"
+      "title": "Appairez-vous à n’importe quel appareil",
+      "description": "Appairez une fois entre iPhone, Android, Mac et Windows, puis envoyez d’un geste"
     },
     "link": {
       "title": "Partagez un lien vers le transfert",

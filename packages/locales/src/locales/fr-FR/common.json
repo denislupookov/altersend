@@ -37,9 +37,9 @@
     "collapseSidebar": "Réduire la barre latérale",
     "expandSidebar": "Développer la barre latérale",
     "language": "Langue",
-    "systemDefault": "Valeur système",
+    "systemDefault": "Système",
     "camera": "Caméra",
-    "statusBar": "Barre d'état",
+    "statusBar": "Barre d’état",
     "transferMode": "Mode de transfert",
     "version": "Version de l’app",
     "platform": "Plateforme",
@@ -70,13 +70,13 @@
     "available": "Mise à jour disponible",
     "restart": "Redémarrer",
     "update": "Mettre à jour",
-    "restartFailed": "Échec du redémarrage: veuillez quitter et rouvrir",
+    "restartFailed": "Échec du redémarrage : veuillez quitter et rouvrir",
     "description": "Une nouvelle version est disponible avec les derniers correctifs et améliorations.",
-    "updateNow": "Mettre à jour",
+    "updateNow": "Mettre à jour maintenant",
     "notNow": "Plus tard"
   },
   "whatsNew": {
-    "heading": "Nouveautés d'AlterSend {{version}}",
+    "heading": "Nouveautés d’AlterSend {{version}}",
     "subtitle_one": "Une chose à savoir.",
     "subtitle_other": "{{count}} choses à savoir.",
     "releases": {
@@ -91,7 +91,7 @@
         },
         "background": {
           "title": "Transferts en arrière-plan",
-          "description": "Continue même après avoir quitté l'app."
+          "description": "Continue même après avoir quitté l’app."
         },
         "share": {
           "title": "Partage depuis toute app",
@@ -110,8 +110,8 @@
     "connectedViaRelay": "Connecté via relais"
   },
   "confirm": {
-    "leaveShareSession": "Quitter mettra fin à votre session de partage active. Continuer?",
-    "leaveReceiveSession": "Quitter mettra fin à votre session de réception active. Continuer?"
+    "leaveShareSession": "Quitter mettra fin à votre session de partage active. Continuer ?",
+    "leaveReceiveSession": "Quitter mettra fin à votre session de réception active. Continuer ?"
   },
   "units": {
     "chars_one": "{{count}} caractère",

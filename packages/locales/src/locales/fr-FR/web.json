@@ -54,7 +54,7 @@
     "completeDescription": "L’expéditeur s’est déconnecté, mais tous les fichiers sont bien arrivés — tout est prêt.",
     "waitingTitle": "En attente de la reconnexion de l’expéditeur",
     "waitingBody": "La connexion a été interrompue. Dès qu’il rouvre le transfert, reprenez où vous en étiez.",
-    "alreadySaved": "{{completed}} fichiers sur {{total}} déjà enregistrés",
+    "alreadySaved": "{{completed}} sur {{total}} fichiers déjà enregistrés",
     "tryNow": "Réessayer",
     "anotherCode": "Autre code"
   },

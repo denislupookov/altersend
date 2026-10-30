@@ -10,11 +10,11 @@
     },
     "waitingForReceiver": {
       "title": "Partagez le code",
-      "description": "Envoyez le code ou QR à votre destinataire pour démarrer le transfert."
+      "description": "Envoyez le code ou le QR code à votre destinataire pour démarrer le transfert."
     },
     "receiverConnected": {
       "title": "Partagez le code",
-      "description": "Envoyez le code ou QR à votre destinataire pour démarrer le transfert."
+      "description": "Envoyez le code ou le QR code à votre destinataire pour démarrer le transfert."
     }
   },
   "actions": {
@@ -37,8 +37,8 @@
   "status": {
     "waitingForPeer": "En attente du destinataire",
     "peerConnected": "Destinataire connecté",
-    "uploaded": "Téléchargé",
-    "uploading": "Téléchargement…",
+    "uploaded": "Téléversé",
+    "uploading": "Téléversement…",
     "waiting": "En attente",
     "failed": "Échec",
     "paused": "En pause",
@@ -53,7 +53,7 @@
     "inviteFailedToast": "Impossible de joindre {{name}}",
     "inviteFailedHint": "Assurez-vous qu’il est en ligne et réessayez",
     "deviceConnected": "{{name}} connecté",
-    "peerOutdated": "Connexion impossible — cet appareil nécessite une version plus récente d'AlterSend.",
+    "peerOutdated": "Connexion impossible — cet appareil nécessite une version plus récente d’AlterSend.",
     "updateRequired": "Mettre à jour pour se connecter"
   },
   "connection": {
@@ -81,9 +81,9 @@
     "failedPickPhotos": "Échec de la sélection des photos"
   },
   "hints": {
-    "keepOpen": "La fermeture de l'application annule le transfert.",
-    "stayInApp": "Restez dans l'app jusqu'à la connexion.",
-    "stayUntilDone": "Restez dans l'app jusqu'à la fin du transfert."
+    "keepOpen": "La fermeture de l’application annule le transfert.",
+    "stayInApp": "Restez dans l’app jusqu’à la connexion.",
+    "stayUntilDone": "Restez dans l’app jusqu’à la fin du transfert."
   },
   "preparing": {
     "uploadedCount_one": "{{completed}} fichier sur {{count}} téléversé",
@@ -106,7 +106,7 @@
     "addTitle": "Que voulez-vous ajouter ?",
     "filesHint": "Choisissez un ou plusieurs fichiers",
     "folderHint": "Envoyer un dossier entier",
-    "browseDescription": "ou <link>parcourez</link> votre ordinateur",
+    "browseDescription": "ou <link>parcourir</link> votre ordinateur",
     "tapTo": "Touchez pour",
     "addMoreLink": "en ajouter",
     "browseLink": "parcourir"
@@ -115,6 +115,6 @@
     "addedFiles": "Fichiers ajoutés",
     "removeLabel": "Supprimer {{name}}",
     "addedText": "Texte ajouté",
-    "tooMany": "Trop de fichiers à envoyer. Compressez-les d'abord dans une archive."
+    "tooMany": "Trop de fichiers à envoyer. Compressez-les d’abord dans une archive."
   }
 }

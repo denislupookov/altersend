@@ -13,18 +13,18 @@
     "system": "Système"
   },
   "crashReports": {
-    "label": "Rapports d'erreur",
-    "description": "Partagez des données anonymes sur les accidents pour contribuer à améliorer AlterSend"
+    "label": "Rapports d’erreur",
+    "description": "Partagez des données anonymes sur les plantages pour contribuer à améliorer AlterSend"
   },
   "relay": {
     "mode": {
       "altersend": {
         "label": "Relais AlterSend",
-        "caption": "Quand la connexion directe échoue, le transfert passe par le relais d'AlterSend. Les fichiers restent chiffrés de bout en bout."
+        "caption": "Quand la connexion directe échoue, le transfert passe par le relais d’AlterSend. Les fichiers restent chiffrés de bout en bout."
       },
       "custom": {
         "label": "Relais auto-hébergé",
-        "caption": "Utilisez votre propre serveur relais au lieu de celui d'AlterSend."
+        "caption": "Utilisez votre propre serveur relais au lieu de celui d’AlterSend."
       },
       "off": {
         "label": "Aucun relais",
@@ -35,7 +35,7 @@
       "label": "Code du relais",
       "placeholder": "relay:2a036b9536083d4df79068c18f555aba122c14983df45978570e049c9de75655@203.0.113.7",
       "invalid": "Cela ne ressemble pas à un code de relais",
-      "failed": "Impossible d'appliquer le relais — réessayez",
+      "failed": "Impossible d’appliquer le relais — réessayez",
       "description": "Votre relais affiche un code à son démarrage.",
       "fallback": {
         "title": "Repli",
@@ -44,7 +44,7 @@
           "caption": "Si votre relais est injoignable, le transfert attend."
         },
         "altersend": {
-          "label": "Utiliser le relais d'AlterSend si besoin",
+          "label": "Utiliser le relais d’AlterSend si besoin",
           "caption": "Les transferts continuent si votre relais est en panne."
         }
       },
@@ -65,8 +65,8 @@
     "sponsor": "Soutenir AlterSend",
     "privacyPolicy": "Politique de confidentialité",
     "privacyPolicyHint": "Comment AlterSend gère vos données",
-    "terms": "Conditions d'utilisation",
-    "termsHint": "Règles d'utilisation de AlterSend",
+    "terms": "Conditions d’utilisation",
+    "termsHint": "Règles d’utilisation d’AlterSend",
     "website": "Site Web",
     "connection": "Relais"
   },
@@ -128,7 +128,7 @@
     "autoSaveDescription": "Si désactivé, un emplacement vous sera demandé à chaque transfert.",
     "change": "Modifier…",
     "chooseFolder": "Choisir un dossier…",
-    "changeFailed": "Impossible d'enregistrer le dossier de téléchargement",
+    "changeFailed": "Impossible d’enregistrer le dossier de téléchargement",
     "mediaToPhotosLabel": "Enregistrer photos et vidéos dans Photos",
     "mediaToGalleryLabel": "Enregistrer photos et vidéos dans la Galerie",
     "destinationPhotos": "Photos et vidéos vers Photos",
@@ -171,8 +171,8 @@
     "saveWarning": "C’est votre seule preuve d’achat. Nous ne pouvons pas le récupérer, car nous ne savons pas qui vous êtes.",
     "codeReplaced": "Ceci est un nouveau code : le précédent ne fonctionne plus. Saisissez-le sur vos autres appareils.",
     "savedCodeTitle": "Avez-vous enregistré votre code ?",
-    "savedCodeBody": "C'est le seul moyen de récupérer votre abonnement sur un autre appareil. Nous ne pouvons pas le retrouver pour vous.",
-    "savedCodeConfirm": "Oui, je l'ai enregistré",
+    "savedCodeBody": "C’est le seul moyen de récupérer votre abonnement sur un autre appareil. Nous ne pouvons pas le retrouver pour vous.",
+    "savedCodeConfirm": "Oui, je l’ai enregistré",
     "done": "Terminé",
     "copied": "Copié",
     "copyFailed": "Impossible de copier votre code : copiez-le manuellement avant de vous déconnecter.",
@@ -183,10 +183,10 @@
     "codeFileWarning": "Ce code est votre abonnement. Saisissez-le dans AlterSend sur n’importe quel appareil pour restaurer Pro. Nous ne l’avons jamais conservé et ne pouvons pas le récupérer pour vous.",
     "subscriptionRow": "Abonnement",
     "manageSubscription": "Gérer",
-    "untilDate": "jusqu'au {{date}}",
+    "untilDate": "jusqu’au {{date}}",
     "cancelTitle": "Annuler votre abonnement ?",
-    "cancelBody": "Pro reste actif jusqu'à la fin de la période déjà payée. Cette action est irréversible depuis l'application : vous devriez vous réabonner une fois la période terminée.",
-    "cancelConfirm": "Annuler l'abonnement",
+    "cancelBody": "Pro reste actif jusqu’à la fin de la période déjà payée. Cette action est irréversible depuis l’application : vous devriez vous réabonner une fois la période terminée.",
+    "cancelConfirm": "Annuler l’abonnement",
     "endsOn": "Se termine le {{date}}",
     "logOut": "Se déconnecter de cet appareil",
     "logOutTitle": "Enregistrez d’abord votre code",
@@ -205,8 +205,8 @@
     "included": "Ce qui est inclus",
     "getPro": "Obtenir Pro",
     "storeUnavailable": "Les achats intégrés ne sont pas disponibles sur cet appareil. Si vous avez déjà Pro, saisissez votre code.",
-    "renewalIos": "Renouvellement automatique jusqu'à résiliation. Gérez-le dans les réglages de l'App Store.",
-    "renewalAndroid": "Renouvellement automatique jusqu'à résiliation. Gérez-le dans les paramètres de Google Play.",
+    "renewalIos": "Renouvellement automatique jusqu’à résiliation. Gérez-le dans les réglages de l’App Store.",
+    "renewalAndroid": "Renouvellement automatique jusqu’à résiliation. Gérez-le dans les paramètres de Google Play.",
     "none": "–",
     "featureDirect": "Transfert P2P direct",
     "featurePriority": "Priorité quand le relais est chargé",

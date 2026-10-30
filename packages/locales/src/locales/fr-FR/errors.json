@@ -1,22 +1,22 @@
 {
   "crash": {
-    "title": "Quelque chose s'est mal passé",
-    "desktopDescription": "AlterSend a rencontré une erreur inattendue et doit redémarrer. Le service de transfert peut être instable, un redémarrage est donc l'option la plus sûre.",
-    "mobileDescription": "AlterSend a rencontré une erreur inattendue. Réessayez ou fermez et rouvrez l'application si le problème persiste.",
+    "title": "Quelque chose s’est mal passé",
+    "desktopDescription": "AlterSend a rencontré une erreur inattendue et doit redémarrer. Le service de transfert peut être instable, un redémarrage est donc l’option la plus sûre.",
+    "mobileDescription": "AlterSend a rencontré une erreur inattendue. Réessayez ou fermez et rouvrez l’application si le problème persiste.",
     "restartAlterSend": "Redémarrez AlterSend",
     "tryAgain": "Réessayez"
   },
   "bridgeUnavailable": {
     "title": "Connexion de bureau indisponible",
-    "description": "Cette fenêtre n'est pas connectée à l'application de bureau. Redémarrez AlterSend depuis l'application de bureau.",
+    "description": "Cette fenêtre n’est pas connectée à l’application de bureau. Redémarrez AlterSend depuis l’application de bureau.",
     "status": "Connexion de bureau indisponible"
   },
   "transfer": {
     "invalidTopic": "Le code de connexion est invalide.",
     "joinFailed": "Impossible de rejoindre la session.",
     "peerUnreachable": "Impossible de joindre l’expéditeur. Vérifiez le code et réessayez.",
-    "relayBusy": "Connexion impossible. La connexion directe n'a pas fonctionné et le relais est saturé. Essayez un autre réseau sur l'un des appareils.",
-    "relayBusyFree": "Connexion impossible. La connexion directe n'a pas fonctionné et le relais est saturé. Essayez un autre réseau sur l'un des appareils, ou passez à Pro.",
+    "relayBusy": "Connexion impossible. La connexion directe n’a pas fonctionné et le relais est saturé. Essayez un autre réseau sur l’un des appareils.",
+    "relayBusyFree": "Connexion impossible. La connexion directe n’a pas fonctionné et le relais est saturé. Essayez un autre réseau sur l’un des appareils, ou passez à Pro.",
     "transferFailed": "Le transfert a échoué. Réessayez.",
     "downloadFailed": "Le téléchargement a échoué. Réessayez."
   }

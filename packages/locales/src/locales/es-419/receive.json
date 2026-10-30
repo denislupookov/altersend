@@ -60,7 +60,7 @@
     "downloadAll": "Descargar todo",
     "view": "Ver",
     "play": "Reproducir",
-    "open": "Abierto",
+    "open": "Abrir",
     "scanQrHint": "Usa la cámara web para leer el QR del remitente",
     "downloadingPercent": "Descargando {{percent}}%",
     "downloadAllWithSize": "Descargar todo ({{size}})",
