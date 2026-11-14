@@ -13,6 +13,7 @@ import { bridgeApi, hasBridge } from './api/bridgeApi'
 import {
   ConfirmDialog,
   InviteBanner,
+  OnboardingModal,
   PairRequestBanner,
   ToastProvider,
   UpdateBanner,
@@ -22,7 +23,7 @@ import { isOnboardingCompleted, markOnboardingCompleted } from './lifecycle/onbo
 import { useExternalFiles } from './lifecycle/useExternalFiles'
 import { useUpdateReady } from './lifecycle/useUpdateReady'
 import { whatsNewStorage } from './lifecycle/whatsNewStorage'
-import { BridgeUnavailablePage, LoadingPage, OnboardingPage, TransferPage } from './pages'
+import { BridgeUnavailablePage, LoadingPage, TransferPage } from './pages'
 
 type TransferTab = 'send' | 'receive'
 
@@ -83,20 +84,6 @@ export default function App() {
     return <BridgeUnavailablePage />
   }
 
-  if (showOnboarding) {
-    return (
-      <>
-        <OnboardingPage
-          onFinish={() => {
-            markOnboardingCompleted()
-            setShowOnboarding(false)
-          }}
-        />
-        <UpdateBanner ready={updateReady} />
-      </>
-    )
-  }
-
   return (
     <ToastProvider>
       <TransferPage version={version} activeTab={activeTab} onTabChange={switchTab} />
@@ -109,8 +96,15 @@ export default function App() {
         }}
       />
       <UpdateBanner ready={updateReady} />
+      <OnboardingModal
+        open={showOnboarding}
+        onFinish={() => {
+          markOnboardingCompleted()
+          setShowOnboarding(false)
+        }}
+      />
       <WhatsNewModal
-        open={whatsNew.release !== null && !updateReady}
+        open={whatsNew.release !== null && !updateReady && !showOnboarding}
         release={whatsNew.release}
         version={version}
         onClose={whatsNew.dismiss}

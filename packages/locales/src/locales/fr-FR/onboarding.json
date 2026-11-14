@@ -1,17 +1,29 @@
 {
-  "slides": {
-    "privacy": {
-      "title": "Envoyez n’importe quoi à n’importe qui, en privé",
-      "description": "Les fichiers sont chiffrés sur votre appareil et vont directement à la personne concernée",
-      "link": "Lire notre politique de confidentialité"
+  "steps": {
+    "welcome": {
+      "title": "Envoyez n’importe quel fichier à n’importe qui",
+      "description": "Toutes tailles, partout. Sans compte, sans stockage cloud."
     },
-    "pair": {
-      "title": "Appairez-vous à n’importe quel appareil",
-      "description": "Appairez une fois entre iPhone, Android, Mac et Windows, puis envoyez d’un geste"
+    "receive": {
+      "title": "Pas besoin de compte",
+      "description": "Partagez un code, un QR ou un lien. Ils l’ouvrent dans AlterSend ou directement dans leur navigateur."
     },
-    "link": {
-      "title": "Partagez un lien vers le transfert",
-      "description": "Envoyez un lien et ils téléchargent directement depuis leur navigateur"
+    "private": {
+      "title": "Directement de vous à eux",
+      "description": "Rien n’est stocké entre les deux, alors gardez AlterSend ouvert jusqu’à la fin."
+    },
+    "network": {
+      "title": "Fonctionne sur tous les réseaux",
+      "description": "Si le Wi-Fi ou un VPN bloque la voie directe, notre relais transporte le fichier, toujours chiffré."
     }
+  },
+  "proIntro": {
+    "title": "Gratuit et open source",
+    "openTitle": "Code source ouvert",
+    "openBody": "Chacun peut lire le code sur GitHub.",
+    "relayTitle": "Les relais coûtent de l’argent",
+    "relayBody": "Les transferts directs restent gratuits. Les serveurs relais, c’est nous qui payons.",
+    "supportTitle": "Soutenez le développeur",
+    "supportBody": "Pro garde AlterSend indépendant. Pas de pub, pas de revente de données."
   }
 }

@@ -189,6 +189,8 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
     }
     case 'session-end':
       return true
+    case 'pro-status':
+      return typeof (x as { pro?: unknown }).pro === 'boolean'
     default:
       return false
   }

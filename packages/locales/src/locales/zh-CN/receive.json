@@ -42,6 +42,9 @@
     "sessionEnded": {
       "title": "会议结束",
       "description": "返回开始新的传输。"
+    },
+    "relayLimit": {
+      "description": "此传输超过 {{limit}}，且经由中继。获取 Pro 即可接收，或换一个两台设备能直接连接的网络再试。"
     }
   },
   "panel": {

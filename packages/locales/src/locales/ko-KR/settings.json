@@ -140,7 +140,7 @@
   },
   "account": {
     "title": "내 구독",
-    "paywallLead": "더 큰 전송과 릴레이 우선 처리.",
+    "paywallLead": "릴레이 크기 제한 없음, 더 빠른 릴레이.",
     "columnFree": "무료",
     "columnPro": "Pro",
     "upgradeToPro": "Pro로 업그레이드",
@@ -209,9 +209,12 @@
     "renewalAndroid": "해지할 때까지 자동으로 갱신됩니다. Google Play 설정에서 관리할 수 있습니다.",
     "none": "–",
     "featureDirect": "직접 P2P 전송",
-    "featurePriority": "릴레이가 혼잡할 때 우선 처리",
+    "featurePriority": "더 빠른 전용 릴레이",
     "featureWebCap": "릴레이 전송, 웹 링크",
-    "featureAppCap": "릴레이 전송, 앱 간"
+    "featureAppCap": "릴레이 전송, 앱 간",
+    "benefitRelay": "크기 제한 없는 릴레이 전송",
+    "benefitWebLinks": "{{limit}} 제한 없는 웹 링크",
+    "benefitDirectFree": "직접 전송은 언제나 무료"
   },
   "shareMenu": {
     "label": "공유 메뉴",

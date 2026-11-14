@@ -73,7 +73,8 @@
     "shareLink": "Compartilhar link",
     "shareMessage": "{{items}} compartilhados com você via AlterSend — abra para baixar:\n\n{{link}}",
     "linkHint": "Até {{limit}} por transferência",
-    "connectedViaBrowser": "Conectado pelo navegador"
+    "connectedViaBrowser": "Conectado pelo navegador",
+    "relayLimit": "Um dispositivo está conectado pelo retransmissor. Transferências gratuitas pelo retransmissor vão até {{limit}}."
   },
   "errors": {
     "folderUnsupported": "As pastas ainda não são suportadas. Selecione apenas arquivos.",

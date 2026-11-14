@@ -8,11 +8,21 @@ import {
   useSubscriptionStore,
   formatFileSize,
   formatItemsCount,
+  NATIVE_RELAY_MAX_LABEL,
+  useSendRelayLimit,
   useShareViewModel,
   WEB_LINK_MAX_LABEL,
   type DeviceRenameTarget
 } from '@altersend/domain'
-import { Button, Input, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
+import {
+  Button,
+  ErrorBanner,
+  Input,
+  LinkCard,
+  LinkRow,
+  WaitingRadar,
+  useTheme
+} from '@altersend/components'
 import {
   CheckIcon,
   ChevronsUpDownIcon,
@@ -84,6 +94,7 @@ export function ShareView() {
 
   const pro = useSubscriptionStore((state) => state.active)
   const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize, pro)
+  const relayLimited = useSendRelayLimit(vm.totalSize)
   const tileCount = 3
   const tileWidth =
     contentWidth > 0 ? (contentWidth - TILE_GAP * (tileCount - 1)) / tileCount : undefined
@@ -122,6 +133,18 @@ export function ShareView() {
         contentContainerStyle={styles.content}
         onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
       >
+        {relayLimited ? (
+          <View style={styles.banner}>
+            <ErrorBanner
+              message={t('send:connection.relayLimit', { limit: NATIVE_RELAY_MAX_LABEL })}
+              action={
+                <Button onClick={() => router.push('/account')} size='sm' variant='primary'>
+                  {t('settings:account.getPro')}
+                </Button>
+              }
+            />
+          </View>
+        ) : null}
         {vm.phase === 'waiting' && (
           <View style={styles.statusStrip}>
             <WaitingRadar
@@ -376,6 +399,7 @@ export function ShareView() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingTop: 0, paddingBottom: 16 },
+  banner: { marginBottom: 24 },
   statusStrip: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 24 },
   statusText: { flex: 1, minWidth: 0 },
   statusTitle: { fontSize: 16, fontWeight: '700' },

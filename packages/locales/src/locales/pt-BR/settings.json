@@ -140,7 +140,7 @@
   },
   "account": {
     "title": "Sua assinatura",
-    "paywallLead": "Transferências maiores e prioridade no retransmissor.",
+    "paywallLead": "Sem limite de tamanho no retransmissor e retransmissores mais rápidos.",
     "columnFree": "Grátis",
     "columnPro": "Pro",
     "upgradeToPro": "Mudar para o Pro",
@@ -209,9 +209,12 @@
     "renewalAndroid": "Renova automaticamente até você cancelar. Gerencie nas configurações da Google Play.",
     "none": "–",
     "featureDirect": "Transferência P2P direta",
-    "featurePriority": "Prioridade quando o retransmissor está ocupado",
+    "featurePriority": "Retransmissores dedicados mais rápidos",
     "featureWebCap": "Transferência via retransmissor, link web",
-    "featureAppCap": "Transferência via retransmissor, app para app"
+    "featureAppCap": "Transferência via retransmissor, app para app",
+    "benefitRelay": "Transferências via relay de qualquer tamanho",
+    "benefitWebLinks": "Links web sem limite de {{limit}}",
+    "benefitDirectFree": "Transferências diretas continuam grátis"
   },
   "shareMenu": {
     "label": "Menu Compartilhar",

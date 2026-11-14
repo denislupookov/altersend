@@ -140,7 +140,7 @@
   },
   "account": {
     "title": "Il tuo abbonamento",
-    "paywallLead": "Trasferimenti più grandi e priorità sul relay.",
+    "paywallLead": "Nessun limite di dimensione sul relay e relay più veloci.",
     "columnFree": "Gratis",
     "columnPro": "Pro",
     "upgradeToPro": "Passa a Pro",
@@ -209,9 +209,12 @@
     "renewalAndroid": "Si rinnova automaticamente fino alla disdetta. Gestiscilo nelle impostazioni di Google Play.",
     "none": "–",
     "featureDirect": "Trasferimento P2P diretto",
-    "featurePriority": "Priorità quando il relay è occupato",
+    "featurePriority": "Relay dedicati più veloci",
     "featureWebCap": "Trasferimento via relay, link web",
-    "featureAppCap": "Trasferimento via relay, app ad app"
+    "featureAppCap": "Trasferimento via relay, app ad app",
+    "benefitRelay": "Trasferimenti via relay di qualsiasi dimensione",
+    "benefitWebLinks": "Link web senza limite di {{limit}}",
+    "benefitDirectFree": "I trasferimenti diretti restano gratuiti"
   },
   "shareMenu": {
     "label": "Menu Condividi",

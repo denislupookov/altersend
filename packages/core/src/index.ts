@@ -12,6 +12,8 @@ export type {
   CustomRelayInput,
   SetRelayConfigInput,
   TestCustomRelayReply,
+  NetworkCheckReply,
+  NetworkStatus,
   TransferRPC,
   TransferMethod,
   TransferRole,

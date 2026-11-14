@@ -1,15 +1,18 @@
-import { Button } from '@altersend/components'
+import { Button, ErrorBanner } from '@altersend/components'
 import { DownloadIcon, PlayIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
 import { useToast } from '../../components/Toast'
+import { openSettingsPanel } from '../../components/Settings/settingsControl'
 import { isAskEveryTime } from '../../lifecycle/downloadLocationStorage'
 import { ReceiveFileList } from './ReceiveFileList'
 import {
   clearSession,
   getPrimaryDownloadLabel,
+  NATIVE_RELAY_MAX_LABEL,
   useReceiveActions,
-  useReceiveDownloads
+  useReceiveDownloads,
+  useReceiveRelayLimit
 } from '@altersend/domain'
 
 function toSafeFileName(name: string): string {
@@ -18,10 +21,11 @@ function toSafeFileName(name: string): string {
 }
 
 export function ReceiveConnectedView() {
-  const { t } = useTranslation(['receive', 'common', 'errors'])
+  const { t } = useTranslation(['receive', 'common', 'errors', 'settings'])
   const toast = useToast()
   const downloads = useReceiveDownloads()
   const actions = useReceiveActions(downloads)
+  const relayLimited = useReceiveRelayLimit()
 
   const downloadWithDialog = async () => {
     const isSingleLooseFile =
@@ -65,41 +69,57 @@ export function ReceiveConnectedView() {
     }
   }
 
+  const getPro = () => openSettingsPanel('account')
+
   return (
-    <ReceiveFileList
-      footer={
-        <>
-          <Button onClick={clearSession} size='sm' variant='secondary'>
-            {t('common:actions.endSession')}
-          </Button>
-          {downloads.primaryAction ? (
-            <Button
-              disabled={downloads.primaryAction === 'downloading'}
-              icon={
-                downloads.primaryAction === 'resume-all' ? (
-                  <PlayIcon size={14} />
-                ) : (
-                  <DownloadIcon size={14} />
-                )
-              }
-              loading={downloads.primaryAction === 'downloading'}
-              onClick={() =>
-                (downloads.primaryAction === 'resume-all'
-                  ? actions.resumeAll()
-                  : downloadAll()
-                ).catch(console.error)
-              }
-              size='sm'
-              variant={downloads.primaryAction === 'downloading' ? 'secondary' : 'primary'}
-            >
-              {getPrimaryDownloadLabel(t, downloads.primaryAction, {
-                percent: downloads.totals.percent,
-                totalBytes: downloads.totals.totalBytes
-              })}
+    <>
+      {relayLimited ? (
+        <div className='mb-[22px]'>
+          <ErrorBanner
+            message={t('receive:page.relayLimit.description', { limit: NATIVE_RELAY_MAX_LABEL })}
+            action={
+              <Button size='sm' variant='primary' onClick={getPro}>
+                {t('settings:account.getPro')}
+              </Button>
+            }
+          />
+        </div>
+      ) : null}
+      <ReceiveFileList
+        footer={
+          <>
+            <Button onClick={clearSession} size='sm' variant='secondary'>
+              {t('common:actions.endSession')}
             </Button>
-          ) : null}
-        </>
-      }
-    />
+            {downloads.primaryAction && !relayLimited ? (
+              <Button
+                disabled={downloads.primaryAction === 'downloading'}
+                icon={
+                  downloads.primaryAction === 'resume-all' ? (
+                    <PlayIcon size={14} />
+                  ) : (
+                    <DownloadIcon size={14} />
+                  )
+                }
+                loading={downloads.primaryAction === 'downloading'}
+                onClick={() =>
+                  (downloads.primaryAction === 'resume-all'
+                    ? actions.resumeAll()
+                    : downloadAll()
+                  ).catch(console.error)
+                }
+                size='sm'
+                variant={downloads.primaryAction === 'downloading' ? 'secondary' : 'primary'}
+              >
+                {getPrimaryDownloadLabel(t, downloads.primaryAction, {
+                  percent: downloads.totals.percent,
+                  totalBytes: downloads.totals.totalBytes
+                })}
+              </Button>
+            ) : null}
+          </>
+        }
+      />
+    </>
   )
 }

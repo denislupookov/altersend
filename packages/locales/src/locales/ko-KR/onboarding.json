@@ -1,17 +1,29 @@
 {
-  "slides": {
-    "privacy": {
-      "title": "누구에게나, 무엇이든 비공개로",
-      "description": "파일은 기기에서 암호화되어 받는 사람에게 바로 전달됩니다",
-      "link": "개인정보 처리방침 보기"
+  "steps": {
+    "welcome": {
+      "title": "어떤 파일이든 누구에게나",
+      "description": "크기도 장소도 상관없이. 계정도 클라우드 저장도 없이."
     },
-    "pair": {
-      "title": "어떤 기기와도 페어링",
-      "description": "iPhone, Android, Mac, Windows를 한 번 페어링하면 이후에는 탭 한 번으로 전송"
+    "receive": {
+      "title": "상대는 계정이 필요 없어요",
+      "description": "코드, QR, 링크를 공유하세요. AlterSend나 브라우저에서 바로 열면 됩니다."
     },
-    "link": {
-      "title": "전송 링크를 공유하세요",
-      "description": "링크를 보내면 상대는 브라우저에서 바로 내려받습니다"
+    "private": {
+      "title": "나에게서 상대에게 바로",
+      "description": "중간에 아무것도 저장되지 않으니 끝날 때까지 AlterSend를 열어 두세요."
+    },
+    "network": {
+      "title": "어떤 네트워크에서도",
+      "description": "Wi-Fi나 VPN이 직접 연결을 막으면 릴레이가 암호화된 상태로 전달합니다."
     }
+  },
+  "proIntro": {
+    "title": "무료 오픈 소스",
+    "openTitle": "오픈 소스",
+    "openBody": "누구나 GitHub에서 코드를 읽을 수 있어요.",
+    "relayTitle": "릴레이에는 비용이 듭니다",
+    "relayBody": "직접 전송은 계속 무료입니다. 릴레이 서버 비용은 저희가 냅니다.",
+    "supportTitle": "개발자를 응원해 주세요",
+    "supportBody": "Pro가 AlterSend의 독립을 지킵니다. 광고도, 데이터 판매도 없습니다."
   }
 }

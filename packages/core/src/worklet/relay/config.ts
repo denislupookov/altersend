@@ -14,6 +14,7 @@ interface WebRelayEntry {
 interface RelayState {
   enabled: boolean
   relays: RelayEntry[]
+  proRelays: RelayEntry[]
   customRelays: RelayEntry[]
   customConfigured: boolean
   customFallback: boolean
@@ -28,6 +29,7 @@ type RelayRole = 'sender' | 'receiver' | null
 const state: RelayState = {
   enabled: false,
   relays: [],
+  proRelays: [],
   customRelays: [],
   customConfigured: false,
   customFallback: false,
@@ -59,6 +61,7 @@ interface WebRelayEntryInput {
 export interface RelayConfigInput {
   enabled?: boolean
   relays?: readonly RelayEntryInput[]
+  proRelays?: readonly RelayEntryInput[]
   customRelays?: readonly RelayEntryInput[]
   customConfigured?: boolean
   customFallback?: boolean
@@ -87,6 +90,11 @@ export function configureRelay(input: RelayConfigInput): void {
 
   if (input.relays) {
     state.relays = input.relays.map(toRelayEntry)
+    state.busyUntil.clear()
+  }
+
+  if (input.proRelays) {
+    state.proRelays = input.proRelays.map(toRelayEntry)
     state.busyUntil.clear()
   }
 
@@ -124,14 +132,14 @@ export function setRelayRole(role: RelayRole): void {
 
 export function proTokenFor(key: Uint8Array): string | null {
   if (!state.proToken || state.role === null) return null
-  if (!state.relays.some((relay) => b4a.equals(relay.key, key))) return null
+  if (!officialRelays().some((relay) => b4a.equals(relay.key, key))) return null
   return state.proToken
 }
 
 export function relayConfigSummary(): { enabled: boolean; keyCount: number } {
   return {
     enabled: state.enabled,
-    keyCount: state.relays.length + state.customRelays.length
+    keyCount: state.relays.length + state.proRelays.length + state.customRelays.length
   }
 }
 
@@ -159,15 +167,25 @@ function isAvailable(relay: RelayEntry): boolean {
   return until === undefined || until <= Date.now()
 }
 
+function officialRelays(): RelayEntry[] {
+  return state.proToken ? [...state.proRelays, ...state.relays] : state.relays
+}
+
+function officialKeys(): Uint8Array[] {
+  if (state.proToken) {
+    const pro = nearestKeys(state.proRelays.filter(isAvailable))
+    if (pro.length > 0) return pro
+  }
+  return nearestKeys(state.relays.filter(isAvailable))
+}
+
 function usableRelayKeys(): Uint8Array[] {
   if (state.customConfigured) {
     const custom = nearestKeys(state.customRelays.filter(isAvailable))
-    return state.customFallback
-      ? [...custom, ...nearestKeys(state.relays.filter(isAvailable))]
-      : custom
+    return state.customFallback ? [...custom, ...officialKeys()] : custom
   }
 
-  return nearestKeys(state.relays.filter(isAvailable))
+  return officialKeys()
 }
 
 export function markRelayBusy(key: Uint8Array): void {
@@ -175,8 +193,8 @@ export function markRelayBusy(key: Uint8Array): void {
 }
 
 function configuredRelays(): RelayEntry[] {
-  if (!state.customConfigured) return state.relays
-  return state.customFallback ? [...state.customRelays, ...state.relays] : state.customRelays
+  if (!state.customConfigured) return officialRelays()
+  return state.customFallback ? [...state.customRelays, ...officialRelays()] : state.customRelays
 }
 
 export function allRelaysBusy(): boolean {
@@ -185,7 +203,9 @@ export function allRelaysBusy(): boolean {
 }
 
 export function isRelayKey(key: Uint8Array): boolean {
-  return [...state.relays, ...state.customRelays].some((relay) => b4a.equals(relay.key, key))
+  return [...state.relays, ...state.proRelays, ...state.customRelays].some((relay) =>
+    b4a.equals(relay.key, key)
+  )
 }
 
 function isRandomizedNat(swarm: unknown): boolean {
@@ -206,9 +226,7 @@ export function relayThrough(force: boolean, swarm?: unknown): Uint8Array[] | nu
 export function isRelayHost(host: string | null | undefined): boolean {
   if (!host) return false
   const wanted = bareHost(host)
-  return (
-    state.relays.some((r) => r.host === wanted) || state.customRelays.some((r) => r.host === wanted)
-  )
+  return [...state.relays, ...state.proRelays, ...state.customRelays].some((r) => r.host === wanted)
 }
 
 export function webRelayKeyForHost(host: string): Uint8Array | null {

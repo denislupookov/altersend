@@ -78,6 +78,7 @@ export interface TransferSessionState {
   peerDownloads: Record<string, PeerDownloadEvent>
   connectedPeers: Record<string, ConnectedPeer>
   webPeers: Record<string, boolean>
+  proPeers: Record<string, boolean>
   outdatedPeers: Record<string, boolean>
   errorCode: TransferErrorCode | null
   errorMessage: string | null
@@ -99,6 +100,7 @@ export type TransferAction =
   | { type: 'connection_type_changed'; peer: string; connectionType: TransferConnectionType }
   | { type: 'relay_busy' }
   | { type: 'peer_client_changed'; peer: string; client: 'web' }
+  | { type: 'peer_pro_changed'; peer: string; pro: boolean }
   | { type: 'peer_outdated'; peer: string }
   | { type: 'peer_authenticated'; peer: string }
   | { type: 'role_changed'; role: TransferRole | null }

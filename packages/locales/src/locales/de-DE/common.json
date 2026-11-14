@@ -80,6 +80,16 @@
     "subtitle_one": "Eine Sache, die du wissen solltest.",
     "subtitle_other": "{{count}} Dinge, die du wissen solltest.",
     "releases": {
+      "v2_1_0": {
+        "support": {
+          "title": "Hilf mit, AlterSend am Leben zu halten",
+          "description": "30.000 Downloads, 3 TB über Relays, noch keine Einnahmen. Pro bezahlt die Relays."
+        },
+        "relayLimit": {
+          "title": "Relay kostenlos bis 1 GB",
+          "description": "Direkte Übertragungen bleiben kostenlos und unbegrenzt."
+        }
+      },
       "v2_0_0": {
         "pro": {
           "title": "Pro-Abo",

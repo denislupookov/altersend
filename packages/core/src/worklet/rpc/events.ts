@@ -21,6 +21,7 @@ export type TransferStatus =
   | 'connection-type'
   | 'relay-busy'
   | 'peer-client'
+  | 'peer-pro'
   | 'peer-unauthenticated'
   | 'peer-authenticated'
 
@@ -65,6 +66,7 @@ export interface StatusEvent {
   paused?: boolean
   connectionType?: 'direct' | 'relay'
   client?: 'web'
+  pro?: boolean
 }
 
 export interface RoleEvent {

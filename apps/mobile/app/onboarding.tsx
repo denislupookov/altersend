@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { Button, SegmentedProgress, ThemeType, useTheme } from '@altersend/components'
-import { onboardingSlides, type OnboardingSlide } from '@altersend/domain'
+import { useSubscriptionStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { useRouter } from 'expo-router'
 import {
@@ -13,28 +13,31 @@ import {
   useWindowDimensions
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { IconButton } from '@/src/components/IconButton'
 import { SlideView } from '@/src/onboarding/SlideView'
+import { onboardingSteps, type OnboardingStep } from '@/src/onboarding/steps'
+import { ONBOARDING_ENTRY_PARAMS } from '@/src/account/onboardingEntry'
 import { markOnboardingCompleted } from '@/src/onboarding/onboardingStorage'
 import { requestNotificationPermission } from '@/src/lifecycle/notificationPermission'
 import logoOnLight from '../../../assets/altersend-logo-dark.png'
 import logoOnDark from '../../../assets/altersend-logo.png'
 
-const MAX_HERO_HEIGHT = 190
-const HERO_HEIGHT_RATIO = 0.24
+const STEP_COUNT = onboardingSteps.length - 1
 
 export default function OnboardingScreen() {
   const { t } = useTranslation(['common'])
   const { theme, themeType } = useTheme()
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const { width, height } = useWindowDimensions()
+  const { width } = useWindowDimensions()
   const [progress, setProgress] = useState(0)
-  const listRef = useRef<FlatList<OnboardingSlide>>(null)
+  const listRef = useRef<FlatList<OnboardingStep>>(null)
+  const isPro = useSubscriptionStore((state) => state.active)
 
   const index = Math.round(progress)
-  const isLast = index === onboardingSlides.length - 1
+  const isWelcome = index === 0
+  const isLast = index === onboardingSteps.length - 1
   const brandLogo = themeType === ThemeType.Light ? logoOnLight : logoOnDark
-  const heroHeight = Math.min(MAX_HERO_HEIGHT, height * HERO_HEIGHT_RATIO)
 
   const finish = () => {
     markOnboardingCompleted()
@@ -42,6 +45,11 @@ export default function OnboardingScreen() {
       console.warn('onboarding: notification permission request failed', err)
     })
     router.replace('/send')
+    if (!isPro) router.push({ pathname: '/account', params: ONBOARDING_ENTRY_PARAMS })
+  }
+
+  const goTo = (target: number) => {
+    listRef.current?.scrollToIndex({ index: target, animated: true })
   }
 
   const next = () => {
@@ -49,7 +57,7 @@ export default function OnboardingScreen() {
       finish()
       return
     }
-    listRef.current?.scrollToIndex({ index: index + 1, animated: true })
+    goTo(index + 1)
   }
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -57,10 +65,10 @@ export default function OnboardingScreen() {
   }
 
   const renderItem = useCallback(
-    ({ item }: { item: OnboardingSlide }) => (
-      <SlideView slide={item} width={width} heroHeight={heroHeight} />
+    ({ item }: { item: OnboardingStep }) => (
+      <SlideView step={item} width={width} active={item === onboardingSteps[index]} />
     ),
-    [width, heroHeight]
+    [width, index]
   )
 
   return (
@@ -69,20 +77,38 @@ export default function OnboardingScreen() {
         styles.screen,
         {
           backgroundColor: theme.colors.colorBackground,
-          paddingTop: insets.top + 30,
+          paddingTop: insets.top + 8,
           paddingBottom: Math.max(insets.bottom, 12)
         }
       ]}
     >
       <View style={styles.header}>
-        <Image source={brandLogo} style={styles.brandLogo} resizeMode='contain' />
+        {isWelcome ? (
+          <Image source={brandLogo} style={styles.brandLogo} resizeMode='contain' />
+        ) : (
+          <>
+            <IconButton
+              icon='back'
+              label={t('common:actions.back')}
+              onPress={() => goTo(index - 1)}
+            />
+            <View style={styles.progress}>
+              <SegmentedProgress
+                count={STEP_COUNT}
+                activeIndex={index - 1}
+                progress={Math.max(0, progress - 1)}
+              />
+            </View>
+          </>
+        )}
       </View>
 
       <FlatList
         ref={listRef}
-        data={onboardingSlides}
+        data={onboardingSteps}
         keyExtractor={(item) => item.kind}
         renderItem={renderItem}
+        extraData={index}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
@@ -93,15 +119,8 @@ export default function OnboardingScreen() {
       />
 
       <View style={styles.footer}>
-        <View style={styles.progress}>
-          <SegmentedProgress
-            count={onboardingSlides.length}
-            activeIndex={index}
-            progress={progress}
-          />
-        </View>
         <Button onClick={next} size='lg' variant='light' width='full'>
-          {isLast ? t('common:actions.getStarted') : t('common:actions.continue')}
+          {isWelcome ? t('common:actions.getStarted') : t('common:actions.continue')}
         </Button>
       </View>
     </View>
@@ -113,24 +132,25 @@ const styles = StyleSheet.create({
     flex: 1
   },
   header: {
+    height: 44,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20
   },
   brandLogo: {
-    width: 148,
-    height: 36
+    flex: 1,
+    height: 32
+  },
+  progress: {
+    width: '32%'
   },
   pager: {
     flex: 1
   },
-  progress: {
-    alignSelf: 'center',
-    width: '32%'
-  },
   footer: {
     paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 20,
-    gap: 20
+    paddingTop: 12,
+    paddingBottom: 20
   }
 })

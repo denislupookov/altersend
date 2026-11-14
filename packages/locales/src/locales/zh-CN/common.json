@@ -80,6 +80,16 @@
     "subtitle_one": "有 1 件事值得了解。",
     "subtitle_other": "有 {{count}} 件事值得了解。",
     "releases": {
+      "v2_1_0": {
+        "support": {
+          "title": "帮 AlterSend 活下去",
+          "description": "3 万次下载，中继 3 TB，至今没有收入。Pro 支付中继的费用。"
+        },
+        "relayLimit": {
+          "title": "免费中继最高 1 GB",
+          "description": "直连传输依然免费且不限量。"
+        }
+      },
       "v2_0_0": {
         "pro": {
           "title": "Pro 套餐",

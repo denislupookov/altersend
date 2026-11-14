@@ -136,6 +136,11 @@ interface SessionEnd {
   type: 'session-end'
 }
 
+interface ProStatus {
+  type: 'pro-status'
+  pro: boolean
+}
+
 export type PeerControlMessage =
   | TransferStart
   | TransferReady
@@ -153,6 +158,7 @@ export type PeerControlMessage =
   | TopicAuth
   | WebRelayConnection
   | SessionEnd
+  | ProStatus
 
 type PeerControlHandler = (message: PeerControlMessage) => void
 

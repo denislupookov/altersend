@@ -140,7 +140,7 @@
   },
   "account": {
     "title": "Ihr Abo",
-    "paywallLead": "Größere Übertragungen und Vorrang beim Relay.",
+    "paywallLead": "Keine Größenbegrenzung auf dem Relay und schnellere Relays.",
     "columnFree": "Kostenlos",
     "columnPro": "Pro",
     "upgradeToPro": "Auf Pro upgraden",
@@ -209,9 +209,12 @@
     "renewalAndroid": "Verlängert sich automatisch, bis Sie kündigen. Verwaltung in den Google-Play-Einstellungen.",
     "none": "–",
     "featureDirect": "Direkte P2P-Übertragung",
-    "featurePriority": "Vorrang, wenn das Relay ausgelastet ist",
+    "featurePriority": "Schnellere eigene Relays",
     "featureWebCap": "Übertragung über Relay, Weblink",
-    "featureAppCap": "Übertragung über Relay, App zu App"
+    "featureAppCap": "Übertragung über Relay, App zu App",
+    "benefitRelay": "Relay-Übertragungen in jeder Größe",
+    "benefitWebLinks": "Weblinks ohne {{limit}}-Grenze",
+    "benefitDirectFree": "Direkte Übertragungen bleiben immer kostenlos"
   },
   "shareMenu": {
     "label": "Teilen-Menü",

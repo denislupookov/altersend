@@ -16,12 +16,32 @@ export interface AboutLink {
   url: string
 }
 
+export type CommunityLinkKey = Extract<AboutLinkKey, 'github' | 'discord' | 'x'>
+
+export interface CommunityLink extends AboutLink {
+  key: CommunityLinkKey
+}
+
+const githubLink: CommunityLink = {
+  key: 'github',
+  labelKey: 'settings:rows.github',
+  url: githubUrl
+}
+const discordLink: CommunityLink = {
+  key: 'discord',
+  labelKey: 'settings:rows.discord',
+  url: discordUrl
+}
+const xLink: CommunityLink = { key: 'x', labelKey: 'settings:rows.x', url: xUrl }
+
+export const communityLinks: CommunityLink[] = [discordLink, githubLink, xLink]
+
 export const aboutLinkGroups: AboutLink[][] = [
   [
     { key: 'website', labelKey: 'settings:rows.website', url: websiteUrl },
-    { key: 'github', labelKey: 'settings:rows.github', url: githubUrl },
-    { key: 'discord', labelKey: 'settings:rows.discord', url: discordUrl },
-    { key: 'x', labelKey: 'settings:rows.x', url: xUrl },
+    githubLink,
+    discordLink,
+    xLink,
     { key: 'sponsor', labelKey: 'settings:rows.sponsor', url: sponsorUrl }
   ],
   [

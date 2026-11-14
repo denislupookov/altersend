@@ -42,6 +42,9 @@
     "sessionEnded": {
       "title": "Sessão encerrada",
       "description": "Retorne para iniciar uma nova transferência."
+    },
+    "relayLimit": {
+      "description": "Esta transferência passa de {{limit}} e vai pelo retransmissor. Obtenha o Pro para recebê-la ou tente uma rede em que os dois dispositivos consigam se conectar diretamente."
     }
   },
   "panel": {

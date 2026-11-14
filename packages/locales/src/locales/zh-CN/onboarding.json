@@ -1,17 +1,29 @@
 {
-  "slides": {
-    "privacy": {
-      "title": "把任何东西私密地发给任何人",
-      "description": "文件在你的设备上加密，直接送达接收方",
-      "link": "阅读隐私政策"
+  "steps": {
+    "welcome": {
+      "title": "任何文件，发给任何人",
+      "description": "任意大小，随时随地。无需账号，不用云存储。"
     },
-    "pair": {
-      "title": "与任何设备配对",
-      "description": "iPhone、Android、Mac、Windows 配对一次，之后轻点即可发送"
+    "receive": {
+      "title": "对方无需账号",
+      "description": "分享代码、二维码或链接。对方在 AlterSend 或浏览器中直接打开。"
     },
-    "link": {
-      "title": "分享传输链接",
-      "description": "发送一个链接，对方直接在浏览器里下载"
+    "private": {
+      "title": "从你直接到对方",
+      "description": "中间不存储任何内容，所以请保持 AlterSend 打开直到完成。"
+    },
+    "network": {
+      "title": "任何网络都能用",
+      "description": "如果 Wi-Fi 或 VPN 阻止直连，我们的中继会传送文件，依然加密。"
     }
+  },
+  "proIntro": {
+    "title": "免费且开源",
+    "openTitle": "开源",
+    "openBody": "任何人都能在 GitHub 上阅读代码。",
+    "relayTitle": "中继要花钱",
+    "relayBody": "直接传输依然免费。中继服务器的费用由我们承担。",
+    "supportTitle": "支持开发者",
+    "supportBody": "Pro 让 AlterSend 保持独立。无广告，不出售数据。"
   }
 }

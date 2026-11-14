@@ -80,6 +80,16 @@
     "subtitle_one": "알아 두면 좋은 한 가지.",
     "subtitle_other": "알아 두면 좋은 {{count}}가지.",
     "releases": {
+      "v2_1_0": {
+        "support": {
+          "title": "AlterSend를 지켜 주세요",
+          "description": "다운로드 3만 회, 릴레이 3TB, 아직 수입은 없습니다. Pro가 릴레이 비용을 냅니다."
+        },
+        "relayLimit": {
+          "title": "릴레이 1GB까지 무료",
+          "description": "직접 전송은 계속 무료이며 무제한입니다."
+        }
+      },
       "v2_0_0": {
         "pro": {
           "title": "Pro 요금제",

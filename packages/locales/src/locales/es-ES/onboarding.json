@@ -1,17 +1,29 @@
 {
-  "slides": {
-    "privacy": {
-      "title": "Envía lo que sea a quien sea, en privado",
-      "description": "Los archivos se cifran en tu dispositivo y van directo a quien se los envías",
-      "link": "Leer nuestra política de privacidad"
+  "steps": {
+    "welcome": {
+      "title": "Envía cualquier archivo a quien quieras",
+      "description": "Cualquier tamaño, a cualquier lugar. Sin cuenta ni almacenamiento en la nube."
     },
-    "pair": {
-      "title": "Vincúlate con cualquier dispositivo",
-      "description": "Vincula una vez entre iPhone, Android, Mac y Windows, y luego envía con un toque"
+    "receive": {
+      "title": "No necesitan una cuenta",
+      "description": "Comparte un código, QR o enlace. Lo abren en AlterSend o directamente en su navegador."
     },
-    "link": {
-      "title": "Comparte un enlace de la transferencia",
-      "description": "Envía un enlace y lo descargan directamente desde su navegador"
+    "private": {
+      "title": "Directo de ti a ellos",
+      "description": "No se guarda nada en medio, así que mantén AlterSend abierto hasta que termine."
+    },
+    "network": {
+      "title": "Funciona en cualquier red",
+      "description": "Si el Wi-Fi o una VPN bloquean la ruta directa, nuestro relay lo lleva, siempre cifrado."
     }
+  },
+  "proIntro": {
+    "title": "Gratis y de código abierto",
+    "openTitle": "Código abierto",
+    "openBody": "Cualquiera puede leer el código en GitHub.",
+    "relayTitle": "Los relays cuestan dinero",
+    "relayBody": "Las transferencias directas siguen siendo gratis. Los servidores de relay los pagamos nosotros.",
+    "supportTitle": "Apoya al desarrollador",
+    "supportBody": "Pro mantiene AlterSend independiente. Sin anuncios, sin venta de datos."
   }
 }

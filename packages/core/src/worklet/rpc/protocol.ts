@@ -134,6 +134,12 @@ export interface TestCustomRelayReply {
   ms?: number
 }
 
+export type NetworkStatus = 'direct' | 'limited' | 'offline'
+
+export interface NetworkCheckReply {
+  status: NetworkStatus
+}
+
 export interface RPCErrorPayload {
   code: 'BAD_REQUEST' | 'UNKNOWN_COMMAND' | 'INTERNAL_ERROR'
   message: string
@@ -187,6 +193,7 @@ export interface TransferRPC {
   joinPairing(topic: string): Promise<JoinReply>
   setRelayConfig(input: SetRelayConfigInput): Promise<SetRelayConfigReply>
   testCustomRelay(): Promise<TestCustomRelayReply>
+  checkNetwork(): Promise<NetworkCheckReply>
 }
 
 export class BadRequestError extends Error {

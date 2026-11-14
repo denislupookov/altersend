@@ -1,17 +1,29 @@
 {
-  "slides": {
-    "privacy": {
-      "title": "誰にでも、なんでもプライベートに送れる",
-      "description": "ファイルは端末上で暗号化され、送る相手にそのまま届きます",
-      "link": "プライバシーポリシーを読む"
+  "steps": {
+    "welcome": {
+      "title": "どんなファイルも、誰にでも",
+      "description": "サイズも場所も問いません。アカウントもクラウド保存も不要。"
     },
-    "pair": {
-      "title": "どんな端末ともペアリング",
-      "description": "iPhone、Android、Mac、Windows をまたいで一度ペアリングすれば、あとはタップだけ"
+    "receive": {
+      "title": "相手にアカウントは不要",
+      "description": "コード、QR、リンクを共有。相手はAlterSendかブラウザで開くだけ。"
     },
-    "link": {
-      "title": "転送のリンクを共有",
-      "description": "リンクを送れば、相手はブラウザからそのままダウンロードできます"
+    "private": {
+      "title": "あなたから相手へ直接",
+      "description": "途中で何も保存されないので、完了するまでAlterSendを開いたままにしてください。"
+    },
+    "network": {
+      "title": "どんなネットワークでも",
+      "description": "Wi-FiやVPNが直接接続をブロックしても、リレーが暗号化したまま届けます。"
     }
+  },
+  "proIntro": {
+    "title": "無料でオープンソース",
+    "openTitle": "オープンソース",
+    "openBody": "コードはGitHubで誰でも読めます。",
+    "relayTitle": "リレーにはお金がかかります",
+    "relayBody": "直接転送は無料のまま。リレーサーバーの費用は私たちが負担しています。",
+    "supportTitle": "開発者を応援",
+    "supportBody": "ProがAlterSendの独立を守ります。広告なし、データ販売なし。"
   }
 }

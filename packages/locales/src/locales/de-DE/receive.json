@@ -42,6 +42,9 @@
     "sessionEnded": {
       "title": "Sitzung beendet",
       "description": "Kehren Sie zurück, um eine neue Übertragung zu starten."
+    },
+    "relayLimit": {
+      "description": "Diese Übertragung ist größer als {{limit}} und läuft über das Relay. Holen Sie sich Pro, um sie zu empfangen, oder nutzen Sie ein Netzwerk, in dem sich beide Geräte direkt verbinden können."
     }
   },
   "panel": {

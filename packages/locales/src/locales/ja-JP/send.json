@@ -73,7 +73,8 @@
     "shareLink": "リンクを共有",
     "shareMessage": "{{items}} が AlterSend で共有されました。リンクを開くとダウンロードできます。\n\n{{link}}",
     "linkHint": "1 回の転送につき最大 {{limit}}",
-    "connectedViaBrowser": "ブラウザで接続"
+    "connectedViaBrowser": "ブラウザで接続",
+    "relayLimit": "デバイスがリレー経由で接続されています。無料のリレー転送は最大 {{limit}} です。"
   },
   "errors": {
     "folderUnsupported": "フォルダはまだ対応していません。ファイルのみ選択してください。",

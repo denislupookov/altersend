@@ -140,7 +140,7 @@
   },
   "account": {
     "title": "我的订阅",
-    "paywallLead": "更大的传输容量，中继繁忙时优先。",
+    "paywallLead": "中继不限大小，速度更快。",
     "columnFree": "免费",
     "columnPro": "Pro",
     "upgradeToPro": "升级到 Pro",
@@ -209,9 +209,12 @@
     "renewalAndroid": "订阅会自动续期，直到您取消。可在 Google Play 设置中管理。",
     "none": "–",
     "featureDirect": "直接 P2P 传输",
-    "featurePriority": "中继繁忙时优先",
+    "featurePriority": "更快的专用中继",
     "featureWebCap": "经中继传输（网页链接）",
-    "featureAppCap": "经中继传输（应用之间）"
+    "featureAppCap": "经中继传输（应用之间）",
+    "benefitRelay": "中继传输不限大小",
+    "benefitWebLinks": "网页链接不受 {{limit}} 限制",
+    "benefitDirectFree": "直接传输始终免费"
   },
   "shareMenu": {
     "label": "共享菜单",

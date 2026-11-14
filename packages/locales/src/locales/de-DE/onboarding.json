@@ -1,17 +1,29 @@
 {
-  "slides": {
-    "privacy": {
-      "title": "Sende alles an jeden, privat",
-      "description": "Dateien werden auf deinem Gerät verschlüsselt und gehen direkt an die Person, der du sie sendest",
-      "link": "Datenschutzerklärung lesen"
+  "steps": {
+    "welcome": {
+      "title": "Sende jede Datei an jeden",
+      "description": "Jede Größe, überall. Kein Konto, kein Cloud-Speicher."
     },
-    "pair": {
-      "title": "Koppele dich mit jedem Gerät",
-      "description": "Koppele einmal über iPhone, Android, Mac und Windows und sende danach mit einem Tippen"
+    "receive": {
+      "title": "Sie brauchen kein Konto",
+      "description": "Teile einen Code, QR-Code oder Link. Sie öffnen ihn in AlterSend oder direkt im Browser."
     },
-    "link": {
-      "title": "Teile einen Link zur Übertragung",
-      "description": "Sende einen Link und sie laden direkt im Browser herunter"
+    "private": {
+      "title": "Direkt von dir zu ihnen",
+      "description": "Dazwischen wird nichts gespeichert, also lass AlterSend offen, bis alles fertig ist."
+    },
+    "network": {
+      "title": "Funktioniert in jedem Netzwerk",
+      "description": "Blockieren WLAN oder VPN den direkten Weg, überträgt unser Relay die Datei, weiterhin verschlüsselt."
     }
+  },
+  "proIntro": {
+    "title": "Kostenlos und Open Source",
+    "openTitle": "Open Source",
+    "openBody": "Jeder kann den Code auf GitHub lesen.",
+    "relayTitle": "Relays kosten Geld",
+    "relayBody": "Direkte Übertragungen bleiben kostenlos. Die Relay-Server zahlen wir.",
+    "supportTitle": "Unterstütze den Entwickler",
+    "supportBody": "Pro hält AlterSend unabhängig. Keine Werbung, kein Datenverkauf."
   }
 }

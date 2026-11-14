@@ -73,7 +73,8 @@
     "shareLink": "Link teilen",
     "shareMessage": "{{items}} für dich über AlterSend freigegeben — zum Herunterladen öffnen:\n\n{{link}}",
     "linkHint": "Bis zu {{limit}} pro Übertragung",
-    "connectedViaBrowser": "Über Browser verbunden"
+    "connectedViaBrowser": "Über Browser verbunden",
+    "relayLimit": "Ein Gerät ist über das Relay verbunden. Kostenlose Übertragungen über das Relay sind auf {{limit}} begrenzt."
   },
   "errors": {
     "folderUnsupported": "Ordner werden noch nicht unterstützt. Bitte wählen Sie nur Dateien aus.",

@@ -4,6 +4,8 @@ import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES, type TransferErrorCode } from './types'
 import { createInitialUploadItems, getPhaseFromSelection } from '../send/draftModel'
 import { exceedsFileCountLimit } from '../constants/transfer'
+import { isSubscriptionActive } from '../account/runtime/store'
+import { isReceiveRelayLimited } from '../relay/relayLimit'
 import type { SelectedFile } from '../send/draftTypes'
 import type {
   DownloadFileRequest,
@@ -102,6 +104,7 @@ export const pauseDownload = async (fileId: string): Promise<void> => {
 }
 
 export const downloadFiles = async (files: DownloadFileRequest[]): Promise<DownloadFilesReply> => {
+  if (isReceiveRelayLimited(transferStore.getState(), isSubscriptionActive())) return { files: [] }
   const offerKeys = files.map((f) => f.fileId)
   dispatchToTransferStore({ type: 'downloads_queued', offerKeys, queued: true })
   try {

@@ -42,6 +42,9 @@
     "sessionEnded": {
       "title": "Session ended",
       "description": "Return to start a new transfer."
+    },
+    "relayLimit": {
+      "description": "This transfer is over {{limit}} and goes through the relay. Get Pro to receive it, or try a network where both devices can connect directly."
     }
   },
   "panel": {

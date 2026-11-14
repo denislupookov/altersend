@@ -42,6 +42,9 @@
     "sessionEnded": {
       "title": "セッション終了",
       "description": "戻って新しい転送を開始してください。"
+    },
+    "relayLimit": {
+      "description": "この転送は {{limit}} を超えており、リレー経由です。受信するには Pro を購入するか、両方のデバイスが直接接続できるネットワークでお試しください。"
     }
   },
   "panel": {

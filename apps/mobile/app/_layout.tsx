@@ -50,6 +50,7 @@ import {
 import { isRelayEnabled } from '../src/lifecycle/relayStorage'
 import { whatsNewStorage } from '../src/lifecycle/whatsNewStorage'
 import { isOnboardingCompleted } from '../src/onboarding/onboardingStorage'
+import { isOnboardingEntry } from '../src/account/onboardingEntry'
 import { startAccountSync, syncAccountToken } from '../src/lifecycle/account'
 import { watchEntitlement } from '../src/lifecycle/purchases'
 import { UpgradeButton, WhatsNewModal } from '@/src/components'
@@ -172,11 +173,11 @@ function ThemedStack() {
         />
         <Stack.Screen
           name='account'
-          options={{
+          options={({ route }) => ({
             headerShown: false,
             presentation: 'fullScreenModal',
-            animation: 'slide_from_bottom'
-          }}
+            animation: isOnboardingEntry(route.params) ? 'none' : 'slide_from_bottom'
+          })}
         />
         <Stack.Screen
           name='subscription'

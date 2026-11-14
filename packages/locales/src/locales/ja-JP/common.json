@@ -80,6 +80,16 @@
     "subtitle_one": "知っておきたいことが 1 つ。",
     "subtitle_other": "知っておきたいことが {{count}} つ。",
     "releases": {
+      "v2_1_0": {
+        "support": {
+          "title": "AlterSend の存続にご協力を",
+          "description": "3万ダウンロード、リレー転送 3 TB、収益はまだゼロ。Pro がリレーの費用をまかないます。"
+        },
+        "relayLimit": {
+          "title": "リレーは 1 GB まで無料",
+          "description": "直接転送はこれからも無料・無制限です。"
+        }
+      },
       "v2_0_0": {
         "pro": {
           "title": "Pro プラン",

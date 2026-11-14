@@ -644,3 +644,24 @@ describe('transferSessionReducer — connection type (per-peer)', () => {
     expect(next.errorCode).toBeNull()
   })
 })
+
+describe('peer Pro status', () => {
+  it('records which peers have Pro', () => {
+    const state = apply(make({ role: 'receiver' }), {
+      type: 'peer_pro_changed',
+      peer: 'a',
+      pro: true
+    })
+    expect(state.proPeers).toEqual({ a: true })
+  })
+
+  it('keeps the same state when nothing changed', () => {
+    const state = make({ role: 'sender', proPeers: { a: true } })
+    expect(apply(state, { type: 'peer_pro_changed', peer: 'a', pro: true })).toBe(state)
+  })
+
+  it('forgets Pro peers when the session ends', () => {
+    const state = make({ role: 'receiver', proPeers: { a: true } })
+    expect(apply(state, { type: 'clear_session' }).proPeers).toEqual({})
+  })
+})

@@ -140,7 +140,7 @@
   },
   "account": {
     "title": "Your subscription",
-    "paywallLead": "Bigger transfers and priority on the relay.",
+    "paywallLead": "No size limit on the relay, and faster relays.",
     "columnFree": "Free",
     "columnPro": "Pro",
     "upgradeToPro": "Upgrade to Pro",
@@ -209,9 +209,12 @@
     "renewalAndroid": "Renews automatically until cancelled. Manage in Google Play settings.",
     "none": "–",
     "featureDirect": "Direct P2P transfer",
-    "featurePriority": "Priority when the relay is busy",
+    "featurePriority": "Faster dedicated relays",
     "featureWebCap": "Relayed transfer, web link",
-    "featureAppCap": "Relayed transfer, app to app"
+    "featureAppCap": "Relayed transfer, app to app",
+    "benefitRelay": "Relayed transfers of any size",
+    "benefitWebLinks": "Web links with no {{limit}} cap",
+    "benefitDirectFree": "Direct transfers stay free either way"
   },
   "shareMenu": {
     "label": "Share menu",

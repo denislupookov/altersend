@@ -73,7 +73,8 @@
     "shareLink": "Partager le lien",
     "shareMessage": "{{items}} partagés avec vous via AlterSend — ouvrez pour télécharger :\n\n{{link}}",
     "linkHint": "Jusqu’à {{limit}} par transfert",
-    "connectedViaBrowser": "Connecté via le navigateur"
+    "connectedViaBrowser": "Connecté via le navigateur",
+    "relayLimit": "Un appareil est connecté via le relais. Les transferts gratuits via le relais sont limités à {{limit}}."
   },
   "errors": {
     "folderUnsupported": "Les dossiers ne sont pas encore pris en charge. Veuillez sélectionner uniquement les fichiers.",

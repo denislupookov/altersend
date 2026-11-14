@@ -1,44 +1,56 @@
 import { memo } from 'react'
-import { ExternalLink, useTheme } from '@altersend/components'
-import type { OnboardingSlide } from '@altersend/domain'
+import { useTheme } from '@altersend/components'
 import { useTranslation } from '@altersend/locales'
-import { Linking, StyleSheet, View } from 'react-native'
-import { OnboardingIllustration } from './OnboardingIllustration'
+import { StyleSheet, View } from 'react-native'
 import { Text } from '@/src/components/ThemedText'
+import { BottomFade } from './BottomFade'
+import { PhoneMockup } from './PhoneMockup'
+import type { OnboardingStep } from './steps'
+
+const PHONE_WIDTH_RATIO = 0.64
+const MAX_PHONE_WIDTH = 260
+const STEP_PHONE_WIDTH_RATIO = 0.68
+const MAX_STEP_PHONE_WIDTH = 275
+const FADE_HEIGHT = 120
 
 interface SlideViewProps {
-  slide: OnboardingSlide
+  step: OnboardingStep
   width: number
-  heroHeight: number
+  active: boolean
 }
 
-function openLink(url: string) {
-  Linking.openURL(url).catch((err) => console.warn('onboarding: could not open url', err))
-}
-
-export const SlideView = memo(function SlideView({ slide, width, heroHeight }: SlideViewProps) {
+export const SlideView = memo(function SlideView({ step, width, active }: SlideViewProps) {
   const { t } = useTranslation(['onboarding'])
   const { theme } = useTheme()
-  const link = slide.link?.url
+  const c = theme.colors
+  const isWelcome = step.kind === 'welcome'
+  const align = isWelcome ? styles.centered : null
+  const phoneWidth = isWelcome
+    ? Math.min(MAX_PHONE_WIDTH, width * PHONE_WIDTH_RATIO)
+    : Math.min(MAX_STEP_PHONE_WIDTH, width * STEP_PHONE_WIDTH_RATIO)
+
+  const copy = (
+    <View style={isWelcome ? styles.welcomeCopy : styles.stepCopy}>
+      <Text style={[styles.title, align, { color: c.colorTextPrimary }]}>
+        {t(`onboarding:steps.${step.kind}.title`)}
+      </Text>
+      <Text style={[styles.description, align, { color: c.colorTextSecondary }]}>
+        {t(`onboarding:steps.${step.kind}.description`)}
+      </Text>
+    </View>
+  )
+
+  const phone = (
+    <View style={isWelcome ? styles.phoneArea : [styles.phoneArea, styles.stepPhoneArea]}>
+      <PhoneMockup screen={step.screen} video={step.video} playing={active} width={phoneWidth} />
+      <BottomFade color={c.colorBackground} height={FADE_HEIGHT} />
+    </View>
+  )
 
   return (
     <View style={[styles.slide, { width }]}>
-      <OnboardingIllustration kind={slide.kind} height={heroHeight} />
-
-      <Text style={[styles.title, { color: theme.colors.colorTextPrimary }]}>
-        {t(`onboarding:slides.${slide.kind}.title`)}
-      </Text>
-      <Text style={[styles.subtitle, { color: theme.colors.colorTextPrimary }]}>
-        {t(`onboarding:slides.${slide.kind}.description`)}
-      </Text>
-
-      {link ? (
-        <View style={styles.linkWrap}>
-          <ExternalLink href={link} onPress={() => openLink(link)}>
-            {t('onboarding:slides.privacy.link')}
-          </ExternalLink>
-        </View>
-      ) : null}
+      {isWelcome ? phone : copy}
+      {isWelcome ? copy : phone}
     </View>
   )
 })
@@ -46,28 +58,38 @@ export const SlideView = memo(function SlideView({ slide, width, heroHeight }: S
 const styles = StyleSheet.create({
   slide: {
     flex: 1,
+    paddingHorizontal: 20
+  },
+  stepCopy: {
+    paddingTop: 28,
+    paddingBottom: 8
+  },
+  welcomeCopy: {
+    paddingTop: 8,
+    paddingBottom: 44,
+    paddingHorizontal: 16
+  },
+  phoneArea: {
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 40
+    overflow: 'hidden',
+    paddingTop: 8
+  },
+  stepPhoneArea: {
+    paddingTop: 32
   },
   title: {
-    marginTop: 44,
     fontSize: 30,
     fontWeight: '700',
-    letterSpacing: -1,
-    textAlign: 'center',
-    maxWidth: 372,
+    letterSpacing: -0.8,
     lineHeight: 35
   },
-  subtitle: {
-    marginTop: 24,
+  description: {
+    marginTop: 14,
     fontSize: 15,
-    lineHeight: 22,
-    textAlign: 'center',
-    maxWidth: 360
+    lineHeight: 21
   },
-  linkWrap: {
-    marginTop: 10
+  centered: {
+    textAlign: 'center'
   }
 })

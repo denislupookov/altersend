@@ -42,6 +42,9 @@
     "sessionEnded": {
       "title": "Sesión finalizada",
       "description": "Regrese para iniciar una nueva transferencia."
+    },
+    "relayLimit": {
+      "description": "Esta transferencia supera {{limit}} y pasa por el relé. Obtén Pro para recibirla o prueba una red en la que ambos dispositivos puedan conectarse directamente."
     }
   },
   "panel": {

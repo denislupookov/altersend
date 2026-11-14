@@ -80,6 +80,16 @@
     "subtitle_one": "Una cosa que conviene saber.",
     "subtitle_other": "{{count}} cosas que conviene saber.",
     "releases": {
+      "v2_1_0": {
+        "support": {
+          "title": "Ayuda a mantener vivo AlterSend",
+          "description": "30.000 descargas, 3 TB por relay y aún sin ingresos. Pro paga los relays."
+        },
+        "relayLimit": {
+          "title": "Relay gratis hasta 1 GB",
+          "description": "Las transferencias directas siguen siendo gratis e ilimitadas."
+        }
+      },
       "v2_0_0": {
         "pro": {
           "title": "Plan Pro",

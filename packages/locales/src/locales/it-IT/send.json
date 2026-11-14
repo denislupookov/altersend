@@ -73,7 +73,8 @@
     "shareLink": "Condividi link",
     "shareMessage": "{{items}} condivisi con te tramite AlterSend: apri per scaricare:\n\n{{link}}",
     "linkHint": "Fino a {{limit}} per trasferimento",
-    "connectedViaBrowser": "Connesso tramite browser"
+    "connectedViaBrowser": "Connesso tramite browser",
+    "relayLimit": "Un dispositivo è connesso tramite il relay. I trasferimenti gratuiti tramite relay arrivano fino a {{limit}}."
   },
   "errors": {
     "folderUnsupported": "Le cartelle non sono ancora supportate. Seleziona solo i file.",

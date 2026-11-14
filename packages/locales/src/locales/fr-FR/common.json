@@ -80,6 +80,16 @@
     "subtitle_one": "Une chose à savoir.",
     "subtitle_other": "{{count}} choses à savoir.",
     "releases": {
+      "v2_1_0": {
+        "support": {
+          "title": "Aidez à faire vivre AlterSend",
+          "description": "30 000 téléchargements, 3 To relayés, aucun revenu pour l'instant. Pro finance les relais."
+        },
+        "relayLimit": {
+          "title": "Relais gratuit jusqu'à 1 Go",
+          "description": "Les transferts directs restent gratuits et illimités."
+        }
+      },
       "v2_0_0": {
         "pro": {
           "title": "Abonnement Pro",

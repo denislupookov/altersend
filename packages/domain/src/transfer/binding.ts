@@ -221,6 +221,11 @@ function dispatchStatusEvent(event: StatusEvent): void {
         })
       }
       return
+    case 'peer-pro':
+      if (event.peer && typeof event.pro === 'boolean') {
+        dispatchToTransferStore({ type: 'peer_pro_changed', peer: event.peer, pro: event.pro })
+      }
+      return
     case 'peer-unauthenticated':
       if (event.peer) dispatchToTransferStore({ type: 'peer_outdated', peer: event.peer })
       return

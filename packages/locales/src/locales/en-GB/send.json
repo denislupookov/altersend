@@ -73,7 +73,8 @@
     "shareLink": "Share link",
     "shareMessage": "{{items}} shared with you via AlterSend — open to download:\n\n{{link}}",
     "linkHint": "Up to {{limit}} per transfer",
-    "connectedViaBrowser": "Connected via browser"
+    "connectedViaBrowser": "Connected via browser",
+    "relayLimit": "A device is connected through the relay. Free relayed transfers are up to {{limit}}."
   },
   "errors": {
     "folderUnsupported": "Folders aren't supported yet. Please select files only.",

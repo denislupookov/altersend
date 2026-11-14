@@ -32,6 +32,7 @@ export const initialTransferSessionState: TransferSessionState = {
   connectionTypes: {},
   relayBusy: false,
   webPeers: {},
+  proPeers: {},
   outdatedPeers: {},
   transferPeerKey: null,
   role: null,
@@ -122,6 +123,7 @@ function endSession(state: TransferSessionState): TransferSessionState {
     connectionTypes: {},
     relayBusy: false,
     webPeers: {},
+    proPeers: {},
     outdatedPeers: {},
     transferPeerKey: null,
     peerCount: 0,
@@ -199,6 +201,9 @@ export function transferSessionReducer(
       return { ...state, relayBusy: true }
     case 'peer_client_changed':
       return flagPeer(state, 'webPeers', action.peer)
+    case 'peer_pro_changed':
+      if (!!state.proPeers[action.peer] === action.pro) return state
+      return { ...state, proPeers: { ...state.proPeers, [action.peer]: action.pro } }
     case 'peer_outdated':
       return flagPeer(state, 'outdatedPeers', action.peer)
     case 'peer_authenticated':
@@ -333,6 +338,7 @@ export function transferSessionReducer(
         connectionTypes: {},
         relayBusy: false,
         webPeers: {},
+        proPeers: {},
         outdatedPeers: {},
         transferPeerKey: null,
         peerCount: 0,

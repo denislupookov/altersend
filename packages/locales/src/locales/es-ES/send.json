@@ -73,7 +73,8 @@
     "shareLink": "Compartir enlace",
     "shareMessage": "{{items}} compartidos contigo con AlterSend: ábrelo para descargar:\n\n{{link}}",
     "linkHint": "Hasta {{limit}} por transferencia",
-    "connectedViaBrowser": "Conectado por navegador"
+    "connectedViaBrowser": "Conectado por navegador",
+    "relayLimit": "Un dispositivo está conectado a través del relé. Las transferencias gratuitas por el relé tienen un límite de {{limit}}."
   },
   "errors": {
     "folderUnsupported": "Las carpetas aún no son compatibles. Seleccione solo archivos.",

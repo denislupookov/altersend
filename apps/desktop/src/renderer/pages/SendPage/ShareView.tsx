@@ -8,10 +8,19 @@ import {
   formatItemsCount,
   formatTextSnippetPreview,
   groupSelectedFiles,
+  NATIVE_RELAY_MAX_LABEL,
   useCopiedFlag,
+  useSendRelayLimit,
   useShareViewModel
 } from '@altersend/domain'
-import { Button, LinkCard, LinkRow, WaitingRadar, useTheme } from '@altersend/components'
+import {
+  Button,
+  ErrorBanner,
+  LinkCard,
+  LinkRow,
+  WaitingRadar,
+  useTheme
+} from '@altersend/components'
 import {
   ChevronsUpDownIcon,
   deviceIcon,
@@ -22,11 +31,12 @@ import {
 } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { Popover, QRCode, QRModal, useToast } from '../../components'
+import { openSettingsPanel } from '../../components/Settings/settingsControl'
 import { CopyLinkButton } from './CopyLinkButton'
 import { TopicCopyButton } from './TopicCopyButton'
 
 export function ShareView() {
-  const { t } = useTranslation(['send', 'common'])
+  const { t } = useTranslation(['send', 'common', 'settings'])
   const { theme } = useTheme()
   const c = theme.colors
   const toast = useToast()
@@ -55,6 +65,7 @@ export function ShareView() {
   const hasConnectedDevices = vm.connectedCount > 0
   const pro = useSubscriptionStore((state) => state.active)
   const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize, pro)
+  const relayLimited = useSendRelayLimit(vm.totalSize)
   const fileRows = groupSelectedFiles(vm.files)
   const singleFolder = fileRows.length === 1 && fileRows[0].kind === 'folder' ? fileRows[0] : null
 
@@ -140,6 +151,16 @@ export function ShareView() {
   return (
     <>
       <div className='flex flex-col gap-6 pt-5'>
+        {relayLimited ? (
+          <ErrorBanner
+            message={t('send:connection.relayLimit', { limit: NATIVE_RELAY_MAX_LABEL })}
+            action={
+              <Button size='sm' variant='primary' onClick={() => openSettingsPanel('account')}>
+                {t('settings:account.getPro')}
+              </Button>
+            }
+          />
+        ) : null}
         {hasConnectedDevices ? (
           <div className='flex w-full gap-2'>
             <TopicCopyButton

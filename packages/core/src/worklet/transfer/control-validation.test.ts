@@ -272,6 +272,17 @@ describe('isValidControlMessage', () => {
     })
   })
 
+  describe('pro-status', () => {
+    it('accepts a boolean pro flag', () => {
+      expect(isValidControlMessage({ ...base, type: 'pro-status', pro: true })).toBe(true)
+      expect(isValidControlMessage({ ...base, type: 'pro-status', pro: false })).toBe(true)
+    })
+    it('rejects a missing or non-boolean flag', () => {
+      expect(isValidControlMessage({ ...base, type: 'pro-status' })).toBe(false)
+      expect(isValidControlMessage({ ...base, type: 'pro-status', pro: 'yes' })).toBe(false)
+    })
+  })
+
   describe('challenge / auth', () => {
     const nonce = 'ab'.repeat(32)
     const proof = 'cd'.repeat(32)

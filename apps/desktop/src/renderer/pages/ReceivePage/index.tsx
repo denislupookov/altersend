@@ -55,7 +55,7 @@ export default function ReceivePage() {
   const isRelay = connectionType === 'relay'
   const connectedBadge = (
     <div
-      onClick={isRelay ? () => openSettingsPanel('connection') : undefined}
+      onClick={isRelay ? () => openSettingsPanel(isPro ? 'connection' : 'account') : undefined}
       className={`inline-flex items-center gap-1.5 rounded-full bg-success/12 px-2.5 py-1 text-[12px] font-semibold text-success ${
         isRelay ? 'cursor-pointer transition-opacity hover:opacity-80' : ''
       }`}

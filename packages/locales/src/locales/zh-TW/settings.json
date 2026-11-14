@@ -140,7 +140,7 @@
   },
   "account": {
     "title": "我的訂閱",
-    "paywallLead": "更大的傳輸容量，中繼忙碌時優先。",
+    "paywallLead": "中繼不限大小，速度更快。",
     "columnFree": "免費",
     "columnPro": "Pro",
     "upgradeToPro": "升級到 Pro",
@@ -209,9 +209,12 @@
     "renewalAndroid": "訂閱會自動續訂，直到您取消。可在 Google Play 設定中管理。",
     "none": "–",
     "featureDirect": "直接 P2P 傳輸",
-    "featurePriority": "中繼忙碌時優先",
+    "featurePriority": "更快的專用中繼",
     "featureWebCap": "經中繼傳輸（網頁連結）",
-    "featureAppCap": "經中繼傳輸（App 之間）"
+    "featureAppCap": "經中繼傳輸（App 之間）",
+    "benefitRelay": "中繼傳輸不限大小",
+    "benefitWebLinks": "網頁連結不受 {{limit}} 限制",
+    "benefitDirectFree": "直接傳輸始終免費"
   },
   "shareMenu": {
     "label": "分享選單",

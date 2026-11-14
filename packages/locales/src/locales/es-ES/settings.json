@@ -140,7 +140,7 @@
   },
   "account": {
     "title": "Tu suscripción",
-    "paywallLead": "Transferencias más grandes y prioridad en el relé.",
+    "paywallLead": "Sin límite de tamaño en el relé y relés más rápidos.",
     "columnFree": "Gratis",
     "columnPro": "Pro",
     "upgradeToPro": "Pasar a Pro",
@@ -209,9 +209,12 @@
     "renewalAndroid": "Se renueva automáticamente hasta que lo canceles. Gestiónalo en los ajustes de Google Play.",
     "none": "–",
     "featureDirect": "Transferencia P2P directa",
-    "featurePriority": "Prioridad cuando el relé está saturado",
+    "featurePriority": "Relés dedicados más rápidos",
     "featureWebCap": "Transferencia por relé, enlace web",
-    "featureAppCap": "Transferencia por relé, app a app"
+    "featureAppCap": "Transferencia por relé, app a app",
+    "benefitRelay": "Transferencias por relay de cualquier tamaño",
+    "benefitWebLinks": "Enlaces web sin límite de {{limit}}",
+    "benefitDirectFree": "Las transferencias directas siguen siendo gratis"
   },
   "shareMenu": {
     "label": "Menú Compartir",

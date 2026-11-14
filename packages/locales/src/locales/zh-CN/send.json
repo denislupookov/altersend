@@ -73,7 +73,8 @@
     "shareLink": "分享链接",
     "shareMessage": "通过 AlterSend 共享了 {{items}}——打开链接即可下载：\n\n{{link}}",
     "linkHint": "每次传输最多 {{limit}}",
-    "connectedViaBrowser": "通过浏览器连接"
+    "connectedViaBrowser": "通过浏览器连接",
+    "relayLimit": "有设备通过中继连接。免费中继传输最多 {{limit}}。"
   },
   "errors": {
     "folderUnsupported": "尚不支持文件夹。请仅选择文件。",

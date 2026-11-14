@@ -31,6 +31,7 @@ beforeEach(() => {
   configureRelay({
     enabled: false,
     relays: [],
+    proRelays: [],
     customRelays: [],
     customConfigured: false,
     customFallback: false,
@@ -410,5 +411,54 @@ describe('busy detection', () => {
     })
     markRelayBusy(b4a.from(KEY_C, 'hex'))
     expect(allRelaysBusy()).toBe(true)
+  })
+})
+
+describe('Pro-only relays', () => {
+  const hex = (keys: Uint8Array[] | null) => keys?.map((k) => b4a.toString(k, 'hex')) ?? null
+
+  beforeEach(() => {
+    configureRelay({
+      enabled: true,
+      relays: [{ keyHex: KEY_A, host: HOST_A }],
+      proRelays: [{ keyHex: KEY_B, host: HOST_B }]
+    })
+  })
+
+  it('keeps free users on the free relays', () => {
+    expect(hex(relayThrough(true))).toEqual([KEY_A])
+  })
+
+  it('routes Pro users through the Pro relays only', () => {
+    configureRelay({ proToken: TOKEN })
+    expect(hex(relayThrough(true))).toEqual([KEY_B])
+  })
+
+  it('falls back to the free relays when every Pro relay is busy', () => {
+    configureRelay({ proToken: TOKEN })
+    markRelayBusy(b4a.from(KEY_B, 'hex'))
+    expect(hex(relayThrough(true))).toEqual([KEY_A])
+    expect(allRelaysBusy()).toBe(false)
+  })
+
+  it('announces the token to Pro relays', () => {
+    configureRelay({ proToken: TOKEN })
+    setRelayRole('sender')
+    expect(proTokenFor(b4a.from(KEY_B, 'hex'))).toBe(TOKEN)
+  })
+
+  it('labels Pro relay connections as relayed', () => {
+    expect(isRelayHost(HOST_B)).toBe(true)
+    expect(isRelayKey(b4a.from(KEY_B, 'hex'))).toBe(true)
+  })
+
+  it('appends the Pro relays after a self-hosted relay with fallback', () => {
+    configureRelay({
+      proToken: TOKEN,
+      customRelays: [{ keyHex: KEY_C, host: HOST_C }],
+      customConfigured: true,
+      customFallback: true
+    })
+    expect(hex(relayThrough(true))).toEqual([KEY_C, KEY_B])
   })
 })

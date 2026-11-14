@@ -14,6 +14,21 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '2.1.0',
+    highlights: [
+      {
+        key: 'support',
+        titleKey: 'common:whatsNew.releases.v2_1_0.support.title',
+        descriptionKey: 'common:whatsNew.releases.v2_1_0.support.description'
+      },
+      {
+        key: 'relayLimit',
+        titleKey: 'common:whatsNew.releases.v2_1_0.relayLimit.title',
+        descriptionKey: 'common:whatsNew.releases.v2_1_0.relayLimit.description'
+      }
+    ]
+  },
+  {
     version: '2.0.0',
     highlights: [
       {

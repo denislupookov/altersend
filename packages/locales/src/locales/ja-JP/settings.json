@@ -140,7 +140,7 @@
   },
   "account": {
     "title": "ご利用中のサブスクリプション",
-    "paywallLead": "より大きな転送と、リレー利用時の優先処理。",
+    "paywallLead": "リレーのサイズ制限なし、さらに高速なリレー。",
     "columnFree": "無料",
     "columnPro": "Pro",
     "upgradeToPro": "Pro にアップグレード",
@@ -209,9 +209,12 @@
     "renewalAndroid": "解約するまで自動更新されます。Google Play の設定で管理できます。",
     "none": "–",
     "featureDirect": "直接 P2P 転送",
-    "featurePriority": "リレー混雑時の優先処理",
+    "featurePriority": "高速な専用リレー",
     "featureWebCap": "リレー経由の転送（ウェブリンク）",
-    "featureAppCap": "リレー経由の転送（アプリ間）"
+    "featureAppCap": "リレー経由の転送（アプリ間）",
+    "benefitRelay": "サイズ無制限のリレー転送",
+    "benefitWebLinks": "{{limit}}上限なしのWebリンク",
+    "benefitDirectFree": "直接転送はいつでも無料"
   },
   "shareMenu": {
     "label": "共有メニュー",

@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { View, StyleSheet, Pressable } from 'react-native'
 import { Paths } from 'expo-file-system'
-import { Button, useTheme } from '@altersend/components'
+import { Button, ErrorBanner, useTheme } from '@altersend/components'
 import { DownloadIcon, InfoIcon, PlayIcon } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { useRouter } from 'expo-router'
@@ -23,15 +23,18 @@ import {
   getReceivePageCopy,
   getReceiveStep,
   isSessionOverStep,
+  NATIVE_RELAY_MAX_LABEL,
   useReceiveActions,
   useReceiveDownloads,
+  useReceiveRelayLimit,
+  useSubscriptionStore,
   useTransferStore
 } from '@altersend/domain'
 import { clearSession } from '@altersend/domain'
 import { Text } from '@/src/components/ThemedText'
 
 export default function ReceiveIncomingScreen() {
-  const { t } = useTranslation(['receive', 'common', 'errors'])
+  const { t } = useTranslation(['receive', 'common', 'errors', 'settings'])
   const { theme } = useTheme()
   const router = useRouter()
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
@@ -44,6 +47,8 @@ export default function ReceiveIncomingScreen() {
   const reconnectExhausted = useTransferStore((s) => s.reconnectExhausted)
   const sessionEndedByPeer = useTransferStore((s) => s.sessionEndedByPeer)
   const errorCode = useTransferStore((s) => s.errorCode)
+  const isPro = useSubscriptionStore((s) => s.active)
+  const relayLimited = useReceiveRelayLimit()
   const displayError = getDisplayError(t, errorCode)
 
   const { totals, fileOffers, allDownloaded } = downloads
@@ -114,7 +119,7 @@ export default function ReceiveIncomingScreen() {
     <Pressable
       accessibilityRole='button'
       accessibilityLabel={t('common:status.connectedViaRelay')}
-      onPress={() => router.push('/connection')}
+      onPress={() => router.push(isPro ? '/connection' : '/account')}
       style={({ pressed }) => [
         styles.badge,
         { backgroundColor: theme.colors.colorSuccessSubtle, opacity: pressed ? 0.7 : 1 }
@@ -191,7 +196,17 @@ export default function ReceiveIncomingScreen() {
         hasNativeHeader
         footer={
           <View style={styles.footerStack}>
-            {downloads.primaryAction ? (
+            {relayLimited ? (
+              <Button
+                onClick={() => router.push('/account')}
+                size='lg'
+                variant='light'
+                width='full'
+              >
+                {t('settings:account.getPro')}
+              </Button>
+            ) : null}
+            {downloads.primaryAction && !relayLimited ? (
               <Button
                 icon={
                   downloads.primaryAction === 'resume-all' ? (
@@ -216,6 +231,13 @@ export default function ReceiveIncomingScreen() {
           </View>
         }
       >
+        {relayLimited ? (
+          <View style={styles.banner}>
+            <ErrorBanner
+              message={t('receive:page.relayLimit.description', { limit: NATIVE_RELAY_MAX_LABEL })}
+            />
+          </View>
+        ) : null}
         <ReceiveIncomingView />
       </Layout>
     )
@@ -247,6 +269,9 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 12,
     fontWeight: '600'
+  },
+  banner: {
+    marginBottom: 16
   },
   footerStack: {
     gap: 8,

@@ -28,6 +28,7 @@ import type {
   SetRelayConfigInput,
   SetRelayConfigReply,
   TestCustomRelayReply,
+  NetworkCheckReply,
   ShareFileRequest,
   ShareFilesReply,
   TransferRPC
@@ -74,9 +75,10 @@ import { RememberCoordinator } from '../peers/remember-coordinator'
 import { RecognitionCoordinator } from '../peers/recognition-coordinator'
 import { DiscoveryCoordinator } from '../peers/discovery'
 import { PairingCoordinator } from '../peers/pairing-coordinator'
-import { configureRelay, relayConfigSummary, setRelayRole } from '../relay/config'
+import { configureRelay, proToken, relayConfigSummary, setRelayRole } from '../relay/config'
 import { applyCustomRelay } from '../relay/conf'
 import { testCustomRelayConnection } from '../relay/testConnection'
+import { checkNetwork as runNetworkCheck } from '../relay/networkCheck'
 import { upgradeWebRelay } from '../relay/upgradeWebRelay'
 
 function createTransferId(): string {
@@ -218,6 +220,7 @@ export class TransferOrchestrator implements TransferRPC {
   private onPeerConnected(session: PeerSession): void {
     this.sendStatus('peer-connected', { peer: session.peerKey, peers: this.swarm.peerCount })
     this.recognition.onPeerConnected(session.peerKey)
+    session.controlChannel.send({ type: 'pro-status', pro: proToken() !== null })
     if (this.role !== 'sender') return
     const nonce = crypto.randomBytes(32).toString('hex')
     this.pendingNonce.set(session.peerKey, nonce)
@@ -327,6 +330,10 @@ export class TransferOrchestrator implements TransferRPC {
     }
     if (message.type === 'session-end') {
       this.sendStatus('peer-session-ended', { peer: session.peerKey })
+      return
+    }
+    if (message.type === 'pro-status') {
+      this.sendStatus('peer-pro', { peer: session.peerKey, pro: message.pro })
       return
     }
     if (message.type === 'recognition') {
@@ -711,11 +718,14 @@ export class TransferOrchestrator implements TransferRPC {
   }
 
   async setRelayConfig(input: SetRelayConfigInput): Promise<SetRelayConfigReply> {
+    const wasPro = proToken() !== null
     configureRelay({
       enabled: input.enabled,
       proToken: input.proToken,
       customFallback: input.customRelayFallback
     })
+    const pro = proToken() !== null
+    if (pro !== wasPro) this.swarm.broadcast({ type: 'pro-status', pro })
     if (input.customRelay !== undefined) applyCustomRelay(input.customRelay)
     const { enabled, keyCount } = relayConfigSummary()
     return { enabled, keyCount }
@@ -723,6 +733,10 @@ export class TransferOrchestrator implements TransferRPC {
 
   testCustomRelay(): Promise<TestCustomRelayReply> {
     return testCustomRelayConnection()
+  }
+
+  checkNetwork(): Promise<NetworkCheckReply> {
+    return runNetworkCheck()
   }
 
   private enqueueLifecycle(op: () => Promise<void>): Promise<void> {

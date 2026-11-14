@@ -20,6 +20,7 @@ function toError(err: unknown) {
 const IMMEDIATE_METHODS = new Set<TransferMethod>([
   'pauseDownload',
   'testCustomRelay',
+  'checkNetwork',
   'inviteDevice',
   'respondToInvite'
 ])

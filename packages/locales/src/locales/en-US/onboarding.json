@@ -1,17 +1,29 @@
 {
-  "slides": {
-    "privacy": {
-      "title": "Send anything to anyone privately",
-      "description": "Files are encrypted on your device and travel straight to whoever you send them to",
-      "link": "Read our privacy policy"
+  "steps": {
+    "welcome": {
+      "title": "Send any file to anyone",
+      "description": "Any size, anywhere. No account, no cloud storage."
     },
-    "pair": {
-      "title": "Pair with any device",
-      "description": "Pair once across iPhone, Android, Mac and Windows, then send with a tap"
+    "receive": {
+      "title": "They don’t need an account",
+      "description": "Share a code, QR or link. They open it in AlterSend or right in their browser."
     },
-    "link": {
-      "title": "Share a link to your transfer",
-      "description": "Send a link and they download straight from their browser"
+    "private": {
+      "title": "Straight from you to them",
+      "description": "Nothing is stored in between, so keep AlterSend open until it’s done."
+    },
+    "network": {
+      "title": "Works on any network",
+      "description": "If Wi-Fi or a VPN blocks the direct path, our relay carries it, still encrypted."
     }
+  },
+  "proIntro": {
+    "title": "Free and open source",
+    "openTitle": "Open source",
+    "openBody": "Anyone can read the code on GitHub.",
+    "relayTitle": "Relays cost money",
+    "relayBody": "Direct transfers stay free. We pay for the relay servers.",
+    "supportTitle": "Support the developer",
+    "supportBody": "Pro keeps AlterSend independent. No ads, no data selling."
   }
 }

@@ -42,6 +42,9 @@
     "sessionEnded": {
       "title": "會議結束",
       "description": "返回開始新的傳輸。"
+    },
+    "relayLimit": {
+      "description": "此傳輸超過 {{limit}}，且經由中繼。取得 Pro 即可接收，或換一個兩台裝置能直接連線的網路再試。"
     }
   },
   "panel": {

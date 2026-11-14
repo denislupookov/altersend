@@ -63,6 +63,7 @@
     "expo-sharing": "~56.0.23",
     "expo-splash-screen": "~56.0.14",
     "expo-system-ui": "~56.0.5",
+    "expo-video": "~56.1.4",
     "lucide-react-native": "^1.8.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",

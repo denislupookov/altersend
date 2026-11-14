@@ -31,9 +31,19 @@ function isValidEntry(entry: unknown): entry is RelayRecordEntry {
   )
 }
 
+function validEntries(value: unknown): RelayRecordEntry[] {
+  return Array.isArray(value) ? value.filter(isValidEntry) : []
+}
+
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
-type ApplyRecord = (relays: RelayRecordEntry[], web: RelayRecordEntry[]) => void
+interface RelayRecord {
+  relays: RelayRecordEntry[]
+  pro: RelayRecordEntry[]
+  web: RelayRecordEntry[]
+}
+
+type ApplyRecord = (record: RelayRecord) => void
 
 interface ConfSource {
   ensure(): void
@@ -57,6 +67,7 @@ function createConfSource(pubkeyHex: string, label: string, apply: ApplyRecord):
       if (!record?.value) return false
       const parsed = JSON.parse(b4a.toString(record.value, 'utf8')) as {
         relays?: unknown
+        pro?: unknown
         web?: unknown
       }
       if (
@@ -64,8 +75,11 @@ function createConfSource(pubkeyHex: string, label: string, apply: ApplyRecord):
         parsed.relays.length > 0 &&
         parsed.relays.every(isValidEntry)
       ) {
-        const web = Array.isArray(parsed.web) ? parsed.web.filter(isValidEntry) : []
-        apply(parsed.relays as RelayRecordEntry[], web)
+        apply({
+          relays: parsed.relays as RelayRecordEntry[],
+          pro: validEntries(parsed.pro),
+          web: validEntries(parsed.web)
+        })
         return true
       }
     } catch {
@@ -127,9 +141,10 @@ registerRelayLoader(() => {
 export function startRelayConf(pubkeyHex: string | undefined): void {
   if (!pubkeyHex || official) return
 
-  official = createConfSource(pubkeyHex, 'official', (relays, web) => {
+  official = createConfSource(pubkeyHex, 'official', ({ relays, pro, web }) => {
     configureRelay({
       relays: relays.map(toRelayInput),
+      proRelays: pro.map(toRelayInput),
       webRelays: web.map((r) => ({ keyHex: r.key, host: r.host }))
     })
   })
@@ -153,7 +168,7 @@ export function applyCustomRelay(input: CustomRelayInput | null): void {
 
   if (valid && input.kind === 'org') {
     configureRelay({ customRelays: [], customConfigured: true })
-    customOrg = createConfSource(input.keyHex, 'custom', (relays) => {
+    customOrg = createConfSource(input.keyHex, 'custom', ({ relays }) => {
       configureRelay({ customRelays: relays.map(toRelayInput) })
     })
     if (relayConfigSummary().enabled) customOrg.ensure()

@@ -42,6 +42,9 @@
     "sessionEnded": {
       "title": "세션이 종료되었습니다.",
       "description": "새로운 전송을 시작하려면 돌아오세요."
+    },
+    "relayLimit": {
+      "description": "이 전송은 {{limit}}를 넘고 릴레이를 거칩니다. 받으려면 Pro를 시작하거나, 두 기기가 직접 연결될 수 있는 네트워크에서 다시 시도하세요."
     }
   },
   "panel": {
