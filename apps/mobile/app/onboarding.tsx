@@ -41,11 +41,14 @@ export default function OnboardingScreen() {
 
   const finish = () => {
     markOnboardingCompleted()
+    router.replace('/send')
+    if (!isPro) {
+      router.push({ pathname: '/account', params: ONBOARDING_ENTRY_PARAMS })
+      return
+    }
     requestNotificationPermission().catch((err: unknown) => {
       console.warn('onboarding: notification permission request failed', err)
     })
-    router.replace('/send')
-    if (!isPro) router.push({ pathname: '/account', params: ONBOARDING_ENTRY_PARAMS })
   }
 
   const goTo = (target: number) => {

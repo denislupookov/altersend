@@ -14,6 +14,7 @@ import {
   type AccountPhaseProps
 } from '@/src/account'
 import { isOnboardingEntry } from '@/src/account/onboardingEntry'
+import { requestNotificationPermission } from '@/src/lifecycle/notificationPermission'
 
 type PhaseScreen = (props: AccountPhaseProps) => React.ReactElement | null
 
@@ -32,11 +33,21 @@ export default function AccountScreen() {
   const model = useAccountModel()
   const router = useRouter()
   const params = useLocalSearchParams()
-  const [showIntro, setShowIntro] = useState(isOnboardingEntry(params))
+  const [fromOnboarding] = useState(() => isOnboardingEntry(params))
+  const [showIntro, setShowIntro] = useState(fromOnboarding)
 
   useEffect(() => {
     if (model.phase === 'active') router.back()
   }, [model.phase, router])
+
+  useEffect(() => {
+    if (!fromOnboarding) return
+    return () => {
+      requestNotificationPermission().catch((err: unknown) => {
+        console.warn('account: notification permission request failed', err)
+      })
+    }
+  }, [fromOnboarding])
 
   if (model.phase === 'active') return null
 
