@@ -79,6 +79,12 @@
     "heading": "Novedades de AlterSend {{version}}",
     "subtitle_one": "Una cosa que vale la pena saber.",
     "subtitle_other": "{{count}} cosas que vale la pena saber.",
+    "rate": {
+      "title": "Ayuda a AlterSend a crecer",
+      "body": "AlterSend crece de boca en boca. Calificarlo toma unos segundos y ayuda a otras personas a encontrarlo.",
+      "action": "Calificar AlterSend",
+      "feedback": "¿No te convence? Envía comentarios"
+    },
     "releases": {
       "v2_1_0": {
         "support": {

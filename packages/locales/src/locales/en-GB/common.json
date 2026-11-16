@@ -79,6 +79,12 @@
     "heading": "What's new in AlterSend {{version}}",
     "subtitle_one": "One thing worth knowing.",
     "subtitle_other": "{{count}} things worth knowing.",
+    "rate": {
+      "title": "Help AlterSend grow",
+      "body": "AlterSend grows by word of mouth. A rating takes a few seconds and helps other people find it.",
+      "action": "Rate AlterSend",
+      "feedback": "Not happy? Send feedback"
+    },
     "releases": {
       "v2_1_0": {
         "support": {

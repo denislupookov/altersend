@@ -79,6 +79,12 @@
     "heading": "AlterSend {{version}}의 새로운 기능",
     "subtitle_one": "알아 두면 좋은 한 가지.",
     "subtitle_other": "알아 두면 좋은 {{count}}가지.",
+    "rate": {
+      "title": "AlterSend의 성장을 도와주세요",
+      "body": "AlterSend는 입소문으로 성장합니다. 평가는 몇 초면 끝나고, 다른 사람들이 AlterSend를 찾는 데 도움이 됩니다.",
+      "action": "AlterSend 평가하기",
+      "feedback": "불만이 있으신가요? 피드백 보내기"
+    },
     "releases": {
       "v2_1_0": {
         "support": {

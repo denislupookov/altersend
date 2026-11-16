@@ -79,6 +79,12 @@
     "heading": "Что нового в AlterSend {{version}}",
     "subtitle_one": "Одно, что стоит знать.",
     "subtitle_other": "{{count}} вещи, о которых стоит знать.",
+    "rate": {
+      "title": "Помогите AlterSend расти",
+      "body": "AlterSend растёт благодаря рекомендациям. Оценка занимает несколько секунд и помогает другим найти приложение.",
+      "action": "Оценить AlterSend",
+      "feedback": "Что-то не так? Напишите нам"
+    },
     "releases": {
       "v2_1_0": {
         "support": {

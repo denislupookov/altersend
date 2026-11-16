@@ -79,6 +79,12 @@
     "heading": "Nouveautés d’AlterSend {{version}}",
     "subtitle_one": "Une chose à savoir.",
     "subtitle_other": "{{count}} choses à savoir.",
+    "rate": {
+      "title": "Aidez AlterSend à grandir",
+      "body": "AlterSend grandit grâce au bouche-à-oreille. Une note ne prend que quelques secondes et aide d’autres personnes à le trouver.",
+      "action": "Noter AlterSend",
+      "feedback": "Pas satisfait ? Envoyez un commentaire"
+    },
     "releases": {
       "v2_1_0": {
         "support": {

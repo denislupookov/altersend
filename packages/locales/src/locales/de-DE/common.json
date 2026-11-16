@@ -79,6 +79,12 @@
     "heading": "Neu in AlterSend {{version}}",
     "subtitle_one": "Eine Sache, die du wissen solltest.",
     "subtitle_other": "{{count}} Dinge, die du wissen solltest.",
+    "rate": {
+      "title": "Hilf AlterSend zu wachsen",
+      "body": "AlterSend wächst durch Empfehlungen. Eine Bewertung dauert nur ein paar Sekunden und hilft anderen, die App zu finden.",
+      "action": "AlterSend bewerten",
+      "feedback": "Nicht zufrieden? Feedback senden"
+    },
     "releases": {
       "v2_1_0": {
         "support": {

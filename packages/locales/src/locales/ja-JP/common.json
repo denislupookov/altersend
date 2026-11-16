@@ -79,6 +79,12 @@
     "heading": "AlterSend {{version}} の新機能",
     "subtitle_one": "知っておきたいことが 1 つ。",
     "subtitle_other": "知っておきたいことが {{count}} つ。",
+    "rate": {
+      "title": "AlterSend を応援してください",
+      "body": "AlterSend は口コミで広がっています。評価は数秒で済み、ほかの人がこのアプリを見つける助けになります。",
+      "action": "AlterSend を評価",
+      "feedback": "ご不満がありますか？フィードバックを送信"
+    },
     "releases": {
       "v2_1_0": {
         "support": {
