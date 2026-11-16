@@ -19,6 +19,7 @@ import {
 import {
   bindTransferApi,
   startBackgroundReconnectEffect,
+  startDownloadRetryEffect,
   startPeerWatchdog
 } from '@altersend/domain'
 import App from './App.js'
@@ -101,6 +102,7 @@ if (hasBridge()) {
     .catch((err) => captureException(err, 'setRelayConfig'))
   startAccountSync()
   startPeerWatchdog()
+  startDownloadRetryEffect()
   startBackgroundReconnectEffect()
   startDeepLinkHandler()
 }

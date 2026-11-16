@@ -2,8 +2,9 @@ import { requireOptionalNativeModule } from 'expo-modules-core'
 
 interface MediaStoreNativeModule {
   saveToDownloads(srcPath: string, fileName: string, mimeType: string): Promise<string>
-  openDownload(contentUri: string, mimeType: string): Promise<void>
+  openContentUri(contentUri: string, mimeType: string): Promise<void>
   openDownloadsFolder(): Promise<void>
+  openGallery(): Promise<void>
 }
 
 const nativeModule = requireOptionalNativeModule<MediaStoreNativeModule>('MediaStore')
@@ -26,10 +27,14 @@ export function saveToDownloads(
   return requireModule().saveToDownloads(srcPath, fileName, mimeType)
 }
 
-export function openDownload(contentUri: string, mimeType: string): Promise<void> {
-  return requireModule().openDownload(contentUri, mimeType)
+export function openContentUri(contentUri: string, mimeType: string): Promise<void> {
+  return requireModule().openContentUri(contentUri, mimeType)
 }
 
 export function openDownloadsFolder(): Promise<void> {
   return requireModule().openDownloadsFolder()
+}
+
+export function openGallery(): Promise<void> {
+  return requireModule().openGallery()
 }

@@ -17,6 +17,8 @@ import {
   withDisplayName
 } from './utils'
 import { fileExists } from './fs-utils'
+import { PEER_DISCONNECTED_REASON } from './drive'
+import { PeerLostError } from './peer-lost-error'
 import type { DownloadFileRequest, DownloadFileResult } from '../rpc/protocol'
 import {
   DownloadReporter,
@@ -115,7 +117,10 @@ export class TransferReceiver {
             callbacks,
             targetPath,
             totalBytes: file.size ?? 0
-          }).failed(cancelled ? 'Cancelled' : toMessage(error), { cancelled })
+          }).failed(cancelled ? 'Cancelled' : toMessage(error), {
+            cancelled,
+            resumable: error instanceof PeerLostError
+          })
         )
       } finally {
         releaseOuter()
@@ -178,8 +183,10 @@ export class TransferReceiver {
       } catch (err) {
         const corrupt = err instanceof Error && err.name === 'IntegrityError'
         if (corrupt) await this.discardPartials([file.fileId])
+        const peerLost = toMessage(err) === PEER_DISCONNECTED_REASON
+        const hasProgress = (this.partials.get(file.fileId)?.received ?? 0) > 0
         return events.failed(toMessage(err), {
-          resumable: !corrupt && (this.partials.get(file.fileId)?.received ?? 0) > 0,
+          resumable: !corrupt && (hasProgress || peerLost),
           cancelled: this.paused.delete(file.fileId)
         })
       }

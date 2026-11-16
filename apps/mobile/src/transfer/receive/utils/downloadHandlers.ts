@@ -99,6 +99,23 @@ async function saveToFiles(
   return { intended: 'filesystem', destination: 'filesystem', localPath }
 }
 
+async function saveToFilesInstead(
+  localPath: string,
+  fileName: string
+): Promise<HandleDownloadedFileResult> {
+  const saved = await saveToFiles(localPath, fileName)
+  return { ...saved, intended: 'photos' }
+}
+
+function deletePrivateCopy(localPath: string): void {
+  try {
+    const original = new File(localPath)
+    if (original.exists) original.delete()
+  } catch (err) {
+    console.warn('handleDownloadedFile: could not remove the private copy', err)
+  }
+}
+
 export async function handleDownloadedFile(
   localPath: string,
   fileName: string
@@ -108,23 +125,20 @@ export async function handleDownloadedFile(
   }
 
   const permission = await requestPermissionsAsync(true)
-  if (!permission.granted) {
-    return { intended: 'photos', destination: 'filesystem', localPath }
-  }
-  let created = true
+  if (!permission.granted) return saveToFilesInstead(localPath, fileName)
+
+  let asset: Asset
   try {
-    await Asset.create(toFilePath(localPath))
+    asset = await Asset.create(toFilePath(localPath))
   } catch (err) {
-    created = false
     console.warn('handleDownloadedFile: media library save failed', err)
+    return saveToFilesInstead(localPath, fileName)
   }
 
-  try {
-    const original = new File(localPath)
-    if (created && original.exists) original.delete()
-  } catch (err) {
-    console.warn('handleDownloadedFile: could not remove the private copy', err)
+  deletePrivateCopy(localPath)
+  return {
+    intended: 'photos',
+    destination: 'photos',
+    localPath: Platform.OS === 'android' ? asset.id : localPath
   }
-
-  return { intended: 'photos', destination: 'photos', localPath }
 }

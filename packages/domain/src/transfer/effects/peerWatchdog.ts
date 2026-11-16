@@ -1,6 +1,7 @@
 import { getTransferApi, reportError } from '../binding'
 import { dispatchToTransferStore, transferStore } from '../store'
 import { getAppActive, subscribeAppActive } from './appActive'
+import { isBackgroundTransferActive } from './backgroundTransfer'
 
 const RECONNECT_TIMEOUT_MS = 30_000
 const INITIAL_CONNECT_TIMEOUT_MS = 60_000
@@ -14,8 +15,8 @@ function evaluate(): WatchdogKey {
   const state = transferStore.getState()
   const hasOffers = state.incomingFileOffers.length > 0
   const settled = hasOffers && (state.sessionEndedByPeer || state.reconnectExhausted)
-  const shouldWatch =
-    getAppActive() && state.role === 'receiver' && state.peerCount === 0 && !settled
+  const running = getAppActive() || isBackgroundTransferActive()
+  const shouldWatch = running && state.role === 'receiver' && state.peerCount === 0 && !settled
   const timeoutMs =
     hasOffers && !state.isReconnecting ? RECONNECT_TIMEOUT_MS : INITIAL_CONNECT_TIMEOUT_MS
   return { shouldWatch, timeoutMs }

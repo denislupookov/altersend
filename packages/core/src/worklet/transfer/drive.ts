@@ -17,8 +17,10 @@ interface Session {
 
 type ProtomuxChannelLike = NonNullable<ReturnType<Protomux['createChannel']>>
 
+export const PEER_DISCONNECTED_REASON = 'Peer disconnected'
+
 function cancelForDisconnect(transferId: string): ControlMessage {
-  return { type: 'cancel', transferId, reason: 'Peer disconnected' }
+  return { type: 'cancel', transferId, reason: PEER_DISCONNECTED_REASON }
 }
 
 export class PeerDrive {

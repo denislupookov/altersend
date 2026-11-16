@@ -124,12 +124,14 @@ function getReceiverActivity(state: TransferSessionState): TransferActivity {
   let failed = false
   let routing = false
   let retrying = false
+  const peerGone = state.reconnectExhausted || state.sessionEndedByPeer
+  const canRetry = state.peerCount > 0 || !peerGone
 
   for (const item of Object.values(state.receiveDownloadStates)) {
     if (item.queued === true) queued = true
     if (item.status === 'failed') failed = true
     if (item.status === 'completed' && item.destination === undefined) routing = true
-    if (state.peerCount > 0 && isAutoResumable(item)) retrying = true
+    if (canRetry && isAutoResumable(item)) retrying = true
   }
 
   return {

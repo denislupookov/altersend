@@ -62,8 +62,7 @@ class MediaStoreModule : Module() {
       itemUri.toString()
     }
 
-    // Opens a saved Downloads item in an external viewer via ACTION_VIEW.
-    AsyncFunction("openDownload") { contentUri: String, mimeType: String ->
+    AsyncFunction("openContentUri") { contentUri: String, mimeType: String ->
       val context = appContext.reactContext ?: throw Exceptions.ReactContextLost()
       val intent = Intent(Intent.ACTION_VIEW).apply {
         setDataAndType(Uri.parse(contentUri), mimeType.ifEmpty { "*/*" })
@@ -89,6 +88,14 @@ class MediaStoreModule : Module() {
     AsyncFunction("openDownloadsFolder") {
       val context = appContext.reactContext ?: throw Exceptions.ReactContextLost()
       val intent = Intent(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      }
+      context.startActivity(intent)
+    }
+
+    AsyncFunction("openGallery") {
+      val context = appContext.reactContext ?: throw Exceptions.ReactContextLost()
+      val intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_GALLERY).apply {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       }
       context.startActivity(intent)

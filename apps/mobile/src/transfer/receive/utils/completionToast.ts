@@ -1,22 +1,37 @@
 import { Linking, Platform } from 'react-native'
 import type { SaveDestination } from '@altersend/domain'
 import { i18nextInstance } from '@altersend/locales'
-import { openDownloadsFolder } from '@/modules/media-store'
+import { openDownloadsFolder, openGallery } from '@/modules/media-store'
 import type { ShowToastInput } from '@/src/components/Toast'
 
 interface BuildCompletionToastInput {
   destinations: SaveDestination[]
 }
 
-function openPhotos() {
-  const url = Platform.OS === 'ios' ? 'photos-redirect://' : 'content://media/internal/images/media'
-  void Linking.openURL(url).catch(() => {})
+function logOpenFailure(err: unknown) {
+  console.warn('completionToast: open failed', err)
 }
 
-function openFiles() {
-  if (Platform.OS === 'ios') {
-    void Linking.openURL('shareddocuments://').catch(() => {})
+function openPhotos() {
+  if (Platform.OS === 'android') {
+    openGallery().catch(logOpenFailure)
+    return
   }
+  Linking.openURL('photos-redirect://').catch(logOpenFailure)
+}
+
+function openIosFiles() {
+  Linking.openURL('shareddocuments://').catch(logOpenFailure)
+}
+
+function openAndroidDownloads() {
+  openDownloadsFolder().catch(logOpenFailure)
+}
+
+function filesToastAction(hasDownloads: boolean): (() => void) | undefined {
+  if (Platform.OS === 'ios') return openIosFiles
+  if (hasDownloads) return openAndroidDownloads
+  return undefined
 }
 
 const LONG_DURATION_MS = 6000
@@ -60,11 +75,7 @@ export function buildCompletionToast({
     title: i18nextInstance.t('receive:summary.savedInFiles', { count }),
     hint: Platform.OS === 'ios' ? i18nextInstance.t('common:files.alterSendFolder') : undefined,
     actionLabel: showDownloadsAction ? i18nextInstance.t('receive:actions.open') : undefined,
-    onPress: showDownloadsAction
-      ? () => void openDownloadsFolder().catch(() => {})
-      : Platform.OS === 'ios'
-        ? openFiles
-        : undefined,
+    onPress: filesToastAction(hasDownloads),
     durationMs: LONG_DURATION_MS
   }
 }

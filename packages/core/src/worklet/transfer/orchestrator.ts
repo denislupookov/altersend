@@ -64,6 +64,7 @@ import type { DriveChannel } from '@altersend/drive'
 import { PeerIdentityStore } from './peer-identity-store'
 import { TransferSender } from './sender'
 import { TransferReceiver } from './receiver'
+import { PeerLostError } from './peer-lost-error'
 import { TransferSwarm, type PeerSession } from './swarm'
 import { isValidHexKey } from './utils'
 import {
@@ -427,7 +428,7 @@ export class TransferOrchestrator implements TransferRPC {
   private async driveChannelFor(file: DownloadFileRequest): Promise<DriveChannel> {
     const peerKey = this.offerPeers.get(file.transferId)
     const drive = peerKey ? this.swarm.getSession(peerKey)?.drive : null
-    if (!drive) throw new Error('Lost the connection to the sender')
+    if (!drive) throw new PeerLostError()
     if (!(await drive.supported.catch(() => false))) {
       throw new Error('Sender is running an older version of AlterSend and needs to update')
     }

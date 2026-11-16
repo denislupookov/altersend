@@ -1,6 +1,7 @@
 export {
   isMediaStoreAvailable,
   saveToDownloads,
-  openDownload,
-  openDownloadsFolder
+  openContentUri,
+  openDownloadsFolder,
+  openGallery
 } from './src/MediaStoreModule'

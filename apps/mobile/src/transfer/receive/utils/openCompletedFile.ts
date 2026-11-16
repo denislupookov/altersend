@@ -1,12 +1,19 @@
 import { Linking, Platform } from 'react-native'
 import * as Sharing from 'expo-sharing'
 import { transferStore } from '@altersend/domain'
-import { openDownload } from '@/modules/media-store'
+import { openContentUri } from '@/modules/media-store'
 import { guessMimeType } from './downloadHandlers'
 
-function openPhotos(): void {
-  const url = Platform.OS === 'ios' ? 'photos-redirect://' : 'content://media/internal/images/media'
-  void Linking.openURL(url).catch(() => {})
+function openIosPhotos(): void {
+  Linking.openURL('photos-redirect://').catch((err) =>
+    console.error('openCompletedFile: open Photos failed', err)
+  )
+}
+
+function openSavedContent(contentUri: string, fileName: string): void {
+  openContentUri(contentUri, guessMimeType(fileName)).catch((err) =>
+    console.error('openCompletedFile: openContentUri failed', err)
+  )
 }
 
 function toFileUri(savedTo: string): string {
@@ -34,17 +41,16 @@ export function openCompletedFile(offerKey: string): void {
   const item = state.receiveDownloadStates[offerKey]
   if (!item || item.status !== 'completed' || !item.savedTo) return
 
-  if (item.destination === 'photos') {
-    openPhotos()
+  const offer = state.incomingFileOffers.find((f) => f.id === offerKey)
+  const name = offer?.kind === 'file' ? offer.name : ''
+
+  if (item.destination === 'photos' && Platform.OS === 'ios') {
+    openIosPhotos()
     return
   }
 
-  if (item.destination === 'downloads') {
-    const offer = state.incomingFileOffers.find((f) => f.id === offerKey)
-    const name = offer?.kind === 'file' ? offer.name : ''
-    void openDownload(item.savedTo, guessMimeType(name)).catch((err) =>
-      console.error('openCompletedFile: openDownload failed', err)
-    )
+  if (item.destination === 'photos' || item.destination === 'downloads') {
+    openSavedContent(item.savedTo, name)
     return
   }
 

@@ -7,6 +7,7 @@ import { Duplex } from 'streamx'
 import type { PeerSocket } from 'hyperswarm'
 import { PeerDrive } from './drive'
 import { TransferReceiver } from './receiver'
+import { PeerLostError } from './peer-lost-error'
 import type { DownloaderCallbacks, DownloadLifecycleEvent } from './download-events'
 import type { DownloadFileRequest } from '../rpc/protocol'
 
@@ -287,5 +288,62 @@ describe('pausing a file that has not started yet', () => {
     expect(results[0].ok).toBe(true)
     expect(results[1].ok).toBe(false)
     expect(results[1].message).toBe('Cancelled')
+  })
+})
+
+describe('losing the sender', () => {
+  const request = (id: string): DownloadFileRequest => ({
+    transferId: 't1',
+    fileId: id,
+    path: '/in.bin',
+    name: `${id}.bin`,
+    size: 1024,
+    targetPath: join(dir, `${id}.bin`)
+  })
+
+  it('keeps every queued file resumable when the sender is gone', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'core-peer-lost-'))
+    const { callbacks, errors } = collect()
+
+    await new TransferReceiver().downloadFiles(
+      [request('f1'), request('f2')],
+      callbacks,
+      async () => {
+        throw new PeerLostError()
+      }
+    )
+
+    expect(errors.map((e) => [e.fileId, e.resumable])).toEqual([
+      ['f1', true],
+      ['f2', true]
+    ])
+  })
+
+  it('does not retry failures that are not about the connection', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'core-peer-lost-'))
+    const { callbacks, errors } = collect()
+
+    await new TransferReceiver().downloadFiles([request('f1')], callbacks, async () => {
+      throw new Error('Sender is running an older version of AlterSend and needs to update')
+    })
+
+    expect(errors[0].resumable).toBe(false)
+  })
+
+  it('keeps a file resumable when the connection drops before its first chunk', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'core-peer-lost-'))
+    const [, socketB] = socketPair()
+    const receiverSide = PeerDrive.create(socketB)!
+    const { callbacks, errors } = collect()
+    callbacks.onFileStart = () => receiverSide.destroy()
+
+    const results = await new TransferReceiver().downloadFiles(
+      [request('f1')],
+      callbacks,
+      async (file) => receiverSide.session(file.fileId)
+    )
+
+    expect(results[0].ok).toBe(false)
+    expect(errors[0].resumable).toBe(true)
   })
 })

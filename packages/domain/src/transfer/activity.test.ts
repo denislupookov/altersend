@@ -279,6 +279,50 @@ describe('getTransferActivity', () => {
     expect(activity.settled).toBe(false)
   })
 
+  it('stays active while waiting for a dropped sender to reconnect', () => {
+    const activity = getTransferActivity(
+      make({
+        role: 'receiver',
+        peerCount: 0,
+        incomingFileOffers: [offer('a')],
+        receiveDownloadStates: {
+          a: downloadState({
+            status: 'failed',
+            bytesTransferred: 400,
+            resumable: true,
+            savedTo: '/downloads/a.bin'
+          })
+        }
+      })
+    )
+
+    expect(activity.active).toBe(true)
+  })
+
+  it.each([{ reconnectExhausted: true }, { sessionEndedByPeer: true }])(
+    'stops waiting once the sender is gone for good (%o)',
+    (gone) => {
+      const activity = getTransferActivity(
+        make({
+          role: 'receiver',
+          peerCount: 0,
+          ...gone,
+          incomingFileOffers: [offer('a')],
+          receiveDownloadStates: {
+            a: downloadState({
+              status: 'failed',
+              bytesTransferred: 400,
+              resumable: true,
+              savedTo: '/downloads/a.bin'
+            })
+          }
+        })
+      )
+
+      expect(activity.active).toBe(false)
+    }
+  )
+
   it('never settles a sender that has no peer downloads yet', () => {
     const activity = getTransferActivity(make({ role: 'sender' }))
 
