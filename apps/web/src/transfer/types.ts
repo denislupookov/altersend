@@ -38,6 +38,8 @@ export interface RelayDHT {
     on(event: 'close' | 'error', cb: () => void): void
   }
   connect(publicKey: Uint8Array): {
+    handshakeHash: Uint8Array | null
+    destroy(): void
     on(event: 'open' | 'close', cb: () => void): void
     on(event: 'error', cb: (err: Error) => void): void
   }

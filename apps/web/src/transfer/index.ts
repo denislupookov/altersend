@@ -1,9 +1,16 @@
 import './sodium-patch'
 import b4a from 'b4a'
 import crypto from 'hypercore-crypto'
-import { fetchRelayLimit, findPeer, openRelay, relayReady, relayUrls } from './relay'
+import {
+  connectErrorCode,
+  fetchRelayLimit,
+  findPeers,
+  openRelay,
+  relayReady,
+  relayUrls
+} from './relay'
 import { waitForOffers } from './session'
-import type { ConnectHandlers, Connection } from './types'
+import type { ConnectHandlers, Connection, Peer } from './types'
 
 export { connectErrorCode } from './relay'
 export type { ConnectHandlers, Connection } from './types'
@@ -34,6 +41,22 @@ function watchRelayLimit(
   signal?.addEventListener('abort', () => {
     for (const timer of timers) clearTimeout(timer)
   })
+}
+
+async function connectToSender(
+  peers: Peer[],
+  attempt: (peer: Peer) => Promise<Connection>
+): Promise<Connection> {
+  let lastError: unknown = new Error('senderNotFound')
+  for (const peer of peers) {
+    try {
+      return await attempt(peer)
+    } catch (err) {
+      if (connectErrorCode(err) === 'nothingShared') throw err
+      lastError = err
+    }
+  }
+  throw lastError
 }
 
 export async function connect(
@@ -68,14 +91,12 @@ export async function connect(
       throwIfAborted()
 
       handlers.onStatus?.('finding')
-      const peer = await findPeer(dht, discovery)
+      const peers = await findPeers(dht, discovery)
       throwIfAborted()
-      if (!peer) throw new Error('senderNotFound')
 
-      const connection = await waitForOffers(dht, peer, topicHex, teardown, handlers, {
-        cid,
-        host: url
-      })
+      const connection = await connectToSender(peers, (peer) =>
+        waitForOffers(dht, peer, topicHex, teardown, handlers, { cid, host: url })
+      )
       connection.maxTransferBytes = await limit
 
       watchRelayLimit(url, cid, connection, handlers, signal)

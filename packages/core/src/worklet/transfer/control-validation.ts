@@ -44,6 +44,10 @@ function isNonNegativeInteger(x: unknown, max = Number.MAX_SAFE_INTEGER): x is n
   return typeof x === 'number' && Number.isInteger(x) && x >= 0 && x <= max
 }
 
+function isOptionalAuthVersion(x: unknown): boolean {
+  return x === undefined || isNonNegativeInteger(x, 255)
+}
+
 function isValidFileOffer(x: unknown): x is FileOffer {
   if (!x || typeof x !== 'object') return false
   const o = x as Partial<FileOffer>
@@ -179,10 +183,14 @@ export function isValidControlMessage(x: unknown): x is PeerControlMessage {
     }
     case 'hello':
       return (x as { client?: unknown }).client === 'web'
-    case 'challenge':
-      return isBoundedHex((x as { nonce?: unknown }).nonce, MAX_ID_LEN)
-    case 'auth':
-      return isBoundedHex((x as { proof?: unknown }).proof, MAX_ID_LEN)
+    case 'challenge': {
+      const v = x as { nonce?: unknown; authVersion?: unknown }
+      return isBoundedHex(v.nonce, MAX_ID_LEN) && isOptionalAuthVersion(v.authVersion)
+    }
+    case 'auth': {
+      const v = x as { proof?: unknown; authVersion?: unknown }
+      return isBoundedHex(v.proof, MAX_ID_LEN) && isOptionalAuthVersion(v.authVersion)
+    }
     case 'web-relay': {
       const v = x as { cid?: unknown; host?: unknown }
       return isBoundedString(v.cid, MAX_ID_LEN) && isBoundedString(v.host, MAX_ID_LEN)

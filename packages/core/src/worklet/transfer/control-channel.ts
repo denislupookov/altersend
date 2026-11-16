@@ -116,14 +116,16 @@ interface ClientHello {
   client: 'web'
 }
 
-interface TopicChallenge {
+export interface TopicChallenge {
   type: 'challenge'
   nonce: string
+  authVersion?: number
 }
 
-interface TopicAuth {
+export interface TopicAuth {
   type: 'auth'
   proof: string
+  authVersion?: number
 }
 
 interface WebRelayConnection {

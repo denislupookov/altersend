@@ -84,7 +84,7 @@ Locale metadata, preference resolution, i18next setup, and bundled catalogs for 
 1. **Sender** opens the share screen → the worklet generates a single-use topic: a random 32-byte key, hex-encoded to a 64-char join code, displayed as QR / `com.altersend.mobile://join/<topic>`.
 2. **Receiver** scans or types the code → domain validates and extracts the topic, passes it to core.
 3. Both sides join the Hyperswarm topic; on connection they open control and drive channels over the noise-encrypted socket.
-4. **Topic authentication** — the sender challenges the receiver to prove it holds the join code before releasing any offers; a wrong proof is rejected, while a peer that never proves it is flagged (not dropped). See [Topic authentication](#topic-authentication).
+4. **Topic authentication** — each side challenges the other to prove it holds the join code: the sender releases offers only to a proven receiver, and the receiver accepts offers only from a proven sender. See [Topic authentication](#topic-authentication).
 5. Sender broadcasts a `transfer-ready` message with file offers.
 6. Receiver requests each file over a `@altersend/drive` chunk channel, streaming chunks straight to disk. Progress flows back over the control channel → RPC → domain → UI.
 
@@ -96,9 +96,15 @@ A transfer is capped at **10,000 files** (`MAX_FILES_PER_TRANSFER`, validated in
 
 The DHT **discovery topic** is only a hash — observable on the network, and (for the browser receiver) also routed through the public [hyperswarm-dht-relay](https://github.com/holepunchto/hyperswarm-dht-relay). Knowing it must not be enough to receive files; a peer has to prove it holds the actual **join code**.
 
-The sender sends a random `challenge` nonce; the receiver must reply with `topicProof(joinCode, nonce)` — a BLAKE2b hash of the code + nonce (`worklet/transfer/topic-auth.ts`). The join code never crosses the wire.
+Authentication is mutual. On connect, each side sends a random `challenge` nonce; the other replies with `topicProof(joinCode, nonce, handshakeHash, role)` — a BLAKE2b hash over a context string, the prover's role, the code, the Noise handshake hash and the nonce (`worklet/transfer/topic-auth.ts`). The join code never crosses the wire.
 
-A valid proof releases the offers (even if late) and is required to serve a file — `serve()` refuses a download request from an unauthenticated peer, so reaching the topic is not enough even if a file id leaks. A wrong proof drops the connection. A peer silent past 10 s isn't dropped — it's flagged **"Update to connect"** (`peer-unauthenticated`) and can still auth late (`peer-authenticated` clears it), so a busy sender never aborts a legit receiver. Receiving from an older sender is unaffected — a receiver only answers a challenge, never requires one.
+The handshake hash ties a proof to one connection, so a peer that only knows the discovery topic can't get a proof from one side and replay it to the other. The role tag stops a proof being reflected back as the opposite role.
+
+On the sender, a valid receiver proof releases the offers (even if late) and is required to serve a file — `serve()` refuses a download request from an unauthenticated peer, so reaching the topic is not enough even if a file id leaks. A wrong proof drops the connection. A peer silent past 10 s isn't dropped — it's flagged **"Update to connect"** (`peer-unauthenticated`) and can still auth late (`peer-authenticated` clears it), so a busy sender never aborts a legit receiver.
+
+On the receiver, `transfer-start`, `transfer-ready` and `session-end` are dropped unless they come from a peer that proved it is the sender, so an unproven peer can't inject offers or end the session. Download progress is only reported back to proven peers, and `pairing-info` / `remember-vote` are only accepted from them. The browser receiver applies the same rule and tries every peer the lookup returns until one proves it is the sender.
+
+Challenges and proofs carry `authVersion: 2`. For the transition, a sender still accepts the old unbound `legacyTopicProof` from a reply with no `authVersion`, so updated senders can still send to old apps and the old web receiver. This adds no exposure: only old clients ever produce that proof, so relaying one only works against a session whose receiver hasn't updated, which was already exposed. The reverse doesn't work: a new receiver won't answer an old sender's challenge, because answering any challenge without the connection binding is what made old receivers usable for relaying proofs. Remove `legacyTopicProof` once old clients have aged out.
 
 ## Relay fallback
 

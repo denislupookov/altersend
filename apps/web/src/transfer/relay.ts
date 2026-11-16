@@ -1,3 +1,4 @@
+import b4a from 'b4a'
 import DHT from '@hyperswarm/dht-relay'
 import Stream from '@hyperswarm/dht-relay/ws'
 import { CONNECT_ERROR_CODES, type ConnectErrorCode, type Peer, type RelayDHT } from './types'
@@ -116,19 +117,19 @@ export function relayReady(dht: RelayDHT): Promise<void> {
   return withTimeout(dht.ready(), RELAY_TIMEOUT_MS, 'relayUnreachable')
 }
 
-export async function findPeer(dht: RelayDHT, discovery: Uint8Array): Promise<Peer | null> {
+export async function findPeers(dht: RelayDHT, discovery: Uint8Array): Promise<Peer[]> {
   for (let attempt = 0; attempt < LOOKUP_ATTEMPTS; attempt++) {
-    const peer = await new Promise<Peer | null>((resolve) => {
+    const peers = await new Promise<Peer[]>((resolve) => {
       const query = dht.lookup(discovery)
-      let found: Peer | null = null
+      const found = new Map<string, Peer>()
       query.on('data', (res) => {
-        if (!found && res.peers?.length) found = res.peers[0]
+        for (const peer of res.peers ?? []) found.set(b4a.toString(peer.publicKey, 'hex'), peer)
       })
-      query.on('close', () => resolve(found))
-      query.on('error', () => resolve(null))
+      query.on('close', () => resolve([...found.values()]))
+      query.on('error', () => resolve([...found.values()]))
     })
-    if (peer) return peer
+    if (peers.length > 0) return peers
     await sleep(LOOKUP_INTERVAL_MS)
   }
-  return null
+  return []
 }

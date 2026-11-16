@@ -1,6 +1,14 @@
 declare module '@hyperswarm/secret-stream' {
   export default class SecretStream {
-    constructor(isInitiator: boolean, rawStream?: unknown)
+    constructor(
+      isInitiator: boolean,
+      rawStream?: unknown,
+      opts?: { keyPair?: { publicKey: Uint8Array; secretKey: Uint8Array } }
+    )
+    opened: Promise<boolean>
+    remotePublicKey: Uint8Array
+    handshakeHash: Uint8Array
+    on(event: 'close', listener: () => void): this
   }
 }
 

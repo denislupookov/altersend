@@ -295,5 +295,15 @@ describe('isValidControlMessage', () => {
       expect(isValidControlMessage({ ...base, type: 'challenge', nonce: '' })).toBe(false)
       expect(isValidControlMessage({ ...base, type: 'auth', proof: 42 })).toBe(false)
     })
+    it('accepts an integer auth version and rejects anything else', () => {
+      expect(isValidControlMessage({ ...base, type: 'challenge', nonce, authVersion: 2 })).toBe(
+        true
+      )
+      expect(isValidControlMessage({ ...base, type: 'auth', proof, authVersion: 2 })).toBe(true)
+      expect(isValidControlMessage({ ...base, type: 'challenge', nonce, authVersion: '2' })).toBe(
+        false
+      )
+      expect(isValidControlMessage({ ...base, type: 'auth', proof, authVersion: -1 })).toBe(false)
+    })
   })
 })

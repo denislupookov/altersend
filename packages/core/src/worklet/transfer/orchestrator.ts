@@ -40,12 +40,14 @@ import {
   type DownloadRequest,
   type PeerControlMessage,
   type TextOffer,
+  type TopicAuth,
+  type TopicChallenge,
   type TransferOffer,
   type TransferReady,
   type TransferStart
 } from './control-channel'
 import { MAX_FILES_PER_TRANSFER } from './control-validation'
-import { topicProof } from './topic-auth'
+import { TOPIC_AUTH_VERSION, legacyTopicProof, topicProof, type TopicAuthRole } from './topic-auth'
 import {
   createDownloadCompleteMessage,
   createDownloadFailedMessage,
@@ -225,10 +227,11 @@ export class TransferOrchestrator implements TransferRPC {
     this.sendStatus('peer-connected', { peer: session.peerKey, peers: this.swarm.peerCount })
     this.recognition.onPeerConnected(session.peerKey)
     session.controlChannel.send({ type: 'pro-status', pro: proToken() !== null })
-    if (this.role !== 'sender') return
+    if (!this.role) return
     const nonce = crypto.randomBytes(32).toString('hex')
     this.pendingNonce.set(session.peerKey, nonce)
-    session.controlChannel.send({ type: 'challenge', nonce })
+    session.controlChannel.send({ type: 'challenge', nonce, authVersion: TOPIC_AUTH_VERSION })
+    if (this.role !== 'sender') return
     this.authTimers.set(
       session.peerKey,
       setTimeout(() => {
@@ -312,20 +315,16 @@ export class TransferOrchestrator implements TransferRPC {
       return
     }
     if (message.type === 'challenge') {
-      if (this.role === 'receiver' && this.currentTopic) {
-        session.controlChannel.send({
-          type: 'auth',
-          proof: topicProof(this.currentTopic, message.nonce)
-        })
-      }
+      this.answerChallenge(message, session)
       return
     }
     if (message.type === 'auth') {
-      this.verifyAuth(message.proof, session)
+      this.verifyAuth(message, session)
       return
     }
+    const authed = this.authedPeers.has(session.peerKey)
     if (message.type === 'web-relay') {
-      if (!this.authedPeers.has(session.peerKey)) return
+      if (!authed) return
 
       upgradeWebRelay(message.cid, message.host).catch((err) => {
         console.warn('[pro] web relay upgrade rejected', err instanceof Error ? err.message : err)
@@ -333,7 +332,7 @@ export class TransferOrchestrator implements TransferRPC {
       return
     }
     if (message.type === 'session-end') {
-      this.sendStatus('peer-session-ended', { peer: session.peerKey })
+      if (authed) this.sendStatus('peer-session-ended', { peer: session.peerKey })
       return
     }
     if (message.type === 'pro-status') {
@@ -345,17 +344,21 @@ export class TransferOrchestrator implements TransferRPC {
       return
     }
     if (message.type === 'pairing-info') {
-      void this.remember.handlePairingInfo(message, session)
+      if (authed) void this.remember.handlePairingInfo(message, session)
       return
     }
     if (message.type === 'remember-vote') {
-      this.remember.handleRememberVote(message, session.peerKey)
+      if (authed) this.remember.handleRememberVote(message, session.peerKey)
       return
     }
 
     if (message.type === 'transfer-start' || message.type === 'transfer-ready') {
       if (this.role !== 'receiver') {
         console.warn(`TransferOrchestrator: dropping inbound ${message.type} in role=${this.role}`)
+        return
+      }
+      if (!authed) {
+        console.warn(`TransferOrchestrator: dropping ${message.type} from unauthenticated peer`)
         return
       }
       if (message.type === 'transfer-ready') {
@@ -372,11 +375,13 @@ export class TransferOrchestrator implements TransferRPC {
       return
     }
 
+    if (message.type === 'download-request') {
+      this.serve(message, session)
+      return
+    }
+    if (!authed) return
+
     switch (message.type) {
-      case 'download-request':
-        this.forwardPeerDownloadStatus('peer-download-started', message, session)
-        this.serve(message, session)
-        return
       case 'download-progress':
         this.forwardPeerDownloadStatus('peer-download-progress', message, session)
         return
@@ -406,6 +411,7 @@ export class TransferOrchestrator implements TransferRPC {
 
       return
     }
+    this.forwardPeerDownloadStatus('peer-download-started', message, session)
     if (!session.drive) return
     session.drive
       .serve(message.fileId, message.fileName, this.sender.localPath(message.fileId))
@@ -454,19 +460,33 @@ export class TransferOrchestrator implements TransferRPC {
     this.emitIPC(createErrorEvent(message, code))
   }
 
+  private sendToAuthed(message: PeerControlMessage): void {
+    for (const session of this.swarm.sessions) {
+      if (this.authedPeers.has(session.peerKey)) session.controlChannel.send(message)
+    }
+  }
+
+  private resetPeerAuth(): void {
+    for (const timer of this.authTimers.values()) clearTimeout(timer)
+    this.authTimers.clear()
+    this.authedPeers.clear()
+    this.pendingNonce.clear()
+    this.pendingServes.clear()
+  }
+
   private onDownloadStart(event: DownloadLifecycleEvent): void {
     this.sendStatus('downloading', createDownloadStartEvent(event))
-    this.swarm.broadcast(createDownloadRequestMessage(event))
+    this.sendToAuthed(createDownloadRequestMessage(event))
   }
 
   private onDownloadProgress(event: DownloadLifecycleEvent): void {
     this.sendStatus('download-progress', createDownloadStatusEvent(event))
-    this.swarm.broadcast(createDownloadProgressMessage(event))
+    this.sendToAuthed(createDownloadProgressMessage(event))
   }
 
   private onDownloadComplete(event: DownloadLifecycleEvent): void {
     this.sendStatus('downloaded', createDownloadStatusEvent(event))
-    this.swarm.broadcast(createDownloadCompleteMessage(event))
+    this.sendToAuthed(createDownloadCompleteMessage(event))
   }
 
   private onDownloadError(event: DownloadLifecycleEvent): void {
@@ -476,7 +496,7 @@ export class TransferOrchestrator implements TransferRPC {
       ...createDownloadStatusEvent(event),
       message
     })
-    this.swarm.broadcast(createDownloadFailedMessage({ ...event, message }))
+    this.sendToAuthed(createDownloadFailedMessage({ ...event, message }))
     if (!event.resumable && !event.cancelled) {
       this.sendError(message, TRANSFER_ERROR_CODES.downloadFailed)
     }
@@ -566,7 +586,7 @@ export class TransferOrchestrator implements TransferRPC {
         totalBytes
       }
       this.activeTransferReady = null
-      this.swarm.broadcast(this.activeTransfer)
+      this.sendToAuthed(this.activeTransfer)
       this.sendStatus('sharing', { transferId })
 
       const offers: TransferOffer[] = this.sender.buildOffers(files, transferId)
@@ -594,11 +614,39 @@ export class TransferOrchestrator implements TransferRPC {
     }
   }
 
-  private verifyAuth(proof: string, session: PeerSession): void {
-    if (this.role !== 'sender') return
+  private answerChallenge(message: TopicChallenge, session: PeerSession): void {
+    if (message.authVersion !== TOPIC_AUTH_VERSION) return
+    if (!this.currentTopic || !session.handshakeHash) return
+    const role: TopicAuthRole = this.role === 'receiver' ? 'receiver' : 'sender'
+    session.controlChannel.send({
+      type: 'auth',
+      authVersion: TOPIC_AUTH_VERSION,
+      proof: topicProof(this.currentTopic, message.nonce, session.handshakeHash, role)
+    })
+  }
+
+  private expectedProof(
+    authVersion: number | undefined,
+    nonce: string,
+    session: PeerSession
+  ): string | null {
+    if (!this.currentTopic) return null
+    if (authVersion === undefined) {
+      return this.role === 'sender' ? legacyTopicProof(this.currentTopic, nonce) : null
+    }
+    if (authVersion !== TOPIC_AUTH_VERSION || !session.handshakeHash) return null
+    const prover: TopicAuthRole = this.role === 'sender' ? 'receiver' : 'sender'
+    return topicProof(this.currentTopic, nonce, session.handshakeHash, prover)
+  }
+
+  private verifyAuth(message: TopicAuth, session: PeerSession): void {
+    if (!this.role) return
     const nonce = this.pendingNonce.get(session.peerKey)
-    if (!nonce || !this.currentTopic) return
-    if (proof !== topicProof(this.currentTopic, nonce)) {
+    if (!nonce) return
+    const expected = this.expectedProof(message.authVersion, nonce, session)
+    if (!expected) return
+    if (message.proof !== expected) {
+      if (this.role === 'receiver') return
       console.warn('TransferOrchestrator: peer failed topic auth', session.peerKey)
       this.clearAuthTimer(session.peerKey)
       session.socket.destroy()
@@ -606,6 +654,10 @@ export class TransferOrchestrator implements TransferRPC {
     }
 
     this.pendingNonce.delete(session.peerKey)
+    if (this.role === 'receiver') {
+      this.authedPeers.add(session.peerKey)
+      return
+    }
     this.clearAuthTimer(session.peerKey)
 
     this.sendStatus('peer-authenticated', { peer: session.peerKey })
@@ -693,7 +745,7 @@ export class TransferOrchestrator implements TransferRPC {
       this.activeTransferReady = null
       this.currentTopic = null
       this.offerPeers.clear()
-      this.pendingServes.clear()
+      this.resetPeerAuth()
       this.interruptedDownloads = []
 
       await this.swarm.endSession()
@@ -715,7 +767,7 @@ export class TransferOrchestrator implements TransferRPC {
     this.remember.reset()
     this.currentTopic = null
     this.offerPeers.clear()
-    this.pendingServes.clear()
+    this.resetPeerAuth()
     this.interruptedDownloads = []
     await this.swarm.endSession()
     await this.receiver.discardPartials()
