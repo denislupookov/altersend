@@ -43,7 +43,9 @@ export default function OnboardingScreen() {
     markOnboardingCompleted()
     router.replace('/send')
     if (!isPro) {
-      router.push({ pathname: '/account', params: ONBOARDING_ENTRY_PARAMS })
+      requestAnimationFrame(() =>
+        router.push({ pathname: '/account', params: ONBOARDING_ENTRY_PARAMS })
+      )
       return
     }
     requestNotificationPermission().catch((err: unknown) => {

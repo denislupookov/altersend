@@ -32,12 +32,34 @@
     },
     "handshake": {
       "title": "連接正在進行中",
-      "description": "完成與發送方的安全握手。"
+      "description": "完成與發送方的安全握手。",
+      "label": "正在加密"
+    },
+    "searching": {
+      "title": "正在尋找傳送者",
+      "description": "請確認對方裝置上已開啟 AlterSend。最多可能需要一分鐘。",
+      "label": "正在尋找"
+    },
+    "reaching": {
+      "title": "已找到傳送者",
+      "description": "正在與對方裝置建立安全連線…",
+      "label": "已找到"
+    },
+    "relaying": {
+      "title": "正在透過中繼連線",
+      "description": "你的網路封鎖了直連，因此 AlterSend 正在使用中繼。檔案仍維持端對端加密。",
+      "label": "透過中繼"
+    },
+    "relayOff": {
+      "title": "直連遭到封鎖",
+      "description": "你的網路封鎖了直連，而且中繼已關閉。請在 設定 → 中繼 中開啟。",
+      "label": "中繼已關閉"
     },
     "relayBusy": {
       "title": "仍在連線…",
       "description": "中繼目前忙碌中，正在嘗試直連。最多可能需要一分鐘。",
-      "proOffer": "<pro>升級到 Pro</pro> 可優先使用中繼。"
+      "proOffer": "<pro>升級到 Pro</pro> 可優先使用中繼。",
+      "label": "中繼忙碌"
     },
     "sessionEnded": {
       "title": "會議結束",
@@ -77,7 +99,9 @@
     "importFromImage": "從圖片匯入",
     "resume": "繼續",
     "stop": "停止",
-    "resumeAll": "全部繼續"
+    "resumeAll": "全部繼續",
+    "openRelaySettings": "中繼設定",
+    "useAnotherCode": "使用其他代碼"
   },
   "errors": {
     "invalidCode": "輸入有效的 64 字元十六進位代碼。",
@@ -145,5 +169,27 @@
     "receivedProgress": "已接收 {{count}} 個中的 {{completed}} 個",
     "filesSaved_one": "已儲存 {{count}} 個檔案",
     "filesSaved_other": "已儲存 {{count}} 個檔案"
+  },
+  "connectFailure": {
+    "peerUnreachable": {
+      "label": "找不到",
+      "title": "找不到傳送者",
+      "description": "請確認代碼，並確認對方裝置上已開啟 AlterSend。"
+    },
+    "directBlocked": {
+      "label": "已封鎖",
+      "title": "連線遭到封鎖",
+      "description": "已找到傳送者，但你的網路封鎖了連線。關閉 VPN 或切換網路（例如改用行動數據）通常會有幫助。"
+    },
+    "relayOff": {
+      "label": "中繼已關閉",
+      "title": "直連遭到封鎖",
+      "description": "已找到傳送者，但你的網路封鎖了直連，而且中繼已關閉。請開啟中繼後再試一次。"
+    },
+    "relayBusy": {
+      "label": "中繼忙碌",
+      "title": "無法連線",
+      "description": "直連未成功，且中繼忙碌中。請在任一裝置上換一個網路。"
+    }
   }
 }

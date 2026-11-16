@@ -51,13 +51,25 @@ export const styles = css.create({
     borderColor: tokens.colorDanger,
     color: tokens.colorDanger
   },
+  info: {
+    backgroundColor: tokens.colorInfoSubtle,
+    borderColor: tokens.colorInfo,
+    color: tokens.colorInfo
+  },
+  warning: {
+    backgroundColor: tokens.colorWarningSubtle,
+    borderColor: tokens.colorWarning,
+    color: tokens.colorWarning
+  },
   dot: {
     width: tokens.space15,
     height: tokens.space15,
     borderRadius: tokens.radiusFull,
-    backgroundColor: 'currentColor',
     flexShrink: 0
   },
+  dotColor: (color: string) => ({
+    backgroundColor: color
+  }),
   label: {
     overflow: 'hidden',
     textOverflow: 'ellipsis',

@@ -14,9 +14,11 @@
   "transfer": {
     "invalidTopic": "Le code de connexion est invalide.",
     "joinFailed": "Impossible de rejoindre la session.",
-    "peerUnreachable": "Impossible de joindre l’expéditeur. Vérifiez le code et réessayez.",
+    "peerUnreachable": "Expéditeur introuvable. Vérifiez le code et assurez-vous qu’AlterSend est ouvert sur son appareil.",
     "relayBusy": "Connexion impossible. La connexion directe n’a pas fonctionné et le relais est saturé. Essayez un autre réseau sur l’un des appareils.",
     "relayBusyFree": "Connexion impossible. La connexion directe n’a pas fonctionné et le relais est saturé. Essayez un autre réseau sur l’un des appareils, ou passez à Pro.",
+    "directBlocked": "Expéditeur trouvé, mais vos réseaux ont bloqué la connexion. Désactiver un VPN ou changer de réseau, par exemple pour les données mobiles, aide généralement.",
+    "relayOff": "Expéditeur trouvé, mais vos réseaux bloquent les connexions directes et le relais est désactivé. Activez le relais, puis réessayez.",
     "transferFailed": "Le transfert a échoué. Réessayez.",
     "downloadFailed": "Le téléchargement a échoué. Réessayez."
   }

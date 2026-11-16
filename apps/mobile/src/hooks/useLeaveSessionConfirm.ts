@@ -5,7 +5,7 @@ import { getLeaveSessionMessage, useTransferStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import type { ConfirmDialogProps } from '@/src/components/ConfirmDialog'
 
-const USER_BACK_ACTIONS = new Set(['GO_BACK', 'POP'])
+export const USER_BACK_ACTIONS = new Set(['GO_BACK', 'POP'])
 
 export function useLeaveSessionConfirm(onLeave: () => void) {
   const { t } = useTranslation(['common'])

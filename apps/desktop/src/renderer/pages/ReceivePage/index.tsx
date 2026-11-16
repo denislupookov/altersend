@@ -1,48 +1,38 @@
-import { Button, ExternalLink, Spinner } from '@altersend/components'
+import { Button, Spinner } from '@altersend/components'
 import { InfoIcon } from '@altersend/components/icons'
-import { Trans, useTranslation } from '@altersend/locales'
-import { TransferActionGroup, TransferStatusPanel, TransferCardFrame } from '../../components'
+import { useTranslation } from '@altersend/locales'
+import { TransferActionGroup, TransferCardFrame } from '../../components'
 import { openSettingsPanel } from '../../components/Settings'
+import { ConnectFailureActions } from './ConnectFailureActions'
+import { ConnectFailureView } from './ConnectFailureView'
 import { ReceiveCompleteView } from './ReceiveCompleteView'
 import { ReceiveConnectedView } from './ReceiveConnectedView'
+import { ReceiveConnectingView } from './ReceiveConnectingView'
 import { ReceiveFileList } from './ReceiveFileList'
 import { ReceiveJoinView } from './ReceiveJoinView'
 
 import {
   clearSession,
-  getConnectingStatusCopy,
+  getConnectFailureCode,
   getReceivePageCopy,
-  getReceiveStep,
   isSessionOverStep,
   useReceiveDownloads,
+  useReceiveStep,
   useSubscriptionStore,
   useTransferStore
 } from '@altersend/domain'
 
 export default function ReceivePage() {
   const { t } = useTranslation(['receive', 'common'])
-  const role = useTransferStore((s) => s.role)
-  const peerCount = useTransferStore((s) => s.peerCount)
   const connectionType = useTransferStore((s) => s.connectionType)
-  const isReconnecting = useTransferStore((s) => s.isReconnecting)
-  const reconnectExhausted = useTransferStore((s) => s.reconnectExhausted)
-  const sessionEndedByPeer = useTransferStore((s) => s.sessionEndedByPeer)
-  const relayBusy = useTransferStore((s) => s.relayBusy)
+  const errorCode = useTransferStore((s) => s.errorCode)
   const isPro = useSubscriptionStore((s) => s.active)
 
-  const { totals, fileOffers, textOffers, allDownloaded } = useReceiveDownloads()
+  const downloads = useReceiveDownloads()
+  const step = useReceiveStep(downloads)
+  const { totals, fileOffers, textOffers } = downloads
   const fileCount = fileOffers.length
   const textCount = textOffers.length
-
-  const step = getReceiveStep({
-    hasIncomingFiles: fileCount + textCount > 0,
-    allDownloadsCompleted: allDownloaded,
-    role,
-    peerCount,
-    isReconnecting,
-    reconnectExhausted,
-    sessionEndedByPeer
-  })
 
   const { title, description } = getReceivePageCopy(
     t,
@@ -51,6 +41,8 @@ export default function ReceivePage() {
     textCount,
     totals.totalBytes
   )
+  const failureCode = getConnectFailureCode(step, errorCode)
+  const frameTitle = step === 'connecting' ? t('receive:page.join.title') : title
 
   const isRelay = connectionType === 'relay'
   const connectedBadge = (
@@ -67,30 +59,16 @@ export default function ReceivePage() {
   )
 
   function renderView() {
+    if (failureCode) {
+      return <ConnectFailureView code={failureCode} />
+    }
+
     if (step === 'join') {
       return <ReceiveJoinView />
     }
 
     if (step === 'connecting') {
-      const status = getConnectingStatusCopy(t, relayBusy)
-      const description =
-        relayBusy && !isPro ? (
-          <>
-            <span className='block'>{status.description}</span>
-            <span className='mt-1.5 block'>
-              <Trans
-                ns='receive'
-                i18nKey='page.relayBusy.proOffer'
-                components={{
-                  pro: <ExternalLink inline onPress={() => openSettingsPanel('account')} />
-                }}
-              />
-            </span>
-          </>
-        ) : (
-          status.description
-        )
-      return <TransferStatusPanel loading description={description} title={status.title} />
+      return <ReceiveConnectingView />
     }
 
     if (isSessionOverStep(step)) {
@@ -128,22 +106,29 @@ export default function ReceivePage() {
     return <ReceiveCompleteView />
   }
 
-  const footer =
-    step === 'connecting' ? (
-      <TransferActionGroup>
-        <Button onClick={clearSession} size='sm' variant='secondary'>
-          {t('common:actions.endSession')}
-        </Button>
-      </TransferActionGroup>
-    ) : undefined
+  function renderFooter() {
+    if (failureCode) {
+      return <ConnectFailureActions code={failureCode} />
+    }
+    if (step === 'connecting') {
+      return (
+        <TransferActionGroup>
+          <Button onClick={clearSession} size='sm' variant='secondary'>
+            {t('common:actions.cancel')}
+          </Button>
+        </TransferActionGroup>
+      )
+    }
+    return undefined
+  }
 
   return (
     <TransferCardFrame
       description={step === 'join' ? '' : description}
-      title={title}
+      title={frameTitle}
       badge={step === 'incoming_transfer' ? connectedBadge : undefined}
       headerRight={step === 'reconnecting' ? <Spinner size={18} /> : undefined}
-      footer={footer}
+      footer={renderFooter()}
     >
       {renderView()}
     </TransferCardFrame>

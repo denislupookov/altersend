@@ -21,12 +21,12 @@ import {
   getDisplayError,
   getPrimaryDownloadLabel,
   getReceivePageCopy,
-  getReceiveStep,
   isSessionOverStep,
   NATIVE_RELAY_MAX_LABEL,
   useReceiveActions,
   useReceiveDownloads,
   useReceiveRelayLimit,
+  useReceiveStep,
   useSubscriptionStore,
   useTransferStore
 } from '@altersend/domain'
@@ -40,29 +40,15 @@ export default function ReceiveIncomingScreen() {
   const incomingFileOffers = useTransferStore((s) => s.incomingFileOffers)
   const downloads = useReceiveDownloads()
   const actions = useReceiveActions(downloads)
-  const role = useTransferStore((s) => s.role)
-  const peerCount = useTransferStore((s) => s.peerCount)
   const connectionType = useTransferStore((s) => s.connectionType)
-  const isReconnecting = useTransferStore((s) => s.isReconnecting)
-  const reconnectExhausted = useTransferStore((s) => s.reconnectExhausted)
-  const sessionEndedByPeer = useTransferStore((s) => s.sessionEndedByPeer)
   const errorCode = useTransferStore((s) => s.errorCode)
   const isPro = useSubscriptionStore((s) => s.active)
   const relayLimited = useReceiveRelayLimit()
   const displayError = getDisplayError(t, errorCode)
 
-  const { totals, fileOffers, allDownloaded } = downloads
-  const hasIncomingFiles = incomingFileOffers.length > 0
+  const { totals, fileOffers } = downloads
   const downloadableFileCount = fileOffers.length
-  const step = getReceiveStep({
-    hasIncomingFiles,
-    allDownloadsCompleted: allDownloaded,
-    role,
-    peerCount,
-    isReconnecting,
-    reconnectExhausted,
-    sessionEndedByPeer
-  })
+  const step = useReceiveStep(downloads)
 
   useErrorToast(isSessionOverStep(step) ? null : displayError, t('receive:errors.transferIssue'))
 

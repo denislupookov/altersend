@@ -32,12 +32,34 @@
     },
     "handshake": {
       "title": "Connection in progress",
-      "description": "Completing the secure handshake with the sender."
+      "description": "Completing the secure handshake with the sender.",
+      "label": "Securing"
+    },
+    "searching": {
+      "title": "Looking for the sender",
+      "description": "Make sure AlterSend is open on their device. This can take up to a minute.",
+      "label": "Searching"
+    },
+    "reaching": {
+      "title": "Sender found",
+      "description": "Setting up a secure connection to their device…",
+      "label": "Found"
+    },
+    "relaying": {
+      "title": "Connecting through the relay",
+      "description": "Your networks block a direct connection, so AlterSend is using its relay. Files stay end-to-end encrypted.",
+      "label": "Via relay"
+    },
+    "relayOff": {
+      "title": "Direct connection blocked",
+      "description": "Your networks block a direct connection and the relay is off. Turn it on in Settings → Relay.",
+      "label": "Relay off"
     },
     "relayBusy": {
       "title": "Still connecting…",
       "description": "The relay is busy right now, so we're trying a direct connection. This can take up to a minute.",
-      "proOffer": "<pro>Upgrade to Pro</pro> for priority on the relay."
+      "proOffer": "<pro>Upgrade to Pro</pro> for priority on the relay.",
+      "label": "Relay busy"
     },
     "sessionEnded": {
       "title": "Session ended",
@@ -77,7 +99,9 @@
     "importFromImage": "Import from image",
     "resume": "Resume",
     "stop": "Stop",
-    "resumeAll": "Resume all"
+    "resumeAll": "Resume all",
+    "openRelaySettings": "Relay settings",
+    "useAnotherCode": "Use another code"
   },
   "errors": {
     "invalidCode": "Enter a valid 64-character hex code.",
@@ -145,5 +169,27 @@
     "receivedProgress": "{{completed}} of {{count}} received",
     "filesSaved_one": "{{count}} file saved",
     "filesSaved_other": "{{count}} files saved"
+  },
+  "connectFailure": {
+    "peerUnreachable": {
+      "label": "Not found",
+      "title": "Couldn't find the sender",
+      "description": "Check the code, and make sure AlterSend is open on their device."
+    },
+    "directBlocked": {
+      "label": "Blocked",
+      "title": "Connection blocked",
+      "description": "Found the sender, but your networks blocked the connection. Turning off a VPN or switching networks, for example to mobile data, usually helps."
+    },
+    "relayOff": {
+      "label": "Relay off",
+      "title": "Direct connection blocked",
+      "description": "Found the sender, but your networks block direct connections and the relay is off. Turn the relay on, then try again."
+    },
+    "relayBusy": {
+      "label": "Relay busy",
+      "title": "Couldn't connect",
+      "description": "A direct connection didn't work and the relay is busy. Try a different network on either device."
+    }
   }
 }

@@ -14,9 +14,11 @@
   "transfer": {
     "invalidTopic": "Il codice di connessione non è valido.",
     "joinFailed": "Impossibile partecipare alla sessione.",
-    "peerUnreachable": "Impossibile raggiungere il mittente. Controlla il codice e riprova.",
+    "peerUnreachable": "Mittente non trovato. Controlla il codice e assicurati che AlterSend sia aperto sul suo dispositivo.",
     "relayBusy": "Impossibile connettersi. La connessione diretta non è riuscita e il relay è occupato. Prova un'altra rete su uno dei dispositivi.",
     "relayBusyFree": "Impossibile connettersi. La connessione diretta non è riuscita e il relay è occupato. Prova un'altra rete su uno dei dispositivi oppure passa a Pro.",
+    "directBlocked": "Mittente trovato, ma le tue reti hanno bloccato la connessione. Di solito aiuta disattivare la VPN o cambiare rete, per esempio passando ai dati mobili.",
+    "relayOff": "Mittente trovato, ma le tue reti bloccano le connessioni dirette e il relay è disattivato. Attiva il relay e riprova.",
     "transferFailed": "Trasferimento non riuscito. Riprova.",
     "downloadFailed": "Download non riuscito. Riprova."
   }

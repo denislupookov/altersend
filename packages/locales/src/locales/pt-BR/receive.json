@@ -32,12 +32,34 @@
     },
     "handshake": {
       "title": "Conexão em andamento",
-      "description": "Concluindo a conexão segura com o remetente."
+      "description": "Concluindo a conexão segura com o remetente.",
+      "label": "Protegendo"
+    },
+    "searching": {
+      "title": "Procurando o remetente",
+      "description": "Verifique se o AlterSend está aberto no dispositivo da outra pessoa. Isso pode levar até um minuto.",
+      "label": "Procurando"
+    },
+    "reaching": {
+      "title": "Remetente encontrado",
+      "description": "Estabelecendo uma conexão segura com o dispositivo…",
+      "label": "Encontrado"
+    },
+    "relaying": {
+      "title": "Conectando pelo retransmissor",
+      "description": "Suas redes bloqueiam a conexão direta, então o AlterSend está usando o retransmissor. Os arquivos continuam criptografados de ponta a ponta.",
+      "label": "Pelo retransmissor"
+    },
+    "relayOff": {
+      "title": "Conexão direta bloqueada",
+      "description": "Suas redes bloqueiam a conexão direta e o retransmissor está desligado. Ative-o em Configurações → Retransmissor.",
+      "label": "Retransmissor desligado"
     },
     "relayBusy": {
       "title": "Ainda conectando…",
       "description": "O retransmissor está ocupado agora, então estamos tentando uma conexão direta. Isso pode levar até um minuto.",
-      "proOffer": "<pro>Mude para o Pro</pro> para ter prioridade no retransmissor."
+      "proOffer": "<pro>Mude para o Pro</pro> para ter prioridade no retransmissor.",
+      "label": "Retransmissor ocupado"
     },
     "sessionEnded": {
       "title": "Sessão encerrada",
@@ -77,7 +99,9 @@
     "importFromImage": "Importar de imagem",
     "resume": "Retomar",
     "stop": "Parar",
-    "resumeAll": "Retomar tudo"
+    "resumeAll": "Retomar tudo",
+    "openRelaySettings": "Configurações do retransmissor",
+    "useAnotherCode": "Usar outro código"
   },
   "errors": {
     "invalidCode": "Insira um código hexadecimal válido de 64 caracteres.",
@@ -145,5 +169,27 @@
     "receivedProgress": "{{completed}} de {{count}} recebidos",
     "filesSaved_one": "{{count}} arquivo salvo",
     "filesSaved_other": "{{count}} arquivos salvos"
+  },
+  "connectFailure": {
+    "peerUnreachable": {
+      "label": "Não encontrado",
+      "title": "Remetente não encontrado",
+      "description": "Verifique o código e se o AlterSend está aberto no dispositivo da outra pessoa."
+    },
+    "directBlocked": {
+      "label": "Bloqueada",
+      "title": "Conexão bloqueada",
+      "description": "O remetente foi encontrado, mas suas redes bloquearam a conexão. Desligar a VPN ou trocar de rede, por exemplo para dados móveis, costuma resolver."
+    },
+    "relayOff": {
+      "label": "Retransmissor desligado",
+      "title": "Conexão direta bloqueada",
+      "description": "O remetente foi encontrado, mas suas redes bloqueiam conexões diretas e o retransmissor está desligado. Ative o retransmissor e tente novamente."
+    },
+    "relayBusy": {
+      "label": "Retransmissor ocupado",
+      "title": "Não foi possível conectar",
+      "description": "A conexão direta não funcionou e o retransmissor está ocupado. Tente outra rede em um dos dispositivos."
+    }
   }
 }

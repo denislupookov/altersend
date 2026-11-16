@@ -14,9 +14,11 @@
   "transfer": {
     "invalidTopic": "连接代码无效。",
     "joinFailed": "无法加入会话。",
-    "peerUnreachable": "无法连接到发送方。请检查代码后重试。",
+    "peerUnreachable": "找不到发送方。请检查代码，并确认对方设备上已打开 AlterSend。",
     "relayBusy": "无法连接。直连未成功，且中继繁忙。请在任一设备上换一个网络。",
     "relayBusyFree": "无法连接。直连未成功，且中继繁忙。请在任一设备上换一个网络，或升级到 Pro。",
+    "directBlocked": "已找到发送方，但你的网络阻止了连接。关闭 VPN 或切换网络（例如改用移动数据）通常会有帮助。",
+    "relayOff": "已找到发送方，但你的网络阻止了直连，且中继已关闭。请开启中继后重试。",
     "transferFailed": "传输失败。请重试。",
     "downloadFailed": "下载失败。请重试。"
   }

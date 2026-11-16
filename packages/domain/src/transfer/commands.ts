@@ -68,7 +68,7 @@ export const joinPairingSession = async (topic: string): Promise<JoinReply> => {
 }
 
 export const joinSession = async (topic: string): Promise<JoinReply> => {
-  dispatchToTransferStore({ type: 'join_requested' })
+  dispatchToTransferStore({ type: 'join_requested', topic })
   try {
     return await getTransferApi().worker.join(topic)
   } catch (error) {
@@ -80,6 +80,14 @@ export const joinSession = async (topic: string): Promise<JoinReply> => {
     })
     throw error
   }
+}
+
+export const retryJoin = async (): Promise<void> => {
+  const topic = transferStore.getState().retryTopic
+  if (!topic) return
+  await joinSession(topic).catch((error: unknown) => {
+    console.warn('retryJoin: join failed', error)
+  })
 }
 
 export const shareFiles = async (files: ShareFileRequest[]): Promise<ShareFilesReply> => {

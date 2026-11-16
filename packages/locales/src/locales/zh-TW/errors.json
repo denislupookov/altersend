@@ -14,9 +14,11 @@
   "transfer": {
     "invalidTopic": "連線代碼無效。",
     "joinFailed": "無法加入工作階段。",
-    "peerUnreachable": "無法連線到傳送者。請確認代碼後再試一次。",
+    "peerUnreachable": "找不到傳送者。請確認代碼，並確認對方裝置上已開啟 AlterSend。",
     "relayBusy": "無法連線。直連未成功，且中繼忙碌中。請在任一裝置上換一個網路。",
     "relayBusyFree": "無法連線。直連未成功，且中繼忙碌中。請在任一裝置上換一個網路，或升級到 Pro。",
+    "directBlocked": "已找到傳送者，但你的網路封鎖了連線。關閉 VPN 或切換網路（例如改用行動數據）通常會有幫助。",
+    "relayOff": "已找到傳送者，但你的網路封鎖了直連，而且中繼已關閉。請開啟中繼後再試一次。",
     "transferFailed": "傳輸失敗。請再試一次。",
     "downloadFailed": "下載失敗。請再試一次。"
   }

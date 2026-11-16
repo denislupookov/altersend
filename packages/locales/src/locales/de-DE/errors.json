@@ -14,9 +14,11 @@
   "transfer": {
     "invalidTopic": "Der Verbindungscode ist ungültig.",
     "joinFailed": "Der Sitzung konnte nicht beigetreten werden.",
-    "peerUnreachable": "Der Sender ist nicht erreichbar. Prüfen Sie den Code und versuchen Sie es erneut.",
+    "peerUnreachable": "Absender nicht gefunden. Prüfen Sie den Code und stellen Sie sicher, dass AlterSend auf dem anderen Gerät geöffnet ist.",
     "relayBusy": "Verbindung fehlgeschlagen. Eine direkte Verbindung hat nicht funktioniert und das Relay ist ausgelastet. Versuchen Sie es auf einem der Geräte mit einem anderen Netzwerk.",
     "relayBusyFree": "Verbindung fehlgeschlagen. Eine direkte Verbindung hat nicht funktioniert und das Relay ist ausgelastet. Versuchen Sie es auf einem der Geräte mit einem anderen Netzwerk oder upgraden Sie auf Pro.",
+    "directBlocked": "Absender gefunden, aber Ihre Netzwerke haben die Verbindung blockiert. Meist hilft es, ein VPN auszuschalten oder das Netzwerk zu wechseln, zum Beispiel zu mobilen Daten.",
+    "relayOff": "Absender gefunden, aber Ihre Netzwerke blockieren direkte Verbindungen und das Relay ist aus. Schalten Sie das Relay ein und versuchen Sie es erneut.",
     "transferFailed": "Die Übertragung ist fehlgeschlagen. Versuchen Sie es erneut.",
     "downloadFailed": "Der Download ist fehlgeschlagen. Versuchen Sie es erneut."
   }

@@ -5,9 +5,16 @@ import { PeerControlChannel } from './control-channel'
 import type { PeerControlMessage } from './control-channel'
 import { PeerIdentityStore, type NoiseKeyPair } from './peer-identity-store'
 import { PeerDrive } from './drive'
-import { allRelaysBusy, relayThrough, isRelayHost, wantsRelay } from '../relay/config'
+import {
+  allRelaysBusy,
+  relayConfigSummary,
+  relayThrough,
+  isRelayHost,
+  wantsRelay
+} from '../relay/config'
 import { attachRelayDial } from '../relay/announce'
 import { whenRelayConfReady } from '../relay/conf'
+import { ConnectProgress, watchDialOpen, type ConnectProgressState } from './connect-progress'
 
 type ConnectionType = 'direct' | 'relay'
 
@@ -25,11 +32,17 @@ export interface TransferSwarmCallbacks {
   onControlMessage: (message: PeerControlMessage, session: PeerSession) => void
   onConnectionType?: (peerKey: string, connectionType: ConnectionType) => void
   onRelayBusy?: () => void
+  onConnectProgress?: (progress: ConnectProgressState) => void
 }
 
 export interface TransferSwarmOptions {
   identityStore?: PeerIdentityStore
   drive?: boolean
+}
+
+function relayUsable(): boolean {
+  const summary = relayConfigSummary()
+  return summary.enabled && summary.keyCount > 0
 }
 
 export class TransferSwarm {
@@ -40,6 +53,7 @@ export class TransferSwarm {
   private readonly driveEnabled: boolean
   private hostedTopicHex: string | null
   private joinedAny: boolean
+  private readonly progress: ConnectProgress
 
   constructor(callbacks: TransferSwarmCallbacks, options: TransferSwarmOptions = {}) {
     this.identityStore = options.identityStore ?? null
@@ -49,6 +63,10 @@ export class TransferSwarm {
     this.hostedTopicHex = null
     this.joinedAny = false
     this.swarm = null
+    this.progress = new ConnectProgress(
+      (progress) => this.callbacks.onConnectProgress?.(progress),
+      relayUsable
+    )
   }
 
   private ensureSwarm(): Hyperswarm {
@@ -63,7 +81,11 @@ export class TransferSwarm {
       ...(keyPair ? { keyPair } : {}),
       relayThrough: (force: boolean, target: unknown) => this.selectRelays(force, target)
     })
-    attachRelayDial(swarm.dht, () => this.callbacks.onRelayBusy?.())
+    attachRelayDial(swarm.dht, {
+      onAllRelaysBusy: () => this.callbacks.onRelayBusy?.(),
+      onPeerDial: (socket) => watchDialOpen(socket, (err) => this.progress.failed(err)),
+      onRelayDial: () => this.progress.relaying()
+    })
     swarm.on('connection', (socket, info) => {
       this.handleConnection(socket, info).catch((err) => {
         console.error(
@@ -75,7 +97,9 @@ export class TransferSwarm {
         } catch {}
       })
     })
-    swarm.on('update', () => {})
+    swarm.on('update', () => {
+      if (swarm.connecting > 0) this.progress.attempting()
+    })
     return swarm
   }
 
@@ -160,6 +184,7 @@ export class TransferSwarm {
   private joinTopic(topic: Uint8Array): void {
     const discovery = crypto.discoveryKey(topic)
     this.joinedAny = true
+    this.progress.reset()
     const swarm = this.ensureSwarm()
     swarm.join(discovery, { server: true, client: false })
 
@@ -176,6 +201,7 @@ export class TransferSwarm {
 
   async suspendTransport(): Promise<void> {
     this.joinedAny = false
+    this.progress.reset()
 
     for (const [conn, session] of this.peerSessions) {
       session.drive?.destroy()

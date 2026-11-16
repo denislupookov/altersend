@@ -226,9 +226,11 @@ describe('transferSessionReducer — send flow', () => {
 
 describe('transferSessionReducer — receive flow', () => {
   it('join_requested resets receiver state and enters joining', () => {
-    const next = apply(make(), { type: 'join_requested' })
+    const next = apply(make(), { type: 'join_requested', topic: 'abc' })
     expect(next.role).toBe('receiver')
     expect(next.connectionState).toBe('joining')
+    expect(next.connectStage).toBe('searching')
+    expect(next.retryTopic).toBe('abc')
     expect(next.peerCount).toBe(0)
     expect(next.incomingFileOffers).toEqual([])
   })
@@ -600,7 +602,7 @@ describe('transferSessionReducer — connection type (per-peer)', () => {
 
   it('forgets a busy relay when a new join starts', () => {
     const busy = apply(make({ role: 'receiver' }), { type: 'relay_busy' })
-    expect(apply(busy, { type: 'join_requested' }).relayBusy).toBe(false)
+    expect(apply(busy, { type: 'join_requested', topic: 'abc' }).relayBusy).toBe(false)
   })
 
   it('blames the busy relay when connecting times out', () => {
@@ -617,6 +619,63 @@ describe('transferSessionReducer — connection type (per-peer)', () => {
       type: 'peer_unreachable'
     })
     expect(failed.errorCode).toBe(TRANSFER_ERROR_CODES.peerUnreachable)
+  })
+
+  it('explains a blocked direct path when connecting times out', () => {
+    const joining = apply(make(), { type: 'join_requested', topic: 'abc' })
+    const blocked = apply(joining, {
+      type: 'connect_progress',
+      stage: 'reaching',
+      reason: 'blocked'
+    })
+    expect(apply(blocked, { type: 'peer_unreachable' }).errorCode).toBe(
+      TRANSFER_ERROR_CODES.directBlocked
+    )
+  })
+
+  it('treats a relay attempt that never finished as a blocked path', () => {
+    const joining = apply(make(), { type: 'join_requested', topic: 'abc' })
+    const relaying = apply(joining, { type: 'connect_progress', stage: 'relaying', reason: null })
+    expect(apply(relaying, { type: 'peer_unreachable' }).errorCode).toBe(
+      TRANSFER_ERROR_CODES.directBlocked
+    )
+  })
+
+  it('points at the relay switch when the relay is off', () => {
+    const joining = apply(make(), { type: 'join_requested', topic: 'abc' })
+    const off = apply(joining, { type: 'connect_progress', stage: 'reaching', reason: 'relay-off' })
+    expect(apply(off, { type: 'peer_unreachable' }).errorCode).toBe(TRANSFER_ERROR_CODES.relayOff)
+  })
+
+  it('keeps the failure and the code through the disconnect that follows', () => {
+    const joining = apply(make(), { type: 'join_requested', topic: 'abc' })
+    const failed = apply(joining, { type: 'peer_unreachable' })
+    const disconnected = apply(failed, { type: 'status_changed', state: 'disconnected' })
+    expect(disconnected.errorCode).toBe(TRANSFER_ERROR_CODES.peerUnreachable)
+    expect(disconnected.retryTopic).toBe('abc')
+  })
+
+  it('clears the failure when the user ends the session', () => {
+    const joining = apply(make(), { type: 'join_requested', topic: 'abc' })
+    const failed = apply(joining, { type: 'peer_unreachable' })
+    const cleared = apply(failed, { type: 'clear_session' })
+    expect(cleared.errorCode).toBeNull()
+  })
+
+  it('keeps the code for a retry when a stale disconnect lands after a new join', () => {
+    const joining = apply(make(), { type: 'join_requested', topic: 'abc' })
+    const reset = apply(joining, { type: 'status_changed', state: 'disconnected' })
+    const failed = apply(apply(reset, { type: 'role_changed', role: 'receiver' }), {
+      type: 'peer_unreachable'
+    })
+    expect(failed.retryTopic).toBe('abc')
+  })
+
+  it('ignores connect progress once the sender is connected', () => {
+    const connected = make({ role: 'receiver', connectionState: 'peer-connected', peerCount: 1 })
+    expect(apply(connected, { type: 'connect_progress', stage: 'relaying', reason: null })).toBe(
+      connected
+    )
   })
 
   it('a cancelled download does not put the page into an error state', () => {

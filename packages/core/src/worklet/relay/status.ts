@@ -13,6 +13,11 @@ function parseState(raw: string): string | null {
   }
 }
 
+export function reportRelayBusy(relayKey: Uint8Array, onAllRelaysBusy: () => void): void {
+  markRelayBusy(relayKey)
+  if (allRelaysBusy()) onAllRelaysBusy()
+}
+
 export function watchRelayStatus(
   socket: unknown,
   relayKey: Uint8Array,
@@ -26,8 +31,7 @@ export function watchRelayStatus(
       encoding: c.string,
       onmessage: (raw) => {
         if (parseState(raw) !== 'busy') return
-        markRelayBusy(relayKey)
-        if (allRelaysBusy()) onAllRelaysBusy()
+        reportRelayBusy(relayKey, onAllRelaysBusy)
       }
     })
     channel.open()

@@ -32,12 +32,34 @@
     },
     "handshake": {
       "title": "Connexion en cours",
-      "description": "Terminer la poignée de main sécurisée avec l’expéditeur."
+      "description": "Terminer la poignée de main sécurisée avec l’expéditeur.",
+      "label": "Sécurisation"
+    },
+    "searching": {
+      "title": "Recherche de l’expéditeur",
+      "description": "Vérifiez qu’AlterSend est ouvert sur son appareil. Cela peut prendre jusqu’à une minute.",
+      "label": "Recherche"
+    },
+    "reaching": {
+      "title": "Expéditeur trouvé",
+      "description": "Établissement d’une connexion sécurisée avec son appareil…",
+      "label": "Trouvé"
+    },
+    "relaying": {
+      "title": "Connexion via le relais",
+      "description": "Vos réseaux bloquent la connexion directe, AlterSend passe donc par son relais. Les fichiers restent chiffrés de bout en bout.",
+      "label": "Via le relais"
+    },
+    "relayOff": {
+      "title": "Connexion directe bloquée",
+      "description": "Vos réseaux bloquent la connexion directe et le relais est désactivé. Activez-le dans Paramètres → Relais.",
+      "label": "Relais désactivé"
     },
     "relayBusy": {
       "title": "Connexion toujours en cours…",
       "description": "Le relais est saturé pour le moment, nous essayons donc une connexion directe. Cela peut prendre jusqu’à une minute.",
-      "proOffer": "<pro>Passez à Pro</pro> pour être prioritaire sur le relais."
+      "proOffer": "<pro>Passez à Pro</pro> pour être prioritaire sur le relais.",
+      "label": "Relais saturé"
     },
     "sessionEnded": {
       "title": "Séance terminée",
@@ -77,7 +99,9 @@
     "importFromImage": "Importer depuis une image",
     "resume": "Reprendre",
     "stop": "Arrêter",
-    "resumeAll": "Tout reprendre"
+    "resumeAll": "Tout reprendre",
+    "openRelaySettings": "Paramètres du relais",
+    "useAnotherCode": "Utiliser un autre code"
   },
   "errors": {
     "invalidCode": "Entrez un code hexadécimal valide de 64 caractères.",
@@ -145,5 +169,27 @@
     "receivedProgress": "{{completed}} sur {{count}} reçus",
     "filesSaved_one": "{{count}} fichier enregistré",
     "filesSaved_other": "{{count}} fichiers enregistrés"
+  },
+  "connectFailure": {
+    "peerUnreachable": {
+      "label": "Introuvable",
+      "title": "Expéditeur introuvable",
+      "description": "Vérifiez le code et assurez-vous qu’AlterSend est ouvert sur son appareil."
+    },
+    "directBlocked": {
+      "label": "Bloquée",
+      "title": "Connexion bloquée",
+      "description": "Expéditeur trouvé, mais vos réseaux ont bloqué la connexion. Désactiver un VPN ou changer de réseau, par exemple pour les données mobiles, aide généralement."
+    },
+    "relayOff": {
+      "label": "Relais désactivé",
+      "title": "Connexion directe bloquée",
+      "description": "Expéditeur trouvé, mais vos réseaux bloquent les connexions directes et le relais est désactivé. Activez le relais, puis réessayez."
+    },
+    "relayBusy": {
+      "label": "Relais saturé",
+      "title": "Connexion impossible",
+      "description": "La connexion directe n’a pas fonctionné et le relais est saturé. Essayez un autre réseau sur l’un des appareils."
+    }
   }
 }

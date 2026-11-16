@@ -32,12 +32,34 @@
     },
     "handshake": {
       "title": "Conexión en progreso",
-      "description": "Completar el apretón de manos seguro con el remitente."
+      "description": "Completar el apretón de manos seguro con el remitente.",
+      "label": "Asegurando"
+    },
+    "searching": {
+      "title": "Buscando al remitente",
+      "description": "Asegúrate de que AlterSend esté abierto en su dispositivo. Puede tardar hasta un minuto.",
+      "label": "Buscando"
+    },
+    "reaching": {
+      "title": "Remitente encontrado",
+      "description": "Estableciendo una conexión segura con su dispositivo…",
+      "label": "Encontrado"
+    },
+    "relaying": {
+      "title": "Conectando a través del relé",
+      "description": "Tus redes bloquean la conexión directa, así que AlterSend está usando su relé. Los archivos siguen cifrados de extremo a extremo.",
+      "label": "Por el relé"
+    },
+    "relayOff": {
+      "title": "Conexión directa bloqueada",
+      "description": "Tus redes bloquean la conexión directa y el relé está desactivado. Actívalo en Ajustes → Relé.",
+      "label": "Relé desactivado"
     },
     "relayBusy": {
       "title": "Seguimos conectando…",
       "description": "El relé está ocupado ahora mismo, así que estamos intentando una conexión directa. Puede tardar hasta un minuto.",
-      "proOffer": "<pro>Pásate a Pro</pro> para tener prioridad en el relé."
+      "proOffer": "<pro>Pásate a Pro</pro> para tener prioridad en el relé.",
+      "label": "Relé ocupado"
     },
     "sessionEnded": {
       "title": "Sesión finalizada",
@@ -77,7 +99,9 @@
     "importFromImage": "Importar desde imagen",
     "resume": "Reanudar",
     "stop": "Detener",
-    "resumeAll": "Reanudar todo"
+    "resumeAll": "Reanudar todo",
+    "openRelaySettings": "Ajustes del relé",
+    "useAnotherCode": "Usar otro código"
   },
   "errors": {
     "invalidCode": "Ingrese un código hexadecimal válido de 64 caracteres.",
@@ -145,5 +169,27 @@
     "receivedProgress": "{{completed}} de {{count}} recibidos",
     "filesSaved_one": "{{count}} archivo guardado",
     "filesSaved_other": "{{count}} archivos guardados"
+  },
+  "connectFailure": {
+    "peerUnreachable": {
+      "label": "No encontrado",
+      "title": "No se ha encontrado al remitente",
+      "description": "Revisa el código y asegúrate de que AlterSend esté abierto en su dispositivo."
+    },
+    "directBlocked": {
+      "label": "Bloqueada",
+      "title": "Conexión bloqueada",
+      "description": "Se ha encontrado al remitente, pero tus redes han bloqueado la conexión. Desactivar la VPN o cambiar de red, por ejemplo a datos móviles, suele ayudar."
+    },
+    "relayOff": {
+      "label": "Relé desactivado",
+      "title": "Conexión directa bloqueada",
+      "description": "Se ha encontrado al remitente, pero tus redes bloquean las conexiones directas y el relé está desactivado. Activa el relé y vuelve a intentarlo."
+    },
+    "relayBusy": {
+      "label": "Relé ocupado",
+      "title": "No se ha podido conectar",
+      "description": "La conexión directa no ha funcionado y el relé está ocupado. Prueba otra red en cualquiera de los dispositivos."
+    }
   }
 }

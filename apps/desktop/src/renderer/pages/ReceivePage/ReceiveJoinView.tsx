@@ -1,24 +1,21 @@
 import { useState, type ChangeEvent } from 'react'
-import { Button, ErrorBanner, Input, LinkRow, useTheme } from '@altersend/components'
+import { Button, Input, LinkRow, useTheme } from '@altersend/components'
 import { ClipboardIcon, DownloadIcon, QrCodeIcon } from '@altersend/components/icons'
 import {
   getDisplayError,
-  getRelayBusyError,
   getTransferErrorCode,
   isValidJoinCode,
   joinSession,
   TRANSFER_ERROR_CODES,
   type TransferErrorCode,
-  useSubscriptionStore,
   useTransferStore
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { bridgeApi } from '../../api/bridgeApi'
-import { openSettingsPanel } from '../../components/Settings'
 import { WebcamScanView } from './WebcamScanView'
 
 export function ReceiveJoinView() {
-  const { t } = useTranslation(['receive', 'common', 'errors', 'settings'])
+  const { t } = useTranslation(['receive', 'common', 'errors'])
   const { theme } = useTheme()
   const [joinKey, setJoinKey] = useState('')
   const [showValidation, setShowValidation] = useState(false)
@@ -26,16 +23,9 @@ export function ReceiveJoinView() {
   const [localErrorCode, setLocalErrorCode] = useState<TransferErrorCode | null>(null)
   const [mode, setMode] = useState<'paste' | 'scan'>('paste')
   const storeErrorCode = useTransferStore((s) => s.errorCode)
-  const isPro = useSubscriptionStore((s) => s.active)
-  const relayBusyFailure = storeErrorCode === TRANSFER_ERROR_CODES.relayBusy
-  const upgradeButton = isPro ? null : (
-    <Button onClick={() => openSettingsPanel('account')} size='sm' variant='primary'>
-      {t('settings:account.upgradeToPro')}
-    </Button>
-  )
-  const displayStoreError = relayBusyFailure
-    ? null
-    : getDisplayError(t, storeErrorCode, { invalidTopicKey: 'receive:errors.invalidKey' })
+  const displayStoreError = getDisplayError(t, storeErrorCode, {
+    invalidTopicKey: 'receive:errors.invalidKey'
+  })
 
   if (mode === 'scan') {
     return <WebcamScanView onCancel={() => setMode('paste')} />
@@ -73,12 +63,6 @@ export function ReceiveJoinView() {
 
   return (
     <div className='flex w-full flex-col'>
-      {relayBusyFailure ? (
-        <div className='mb-[22px]'>
-          <ErrorBanner message={getRelayBusyError(t, isPro)} action={upgradeButton} />
-        </div>
-      ) : null}
-
       <LinkRow
         disabled={isJoining}
         icon={<QrCodeIcon size={18} color={theme.colors.colorTextMuted} />}

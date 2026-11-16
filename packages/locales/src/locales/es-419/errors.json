@@ -14,9 +14,11 @@
   "transfer": {
     "invalidTopic": "El código de conexión no es válido.",
     "joinFailed": "No se pudo unir a la sesión.",
-    "peerUnreachable": "No se pudo conectar con el remitente. Revisa el código e inténtalo de nuevo.",
+    "peerUnreachable": "No se encontró al remitente. Revisa el código y asegúrate de que AlterSend esté abierto en su dispositivo.",
     "relayBusy": "No se pudo conectar. La conexión directa no funcionó y el relé está ocupado. Prueba otra red en cualquiera de los dispositivos.",
     "relayBusyFree": "No se pudo conectar. La conexión directa no funcionó y el relé está ocupado. Prueba otra red en cualquiera de los dispositivos o cámbiate a Pro.",
+    "directBlocked": "Se encontró al remitente, pero tus redes bloquearon la conexión. Desactivar la VPN o cambiar de red, por ejemplo a datos móviles, suele ayudar.",
+    "relayOff": "Se encontró al remitente, pero tus redes bloquean las conexiones directas y el relé está desactivado. Activa el relé y vuelve a intentarlo.",
     "transferFailed": "La transferencia falló. Inténtalo de nuevo.",
     "downloadFailed": "La descarga falló. Inténtalo de nuevo."
   }

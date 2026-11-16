@@ -32,12 +32,34 @@
     },
     "handshake": {
       "title": "Connessione in corso",
-      "description": "Completamento dell'handshake sicuro con il mittente."
+      "description": "Completamento dell'handshake sicuro con il mittente.",
+      "label": "Protezione"
+    },
+    "searching": {
+      "title": "Ricerca del mittente",
+      "description": "Assicurati che AlterSend sia aperto sul suo dispositivo. Può richiedere fino a un minuto.",
+      "label": "Ricerca"
+    },
+    "reaching": {
+      "title": "Mittente trovato",
+      "description": "Creazione di una connessione sicura con il suo dispositivo…",
+      "label": "Trovato"
+    },
+    "relaying": {
+      "title": "Connessione tramite relay",
+      "description": "Le tue reti bloccano la connessione diretta, quindi AlterSend usa il suo relay. I file restano crittografati end-to-end.",
+      "label": "Tramite relay"
+    },
+    "relayOff": {
+      "title": "Connessione diretta bloccata",
+      "description": "Le tue reti bloccano la connessione diretta e il relay è disattivato. Attivalo in Impostazioni → Relay.",
+      "label": "Relay disattivato"
     },
     "relayBusy": {
       "title": "Connessione ancora in corso…",
       "description": "Il relay è occupato in questo momento, quindi stiamo provando una connessione diretta. Può richiedere fino a un minuto.",
-      "proOffer": "<pro>Passa a Pro</pro> per avere la priorità sul relay."
+      "proOffer": "<pro>Passa a Pro</pro> per avere la priorità sul relay.",
+      "label": "Relay occupato"
     },
     "sessionEnded": {
       "title": "La sessione è terminata",
@@ -77,7 +99,9 @@
     "importFromImage": "Importa da immagine",
     "resume": "Riprendi",
     "stop": "Ferma",
-    "resumeAll": "Riprendi tutto"
+    "resumeAll": "Riprendi tutto",
+    "openRelaySettings": "Impostazioni relay",
+    "useAnotherCode": "Usa un altro codice"
   },
   "errors": {
     "invalidCode": "Inserisci un codice esadecimale valido di 64 caratteri.",
@@ -145,5 +169,27 @@
     "receivedProgress": "{{completed}} di {{count}} ricevuti",
     "filesSaved_one": "{{count}} file salvato",
     "filesSaved_other": "{{count}} file salvati"
+  },
+  "connectFailure": {
+    "peerUnreachable": {
+      "label": "Non trovato",
+      "title": "Mittente non trovato",
+      "description": "Controlla il codice e assicurati che AlterSend sia aperto sul suo dispositivo."
+    },
+    "directBlocked": {
+      "label": "Bloccata",
+      "title": "Connessione bloccata",
+      "description": "Mittente trovato, ma le tue reti hanno bloccato la connessione. Di solito aiuta disattivare la VPN o cambiare rete, per esempio passando ai dati mobili."
+    },
+    "relayOff": {
+      "label": "Relay disattivato",
+      "title": "Connessione diretta bloccata",
+      "description": "Mittente trovato, ma le tue reti bloccano le connessioni dirette e il relay è disattivato. Attiva il relay e riprova."
+    },
+    "relayBusy": {
+      "label": "Relay occupato",
+      "title": "Impossibile connettersi",
+      "description": "La connessione diretta non è riuscita e il relay è occupato. Prova un'altra rete su uno dei dispositivi."
+    }
   }
 }

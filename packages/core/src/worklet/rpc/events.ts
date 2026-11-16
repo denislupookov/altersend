@@ -20,6 +20,7 @@ export type TransferStatus =
   | 'reconnecting'
   | 'connection-type'
   | 'relay-busy'
+  | 'connect-progress'
   | 'peer-client'
   | 'peer-pro'
   | 'peer-unauthenticated'
@@ -27,9 +28,15 @@ export type TransferStatus =
 
 export type TransferRole = 'sender' | 'receiver'
 
+export type ConnectStage = 'searching' | 'reaching' | 'relaying'
+
+export type ConnectReason = 'unreachable' | 'blocked' | 'relay-off'
+
 export const TRANSFER_ERROR_CODES = {
   peerUnreachable: 'peer_unreachable',
   relayBusy: 'relay_busy',
+  directBlocked: 'direct_blocked',
+  relayOff: 'relay_off',
   invalidTopic: 'invalid_topic',
   joinFailed: 'join_failed',
   transferFailed: 'transfer_failed',
@@ -65,6 +72,8 @@ export interface StatusEvent {
   pausable?: boolean
   paused?: boolean
   connectionType?: 'direct' | 'relay'
+  connectStage?: ConnectStage
+  connectReason?: ConnectReason | null
   client?: 'web'
   pro?: boolean
 }

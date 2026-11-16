@@ -1,5 +1,7 @@
 import {
   TRANSFER_ERROR_CODES,
+  type ConnectReason,
+  type ConnectStage,
   type IncomingFileOffer,
   type RememberedPeer,
   type RendererTransferEvent,
@@ -16,7 +18,7 @@ import type { ConnectedPeer, PeerDownloadEvent } from '../send/shareModel'
 import type { SelectedFile, SenderUploadItem } from '../send/draftTypes'
 import type { SendDraftPhase } from '../send/pageUi'
 
-export type { TransferRole }
+export type { ConnectReason, ConnectStage, TransferRole }
 export { TRANSFER_ERROR_CODES }
 export type { TransferErrorCode }
 
@@ -64,6 +66,9 @@ export interface TransferSessionState {
   connectionType: TransferConnectionType | null
   connectionTypes: Record<string, TransferConnectionType>
   relayBusy: boolean
+  connectStage: ConnectStage | null
+  connectReason: ConnectReason | null
+  retryTopic: string | null
   transferPeerKey: string | null
   role: TransferRole | null
   peerCount: number
@@ -91,7 +96,7 @@ export type TransferAction =
   | { type: 'booted' }
   | { type: 'boot_failed'; code?: TransferErrorCode; message: string }
   | { type: 'session_hosted'; topic: string }
-  | { type: 'join_requested' }
+  | { type: 'join_requested'; topic: string }
   | { type: 'share_requested' }
   | { type: 'join_failed'; code?: TransferErrorCode; message: string }
   | { type: 'clear_session' }
@@ -99,6 +104,7 @@ export type TransferAction =
   | { type: 'status_changed'; state: ConnectionState; peers?: number }
   | { type: 'connection_type_changed'; peer: string; connectionType: TransferConnectionType }
   | { type: 'relay_busy' }
+  | { type: 'connect_progress'; stage: ConnectStage; reason: ConnectReason | null }
   | { type: 'peer_client_changed'; peer: string; client: 'web' }
   | { type: 'peer_pro_changed'; peer: string; pro: boolean }
   | { type: 'peer_outdated'; peer: string }

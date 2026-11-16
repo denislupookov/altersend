@@ -127,7 +127,7 @@ function persistThemePreference(preference: ThemePreference) {
 
 function ThemedStack() {
   const { theme, themeType, fontFamilyName } = useTheme()
-  const { t } = useTranslation(['settings', 'feedback'])
+  const { t } = useTranslation(['settings', 'feedback', 'receive'])
   const flowScreenOptions = getFlowScreenOptions(theme)
   const titledScreenOptions = getTitledScreenOptions(theme, fontFamilyName)
   const progress = useSimulatedLoading()
@@ -198,6 +198,10 @@ function ThemedStack() {
         <Stack.Screen name='send/preparing' options={flowScreenOptions} />
         <Stack.Screen name='send/share' options={flowScreenOptions} />
         <Stack.Screen name='receive/scan' options={flowScreenOptions} />
+        <Stack.Screen
+          name='receive/connecting'
+          options={{ ...titledScreenOptions, title: t('receive:page.tabTitle') }}
+        />
         <Stack.Screen name='receive/incoming' options={flowScreenOptions} />
         <Stack.Screen
           name='receive/complete'

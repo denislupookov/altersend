@@ -1,4 +1,5 @@
 export { ReceiveCompleteView } from './views/ReceiveCompleteView'
+export { ReceiveConnectFailureView } from './views/ReceiveConnectFailureView'
 export { ReceiveConnectingView } from './views/ReceiveConnectingView'
 export { ReceiveIncomingView } from './views/ReceiveIncomingView'
 export { ReceiveInterruptedView } from './views/ReceiveInterruptedView'

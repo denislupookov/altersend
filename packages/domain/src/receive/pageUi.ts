@@ -1,6 +1,8 @@
-import type { TransferRole } from '@altersend/core'
+import type { ConnectReason, ConnectStage, TransferRole } from '@altersend/core'
 import { formatFileSize, formatItemsCount } from '../format'
 import type { Translate } from '../i18n'
+import { isConnectFailure, type ConnectFailureCode } from '../transfer/errors'
+import { TRANSFER_ERROR_CODES, type TransferErrorCode } from '../transfer/types'
 
 export type ReceiveStep =
   | 'join'
@@ -66,12 +68,98 @@ export function isSessionOverStep(step: ReceiveStep): boolean {
   return step === 'interrupted' || step === 'session_ended'
 }
 
-export function getConnectingStatusCopy(t: Translate, relayBusy: boolean): ReceivePageCopy {
-  const key = relayBusy ? 'relayBusy' : 'handshake'
+export interface ConnectingStatusInput {
+  relayBusy: boolean
+  stage: ConnectStage | null
+  reason: ConnectReason | null
+  peerCount: number
+}
+
+type ConnectingStatusKey = ConnectStage | 'handshake' | 'relayBusy' | 'relayOff'
+
+export function getConnectingStatusKey({
+  relayBusy,
+  stage,
+  reason,
+  peerCount
+}: ConnectingStatusInput): ConnectingStatusKey {
+  if (peerCount > 0) return 'handshake'
+  if (relayBusy) return 'relayBusy'
+  if (reason === 'relay-off') return 'relayOff'
+  return stage ?? 'searching'
+}
+
+export type ConnectStatusTone = 'neutral' | 'success' | 'info' | 'warning'
+
+export interface ConnectStatus {
+  tone: ConnectStatusTone
+  active: boolean
+  label: string
+  title: string
+  description: string
+}
+
+const CONNECTING_TONES: Record<ConnectingStatusKey, ConnectStatusTone> = {
+  searching: 'neutral',
+  reaching: 'success',
+  handshake: 'success',
+  relaying: 'info',
+  relayBusy: 'warning',
+  relayOff: 'warning'
+}
+
+export function getConnectingStatus(t: Translate, input: ConnectingStatusInput): ConnectStatus {
+  const key = getConnectingStatusKey(input)
   return {
+    tone: CONNECTING_TONES[key],
+    active: true,
+    label: t(`receive:page.${key}.label`),
     title: t(`receive:page.${key}.title`),
     description: t(`receive:page.${key}.description`)
   }
+}
+
+type ConnectFailureKey = 'peerUnreachable' | 'directBlocked' | 'relayOff' | 'relayBusy'
+
+const CONNECT_FAILURE_KEYS: Record<ConnectFailureCode, ConnectFailureKey> = {
+  [TRANSFER_ERROR_CODES.peerUnreachable]: 'peerUnreachable',
+  [TRANSFER_ERROR_CODES.directBlocked]: 'directBlocked',
+  [TRANSFER_ERROR_CODES.relayOff]: 'relayOff',
+  [TRANSFER_ERROR_CODES.relayBusy]: 'relayBusy'
+}
+
+export function getConnectFailureStatus(t: Translate, code: ConnectFailureCode): ConnectStatus {
+  const key = CONNECT_FAILURE_KEYS[code]
+  return {
+    tone: 'warning',
+    active: false,
+    label: t(`receive:connectFailure.${key}.label`),
+    title: t(`receive:connectFailure.${key}.title`),
+    description: t(`receive:connectFailure.${key}.description`)
+  }
+}
+
+export function getConnectFailureCode(
+  step: ReceiveStep,
+  errorCode: TransferErrorCode | null
+): ConnectFailureCode | null {
+  return step === 'join' && isConnectFailure(errorCode) ? errorCode : null
+}
+
+export type ConnectFailureFix = 'relaySettings' | 'upgrade'
+
+export const CONNECT_FAILURE_FIX_LABEL: Record<ConnectFailureFix, string> = {
+  relaySettings: 'receive:actions.openRelaySettings',
+  upgrade: 'settings:account.upgradeToPro'
+}
+
+export function getConnectFailureFix(
+  code: ConnectFailureCode,
+  isPro: boolean
+): ConnectFailureFix | null {
+  if (code === TRANSFER_ERROR_CODES.relayOff) return 'relaySettings'
+  if (code === TRANSFER_ERROR_CODES.relayBusy && !isPro) return 'upgrade'
+  return null
 }
 
 export function getReceivePageCopy(

@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Spinner } from '@altersend/components'
 
 interface TransferCardProps {
   title: string
@@ -8,21 +7,6 @@ interface TransferCardProps {
   footer?: ReactNode
   badge?: ReactNode
   headerRight?: ReactNode
-}
-
-type TransferTone = 'neutral' | 'success' | 'critical'
-
-interface TransferStatusPanelProps {
-  title: string
-  description: ReactNode
-  tone?: TransferTone
-  loading?: boolean
-}
-
-function dotToneClass(tone: TransferTone): string {
-  if (tone === 'success') return 'bg-success'
-  if (tone === 'critical') return 'bg-danger'
-  return 'bg-text-muted'
 }
 
 export function TransferCardFrame({
@@ -62,29 +46,4 @@ export function TransferCardFrame({
 
 export function TransferActionGroup({ children }: { children: ReactNode }) {
   return <div className='flex items-center justify-end gap-2.5'>{children}</div>
-}
-
-export function TransferStatusPanel({
-  description,
-  title,
-  tone = 'neutral',
-  loading = false
-}: TransferStatusPanelProps) {
-  return (
-    <div className='w-full rounded-2xl border border-border-primary bg-background-subtle px-4 py-4'>
-      <div className='flex items-start gap-3'>
-        {loading ? (
-          <span className='mt-0.5 shrink-0 text-info'>
-            <Spinner size={15} />
-          </span>
-        ) : (
-          <div className={`mt-1 h-2 w-2 shrink-0 rounded-full ${dotToneClass(tone)}`} />
-        )}
-        <div className='min-w-0'>
-          <p className='m-0 text-[14px] font-medium text-text-primary'>{title}</p>
-          <p className='mt-1 text-[13px] leading-6 text-text-secondary'>{description}</p>
-        </div>
-      </div>
-    </div>
-  )
 }

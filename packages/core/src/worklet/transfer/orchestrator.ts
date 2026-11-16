@@ -169,6 +169,10 @@ export class TransferOrchestrator implements TransferRPC {
         onRelayBusy: () => {
           if (this.suspended) return
           this.sendStatus('relay-busy')
+        },
+        onConnectProgress: ({ stage, reason }) => {
+          if (this.suspended) return
+          this.sendStatus('connect-progress', { connectStage: stage, connectReason: reason })
         }
       },
       { identityStore, drive: true }

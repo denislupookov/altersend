@@ -32,12 +32,34 @@
     },
     "handshake": {
       "title": "Verbindung läuft",
-      "description": "Abschluss des sicheren Handshakes mit dem Absender."
+      "description": "Abschluss des sicheren Handshakes mit dem Absender.",
+      "label": "Wird gesichert"
+    },
+    "searching": {
+      "title": "Absender wird gesucht",
+      "description": "Stellen Sie sicher, dass AlterSend auf dem anderen Gerät geöffnet ist. Das kann bis zu einer Minute dauern.",
+      "label": "Suche läuft"
+    },
+    "reaching": {
+      "title": "Absender gefunden",
+      "description": "Sichere Verbindung zum anderen Gerät wird aufgebaut …",
+      "label": "Gefunden"
+    },
+    "relaying": {
+      "title": "Verbindung über das Relay",
+      "description": "Ihre Netzwerke blockieren eine direkte Verbindung, daher nutzt AlterSend sein Relay. Dateien bleiben Ende-zu-Ende-verschlüsselt.",
+      "label": "Über Relay"
+    },
+    "relayOff": {
+      "title": "Direkte Verbindung blockiert",
+      "description": "Ihre Netzwerke blockieren eine direkte Verbindung und das Relay ist aus. Schalten Sie es unter Einstellungen → Relay ein.",
+      "label": "Relay aus"
     },
     "relayBusy": {
       "title": "Verbindung wird weiter aufgebaut…",
       "description": "Das Relay ist gerade ausgelastet, daher versuchen wir eine direkte Verbindung. Das kann bis zu einer Minute dauern.",
-      "proOffer": "<pro>Upgraden Sie auf Pro</pro>, um Vorrang auf dem Relay zu haben."
+      "proOffer": "<pro>Upgraden Sie auf Pro</pro>, um Vorrang auf dem Relay zu haben.",
+      "label": "Relay ausgelastet"
     },
     "sessionEnded": {
       "title": "Sitzung beendet",
@@ -77,7 +99,9 @@
     "importFromImage": "Aus Bild importieren",
     "resume": "Fortsetzen",
     "stop": "Anhalten",
-    "resumeAll": "Alle fortsetzen"
+    "resumeAll": "Alle fortsetzen",
+    "openRelaySettings": "Relay-Einstellungen",
+    "useAnotherCode": "Anderen Code verwenden"
   },
   "errors": {
     "invalidCode": "Geben Sie einen gültigen 64-stelligen Hex-Code ein.",
@@ -145,5 +169,27 @@
     "receivedProgress": "{{completed}} von {{count}} empfangen",
     "filesSaved_one": "{{count}} Datei gespeichert",
     "filesSaved_other": "{{count}} Dateien gespeichert"
+  },
+  "connectFailure": {
+    "peerUnreachable": {
+      "label": "Nicht gefunden",
+      "title": "Absender nicht gefunden",
+      "description": "Prüfen Sie den Code und stellen Sie sicher, dass AlterSend auf dem anderen Gerät geöffnet ist."
+    },
+    "directBlocked": {
+      "label": "Blockiert",
+      "title": "Verbindung blockiert",
+      "description": "Absender gefunden, aber Ihre Netzwerke haben die Verbindung blockiert. Meist hilft es, ein VPN auszuschalten oder das Netzwerk zu wechseln, zum Beispiel zu mobilen Daten."
+    },
+    "relayOff": {
+      "label": "Relay aus",
+      "title": "Direkte Verbindung blockiert",
+      "description": "Absender gefunden, aber Ihre Netzwerke blockieren direkte Verbindungen und das Relay ist aus. Schalten Sie das Relay ein und versuchen Sie es erneut."
+    },
+    "relayBusy": {
+      "label": "Relay ausgelastet",
+      "title": "Verbindung fehlgeschlagen",
+      "description": "Eine direkte Verbindung hat nicht funktioniert und das Relay ist ausgelastet. Versuchen Sie es auf einem der Geräte mit einem anderen Netzwerk."
+    }
   }
 }

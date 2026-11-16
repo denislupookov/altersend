@@ -36,6 +36,21 @@ export function getTransferErrorCode(
   return fallback
 }
 
+const CONNECT_FAILURE_CODES = [
+  TRANSFER_ERROR_CODES.peerUnreachable,
+  TRANSFER_ERROR_CODES.relayBusy,
+  TRANSFER_ERROR_CODES.directBlocked,
+  TRANSFER_ERROR_CODES.relayOff
+] as const
+
+export type ConnectFailureCode = (typeof CONNECT_FAILURE_CODES)[number]
+
+const CONNECT_FAILURE_CODE_SET = new Set<TransferErrorCode>(CONNECT_FAILURE_CODES)
+
+export function isConnectFailure(code: TransferErrorCode | null): code is ConnectFailureCode {
+  return code !== null && CONNECT_FAILURE_CODE_SET.has(code)
+}
+
 export function getRelayBusyError(t: Translate, isPro: boolean): string {
   return t(isPro ? 'errors:transfer.relayBusy' : 'errors:transfer.relayBusyFree')
 }
@@ -56,6 +71,10 @@ export function getDisplayError(
       return t('errors:transfer.peerUnreachable')
     case TRANSFER_ERROR_CODES.relayBusy:
       return t('errors:transfer.relayBusy')
+    case TRANSFER_ERROR_CODES.directBlocked:
+      return t('errors:transfer.directBlocked')
+    case TRANSFER_ERROR_CODES.relayOff:
+      return t('errors:transfer.relayOff')
     case TRANSFER_ERROR_CODES.downloadFailed:
       return t('errors:transfer.downloadFailed')
     case TRANSFER_ERROR_CODES.transferFailed:

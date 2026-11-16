@@ -15,7 +15,7 @@ export const styles = css.create({
   message: {
     margin: 0,
     fontSize: tokens.fontSizeMd,
-    lineHeight: 20,
+    lineHeight: tokens.lineHeightNormal,
     color: tokens.colorDanger
   },
   action: {

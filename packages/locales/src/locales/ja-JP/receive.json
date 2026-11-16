@@ -32,12 +32,34 @@
     },
     "handshake": {
       "title": "接続処理中",
-      "description": "送信側との安全なハンドシェイクを完了しています。"
+      "description": "送信側との安全なハンドシェイクを完了しています。",
+      "label": "保護中"
+    },
+    "searching": {
+      "title": "送信者を探しています",
+      "description": "相手のデバイスで AlterSend が開いていることを確認してください。最大で1分ほどかかることがあります。",
+      "label": "検索中"
+    },
+    "reaching": {
+      "title": "送信者が見つかりました",
+      "description": "相手のデバイスと安全な接続を確立しています…",
+      "label": "検出済み"
+    },
+    "relaying": {
+      "title": "リレー経由で接続しています",
+      "description": "ネットワークが直接接続をブロックしているため、AlterSend のリレーを使っています。ファイルはエンドツーエンドで暗号化されたままです。",
+      "label": "リレー経由"
+    },
+    "relayOff": {
+      "title": "直接接続がブロックされています",
+      "description": "ネットワークが直接接続をブロックしていて、リレーがオフになっています。設定 → リレー でオンにしてください。",
+      "label": "リレーオフ"
     },
     "relayBusy": {
       "title": "接続を続けています…",
       "description": "現在リレーが混雑しているため、直接接続を試しています。最大で1分ほどかかることがあります。",
-      "proOffer": "<pro>Pro にアップグレード</pro>すると、リレーを優先的に利用できます。"
+      "proOffer": "<pro>Pro にアップグレード</pro>すると、リレーを優先的に利用できます。",
+      "label": "リレー混雑"
     },
     "sessionEnded": {
       "title": "セッション終了",
@@ -77,7 +99,9 @@
     "importFromImage": "画像から読み込む",
     "resume": "再開",
     "stop": "停止",
-    "resumeAll": "すべて再開"
+    "resumeAll": "すべて再開",
+    "openRelaySettings": "リレー設定",
+    "useAnotherCode": "別のコードを使う"
   },
   "errors": {
     "invalidCode": "有効な64文字の16進コードを入力してください。",
@@ -145,5 +169,27 @@
     "receivedProgress": "{{count}} 個中 {{completed}} 個受信済み",
     "filesSaved_one": "{{count}} 個のファイルを保存済み",
     "filesSaved_other": "{{count}} 個のファイルを保存済み"
+  },
+  "connectFailure": {
+    "peerUnreachable": {
+      "label": "見つかりません",
+      "title": "送信者が見つかりませんでした",
+      "description": "コードを確認し、相手のデバイスで AlterSend が開いていることを確かめてください。"
+    },
+    "directBlocked": {
+      "label": "ブロック",
+      "title": "接続がブロックされました",
+      "description": "送信者は見つかりましたが、ネットワークが接続をブロックしました。VPN をオフにするか、モバイルデータなど別のネットワークに切り替えると改善することがよくあります。"
+    },
+    "relayOff": {
+      "label": "リレーオフ",
+      "title": "直接接続がブロックされています",
+      "description": "送信者は見つかりましたが、ネットワークが直接接続をブロックしていて、リレーがオフです。リレーをオンにしてから、もう一度お試しください。"
+    },
+    "relayBusy": {
+      "label": "リレー混雑",
+      "title": "接続できませんでした",
+      "description": "直接接続できず、リレーも混雑しています。どちらかのデバイスで別のネットワークを試してください。"
+    }
   }
 }

@@ -8,13 +8,35 @@ import {
 import { applySharingProgress, getPhaseFromSelection, mergeSelectedFiles } from '../send/draftModel'
 import { applyPeerDownloadEvent } from '../send/shareModel'
 import { TRANSFER_ERROR_CODES } from './types'
+import { isConnectFailure } from './errors'
 import type {
   ConnectionState,
+  ConnectReason,
   IncomingPairRequest,
   TransferAction,
   TransferConnectionType,
+  TransferErrorCode,
   TransferSessionState
 } from './types'
+
+const CONNECT_FAILURE_ERRORS: Record<ConnectReason, TransferErrorCode> = {
+  unreachable: TRANSFER_ERROR_CODES.peerUnreachable,
+  blocked: TRANSFER_ERROR_CODES.directBlocked,
+  'relay-off': TRANSFER_ERROR_CODES.relayOff
+}
+
+function endSessionKeepingFailure(state: TransferSessionState): TransferSessionState {
+  const ended = endSession(state)
+  if (state.role !== null || !isConnectFailure(state.errorCode)) return ended
+  return { ...ended, errorCode: state.errorCode }
+}
+
+function connectFailureCode(state: TransferSessionState): TransferErrorCode {
+  if (state.relayBusy) return TRANSFER_ERROR_CODES.relayBusy
+  if (state.connectReason) return CONNECT_FAILURE_ERRORS[state.connectReason]
+  if (state.connectStage === 'relaying') return TRANSFER_ERROR_CODES.directBlocked
+  return TRANSFER_ERROR_CODES.peerUnreachable
+}
 
 function clearIncomingFor(
   incoming: IncomingPairRequest | null,
@@ -31,6 +53,9 @@ export const initialTransferSessionState: TransferSessionState = {
   connectionType: null,
   connectionTypes: {},
   relayBusy: false,
+  connectStage: null,
+  connectReason: null,
+  retryTopic: null,
   webPeers: {},
   proPeers: {},
   outdatedPeers: {},
@@ -122,6 +147,8 @@ function endSession(state: TransferSessionState): TransferSessionState {
     connectionType: null,
     connectionTypes: {},
     relayBusy: false,
+    connectStage: null,
+    connectReason: null,
     webPeers: {},
     proPeers: {},
     outdatedPeers: {},
@@ -160,9 +187,16 @@ export function transferSessionReducer(
     case 'status_changed':
       switch (action.state) {
         case 'disconnected':
-          return endSession(state)
+          return endSessionKeepingFailure(state)
         case 'joining':
-          return { ...state, connectionState: 'joining', errorCode: null, errorMessage: null }
+          return {
+            ...state,
+            connectionState: 'joining',
+            connectStage: 'searching',
+            connectReason: null,
+            errorCode: null,
+            errorMessage: null
+          }
         case 'joined': {
           const peerCount = typeof action.peers === 'number' ? action.peers : state.peerCount
           const resolved: ConnectionState = peerCount > 0 ? 'peer-connected' : 'joined'
@@ -182,6 +216,8 @@ export function transferSessionReducer(
             peerCount,
             isReconnecting: false,
             relayBusy: false,
+            connectStage: null,
+            connectReason: null,
             errorCode: null,
             errorMessage: null
           }
@@ -199,6 +235,10 @@ export function transferSessionReducer(
     case 'relay_busy':
       if (state.role !== 'receiver' || state.relayBusy) return state
       return { ...state, relayBusy: true }
+    case 'connect_progress':
+      if (state.role !== 'receiver' || state.connectionState === 'peer-connected') return state
+      if (state.connectStage === action.stage && state.connectReason === action.reason) return state
+      return { ...state, connectStage: action.stage, connectReason: action.reason }
     case 'peer_client_changed':
       return flagPeer(state, 'webPeers', action.peer)
     case 'peer_pro_changed':
@@ -337,6 +377,9 @@ export function transferSessionReducer(
         connectionType: null,
         connectionTypes: {},
         relayBusy: false,
+        connectStage: 'searching',
+        connectReason: null,
+        retryTopic: action.topic,
         webPeers: {},
         proPeers: {},
         outdatedPeers: {},
@@ -438,9 +481,9 @@ export function transferSessionReducer(
         topic: '',
         connectedPeers: {},
         relayBusy: false,
-        errorCode: state.relayBusy
-          ? TRANSFER_ERROR_CODES.relayBusy
-          : TRANSFER_ERROR_CODES.peerUnreachable,
+        connectStage: null,
+        connectReason: null,
+        errorCode: connectFailureCode(state),
         errorMessage: null
       }
 

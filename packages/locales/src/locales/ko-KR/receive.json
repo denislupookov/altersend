@@ -32,12 +32,34 @@
     },
     "handshake": {
       "title": "연결 진행 중",
-      "description": "발신자와 보안 핸드셰이크를 완료합니다."
+      "description": "발신자와 보안 핸드셰이크를 완료합니다.",
+      "label": "보안 연결 중"
+    },
+    "searching": {
+      "title": "보낸 사람을 찾는 중",
+      "description": "상대 기기에서 AlterSend가 열려 있는지 확인하세요. 최대 1분 정도 걸릴 수 있습니다.",
+      "label": "찾는 중"
+    },
+    "reaching": {
+      "title": "보낸 사람을 찾았습니다",
+      "description": "상대 기기와 보안 연결을 설정하는 중…",
+      "label": "찾음"
+    },
+    "relaying": {
+      "title": "릴레이를 통해 연결하는 중",
+      "description": "네트워크가 직접 연결을 차단해서 AlterSend 릴레이를 사용하고 있습니다. 파일은 계속 종단 간 암호화됩니다.",
+      "label": "릴레이 경유"
+    },
+    "relayOff": {
+      "title": "직접 연결이 차단됨",
+      "description": "네트워크가 직접 연결을 차단하고 있고 릴레이가 꺼져 있습니다. 설정 → 릴레이에서 켜세요.",
+      "label": "릴레이 꺼짐"
     },
     "relayBusy": {
       "title": "계속 연결 중…",
       "description": "지금 릴레이가 혼잡해 직접 연결을 시도하고 있습니다. 최대 1분 정도 걸릴 수 있습니다.",
-      "proOffer": "<pro>Pro로 업그레이드</pro>하면 릴레이를 우선적으로 이용할 수 있습니다."
+      "proOffer": "<pro>Pro로 업그레이드</pro>하면 릴레이를 우선적으로 이용할 수 있습니다.",
+      "label": "릴레이 혼잡"
     },
     "sessionEnded": {
       "title": "세션이 종료되었습니다.",
@@ -77,7 +99,9 @@
     "importFromImage": "이미지에서 가져오기",
     "resume": "이어받기",
     "stop": "중지",
-    "resumeAll": "모두 이어받기"
+    "resumeAll": "모두 이어받기",
+    "openRelaySettings": "릴레이 설정",
+    "useAnotherCode": "다른 코드 사용"
   },
   "errors": {
     "invalidCode": "유효한 64자의 16진수 코드를 입력하세요.",
@@ -145,5 +169,27 @@
     "receivedProgress": "{{count}}개 중 {{completed}}개 수신됨",
     "filesSaved_one": "{{count}}개 파일 저장됨",
     "filesSaved_other": "{{count}}개 파일 저장됨"
+  },
+  "connectFailure": {
+    "peerUnreachable": {
+      "label": "찾을 수 없음",
+      "title": "보낸 사람을 찾을 수 없습니다",
+      "description": "코드를 확인하고 상대 기기에서 AlterSend가 열려 있는지 확인하세요."
+    },
+    "directBlocked": {
+      "label": "차단됨",
+      "title": "연결이 차단됨",
+      "description": "보낸 사람을 찾았지만 네트워크가 연결을 차단했습니다. VPN을 끄거나 모바일 데이터 등 다른 네트워크로 바꾸면 대개 해결됩니다."
+    },
+    "relayOff": {
+      "label": "릴레이 꺼짐",
+      "title": "직접 연결이 차단됨",
+      "description": "보낸 사람을 찾았지만 네트워크가 직접 연결을 차단하고 있고 릴레이가 꺼져 있습니다. 릴레이를 켠 뒤 다시 시도하세요."
+    },
+    "relayBusy": {
+      "label": "릴레이 혼잡",
+      "title": "연결하지 못했습니다",
+      "description": "직접 연결에 실패했고 릴레이도 혼잡합니다. 두 기기 중 하나에서 다른 네트워크를 사용해 보세요."
+    }
   }
 }

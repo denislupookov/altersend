@@ -14,9 +14,11 @@
   "transfer": {
     "invalidTopic": "The connection code is invalid.",
     "joinFailed": "Could not join the session.",
-    "peerUnreachable": "Couldn't reach the sender. Check the code and try again.",
+    "peerUnreachable": "Couldn't find the sender. Check the code, and make sure AlterSend is open on their device.",
     "relayBusy": "Couldn't connect. A direct connection didn't work and the relay is busy. Try a different network on either device.",
     "relayBusyFree": "Couldn't connect. A direct connection didn't work and the relay is busy. Try a different network on either device, or upgrade to Pro.",
+    "directBlocked": "Found the sender, but your networks blocked the connection. Turning off a VPN or switching networks, for example to mobile data, usually helps.",
+    "relayOff": "Found the sender, but your networks block direct connections and the relay is off. Turn the relay on, then try again.",
     "transferFailed": "Transfer failed. Try again.",
     "downloadFailed": "Download failed. Try again."
   }

@@ -212,6 +212,15 @@ function dispatchStatusEvent(event: StatusEvent): void {
     case 'relay-busy':
       dispatchToTransferStore({ type: 'relay_busy' })
       return
+    case 'connect-progress':
+      if (event.connectStage) {
+        dispatchToTransferStore({
+          type: 'connect_progress',
+          stage: event.connectStage,
+          reason: event.connectReason ?? null
+        })
+      }
+      return
     case 'peer-client':
       if (event.peer && event.client) {
         dispatchToTransferStore({

@@ -70,6 +70,7 @@ declare module 'hyperswarm' {
     readonly dht: {
       connect(publicKey: Uint8Array, opts?: unknown): unknown
     }
+    readonly connecting: number
     join(
       discoveryKey: Uint8Array,
       opts?: { server?: boolean; client?: boolean }
