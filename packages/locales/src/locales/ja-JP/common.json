@@ -131,7 +131,8 @@
   "status": {
     "connected": "接続済み",
     "wantsToSend": "が{{label}}{{size}}を送信しようとしています",
-    "connectedViaRelay": "リレー経由で接続"
+    "connectedViaRelay": "リレー経由で接続",
+    "connectedViaOwnRelay": "自分のリレー経由で接続"
   },
   "confirm": {
     "leaveShareSession": "退出すると、アクティブな共有セッションが終了します。続く？",

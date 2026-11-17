@@ -131,7 +131,8 @@
   "status": {
     "connected": "Connecté",
     "wantsToSend": "veut vous envoyer {{label}}{{size}}",
-    "connectedViaRelay": "Connecté via relais"
+    "connectedViaRelay": "Connecté via relais",
+    "connectedViaOwnRelay": "Connecté via votre relais"
   },
   "confirm": {
     "leaveShareSession": "Quitter mettra fin à votre session de partage active. Continuer ?",

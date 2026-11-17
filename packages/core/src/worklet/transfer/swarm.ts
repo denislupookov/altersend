@@ -9,6 +9,7 @@ import {
   allRelaysBusy,
   relayConfigSummary,
   relayThrough,
+  isOfficialRelayHost,
   isRelayHost,
   wantsRelay
 } from '../relay/config'
@@ -17,7 +18,14 @@ import { whenRelayConfReady } from '../relay/conf'
 import { ConnectProgress, watchDialOpen, type ConnectProgressState } from './connect-progress'
 import { remoteHostOf } from './utils'
 
-type ConnectionType = 'direct' | 'relay'
+type ConnectionType = 'direct' | 'relay' | 'own-relay'
+
+function connectionTypeOf(socket: PeerSocket): ConnectionType {
+  const host = remoteHostOf(socket)
+  if (isOfficialRelayHost(host)) return 'relay'
+  if (isRelayHost(host)) return 'own-relay'
+  return 'direct'
+}
 
 export interface PeerSession {
   socket: PeerSocket
@@ -151,21 +159,19 @@ export class TransferSwarm {
 
   private classifyConnection(socket: PeerSocket, peerKey: string): void {
     if (!this.callbacks.onConnectionType) return
-    const classify = (): ConnectionType => (isRelayHost(remoteHostOf(socket)) ? 'relay' : 'direct')
-
-    let current = classify()
+    let current = connectionTypeOf(socket)
     this.callbacks.onConnectionType(peerKey, current)
 
-    if (current !== 'relay') return
+    if (current === 'direct') return
 
     let ticks = 0
     const timer = setInterval(() => {
-      const next = classify()
+      const next = connectionTypeOf(socket)
       if (next !== current) {
         current = next
         this.callbacks.onConnectionType?.(peerKey, next)
       }
-      if (next !== 'relay' || ++ticks >= 8) clearInterval(timer)
+      if (next === 'direct' || ++ticks >= 8) clearInterval(timer)
     }, 2000)
     ;(timer as unknown as { unref?: () => void }).unref?.()
 

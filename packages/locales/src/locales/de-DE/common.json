@@ -131,7 +131,8 @@
   "status": {
     "connected": "Verbunden",
     "wantsToSend": "möchte dir {{label}}{{size}} senden",
-    "connectedViaRelay": "Verbunden über Relay"
+    "connectedViaRelay": "Verbunden über Relay",
+    "connectedViaOwnRelay": "Verbunden über Ihr Relay"
   },
   "confirm": {
     "leaveShareSession": "Durch das Verlassen wird Ihre aktive Freigabesitzung beendet. Weitermachen?",

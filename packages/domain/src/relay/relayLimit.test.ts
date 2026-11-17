@@ -35,6 +35,7 @@ describe('isRelayLimited', () => {
   it('only limits relayed connections without Pro', () => {
     expect(isRelayLimited('relay', OVER, false)).toBe(true)
     expect(isRelayLimited('direct', OVER, false)).toBe(false)
+    expect(isRelayLimited('own-relay', OVER, false)).toBe(false)
     expect(isRelayLimited(null, OVER, false)).toBe(false)
     expect(isRelayLimited('relay', OVER, true)).toBe(false)
   })

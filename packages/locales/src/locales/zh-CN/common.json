@@ -131,7 +131,8 @@
   "status": {
     "connected": "已连接",
     "wantsToSend": "想要发送 {{label}}{{size}} 给你",
-    "connectedViaRelay": "已通过中继连接"
+    "connectedViaRelay": "已通过中继连接",
+    "connectedViaOwnRelay": "已通过你的中继连接"
   },
   "confirm": {
     "leaveShareSession": "离开将结束您的活跃共享会话。继续？",

@@ -1,5 +1,19 @@
 import type { Translate } from '../i18n'
+import type { TransferConnectionType } from '../transfer/types'
 import type { RelayMode, RelayTestState } from './useRelaySettings'
+
+const CONNECTED_STATUS_KEYS: Record<TransferConnectionType, string> = {
+  direct: 'common:status.connected',
+  relay: 'common:status.connectedViaRelay',
+  'own-relay': 'common:status.connectedViaOwnRelay'
+}
+
+export function connectedStatusLabel(
+  t: Translate,
+  connection: TransferConnectionType | null
+): string {
+  return t(connection ? CONNECTED_STATUS_KEYS[connection] : 'common:status.connected')
+}
 
 export interface RelayModeLabel {
   label: string

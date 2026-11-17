@@ -131,7 +131,8 @@
   "status": {
     "connected": "Подключено",
     "wantsToSend": "хочет отправить вам {{label}}{{size}}",
-    "connectedViaRelay": "Подключено через ретранслятор"
+    "connectedViaRelay": "Подключено через ретранслятор",
+    "connectedViaOwnRelay": "Подключено через ваш ретранслятор"
   },
   "confirm": {
     "leaveShareSession": "Выход завершит активный сеанс отправки. Продолжить?",

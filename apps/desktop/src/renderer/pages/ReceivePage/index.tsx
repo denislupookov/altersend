@@ -13,6 +13,7 @@ import { ReceiveJoinView } from './ReceiveJoinView'
 
 import {
   clearSession,
+  connectedStatusLabel,
   getConnectFailureCode,
   getReceivePageCopy,
   isSessionOverStep,
@@ -53,7 +54,7 @@ export default function ReceivePage() {
       }`}
     >
       <span className='h-2 w-2 shrink-0 rounded-full bg-success' />
-      {isRelay ? t('common:status.connectedViaRelay') : t('common:status.connected')}
+      {connectedStatusLabel(t, connectionType)}
       {isRelay ? <InfoIcon size={13} /> : null}
     </div>
   )

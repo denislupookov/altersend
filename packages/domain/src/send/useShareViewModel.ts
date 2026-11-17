@@ -36,6 +36,7 @@ type ConnectionBadge = TransferConnectionType | 'relay-limited'
 const CONNECTION_SUBTITLE: Record<ConnectionBadge, { key: string; tone: SubtitleTone }> = {
   direct: { key: 'send:peer.direct', tone: 'success' },
   relay: { key: 'send:peer.relay', tone: 'warning' },
+  'own-relay': { key: 'common:status.connectedViaOwnRelay', tone: 'success' },
   'relay-limited': { key: 'send:peer.relayLimited', tone: 'warning' }
 }
 

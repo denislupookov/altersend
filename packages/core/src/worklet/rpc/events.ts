@@ -71,7 +71,7 @@ export interface StatusEvent {
   cancelled?: boolean
   pausable?: boolean
   paused?: boolean
-  connectionType?: 'direct' | 'relay'
+  connectionType?: 'direct' | 'relay' | 'own-relay'
   connectStage?: ConnectStage
   connectReason?: ConnectReason | null
   client?: 'web'

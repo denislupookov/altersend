@@ -24,7 +24,7 @@ export type { TransferErrorCode }
 
 export type ConnectionState = 'disconnected' | 'joining' | 'joined' | 'peer-connected'
 
-export type TransferConnectionType = 'direct' | 'relay'
+export type TransferConnectionType = 'direct' | 'relay' | 'own-relay'
 
 export type PeerPairStatus = 'requested' | 'paired'
 

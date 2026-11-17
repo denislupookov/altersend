@@ -131,7 +131,8 @@
   "status": {
     "connected": "Conectado",
     "wantsToSend": "quiere enviarte {{label}}{{size}}",
-    "connectedViaRelay": "Conectado vía relé"
+    "connectedViaRelay": "Conectado vía relé",
+    "connectedViaOwnRelay": "Conectado vía tu relé"
   },
   "confirm": {
     "leaveShareSession": "Al salir, finalizará su sesión activa para compartir. ¿Continuar?",

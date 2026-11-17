@@ -21,6 +21,7 @@ import { useErrorToast } from '@/src/transfer/receive/utils/useErrorToast'
 import { exitToReceiveTab } from '@/src/transfer/receive/utils/exitToReceiveTab'
 import ConnectionLostSvg from '../../../../assets/connection-lost.svg'
 import {
+  connectedStatusLabel,
   getConnectFailureCode,
   getDisplayError,
   getPrimaryDownloadLabel,
@@ -150,7 +151,7 @@ export default function ReceiveIncomingScreen() {
     <View style={[styles.badge, { backgroundColor: theme.colors.colorSuccessSubtle }]}>
       <View style={[styles.badgeDot, { backgroundColor: theme.colors.colorSuccess }]} />
       <Text style={[styles.badgeText, { color: theme.colors.colorSuccess }]}>
-        {t('common:status.connected')}
+        {connectedStatusLabel(t, connectionType)}
       </Text>
     </View>
   )

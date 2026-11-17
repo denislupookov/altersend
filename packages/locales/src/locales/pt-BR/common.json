@@ -131,7 +131,8 @@
   "status": {
     "connected": "Conectado",
     "wantsToSend": "quer enviar {{label}}{{size}} para você",
-    "connectedViaRelay": "Conectado via retransmissor"
+    "connectedViaRelay": "Conectado via retransmissor",
+    "connectedViaOwnRelay": "Conectado via seu retransmissor"
   },
   "confirm": {
     "leaveShareSession": "Sair encerrará sua sessão de compartilhamento ativa. Continuar?",
