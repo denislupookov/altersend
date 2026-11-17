@@ -1,14 +1,6 @@
 import { Image, type ImageSourcePropType, StyleSheet, View } from 'react-native'
-import deviceFrame from '../../../../assets/onboarding/device-frame.png'
+import { DEVICE_FRAME } from './media'
 import { ScreenVideo } from './ScreenVideo'
-
-const FRAME_WIDTH = 1350
-const FRAME_HEIGHT = 2760
-const SCREEN_LEFT = 72
-const SCREEN_TOP = 69
-const SCREEN_WIDTH = 1206
-const SCREEN_HEIGHT = 2622
-const SCREEN_CORNER_RATIO = 0.13
 
 interface PhoneMockupProps {
   screen: ImageSourcePropType
@@ -18,10 +10,10 @@ interface PhoneMockupProps {
 }
 
 export function PhoneMockup({ screen, video, playing = true, width }: PhoneMockupProps) {
-  const scale = width / FRAME_WIDTH
-  const screenWidth = SCREEN_WIDTH * scale
-  const screenHeight = SCREEN_HEIGHT * scale
-  const height = FRAME_HEIGHT * scale
+  const scale = width / DEVICE_FRAME.width
+  const screenWidth = DEVICE_FRAME.screenWidth * scale
+  const screenHeight = DEVICE_FRAME.screenHeight * scale
+  const height = DEVICE_FRAME.height * scale
   const screenSize = { width: screenWidth, height: screenHeight }
 
   return (
@@ -30,11 +22,11 @@ export function PhoneMockup({ screen, video, playing = true, width }: PhoneMocku
         style={[
           styles.screen,
           {
-            left: SCREEN_LEFT * scale,
-            top: SCREEN_TOP * scale,
+            left: DEVICE_FRAME.screenLeft * scale,
+            top: DEVICE_FRAME.screenTop * scale,
             width: screenWidth,
             height: screenHeight,
-            borderRadius: screenWidth * SCREEN_CORNER_RATIO
+            borderRadius: screenWidth * DEVICE_FRAME.screenCornerRatio
           }
         ]}
       >
@@ -43,7 +35,11 @@ export function PhoneMockup({ screen, video, playing = true, width }: PhoneMocku
           <ScreenVideo source={video} playing={playing} style={[styles.video, screenSize]} />
         ) : null}
       </View>
-      <Image source={deviceFrame} style={[styles.frame, { width, height }]} resizeMode='stretch' />
+      <Image
+        source={DEVICE_FRAME.image}
+        style={[styles.frame, { width, height }]}
+        resizeMode='stretch'
+      />
     </View>
   )
 }

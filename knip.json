@@ -63,7 +63,7 @@
       ],
       "project": ["app/**/*.{ts,tsx}", "src/**/*.{ts,tsx}", "scripts/**/*.{js,cjs,mjs}"],
       "ignoreDependencies": ["b4a", "react-native-b4a", "react-strict-dom", "expo-updates"],
-      "ignoreUnresolved": ["^\\./ConfirmDialog$", "^\\./IconButton$"],
+      "ignoreUnresolved": ["^\\./ConfirmDialog$", "^\\./IconButton$", "^\\./media$"],
       "ignoreBinaries": ["eas"]
     },
     "apps/web": {
