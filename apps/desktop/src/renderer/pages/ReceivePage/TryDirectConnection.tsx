@@ -5,7 +5,11 @@ import { useTranslation } from '@altersend/locales'
 import { Popover } from '../../components/Popover'
 import { openSettingsPanel } from '../../components/Settings/settingsControl'
 
-export function TryDirectConnection() {
+interface TryDirectConnectionProps {
+  canReconnect: boolean
+}
+
+export function TryDirectConnection({ canReconnect }: TryDirectConnectionProps) {
   const { t } = useTranslation(['receive', 'common'])
 
   return (
@@ -46,23 +50,25 @@ export function TryDirectConnection() {
               {t('receive:actions.openRelaySettings')}
             </ExternalLink>
           </p>
-          <div className='mt-3 flex justify-end gap-2'>
-            <Button onClick={close} size='sm' variant='ghost'>
-              {t('common:actions.cancel')}
-            </Button>
-            <Button
-              onClick={() => {
-                close()
-                reconnectSession().catch((error: unknown) => {
-                  console.error('TryDirectConnection: reconnect failed', error)
-                })
-              }}
-              size='sm'
-              variant='primary'
-            >
-              {t('common:actions.tryAgain')}
-            </Button>
-          </div>
+          {canReconnect ? (
+            <div className='mt-3 flex justify-end gap-2'>
+              <Button onClick={close} size='sm' variant='ghost'>
+                {t('common:actions.cancel')}
+              </Button>
+              <Button
+                onClick={() => {
+                  close()
+                  reconnectSession().catch((error: unknown) => {
+                    console.error('TryDirectConnection: reconnect failed', error)
+                  })
+                }}
+                size='sm'
+                variant='primary'
+              >
+                {t('common:actions.tryAgain')}
+              </Button>
+            </div>
+          ) : null}
         </div>
       )}
     </Popover>

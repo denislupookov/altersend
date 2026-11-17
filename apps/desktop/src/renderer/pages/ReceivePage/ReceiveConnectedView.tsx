@@ -78,7 +78,7 @@ export function ReceiveConnectedView() {
   const getPro = () => openSettingsPanel('account')
 
   const renderPrimary = () => {
-    const action = downloads.primaryAction
+    const action = allowance.primaryAction
     if (!action) return null
 
     const relayAction = relayPrimaryAction(t, action, allowance)
@@ -109,7 +109,11 @@ export function ReceiveConnectedView() {
     <ReceiveFileList
       rows={allowance.rows}
       lockedKeys={allowance.lockedKeys}
-      rowsFooter={allowance.limited ? <RelayLimitNote onGetPro={getPro} /> : undefined}
+      rowsFooter={
+        allowance.limited ? (
+          <RelayLimitNote canReconnect={allowance.canReconnect} onGetPro={getPro} />
+        ) : undefined
+      }
       footer={
         <>
           <Button onClick={clearSession} size='sm' variant='secondary'>

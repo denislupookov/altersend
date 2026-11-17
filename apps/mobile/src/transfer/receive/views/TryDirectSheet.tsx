@@ -8,7 +8,7 @@ import { Text } from '@/src/components/ThemedText'
 interface TryDirectSheetProps {
   open: boolean
   onClose: () => void
-  onTryAgain: () => void
+  onTryAgain?: () => void
 }
 
 export function TryDirectSheet({ open, onClose, onTryAgain }: TryDirectSheetProps) {
@@ -49,11 +49,13 @@ export function TryDirectSheet({ open, onClose, onTryAgain }: TryDirectSheetProp
             {t('receive:actions.openRelaySettings')}
           </ExternalLink>
         </View>
-        <SheetActions
-          primaryLabel={t('common:actions.tryAgain')}
-          onPrimary={onTryAgain}
-          onClose={onClose}
-        />
+        {onTryAgain ? (
+          <SheetActions
+            primaryLabel={t('common:actions.tryAgain')}
+            onPrimary={onTryAgain}
+            onClose={onClose}
+          />
+        ) : null}
       </View>
     </BottomSheet>
   )

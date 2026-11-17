@@ -9,7 +9,7 @@ import { TryDirectSheet } from './TryDirectSheet'
 
 interface RelayLimitNoteProps {
   onGetPro: () => void
-  onTryAgain: () => void
+  onTryAgain?: () => void
 }
 
 export function RelayLimitNote({ onGetPro, onTryAgain }: RelayLimitNoteProps) {

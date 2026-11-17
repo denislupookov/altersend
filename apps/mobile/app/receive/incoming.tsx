@@ -110,10 +110,10 @@ export default function ReceiveIncomingScreen() {
 
   const handlePrimaryAction = async () => {
     try {
-      if (downloads.primaryAction === 'resume-all') {
+      if (allowance.primaryAction === 'resume-all') {
         lightTap()
         await actions.resumeAll()
-      } else if (downloads.primaryAction === 'download-all') {
+      } else if (allowance.primaryAction === 'download-all') {
         lightTap()
         await actions.downloadInto(uriToPath(Paths.document.uri), allowance.freePendingOffers)
       }
@@ -157,7 +157,7 @@ export default function ReceiveIncomingScreen() {
   )
 
   const renderPrimary = () => {
-    const action = downloads.primaryAction
+    const action = allowance.primaryAction
     if (!action) return null
 
     const relayAction = relayPrimaryAction(t, action, allowance)
@@ -250,7 +250,10 @@ export default function ReceiveIncomingScreen() {
           lockedKeys={allowance.lockedKeys}
           rowsFooter={
             allowance.limited ? (
-              <RelayLimitNote onGetPro={getPro} onTryAgain={reconnect} />
+              <RelayLimitNote
+                onGetPro={getPro}
+                onTryAgain={allowance.canReconnect ? reconnect : undefined}
+              />
             ) : undefined
           }
         />

@@ -149,7 +149,7 @@ export function startRelayConf(pubkeyHex: string | undefined): void {
     })
   })
 
-  if (relayConfigSummary().enabled) official.ensure()
+  official.ensure()
 }
 
 export function applyCustomRelay(input: CustomRelayInput | null): void {
@@ -192,6 +192,21 @@ export function whenRelayConfReady(timeoutMs = READY_TIMEOUT_MS): Promise<void> 
   })
 
   return Promise.race([Promise.all(waits).then(() => undefined), timeout]).finally(() => {
+    if (timer) clearTimeout(timer)
+  })
+}
+
+export function whenOfficialRelaysKnown(timeoutMs = READY_TIMEOUT_MS): Promise<void> {
+  official?.ensure()
+  const wait = official?.pending()
+  if (!wait) return Promise.resolve()
+
+  let timer: ReturnType<typeof setTimeout> | null = null
+  const timeout = new Promise<void>((resolve) => {
+    timer = setTimeout(resolve, timeoutMs)
+  })
+
+  return Promise.race([wait, timeout]).finally(() => {
     if (timer) clearTimeout(timer)
   })
 }
