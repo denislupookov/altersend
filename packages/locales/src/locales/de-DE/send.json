@@ -103,9 +103,9 @@
     "inviting": "Wird eingeladen…",
     "sent": "Gesendet",
     "deviceOffline": "Gerät offline – erneut versuchen",
-    "direct": "Direkt",
-    "relay": "Relay",
-    "relayLimited": "Relay, bis {{limit}}",
+    "direct": "Direkt verbunden",
+    "relay": "Verbunden über Relay",
+    "relayLimited": "Verbunden über Relay, bis {{limit}}",
     "pro": "Pro"
   },
   "dropzone": {

@@ -103,9 +103,9 @@
     "inviting": "招待中…",
     "sent": "送信済み",
     "deviceOffline": "デバイスはオフラインです — もう一度お試しください",
-    "direct": "直接",
-    "relay": "リレー",
-    "relayLimited": "リレー（最大 {{limit}}）",
+    "direct": "直接接続",
+    "relay": "リレー経由で接続",
+    "relayLimited": "リレー経由で接続（最大 {{limit}}）",
     "pro": "Pro"
   },
   "dropzone": {

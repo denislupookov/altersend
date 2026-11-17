@@ -89,7 +89,7 @@
       "v2_1_0": {
         "support": {
           "title": "Help keep AlterSend alive",
-          "description": "30,000 downloads, 3 TB relayed, no income yet. Pro pays for the relays."
+          "description": "Relays cost money to run. Pro covers them and keeps AlterSend free for everyone else."
         },
         "relayLimit": {
           "title": "Free relay up to 1 GB",

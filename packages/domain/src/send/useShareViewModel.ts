@@ -164,7 +164,7 @@ function connectedDeviceSubtitle(
     return { subtitle: `● ${t(key, { limit: NATIVE_RELAY_MAX_LABEL })}`, subtitleTone: tone }
   }
   if (entry.status === 'online') {
-    return { subtitle: `● ${t('send:status.online')}`, subtitleTone: 'info' }
+    return { subtitle: `● ${t('common:status.connected')}`, subtitleTone: 'info' }
   }
   if (entry.status === 'failed') {
     return {

@@ -89,7 +89,7 @@
       "v2_1_0": {
         "support": {
           "title": "Aidez à faire vivre AlterSend",
-          "description": "30 000 téléchargements, 3 To relayés, aucun revenu pour l'instant. Pro finance les relais."
+          "description": "Faire tourner les relais coûte de l'argent. Pro les finance et garde AlterSend gratuit pour tous les autres."
         },
         "relayLimit": {
           "title": "Relais gratuit jusqu'à 1 Go",

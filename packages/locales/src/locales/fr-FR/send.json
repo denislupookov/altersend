@@ -103,9 +103,9 @@
     "inviting": "Invitation…",
     "sent": "Envoyé",
     "deviceOffline": "Appareil hors ligne — réessayez",
-    "direct": "Directe",
-    "relay": "Relais",
-    "relayLimited": "Relais, jusqu’à {{limit}}",
+    "direct": "Connecté directement",
+    "relay": "Connecté via relais",
+    "relayLimited": "Connecté via relais, jusqu’à {{limit}}",
     "pro": "Pro"
   },
   "dropzone": {

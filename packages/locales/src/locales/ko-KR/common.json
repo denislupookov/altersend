@@ -89,7 +89,7 @@
       "v2_1_0": {
         "support": {
           "title": "AlterSend를 지켜 주세요",
-          "description": "다운로드 3만 회, 릴레이 3TB, 아직 수입은 없습니다. Pro가 릴레이 비용을 냅니다."
+          "description": "릴레이 운영에는 비용이 듭니다. Pro가 그 비용을 내고, 다른 모두는 AlterSend를 무료로 쓸 수 있습니다."
         },
         "relayLimit": {
           "title": "릴레이 1GB까지 무료",

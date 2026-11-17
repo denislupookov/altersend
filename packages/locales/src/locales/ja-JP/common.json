@@ -89,7 +89,7 @@
       "v2_1_0": {
         "support": {
           "title": "AlterSend の存続にご協力を",
-          "description": "3万ダウンロード、リレー転送 3 TB、収益はまだゼロ。Pro がリレーの費用をまかないます。"
+          "description": "リレーの運用には費用がかかります。Pro がその費用をまかない、ほかの人は AlterSend を無料で使い続けられます。"
         },
         "relayLimit": {
           "title": "リレーは 1 GB まで無料",

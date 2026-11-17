@@ -89,7 +89,7 @@
       "v2_1_0": {
         "support": {
           "title": "幫 AlterSend 走下去",
-          "description": "3 萬次下載，中繼 3 TB，至今沒有收入。Pro 支付中繼的費用。"
+          "description": "運行中繼需要花錢。Pro 負擔這筆費用，讓其他人可以繼續免費使用 AlterSend。"
         },
         "relayLimit": {
           "title": "免費中繼最高 1 GB",

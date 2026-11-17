@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button, SegmentedProgress, ThemeType, useTheme } from '@altersend/components'
 import { useSubscriptionStore } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { IconButton } from '@/src/components/IconButton'
 import { SlideView } from '@/src/onboarding/SlideView'
 import { onboardingSteps, type OnboardingStep } from '@/src/onboarding/steps'
+import { useAccountModel } from '@/src/account'
 import { ONBOARDING_ENTRY_PARAMS } from '@/src/account/onboardingEntry'
 import { markOnboardingCompleted } from '@/src/onboarding/onboardingStorage'
 import { requestNotificationPermission } from '@/src/lifecycle/notificationPermission'
@@ -33,6 +34,11 @@ export default function OnboardingScreen() {
   const [progress, setProgress] = useState(0)
   const listRef = useRef<FlatList<OnboardingStep>>(null)
   const isPro = useSubscriptionStore((state) => state.active)
+  const { prepareStore } = useAccountModel()
+
+  useEffect(() => {
+    if (!isPro) prepareStore()
+  }, [isPro, prepareStore])
 
   const index = Math.round(progress)
   const isWelcome = index === 0

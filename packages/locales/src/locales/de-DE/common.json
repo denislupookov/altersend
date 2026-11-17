@@ -89,7 +89,7 @@
       "v2_1_0": {
         "support": {
           "title": "Hilf mit, AlterSend am Leben zu halten",
-          "description": "30.000 Downloads, 3 TB über Relays, noch keine Einnahmen. Pro bezahlt die Relays."
+          "description": "Relays kosten Geld im Betrieb. Pro deckt die Kosten und hält AlterSend für alle anderen kostenlos."
         },
         "relayLimit": {
           "title": "Relay kostenlos bis 1 GB",

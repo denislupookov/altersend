@@ -103,9 +103,9 @@
     "inviting": "초대 중…",
     "sent": "보냄",
     "deviceOffline": "기기 오프라인 — 다시 시도하세요",
-    "direct": "직접",
-    "relay": "릴레이",
-    "relayLimited": "릴레이(최대 {{limit}})",
+    "direct": "직접 연결됨",
+    "relay": "릴레이를 통해 연결됨",
+    "relayLimited": "릴레이를 통해 연결됨(최대 {{limit}})",
     "pro": "Pro"
   },
   "dropzone": {

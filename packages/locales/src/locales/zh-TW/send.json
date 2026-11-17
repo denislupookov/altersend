@@ -103,9 +103,9 @@
     "inviting": "正在邀請…",
     "sent": "已傳送",
     "deviceOffline": "裝置離線 — 請重試",
-    "direct": "直接",
-    "relay": "中繼",
-    "relayLimited": "中繼（最多 {{limit}}）",
+    "direct": "已直接連線",
+    "relay": "已透過中繼連線",
+    "relayLimited": "已透過中繼連線（最多 {{limit}}）",
     "pro": "Pro"
   },
   "dropzone": {
