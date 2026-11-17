@@ -195,7 +195,6 @@ function ThemedStack() {
           name='report'
           options={{ ...titledScreenOptions, title: t('feedback:title') }}
         />
-        <Stack.Screen name='send/preparing' options={flowScreenOptions} />
         <Stack.Screen name='send/share' options={flowScreenOptions} />
         <Stack.Screen name='receive/scan' options={flowScreenOptions} />
         <Stack.Screen

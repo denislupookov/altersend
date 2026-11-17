@@ -18,6 +18,7 @@ import type { IncomingFileOffer } from '@altersend/core'
 import { LinkRow, type LinkRowStatus } from '../LinkRow'
 import { ChevronRightIcon, FolderIcon } from '../../icons'
 import { useTheme } from '../../theme'
+import { LockedRow } from './LockedRow'
 import { RowActionButton } from './RowActionButton'
 import { styles } from './styles'
 
@@ -25,6 +26,11 @@ type FileOffer = Extract<IncomingFileOffer, { kind: 'file' }>
 
 export function rowKey(row: ReceiveRow): string {
   return row.kind === 'file' ? getOfferKey(row.offer) : `folder:${row.name}`
+}
+
+export interface DownloadRowLock {
+  label: string
+  tag: string
 }
 
 export interface DownloadRowProps {
@@ -35,6 +41,7 @@ export interface DownloadRowProps {
   labelsFor: (display: DownloadRowDisplay) => DownloadRowLabels
   transferActive: boolean
   inert?: boolean
+  locked?: DownloadRowLock
   isFirst?: boolean
   compact?: boolean
   standalone?: boolean
@@ -88,6 +95,17 @@ function runRowAction(
 }
 
 export function DownloadRow(props: DownloadRowProps) {
+  if (props.locked) {
+    return (
+      <LockedRow
+        row={props.row}
+        lock={props.locked}
+        isFirst={props.isFirst}
+        compact={props.compact}
+        standalone={props.standalone}
+      />
+    )
+  }
   return props.row.kind === 'file' ? (
     <FileRow {...props} offer={props.row.offer} />
   ) : (

@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -8,6 +8,8 @@ import { Duplex } from 'streamx'
 import { SenderSession, ReceiverSession, DiskReader, DiskWriter } from '@altersend/drive'
 import type { PeerSocket } from 'hyperswarm'
 import { PeerDrive } from './drive'
+import { RateLimiter } from './rate-limiter'
+import { configureRelay } from '../relay/config'
 
 function socketPair(): [PeerSocket, PeerSocket] {
   const a = new Duplex({
@@ -255,5 +257,68 @@ describe('PeerDrive backpressure', () => {
     channel.sendChunk({ transferId: 'f', index: 0 }, new Uint8Array(1024 * 1024))
 
     expect(channel.bufferedAmount()).toBeLessThan(8 * 1024 * 1024)
+  })
+})
+
+describe('PeerDrive free relay pacing', () => {
+  const RELAY_HOST = '203.0.113.5'
+  const RELAY_KEY = 'ab'.repeat(32)
+
+  const relayedPair = (): [PeerSocket, PeerSocket] => {
+    const [a, b] = socketPair()
+    ;(a as unknown as { rawStream: { remoteHost?: string } }).rawStream.remoteHost = RELAY_HOST
+    return [a, b]
+  }
+
+  const pacedBytes = async (
+    [socketA, socketB]: [PeerSocket, PeerSocket],
+    setup?: (sender: PeerDrive) => void
+  ) => {
+    const limiter = new RateLimiter(Infinity)
+    const take = vi.spyOn(limiter, 'take')
+    const senderSide = PeerDrive.create(socketA, limiter)!
+    const receiverSide = PeerDrive.create(socketB)!
+    setup?.(senderSide)
+
+    const [src] = await sourceFile('in.bin', 300 * 1024)
+    const receiver = new ReceiverSession(
+      new MemoryWriter('/saved/in.bin'),
+      receiverSide.session('f'),
+      {
+        transferId: 'f'
+      }
+    )
+    const sender = new SenderSession(new DiskReader(src), senderSide.session('f'), {
+      transferId: 'f',
+      name: 'in.bin'
+    })
+    await Promise.all([receiver.receive(), sender.start()])
+
+    return take.mock.calls.reduce((total, [bytes]) => total + bytes, 0)
+  }
+
+  beforeEach(() => {
+    configureRelay({ relays: [{ keyHex: RELAY_KEY, host: RELAY_HOST }], proToken: null })
+  })
+
+  afterEach(() => {
+    configureRelay({ relays: [], proToken: null })
+  })
+
+  it('paces every byte sent through an official relay when neither side is Pro', async () => {
+    expect(await pacedBytes(relayedPair())).toBe(300 * 1024)
+  })
+
+  it('does not pace direct connections', async () => {
+    expect(await pacedBytes(socketPair())).toBe(0)
+  })
+
+  it('does not pace when this device is Pro', async () => {
+    configureRelay({ proToken: 'token' })
+    expect(await pacedBytes(relayedPair())).toBe(0)
+  })
+
+  it('does not pace when the other device is Pro', async () => {
+    expect(await pacedBytes(relayedPair(), (sender) => sender.setPeerPro(true))).toBe(0)
   })
 })

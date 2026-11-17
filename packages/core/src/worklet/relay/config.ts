@@ -223,10 +223,18 @@ export function relayThrough(force: boolean, swarm?: unknown): Uint8Array[] | nu
   return keys.length > 0 ? keys : null
 }
 
-export function isRelayHost(host: string | null | undefined): boolean {
+function hostIn(relays: RelayEntry[], host: string | null | undefined): boolean {
   if (!host) return false
   const wanted = bareHost(host)
-  return [...state.relays, ...state.proRelays, ...state.customRelays].some((r) => r.host === wanted)
+  return relays.some((r) => r.host === wanted)
+}
+
+export function isRelayHost(host: string | null | undefined): boolean {
+  return hostIn([...state.relays, ...state.proRelays, ...state.customRelays], host)
+}
+
+export function isOfficialRelayHost(host: string | null | undefined): boolean {
+  return hostIn([...state.relays, ...state.proRelays], host)
 }
 
 export function webRelayKeyForHost(host: string): Uint8Array | null {

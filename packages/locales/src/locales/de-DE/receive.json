@@ -64,9 +64,6 @@
     "sessionEnded": {
       "title": "Sitzung beendet",
       "description": "Kehren Sie zurück, um eine neue Übertragung zu starten."
-    },
-    "relayLimit": {
-      "description": "Diese Übertragung ist größer als {{limit}} und läuft über das Relay. Holen Sie sich Pro, um sie zu empfangen, oder nutzen Sie ein Netzwerk, in dem sich beide Geräte direkt verbinden können."
     }
   },
   "panel": {
@@ -191,5 +188,16 @@
       "title": "Verbindung fehlgeschlagen",
       "description": "Eine direkte Verbindung hat nicht funktioniert und das Relay ist ausgelastet. Versuchen Sie es auf einem der Geräte mit einem anderen Netzwerk."
     }
+  },
+  "relayLimit": {
+    "free": "Relay ist bis {{limit}} kostenlos",
+    "locked": "Über dem kostenlosen Relay-Limit",
+    "unlocked": "Mit Pro freigeschaltet. Alles kann heruntergeladen werden.",
+    "downloadSome": "{{files}} herunterladen ({{size}})",
+    "directTitle": "Direkte Verbindung herstellen",
+    "directSameWifi": "Verbinden Sie beide Geräte mit demselben WLAN",
+    "directVpn": "Oder schalten Sie auf beiden das VPN aus",
+    "directFree": "Direkte Übertragungen sind kostenlos und unbegrenzt.",
+    "directOwnRelay": "Sie können auch Ihr eigenes Relay betreiben oder das Relay in den Relay-Einstellungen ausschalten."
   }
 }

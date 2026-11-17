@@ -74,7 +74,8 @@
     "shareMessage": "透過 AlterSend 分享了 {{items}}——開啟連結即可下載：\n\n{{link}}",
     "linkHint": "每次傳輸最多 {{limit}}",
     "connectedViaBrowser": "透過瀏覽器連線",
-    "relayLimit": "有裝置透過中繼連線。免費中繼傳輸最多 {{limit}}。"
+    "linkLimitTitle": "網頁連結免費額度為 {{limit}}",
+    "linkLimitBody": "此傳輸大小為 {{size}}。取得 Pro 即可透過連結分享，或將代碼傳給已安裝 App 的人。"
   },
   "errors": {
     "folderUnsupported": "尚不支持文件夹。请仅选择文件。",
@@ -101,7 +102,11 @@
     "invite": "邀請",
     "inviting": "正在邀請…",
     "sent": "已傳送",
-    "deviceOffline": "裝置離線 — 請重試"
+    "deviceOffline": "裝置離線 — 請重試",
+    "direct": "直接",
+    "relay": "中繼",
+    "relayLimited": "中繼（最多 {{limit}}）",
+    "pro": "Pro"
   },
   "dropzone": {
     "addTitle": "要新增什麼？",

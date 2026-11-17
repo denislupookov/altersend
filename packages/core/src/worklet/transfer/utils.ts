@@ -1,3 +1,5 @@
+import type { PeerSocket } from 'hyperswarm'
+
 export function getDirname(filePath: string) {
   const normalizedPath = filePath.replace(/\\/g, '/')
   const lastSlashIndex = normalizedPath.lastIndexOf('/')
@@ -108,4 +110,8 @@ export function onAbort(signal: AbortLike | undefined, abort: () => void): () =>
   }
   signal.addEventListener('abort', abort)
   return () => signal.removeEventListener('abort', abort)
+}
+
+export function remoteHostOf(socket: PeerSocket): string | undefined {
+  return (socket as unknown as { rawStream?: { remoteHost?: string } }).rawStream?.remoteHost
 }

@@ -5,10 +5,17 @@ interface PopoverProps {
   trigger: React.ReactNode
   children: (close: () => void) => React.ReactNode
   align?: 'left' | 'right'
+  side?: 'bottom' | 'top'
   variant?: 'menu' | 'plain'
 }
 
-export function Popover({ trigger, children, align = 'right', variant = 'menu' }: PopoverProps) {
+export function Popover({
+  trigger,
+  children,
+  align = 'right',
+  side = 'bottom',
+  variant = 'menu'
+}: PopoverProps) {
   const [open, setOpen] = useState(false)
   const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -41,15 +48,20 @@ export function Popover({ trigger, children, align = 'right', variant = 'menu' }
       ? 'min-w-[180px] overflow-hidden rounded-2xl border border-border-primary bg-background-subtle p-1 shadow-[0_8px_24px_color-mix(in_oklab,var(--as-color-scrim)_35%,transparent)]'
       : 'rounded-2xl shadow-lg'
 
+  const verticalFor = (rect: DOMRect): React.CSSProperties =>
+    side === 'top' ? { bottom: window.innerHeight - rect.top + 6 } : { top: rect.bottom + 2 }
+
   const posStyle: React.CSSProperties = anchorRect
     ? variant === 'plain'
-      ? { top: anchorRect.bottom + 2, left: anchorRect.left, width: anchorRect.width }
+      ? { ...verticalFor(anchorRect), left: anchorRect.left, width: anchorRect.width }
       : align === 'right'
-        ? { top: anchorRect.bottom + 2, right: window.innerWidth - anchorRect.right }
-        : { top: anchorRect.bottom + 2, left: anchorRect.left }
+        ? { ...verticalFor(anchorRect), right: window.innerWidth - anchorRect.right }
+        : { ...verticalFor(anchorRect), left: anchorRect.left }
     : {}
 
-  const transformOrigin = variant === 'plain' || align === 'left' ? 'top left' : 'top right'
+  const originY = side === 'top' ? 'bottom' : 'top'
+  const originX = variant === 'plain' || align === 'left' ? 'left' : 'right'
+  const transformOrigin = `${originY} ${originX}`
 
   return (
     <div ref={triggerRef}>

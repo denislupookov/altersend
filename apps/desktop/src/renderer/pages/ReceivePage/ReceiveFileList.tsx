@@ -5,9 +5,11 @@ import {
   formatTransferRate,
   getDownloadRowLabels,
   getOfferKey,
+  isReceiveRowLocked,
   useCopiedFlag,
   useReceiveActions,
-  useReceiveDownloads
+  useReceiveDownloads,
+  type ReceiveRow
 } from '@altersend/domain'
 import { TransferActionGroup } from '../../components'
 import { bridgeApi } from '../../api/bridgeApi'
@@ -25,13 +27,25 @@ interface ReceiveFileListProps {
   pendingLabel?: string
   hideFilesTitle?: boolean
   footer?: ReactNode
+  rows?: ReceiveRow[]
+  lockedKeys?: ReadonlySet<string>
+  rowsFooter?: ReactNode
 }
 
-export function ReceiveFileList({ pendingLabel, hideFilesTitle, footer }: ReceiveFileListProps) {
-  const { t } = useTranslation(['receive', 'common', 'errors'])
+export function ReceiveFileList({
+  pendingLabel,
+  hideFilesTitle,
+  footer,
+  rows,
+  lockedKeys,
+  rowsFooter
+}: ReceiveFileListProps) {
+  const { t } = useTranslation(['receive', 'common', 'errors', 'send'])
   const { copiedId, flashCopied } = useCopiedFlag()
   const downloads = useReceiveDownloads()
   const actions = useReceiveActions(downloads)
+  const visibleRows = rows ?? downloads.rows
+  const lock = { label: t('receive:relayLimit.locked'), tag: t('send:peer.pro') }
 
   const copyText = (id: string, content: string) => {
     navigator.clipboard.writeText(content).catch((err: unknown) => {
@@ -43,12 +57,13 @@ export function ReceiveFileList({ pendingLabel, hideFilesTitle, footer }: Receiv
   return (
     <div className='flex h-full min-h-0 w-full flex-1 flex-col'>
       <div className='flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto pr-1'>
-        {downloads.rows.length > 0 ? (
+        {visibleRows.length > 0 ? (
           <RowGroup title={hideFilesTitle ? undefined : t('common:files.files')}>
-            {downloads.rows.map((row, index) => (
+            {visibleRows.map((row, index) => (
               <DownloadRow
                 key={rowKey(row)}
                 row={row}
+                locked={lockedKeys && isReceiveRowLocked(row, lockedKeys) ? lock : undefined}
                 states={downloads.states}
                 rates={downloads.rates}
                 rateLabelFor={(rate) => formatTransferRate(rate, t)}
@@ -64,6 +79,7 @@ export function ReceiveFileList({ pendingLabel, hideFilesTitle, footer }: Receiv
                 onResumeFolder={actions.resumeFolder}
               />
             ))}
+            {rowsFooter}
           </RowGroup>
         ) : null}
 

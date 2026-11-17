@@ -64,9 +64,6 @@
     "sessionEnded": {
       "title": "会议结束",
       "description": "返回开始新的传输。"
-    },
-    "relayLimit": {
-      "description": "此传输超过 {{limit}}，且经由中继。获取 Pro 即可接收，或换一个两台设备能直接连接的网络再试。"
     }
   },
   "panel": {
@@ -191,5 +188,16 @@
       "title": "无法连接",
       "description": "直连未成功，且中继繁忙。请在任一设备上换一个网络。"
     }
+  },
+  "relayLimit": {
+    "free": "中继免费额度为 {{limit}}",
+    "locked": "超出免费中继额度",
+    "unlocked": "已通过 Pro 解锁，现在可以下载全部文件。",
+    "downloadSome": "下载 {{files}}（{{size}}）",
+    "directTitle": "建立直接连接",
+    "directSameWifi": "让两台设备连接同一个 Wi-Fi",
+    "directVpn": "或在两台设备上关闭 VPN",
+    "directFree": "直接传输免费且不限大小。",
+    "directOwnRelay": "你也可以在中继设置中使用自己的中继，或关闭中继。"
   }
 }

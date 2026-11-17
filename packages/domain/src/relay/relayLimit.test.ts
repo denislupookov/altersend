@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { IncomingFileOffer } from '@altersend/core'
 import { NATIVE_RELAY_MAX_BYTES } from '../constants/transfer'
-import { exceedsFreeRelay, isReceiveRelayLimited, isSendRelayLimited } from './relayLimit'
+import { exceedsFreeRelay, isReceiveRelayLimited, isRelayLimited } from './relayLimit'
 
 const PEER = 'peer-a'
 const OVER = NATIVE_RELAY_MAX_BYTES + 1
@@ -20,15 +20,6 @@ function receiveState(overrides: Partial<Parameters<typeof isReceiveRelayLimited
   }
 }
 
-function sendState(overrides: Partial<Parameters<typeof isSendRelayLimited>[0]> = {}) {
-  return {
-    connectedPeers: { [PEER]: { peerKey: PEER, connectedAt: 1 } },
-    connectionTypes: { [PEER]: 'relay' as const },
-    proPeers: {},
-    ...overrides
-  }
-}
-
 describe('exceedsFreeRelay', () => {
   it('allows up to 1 GB for free', () => {
     expect(exceedsFreeRelay(NATIVE_RELAY_MAX_BYTES, false)).toBe(false)
@@ -37,6 +28,15 @@ describe('exceedsFreeRelay', () => {
 
   it('never limits Pro', () => {
     expect(exceedsFreeRelay(OVER * 100, true)).toBe(false)
+  })
+})
+
+describe('isRelayLimited', () => {
+  it('only limits relayed connections without Pro', () => {
+    expect(isRelayLimited('relay', OVER, false)).toBe(true)
+    expect(isRelayLimited('direct', OVER, false)).toBe(false)
+    expect(isRelayLimited(null, OVER, false)).toBe(false)
+    expect(isRelayLimited('relay', OVER, true)).toBe(false)
   })
 })
 
@@ -67,26 +67,5 @@ describe('isReceiveRelayLimited', () => {
 
   it('does nothing before a sender is known', () => {
     expect(isReceiveRelayLimited(receiveState({ transferPeerKey: null }), false)).toBe(false)
-  })
-})
-
-describe('isSendRelayLimited', () => {
-  it('flags a relayed receiver without Pro', () => {
-    expect(isSendRelayLimited(sendState(), OVER, false)).toBe(true)
-  })
-
-  it('ignores receivers that already left', () => {
-    const state = sendState({
-      connectedPeers: { [PEER]: { peerKey: PEER, connectedAt: 1, disconnectedAt: 2 } }
-    })
-    expect(isSendRelayLimited(state, OVER, false)).toBe(false)
-  })
-
-  it('lets a Pro receiver through', () => {
-    expect(isSendRelayLimited(sendState({ proPeers: { [PEER]: true } }), OVER, false)).toBe(false)
-  })
-
-  it('lets a Pro sender through', () => {
-    expect(isSendRelayLimited(sendState(), OVER, true)).toBe(false)
   })
 })

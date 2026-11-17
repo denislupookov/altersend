@@ -64,9 +64,6 @@
     "sessionEnded": {
       "title": "Séance terminée",
       "description": "Revenez pour démarrer un nouveau transfert."
-    },
-    "relayLimit": {
-      "description": "Ce transfert dépasse {{limit}} et passe par le relais. Passez à Pro pour le recevoir, ou essayez un réseau où les deux appareils peuvent se connecter directement."
     }
   },
   "panel": {
@@ -191,5 +188,16 @@
       "title": "Connexion impossible",
       "description": "La connexion directe n’a pas fonctionné et le relais est saturé. Essayez un autre réseau sur l’un des appareils."
     }
+  },
+  "relayLimit": {
+    "free": "Le relais est gratuit jusqu'à {{limit}}",
+    "locked": "Au-delà de la limite gratuite du relais",
+    "unlocked": "Débloqué avec Pro. Tout peut être téléchargé.",
+    "downloadSome": "Télécharger {{files}} ({{size}})",
+    "directTitle": "Obtenir une connexion directe",
+    "directSameWifi": "Connectez les deux appareils au même Wi-Fi",
+    "directVpn": "Ou désactivez le VPN sur les deux",
+    "directFree": "Les transferts directs sont gratuits et sans limite.",
+    "directOwnRelay": "Vous pouvez aussi utiliser votre propre relais, ou désactiver le relais, dans les réglages du relais."
   }
 }

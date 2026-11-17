@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Linking, View, StyleSheet } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import { DownloadRow, ReceivedTextRow, RowGroup, rowKey, useTheme } from '@altersend/components'
@@ -5,9 +6,11 @@ import {
   formatTransferRate,
   getDownloadRowLabels,
   getOfferKey,
+  isReceiveRowLocked,
   useCopiedFlag,
   useReceiveActions,
-  useReceiveDownloads
+  useReceiveDownloads,
+  type ReceiveRow
 } from '@altersend/domain'
 import { useTranslation } from '@altersend/locales'
 import { lightTap } from '@/src/haptics'
@@ -24,15 +27,26 @@ function withTap<Args extends unknown[]>(action: (...args: Args) => void) {
 interface ReceiveIncomingViewProps {
   pendingLabel?: string
   hideFilesTitle?: boolean
+  rows?: ReceiveRow[]
+  lockedKeys?: ReadonlySet<string>
+  rowsFooter?: ReactNode
 }
 
-export function ReceiveIncomingView({ pendingLabel, hideFilesTitle }: ReceiveIncomingViewProps) {
-  const { t } = useTranslation(['receive', 'common', 'errors'])
+export function ReceiveIncomingView({
+  pendingLabel,
+  hideFilesTitle,
+  rows,
+  lockedKeys,
+  rowsFooter
+}: ReceiveIncomingViewProps) {
+  const { t } = useTranslation(['receive', 'common', 'errors', 'send'])
   const { theme } = useTheme()
   const c = theme.colors
   const { copiedId, flashCopied } = useCopiedFlag()
   const downloads = useReceiveDownloads()
   const actions = useReceiveActions(downloads)
+  const visibleRows = rows ?? downloads.rows
+  const lock = { label: t('receive:relayLimit.locked'), tag: t('send:peer.pro') }
 
   const copyText = (id: string, content: string) => {
     void Clipboard.setStringAsync(content)
@@ -54,10 +68,11 @@ export function ReceiveIncomingView({ pendingLabel, hideFilesTitle }: ReceiveInc
     <View style={styles.container}>
       {downloads.hasFiles ? (
         <RowGroup title={hideFilesTitle ? undefined : t('common:files.files')}>
-          {downloads.rows.map((row, index) => (
+          {visibleRows.map((row, index) => (
             <DownloadRow
               key={rowKey(row)}
               row={row}
+              locked={lockedKeys && isReceiveRowLocked(row, lockedKeys) ? lock : undefined}
               states={downloads.states}
               rates={downloads.rates}
               rateLabelFor={(rate) => formatTransferRate(rate, t)}
@@ -72,6 +87,7 @@ export function ReceiveIncomingView({ pendingLabel, hideFilesTitle }: ReceiveInc
               onResumeFolder={withTap(actions.resumeFolder)}
             />
           ))}
+          {rowsFooter}
         </RowGroup>
       ) : null}
 

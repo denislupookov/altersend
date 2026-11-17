@@ -74,7 +74,8 @@
     "shareMessage": "{{items}} compartilhados com você via AlterSend — abra para baixar:\n\n{{link}}",
     "linkHint": "Até {{limit}} por transferência",
     "connectedViaBrowser": "Conectado pelo navegador",
-    "relayLimit": "Um dispositivo está conectado pelo retransmissor. Transferências gratuitas pelo retransmissor vão até {{limit}}."
+    "linkLimitTitle": "Links da web são grátis até {{limit}}",
+    "linkLimitBody": "Esta transferência tem {{size}}. Obtenha o Pro para compartilhá-la como link ou envie o código para alguém que tenha o app."
   },
   "errors": {
     "folderUnsupported": "As pastas ainda não são suportadas. Selecione apenas arquivos.",
@@ -101,7 +102,11 @@
     "invite": "Convidar",
     "inviting": "Convidando…",
     "sent": "Enviado",
-    "deviceOffline": "Dispositivo off-line — tente novamente"
+    "deviceOffline": "Dispositivo off-line — tente novamente",
+    "direct": "Direta",
+    "relay": "Retransmissor",
+    "relayLimited": "Retransmissor, até {{limit}}",
+    "pro": "Pro"
   },
   "dropzone": {
     "addTitle": "O que você quer adicionar?",

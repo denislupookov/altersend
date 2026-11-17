@@ -8,6 +8,9 @@ import {
   type DriveChannel
 } from '@altersend/drive'
 import { DRIVE_PROTOCOL, chunkEncoding, type ChunkFrame } from '@altersend/drive/transport'
+import { isOfficialRelayHost, proToken } from '../relay/config'
+import { RateLimiter } from './rate-limiter'
+import { remoteHostOf } from './utils'
 
 interface Session {
   onMessage?: (message: ControlMessage) => void
@@ -18,6 +21,8 @@ interface Session {
 type ProtomuxChannelLike = NonNullable<ReturnType<Protomux['createChannel']>>
 
 export const PEER_DISCONNECTED_REASON = 'Peer disconnected'
+
+const FREE_RELAY_BYTES_PER_SECOND = 1024 ** 2
 
 function cancelForDisconnect(transferId: string): ControlMessage {
   return { type: 'cancel', transferId, reason: PEER_DISCONNECTED_REASON }
@@ -33,12 +38,15 @@ export class PeerDrive {
   private inFlightBytes = 0
   private readonly sends = new Map<string, { abort: AbortController; done: Promise<void> }>()
   private destroyed = false
+  private peerPro = false
+  private readonly relayLimiter: RateLimiter
 
   readonly supported: Promise<boolean>
 
-  private constructor(channel: ProtomuxChannelLike, socket: PeerSocket) {
+  private constructor(channel: ProtomuxChannelLike, socket: PeerSocket, relayLimiter: RateLimiter) {
     this.channel = channel
     this.socket = socket
+    this.relayLimiter = relayLimiter
     socket.on('drain', this.onDrain)
     this.control = channel.addMessage<ControlMessage>({
       encoding: c.json,
@@ -58,9 +66,21 @@ export class PeerDrive {
     this.supported = channel.fullyOpened()
   }
 
-  static create(socket: PeerSocket): PeerDrive | null {
+  static create(
+    socket: PeerSocket,
+    relayLimiter = new RateLimiter(FREE_RELAY_BYTES_PER_SECOND)
+  ): PeerDrive | null {
     const channel = Protomux.from(socket).createChannel({ protocol: DRIVE_PROTOCOL })
-    return channel ? new PeerDrive(channel, socket) : null
+    return channel ? new PeerDrive(channel, socket, relayLimiter) : null
+  }
+
+  setPeerPro(pro: boolean): void {
+    this.peerPro = pro
+  }
+
+  private onFreeRelay(): boolean {
+    if (this.peerPro || proToken() !== null) return false
+    return isOfficialRelayHost(remoteHostOf(this.socket))
   }
 
   session(fileId: string): DriveChannel {
@@ -83,6 +103,7 @@ export class PeerDrive {
       },
       bufferedAmount: () => this.outstandingBytes(),
       whenWritable: () => this.whenWritable(),
+      pace: (bytes) => (this.onFreeRelay() ? this.relayLimiter.take(bytes) : Promise.resolve()),
       close: () => {
         this.sessions.delete(fileId)
       }

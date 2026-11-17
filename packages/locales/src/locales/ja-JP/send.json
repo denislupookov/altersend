@@ -74,7 +74,8 @@
     "shareMessage": "{{items}} が AlterSend で共有されました。リンクを開くとダウンロードできます。\n\n{{link}}",
     "linkHint": "1 回の転送につき最大 {{limit}}",
     "connectedViaBrowser": "ブラウザで接続",
-    "relayLimit": "デバイスがリレー経由で接続されています。無料のリレー転送は最大 {{limit}} です。"
+    "linkLimitTitle": "Web リンクは {{limit}} まで無料です",
+    "linkLimitBody": "この転送は {{size}} です。リンクで共有するには Pro を購入するか、アプリを持っている相手にコードを送ってください。"
   },
   "errors": {
     "folderUnsupported": "フォルダはまだ対応していません。ファイルのみ選択してください。",
@@ -101,7 +102,11 @@
     "invite": "招待",
     "inviting": "招待中…",
     "sent": "送信済み",
-    "deviceOffline": "デバイスはオフラインです — もう一度お試しください"
+    "deviceOffline": "デバイスはオフラインです — もう一度お試しください",
+    "direct": "直接",
+    "relay": "リレー",
+    "relayLimited": "リレー（最大 {{limit}}）",
+    "pro": "Pro"
   },
   "dropzone": {
     "addTitle": "何を追加しますか？",

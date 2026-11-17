@@ -113,7 +113,7 @@ export interface ReceiveActions {
   pauseFolder: (offers: ReceiveFileOffer[]) => void
   resumeFolder: (offers: ReceiveFileOffer[]) => void
   resumeAll: () => Promise<void>
-  downloadInto: (targetDir: string) => Promise<void>
+  downloadInto: (targetDir: string, offers?: ReceiveFileOffer[]) => Promise<void>
   replaceWith: (offer: ReceiveFileOffer, targetPath: string) => Promise<void>
 }
 
@@ -166,9 +166,9 @@ export function useReceiveActions(downloads: ReceiveDownloads): ReceiveActions {
   }, [pausedOffers, states])
 
   const downloadInto = useCallback(
-    async (targetDir: string) => {
-      if (pendingOffers.length === 0) return
-      await downloadFiles(createDirectoryDownloadRequests(pendingOffers, targetDir))
+    async (targetDir: string, offers: ReceiveFileOffer[] = pendingOffers) => {
+      if (offers.length === 0) return
+      await downloadFiles(createDirectoryDownloadRequests(offers, targetDir))
     },
     [pendingOffers]
   )

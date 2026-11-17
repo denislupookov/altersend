@@ -24,6 +24,7 @@ export interface DriveChannel {
   onChunk(handler: (header: ChunkHeader, data: Uint8Array) => void): void
   bufferedAmount(): number
   whenWritable?(): Promise<void>
+  pace?(bytes: number): Promise<void>
   close(): void
 }
 

@@ -74,7 +74,8 @@
     "shareMessage": "{{items}} shared with you via AlterSend — open to download:\n\n{{link}}",
     "linkHint": "Up to {{limit}} per transfer",
     "connectedViaBrowser": "Connected via browser",
-    "relayLimit": "A device is connected through the relay. Free relayed transfers are up to {{limit}}."
+    "linkLimitTitle": "Web links are free up to {{limit}}",
+    "linkLimitBody": "This transfer is {{size}}. Get Pro to share it as a link, or send the code to someone with the app."
   },
   "errors": {
     "folderUnsupported": "Folders aren't supported yet. Please select files only.",
@@ -101,7 +102,11 @@
     "invite": "Invite",
     "inviting": "Inviting…",
     "sent": "Sent",
-    "deviceOffline": "Device offline — try again"
+    "deviceOffline": "Device offline — try again",
+    "direct": "Direct",
+    "relay": "Relay",
+    "relayLimited": "Relay, up to {{limit}}",
+    "pro": "Pro"
   },
   "dropzone": {
     "addTitle": "What do you want to add?",

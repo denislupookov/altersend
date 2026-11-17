@@ -123,6 +123,17 @@ export const styles = css.create({
     display: 'flex',
     flexDirection: 'column'
   },
+  labelRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tokens.space2,
+    minWidth: 0
+  },
+  labelShrink: {
+    minWidth: 0,
+    flexShrink: 1
+  },
   label: {
     margin: 0,
     overflow: 'hidden',
@@ -172,6 +183,9 @@ export const styles = css.create({
   },
   subtitleInfo: {
     color: tokens.colorInfo
+  },
+  subtitleWarning: {
+    color: tokens.colorWarning
   },
   statusGroup: {
     display: 'flex',

@@ -74,7 +74,8 @@
     "shareMessage": "{{items}} compartidos contigo con AlterSend: ábrelo para descargar:\n\n{{link}}",
     "linkHint": "Hasta {{limit}} por transferencia",
     "connectedViaBrowser": "Conectado por navegador",
-    "relayLimit": "Un dispositivo está conectado a través del relé. Las transferencias gratuitas por el relé tienen un límite de {{limit}}."
+    "linkLimitTitle": "Los enlaces web son gratis hasta {{limit}}",
+    "linkLimitBody": "Esta transferencia ocupa {{size}}. Hazte Pro para compartirla como enlace o envía el código a alguien que tenga la app."
   },
   "errors": {
     "folderUnsupported": "Las carpetas aún no son compatibles. Seleccione solo archivos.",
@@ -101,7 +102,11 @@
     "invite": "Invitar",
     "inviting": "Invitando…",
     "sent": "Enviado",
-    "deviceOffline": "Dispositivo sin conexión: inténtalo de nuevo"
+    "deviceOffline": "Dispositivo sin conexión: inténtalo de nuevo",
+    "direct": "Directa",
+    "relay": "Relé",
+    "relayLimited": "Relé, hasta {{limit}}",
+    "pro": "Pro"
   },
   "dropzone": {
     "addTitle": "¿Qué quieres añadir?",

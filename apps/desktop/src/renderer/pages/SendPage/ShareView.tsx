@@ -8,19 +8,11 @@ import {
   formatItemsCount,
   formatTextSnippetPreview,
   groupSelectedFiles,
-  NATIVE_RELAY_MAX_LABEL,
   useCopiedFlag,
-  useSendRelayLimit,
-  useShareViewModel
+  useShareViewModel,
+  type ConnectedDeviceRow
 } from '@altersend/domain'
-import {
-  Button,
-  ErrorBanner,
-  LinkCard,
-  LinkRow,
-  WaitingRadar,
-  useTheme
-} from '@altersend/components'
+import { Button, LinkCard, LinkRow, ProTag, WaitingRadar, useTheme } from '@altersend/components'
 import {
   ChevronsUpDownIcon,
   deviceIcon,
@@ -31,7 +23,6 @@ import {
 } from '@altersend/components/icons'
 import { useTranslation } from '@altersend/locales'
 import { Popover, QRCode, QRModal, useToast } from '../../components'
-import { openSettingsPanel } from '../../components/Settings/settingsControl'
 import { CopyLinkButton } from './CopyLinkButton'
 import { TopicCopyButton } from './TopicCopyButton'
 
@@ -65,9 +56,26 @@ export function ShareView() {
   const hasConnectedDevices = vm.connectedCount > 0
   const pro = useSubscriptionStore((state) => state.active)
   const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize, pro)
-  const relayLimited = useSendRelayLimit(vm.totalSize)
   const fileRows = groupSelectedFiles(vm.files)
   const singleFolder = fileRows.length === 1 && fileRows[0].kind === 'folder' ? fileRows[0] : null
+
+  const renderConnectedTrailing = (row: ConnectedDeviceRow) => {
+    if (row.action === 'pair') {
+      return (
+        <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>
+          {t('send:peer.pair')}
+        </Button>
+      )
+    }
+    if (row.action === 'pair-requested') {
+      return (
+        <Button size='sm' variant='secondary' pill loading>
+          {t('send:peer.requested')}
+        </Button>
+      )
+    }
+    return undefined
+  }
 
   const copyTopic = async () => {
     if (!vm.topic) return
@@ -151,16 +159,6 @@ export function ShareView() {
   return (
     <>
       <div className='flex flex-col gap-6 pt-5'>
-        {relayLimited ? (
-          <ErrorBanner
-            message={t('send:connection.relayLimit', { limit: NATIVE_RELAY_MAX_LABEL })}
-            action={
-              <Button size='sm' variant='primary' onClick={() => openSettingsPanel('account')}>
-                {t('settings:account.getPro')}
-              </Button>
-            }
-          />
-        ) : null}
         {hasConnectedDevices ? (
           <div className='flex w-full gap-2'>
             <TopicCopyButton
@@ -173,6 +171,7 @@ export function ShareView() {
               topic={vm.topic}
               copied={copiedId === 'link'}
               locked={webLinkTooLarge}
+              totalSize={vm.totalSize}
               onCopy={() => void copyLink()}
             />
             <div className='flex h-12 w-12 shrink-0'>
@@ -241,6 +240,7 @@ export function ShareView() {
                     topic={vm.topic}
                     copied={copiedId === 'link'}
                     locked={webLinkTooLarge}
+                    totalSize={vm.totalSize}
                     onCopy={() => void copyLink()}
                   />
                 </div>
@@ -288,26 +288,14 @@ export function ShareView() {
                       }
                       iconBackground={Icon ? c.colorSurfacePrimary : c.colorInfoSubtle}
                       label={row.name}
+                      labelAccessory={
+                        row.peerPro ? <ProTag label={t('send:peer.pro')} /> : undefined
+                      }
                       subtitle={row.subtitle}
                       subtitleTone={row.subtitleTone}
                       status={row.status}
                       progressPercent={row.progressPercent}
-                      trailing={
-                        row.action === 'pair' ? (
-                          <Button
-                            onClick={() => vm.pair(row.peerKey)}
-                            size='sm'
-                            variant='secondary'
-                            pill
-                          >
-                            {t('send:peer.pair')}
-                          </Button>
-                        ) : row.action === 'pair-requested' ? (
-                          <Button size='sm' variant='secondary' pill loading>
-                            {t('send:peer.requested')}
-                          </Button>
-                        ) : undefined
-                      }
+                      trailing={renderConnectedTrailing(row)}
                       isLast={isLast}
                     />
                   )

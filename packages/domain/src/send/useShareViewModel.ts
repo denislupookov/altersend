@@ -16,6 +16,10 @@ import {
   startSendSession
 } from '../transfer/commands'
 import { useTransferStore } from '../transfer/store'
+import type { TransferConnectionType } from '../transfer/types'
+import { useSubscriptionStore } from '../account/runtime/store'
+import { isRelayLimited } from '../relay/relayLimit'
+import { NATIVE_RELAY_MAX_LABEL } from '../constants/transfer'
 import { applyPairState, getActivePeerProgress, getPeerListEntries } from './peerListUi'
 import type { PairState, PeerListEntry, PeerListEntryWithPair } from './peerListUi'
 import type { Translate } from '../i18n'
@@ -25,7 +29,15 @@ const COPY_TOPIC_ID = 'topic'
 
 const PEER_JOIN_TOAST_DELAY_MS = 600
 
-export type SubtitleTone = 'muted' | 'success' | 'danger' | 'info'
+export type SubtitleTone = 'muted' | 'success' | 'danger' | 'info' | 'warning'
+
+type ConnectionBadge = TransferConnectionType | 'relay-limited'
+
+const CONNECTION_SUBTITLE: Record<ConnectionBadge, { key: string; tone: SubtitleTone }> = {
+  direct: { key: 'send:peer.direct', tone: 'success' },
+  relay: { key: 'send:peer.relay', tone: 'warning' },
+  'relay-limited': { key: 'send:peer.relayLimited', tone: 'warning' }
+}
 
 interface DeviceRowStatus {
   label: string
@@ -50,6 +62,8 @@ export interface ConnectedDeviceRow {
   progressPercent?: number
   status?: DeviceRowStatus
   action: 'pair' | 'pair-requested' | 'pair-done' | 'none'
+  connection: TransferConnectionType | null
+  peerPro: boolean
 }
 
 export interface OfflineDeviceRow {
@@ -133,7 +147,8 @@ function connectedDeviceSubtitle(
   entry: PeerListEntryWithPair,
   fileCount: number,
   t: Translate,
-  isOutdated: boolean
+  isOutdated: boolean,
+  badge: ConnectionBadge | null
 ): { subtitle: string; subtitleTone: SubtitleTone } {
   if (isOutdated) {
     return { subtitle: t('send:status.updateRequired'), subtitleTone: 'danger' }
@@ -143,6 +158,10 @@ function connectedDeviceSubtitle(
       subtitle: `${t('common:files.count', { count: fileCount })} downloaded`,
       subtitleTone: 'success'
     }
+  }
+  if (entry.status === 'online' && badge) {
+    const { key, tone } = CONNECTION_SUBTITLE[badge]
+    return { subtitle: `● ${t(key, { limit: NATIVE_RELAY_MAX_LABEL })}`, subtitleTone: tone }
   }
   if (entry.status === 'online') {
     return { subtitle: `● ${t('send:status.online')}`, subtitleTone: 'info' }
@@ -216,6 +235,9 @@ export function useShareViewModel(
   const connectedPeers = useTransferStore((s) => s.connectedPeers)
   const webPeers = useTransferStore((s) => s.webPeers)
   const outdatedPeers = useTransferStore((s) => s.outdatedPeers)
+  const connectionTypes = useTransferStore((s) => s.connectionTypes)
+  const proPeers = useTransferStore((s) => s.proPeers)
+  const selfPro = useSubscriptionStore((s) => s.active)
   const transferId = useTransferStore((s) => s.transferId)
   const pairStatus = useTransferStore((s) => s.remember.pairStatus)
   const peerDisplayNames = useTransferStore((s) => s.remember.peerDisplayNames)
@@ -280,14 +302,23 @@ export function useShareViewModel(
     [rememberedPeers, connectedKeySet, connectedDisplayNames]
   )
 
+  const sendBytes = useMemo(
+    () => fileOffers.reduce((sum, file) => sum + (file.size ?? 0), 0),
+    [fileOffers]
+  )
+
   const connectedRows: ConnectedDeviceRow[] = peerEntriesWithPair.map((entry) => {
     const isOutdated = Boolean(outdatedPeers[entry.peerKey])
     const isWeb = Boolean(webPeers[entry.peerKey])
+    const connection = isWeb || !entry.isConnected ? null : (connectionTypes[entry.peerKey] ?? null)
+    const peerPro = Boolean(proPeers[entry.peerKey])
+    const relayLimited = isRelayLimited(connection, sendBytes, selfPro || peerPro)
     const { subtitle, subtitleTone } = connectedDeviceSubtitle(
       entry,
       fileOffers.length,
       t,
-      isOutdated
+      isOutdated,
+      relayLimited ? 'relay-limited' : connection
     )
     const rememberedForPeer = rememberedPeers.find(
       (r: RememberedPeer) =>
@@ -306,7 +337,9 @@ export function useShareViewModel(
       subtitleTone,
       progressPercent: entry.status === 'downloading' ? entry.progressPercent : undefined,
       status: connectedDeviceStatus(entry, peerRates[entry.peerKey], t),
-      action: connectedAction(entry, isWeb, isOutdated)
+      action: connectedAction(entry, isWeb, isOutdated),
+      connection,
+      peerPro
     }
   })
 
@@ -416,7 +449,7 @@ export function useShareViewModel(
       relativePath: f.relativePath
     })),
     texts: textOffers.map((f) => ({ path: f.path, content: f.content ?? f.name })),
-    totalSize: fileOffers.reduce((sum, f) => sum + (f.size ?? 0), 0),
+    totalSize: sendBytes,
     devices,
     connectedCount: connectedRows.length,
     hasDevices: devices.length > 0,

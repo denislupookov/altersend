@@ -15,6 +15,7 @@ import {
 import { attachRelayDial } from '../relay/announce'
 import { whenRelayConfReady } from '../relay/conf'
 import { ConnectProgress, watchDialOpen, type ConnectProgressState } from './connect-progress'
+import { remoteHostOf } from './utils'
 
 type ConnectionType = 'direct' | 'relay'
 
@@ -150,9 +151,7 @@ export class TransferSwarm {
 
   private classifyConnection(socket: PeerSocket, peerKey: string): void {
     if (!this.callbacks.onConnectionType) return
-    const remoteHost = () =>
-      (socket as unknown as { rawStream?: { remoteHost?: string } }).rawStream?.remoteHost
-    const classify = (): ConnectionType => (isRelayHost(remoteHost()) ? 'relay' : 'direct')
+    const classify = (): ConnectionType => (isRelayHost(remoteHostOf(socket)) ? 'relay' : 'direct')
 
     let current = classify()
     this.callbacks.onConnectionType(peerKey, current)

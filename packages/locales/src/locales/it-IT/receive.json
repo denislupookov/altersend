@@ -64,9 +64,6 @@
     "sessionEnded": {
       "title": "La sessione è terminata",
       "description": "Ritorna per iniziare un nuovo trasferimento."
-    },
-    "relayLimit": {
-      "description": "Questo trasferimento supera {{limit}} e passa dal relay. Passa a Pro per riceverlo, oppure prova una rete in cui i due dispositivi possano connettersi direttamente."
     }
   },
   "panel": {
@@ -191,5 +188,16 @@
       "title": "Impossibile connettersi",
       "description": "La connessione diretta non è riuscita e il relay è occupato. Prova un'altra rete su uno dei dispositivi."
     }
+  },
+  "relayLimit": {
+    "free": "Il relay è gratuito fino a {{limit}}",
+    "locked": "Oltre il limite gratuito del relay",
+    "unlocked": "Sbloccato con Pro. Ora puoi scaricare tutto.",
+    "downloadSome": "Scarica {{files}} ({{size}})",
+    "directTitle": "Ottieni una connessione diretta",
+    "directSameWifi": "Collega entrambi i dispositivi alla stessa Wi-Fi",
+    "directVpn": "Oppure disattiva la VPN su entrambi",
+    "directFree": "I trasferimenti diretti sono gratuiti e senza limiti.",
+    "directOwnRelay": "Puoi anche usare un tuo relay, oppure disattivare il relay, nelle impostazioni del relay."
   }
 }

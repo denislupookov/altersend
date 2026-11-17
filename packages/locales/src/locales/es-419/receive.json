@@ -64,9 +64,6 @@
     "sessionEnded": {
       "title": "Sesión finalizada",
       "description": "Regrese para iniciar una nueva transferencia."
-    },
-    "relayLimit": {
-      "description": "Esta transferencia supera {{limit}} y pasa por el relé. Obtén Pro para recibirla o prueba una red en la que ambos dispositivos puedan conectarse directamente."
     }
   },
   "panel": {
@@ -191,5 +188,16 @@
       "title": "No se pudo conectar",
       "description": "La conexión directa no funcionó y el relé está ocupado. Prueba otra red en cualquiera de los dispositivos."
     }
+  },
+  "relayLimit": {
+    "free": "El relé es gratis hasta {{limit}}",
+    "locked": "Supera el límite gratuito del relé",
+    "unlocked": "Desbloqueado con Pro. Ya puedes descargar todo.",
+    "downloadSome": "Descargar {{files}} ({{size}})",
+    "directTitle": "Conseguir una conexión directa",
+    "directSameWifi": "Conecta ambos dispositivos a la misma red Wi-Fi",
+    "directVpn": "O desactiva la VPN en los dos",
+    "directFree": "Las transferencias directas son gratis y sin límite.",
+    "directOwnRelay": "También puedes usar tu propio relé o desactivar el relé en la configuración del relé."
   }
 }

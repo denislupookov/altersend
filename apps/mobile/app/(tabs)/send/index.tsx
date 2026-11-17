@@ -15,7 +15,7 @@ import {
 } from '@altersend/domain'
 import { continueShare, exceedsFileCountLimit } from '@altersend/domain'
 
-const SEND_FLOW_PATHS = new Set(['/send', '/send/preparing', '/send/share'])
+const SEND_FLOW_PATHS = new Set(['/send', '/send/share'])
 
 function NavigationController() {
   const router = useRouter()
@@ -25,22 +25,14 @@ function NavigationController() {
   const step = getSendStep({ draftPhase, isPeerConnected: connectionState === 'peer-connected' })
 
   useEffect(() => {
-    const target =
-      step === 'preparing' ? '/send/preparing' : isShareStep(step) ? '/send/share' : '/send'
+    const target = step === 'preparing' || isShareStep(step) ? '/send/share' : '/send'
 
     if (!SEND_FLOW_PATHS.has(pathname)) return
     if (pathname === target) return
 
-    if (target === '/send/preparing') {
-      if (pathname === '/send') router.push('/send/preparing')
-      else router.replace('/send/preparing')
-    } else if (target === '/send/share') {
-      if (pathname === '/send') router.push('/send/share')
-      else router.replace('/send/share')
-    } else if (
-      (pathname === '/send/preparing' || pathname === '/send/share') &&
-      router.canDismiss()
-    ) {
+    if (target === '/send/share') {
+      router.push('/send/share')
+    } else if (router.canDismiss()) {
       router.dismissAll()
     }
   }, [step, pathname, router])

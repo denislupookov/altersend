@@ -134,6 +134,7 @@ export class SenderSession {
         const { offset, length } = chunkRange(index, this.size, this.chunkSize)
         const data = await this.reader.read(offset, length)
 
+        await this.pace(data.length)
         await this.drain()
         if (this.settled) return
         this.channel.sendChunk({ transferId: this.opts.transferId, index }, data)
@@ -154,6 +155,11 @@ export class SenderSession {
     } finally {
       this.sending = false
     }
+  }
+
+  private async pace(bytes: number): Promise<void> {
+    const pacing = this.channel.pace?.(bytes)
+    if (pacing) await Promise.race([pacing, this.whenSettled()])
   }
 
   private async drain(): Promise<void> {

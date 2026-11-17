@@ -74,7 +74,8 @@
     "shareMessage": "{{items}}을(를) AlterSend로 공유했습니다. 링크를 열면 다운로드할 수 있습니다.\n\n{{link}}",
     "linkHint": "전송당 최대 {{limit}}",
     "connectedViaBrowser": "브라우저로 연결됨",
-    "relayLimit": "기기가 릴레이를 통해 연결되어 있습니다. 무료 릴레이 전송은 최대 {{limit}}입니다."
+    "linkLimitTitle": "웹 링크는 {{limit}}까지 무료입니다",
+    "linkLimitBody": "이 전송은 {{size}}입니다. 링크로 공유하려면 Pro를 시작하거나, 앱이 있는 사람에게 코드를 보내세요."
   },
   "errors": {
     "folderUnsupported": "폴더는 아직 지원되지 않습니다. 파일만 선택하세요.",
@@ -101,7 +102,11 @@
     "invite": "초대",
     "inviting": "초대 중…",
     "sent": "보냄",
-    "deviceOffline": "기기 오프라인 — 다시 시도하세요"
+    "deviceOffline": "기기 오프라인 — 다시 시도하세요",
+    "direct": "직접",
+    "relay": "릴레이",
+    "relayLimited": "릴레이(최대 {{limit}})",
+    "pro": "Pro"
   },
   "dropzone": {
     "addTitle": "무엇을 추가할까요?",

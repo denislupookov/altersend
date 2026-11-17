@@ -18,7 +18,7 @@ export type ButtonVariant =
   | 'light'
   | 'danger'
   | 'success'
-export type ButtonSize = 'sm' | 'md' | 'lg'
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 export interface ButtonProps extends Omit<ButtonElementProps, 'children' | 'style'> {
   children?: ReactNode
@@ -47,6 +47,7 @@ const pressedStyle = {
 } as const
 
 const textSize = {
+  xs: styles.textXs,
   sm: styles.textSm,
   md: styles.textMd,
   lg: styles.textLg
@@ -87,9 +88,10 @@ const pressedIconColor: Partial<
   success: 'colorBackground'
 }
 
-const spinnerSize: Record<ButtonSize, number> = { sm: 12, md: 14, lg: 16 }
+const spinnerSize: Record<ButtonSize, number> = { xs: 11, sm: 12, md: 14, lg: 16 }
 
 const iconOnlySize: Record<ButtonSize, (typeof styles)[keyof typeof styles]> = {
+  xs: styles.iconOnlyXs,
   sm: styles.iconOnlySm,
   md: styles.iconOnlyMd,
   lg: styles.iconOnlyLg

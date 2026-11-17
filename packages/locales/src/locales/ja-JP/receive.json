@@ -64,9 +64,6 @@
     "sessionEnded": {
       "title": "セッション終了",
       "description": "戻って新しい転送を開始してください。"
-    },
-    "relayLimit": {
-      "description": "この転送は {{limit}} を超えており、リレー経由です。受信するには Pro を購入するか、両方のデバイスが直接接続できるネットワークでお試しください。"
     }
   },
   "panel": {
@@ -191,5 +188,16 @@
       "title": "接続できませんでした",
       "description": "直接接続できず、リレーも混雑しています。どちらかのデバイスで別のネットワークを試してください。"
     }
+  },
+  "relayLimit": {
+    "free": "リレーは {{limit}} まで無料",
+    "locked": "無料のリレー上限を超えています",
+    "unlocked": "Pro でロックを解除しました。すべてダウンロードできます。",
+    "downloadSome": "{{files}}（{{size}}）をダウンロード",
+    "directTitle": "直接接続するには",
+    "directSameWifi": "両方のデバイスを同じ Wi-Fi に接続する",
+    "directVpn": "または両方で VPN をオフにする",
+    "directFree": "直接転送は無料で、容量制限もありません。",
+    "directOwnRelay": "リレー設定で、自分のリレーを使うか、リレーをオフにすることもできます。"
   }
 }

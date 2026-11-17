@@ -64,9 +64,6 @@
     "sessionEnded": {
       "title": "Session ended",
       "description": "Return to start a new transfer."
-    },
-    "relayLimit": {
-      "description": "This transfer is over {{limit}} and goes through the relay. Get Pro to receive it, or try a network where both devices can connect directly."
     }
   },
   "panel": {
@@ -191,5 +188,16 @@
       "title": "Couldn't connect",
       "description": "A direct connection didn't work and the relay is busy. Try a different network on either device."
     }
+  },
+  "relayLimit": {
+    "free": "Relay is free up to {{limit}}",
+    "locked": "Over the free relay limit",
+    "unlocked": "Unlocked with Pro. Everything can be downloaded.",
+    "downloadSome": "Download {{files}} ({{size}})",
+    "directTitle": "Get a direct connection",
+    "directSameWifi": "Put both devices on the same Wi-Fi",
+    "directVpn": "Or turn off VPN on both",
+    "directFree": "Direct transfers are free with no limit.",
+    "directOwnRelay": "You can also run your own relay, or turn the relay off, in Relay settings."
   }
 }

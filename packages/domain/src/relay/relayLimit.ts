@@ -1,26 +1,22 @@
 import type { IncomingFileOffer } from '@altersend/core'
 import { NATIVE_RELAY_MAX_BYTES } from '../constants/transfer'
-import type { TransferSessionState } from '../transfer/types'
+import type { TransferConnectionType, TransferSessionState } from '../transfer/types'
 
-type PeerRelayState = Pick<TransferSessionState, 'connectionTypes' | 'proPeers'>
-
-type ReceiveRelayState = PeerRelayState &
-  Pick<TransferSessionState, 'transferPeerKey' | 'incomingFileOffers'>
-
-type SendRelayState = PeerRelayState & Pick<TransferSessionState, 'connectedPeers'>
+type ReceiveRelayState = Pick<
+  TransferSessionState,
+  'connectionTypes' | 'proPeers' | 'transferPeerKey' | 'incomingFileOffers'
+>
 
 export function exceedsFreeRelay(totalBytes: number, pro: boolean): boolean {
   return !pro && totalBytes > NATIVE_RELAY_MAX_BYTES
 }
 
-function isPeerRelayLimited(
-  state: PeerRelayState,
-  peerKey: string,
+export function isRelayLimited(
+  connection: TransferConnectionType | null | undefined,
   totalBytes: number,
-  selfPro: boolean
+  pro: boolean
 ): boolean {
-  if (state.connectionTypes[peerKey] !== 'relay') return false
-  return exceedsFreeRelay(totalBytes, selfPro || !!state.proPeers[peerKey])
+  return connection === 'relay' && exceedsFreeRelay(totalBytes, pro)
 }
 
 function offeredBytes(offers: IncomingFileOffer[]): number {
@@ -30,15 +26,9 @@ function offeredBytes(offers: IncomingFileOffer[]): number {
 export function isReceiveRelayLimited(state: ReceiveRelayState, selfPro: boolean): boolean {
   const peerKey = state.transferPeerKey
   if (!peerKey) return false
-  return isPeerRelayLimited(state, peerKey, offeredBytes(state.incomingFileOffers), selfPro)
-}
-
-export function isSendRelayLimited(
-  state: SendRelayState,
-  totalBytes: number,
-  selfPro: boolean
-): boolean {
-  return Object.values(state.connectedPeers).some(
-    (peer) => !peer.disconnectedAt && isPeerRelayLimited(state, peer.peerKey, totalBytes, selfPro)
+  return isRelayLimited(
+    state.connectionTypes[peerKey],
+    offeredBytes(state.incomingFileOffers),
+    selfPro || !!state.proPeers[peerKey]
   )
 }

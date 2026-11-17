@@ -21,10 +21,11 @@ interface LinkRowBaseProps {
   iconBackground?: string
   label: string
   labelNode?: ReactNode
+  labelAccessory?: ReactNode
   labelFontFamily?: string
   size?: number
   subtitle?: string
-  subtitleTone?: 'muted' | 'faint' | 'success' | 'danger' | 'info'
+  subtitleTone?: 'muted' | 'faint' | 'success' | 'danger' | 'info' | 'warning'
   subtitleWrap?: boolean
   description?: string
   isActive?: boolean
@@ -39,6 +40,7 @@ interface LinkRowBaseProps {
   standalone?: boolean
   alignTop?: boolean
   disabled?: boolean
+  muted?: boolean
   status?: LinkRowStatus
   progress?: LinkRowProgressState
   progressPercent?: number
@@ -63,7 +65,8 @@ const subtitleToneStyle = {
   faint: styles.subtitleFaint,
   success: styles.subtitleSuccess,
   danger: styles.subtitleDanger,
-  info: styles.subtitleInfo
+  info: styles.subtitleInfo,
+  warning: styles.subtitleWarning
 } as const
 
 const statusToneStyle = {
@@ -89,6 +92,7 @@ export function LinkRow({
   iconBackground,
   label,
   labelNode,
+  labelAccessory,
   labelFontFamily,
   size,
   subtitle,
@@ -107,6 +111,7 @@ export function LinkRow({
   standalone = false,
   alignTop = false,
   disabled = false,
+  muted = false,
   status,
   progress,
   progressPercent,
@@ -116,6 +121,7 @@ export function LinkRow({
   const { theme } = useTheme()
   const { isPressed, pressHandlers } = usePressState()
   const interactive = !!onPress && !disabled
+  const dimmed = disabled || muted
   const kind = file ? getFileKind(label) : null
   const fileTone = kind ? fileTypeColors[kind] : null
   const renderIcon = (): ReactNode => {
@@ -125,13 +131,38 @@ export function LinkRow({
       <FileKindIcon
         kind={kind}
         size={compact ? 16 : 20}
-        color={disabled ? theme.colors.colorTextMuted : fileTone?.fg}
+        color={dimmed ? theme.colors.colorTextMuted : fileTone?.fg}
       />
+    )
+  }
+
+  const renderLabel = (): ReactNode => {
+    if (labelNode) return labelNode
+    const text = (
+      <html.p
+        style={[
+          styles.label,
+          dimmed && styles.labelDisabled,
+          compact && styles.labelCompact,
+          labelAccessory ? styles.labelShrink : null,
+          labelFontFamily ? ({ fontFamily: labelFontFamily } as never) : null
+        ]}
+      >
+        {label}
+      </html.p>
+    )
+    if (!labelAccessory) return text
+    return (
+      <html.div style={styles.labelRow}>
+        {text}
+        {labelAccessory}
+      </html.div>
     )
   }
 
   const resolveIconBoxBackground = (): string | undefined => {
     if (disabled) return theme.colors.colorBackgroundSubtle
+    if (muted) return theme.colors.colorSurfacePrimary
     return iconBackground ?? fileTone?.bg
   }
 
@@ -218,20 +249,7 @@ export function LinkRow({
         ) : null}
         <html.div style={styles.content}>
           <html.div style={styles.metaRow}>
-            <html.div style={styles.text}>
-              {labelNode ?? (
-                <html.p
-                  style={[
-                    styles.label,
-                    disabled && styles.labelDisabled,
-                    compact && styles.labelCompact,
-                    labelFontFamily ? ({ fontFamily: labelFontFamily } as never) : null
-                  ]}
-                >
-                  {label}
-                </html.p>
-              )}
-            </html.div>
+            <html.div style={styles.text}>{renderLabel()}</html.div>
 
             {status?.detail ? statusBadge : null}
           </html.div>

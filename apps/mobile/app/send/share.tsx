@@ -6,7 +6,7 @@ import { useTranslation } from '@altersend/locales'
 import { ConfirmDialog, Layout } from '@/src/components'
 import { mediumTap } from '@/src/haptics'
 import { useLeaveSessionConfirm } from '@/src/hooks/useLeaveSessionConfirm'
-import { ShareView } from '@/src/transfer/send'
+import { PreparingView, ShareView } from '@/src/transfer/send'
 
 const IOS_CONTINUED_TASK_VERSION = 26
 
@@ -27,6 +27,15 @@ export default function SendShareScreen() {
     clearSenderFlow()
   }, [])
   const { leaveDialog } = useLeaveSessionConfirm(handleEndSession)
+
+  if (step === 'preparing') {
+    return (
+      <Layout hasNativeHeader>
+        <PreparingView />
+        <ConfirmDialog {...leaveDialog} />
+      </Layout>
+    )
+  }
 
   return (
     <Layout

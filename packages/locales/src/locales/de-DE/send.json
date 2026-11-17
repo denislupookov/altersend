@@ -74,7 +74,8 @@
     "shareMessage": "{{items}} für dich über AlterSend freigegeben — zum Herunterladen öffnen:\n\n{{link}}",
     "linkHint": "Bis zu {{limit}} pro Übertragung",
     "connectedViaBrowser": "Über Browser verbunden",
-    "relayLimit": "Ein Gerät ist über das Relay verbunden. Kostenlose Übertragungen über das Relay sind auf {{limit}} begrenzt."
+    "linkLimitTitle": "Web-Links sind bis {{limit}} kostenlos",
+    "linkLimitBody": "Diese Übertragung ist {{size}} groß. Holen Sie sich Pro, um sie als Link zu teilen, oder senden Sie den Code an jemanden mit der App."
   },
   "errors": {
     "folderUnsupported": "Ordner werden noch nicht unterstützt. Bitte wählen Sie nur Dateien aus.",
@@ -101,7 +102,11 @@
     "invite": "Einladen",
     "inviting": "Wird eingeladen…",
     "sent": "Gesendet",
-    "deviceOffline": "Gerät offline – erneut versuchen"
+    "deviceOffline": "Gerät offline – erneut versuchen",
+    "direct": "Direkt",
+    "relay": "Relay",
+    "relayLimited": "Relay, bis {{limit}}",
+    "pro": "Pro"
   },
   "dropzone": {
     "addTitle": "Was möchten Sie hinzufügen?",

@@ -3,9 +3,10 @@ import { discardPendingProgress, getTransferApi, loadPeers, reportError } from '
 import { getTransferDebugMessage, getTransferErrorCode } from './errors'
 import { TRANSFER_ERROR_CODES, type TransferErrorCode } from './types'
 import { createInitialUploadItems, getPhaseFromSelection } from '../send/draftModel'
-import { exceedsFileCountLimit } from '../constants/transfer'
+import { exceedsFileCountLimit, NATIVE_RELAY_MAX_BYTES } from '../constants/transfer'
 import { isSubscriptionActive } from '../account/runtime/store'
 import { isReceiveRelayLimited } from '../relay/relayLimit'
+import { includesLockedOffer } from '../relay/relayAllowance'
 import type { SelectedFile } from '../send/draftTypes'
 import type {
   DownloadFileRequest,
@@ -90,6 +91,15 @@ export const retryJoin = async (): Promise<void> => {
   })
 }
 
+export const reconnectSession = async (): Promise<void> => {
+  const topic = transferStore.getState().retryTopic
+  if (!topic) return
+  await clearSession()
+  await joinSession(topic).catch((error: unknown) => {
+    console.warn('reconnectSession: join failed', error)
+  })
+}
+
 export const shareFiles = async (files: ShareFileRequest[]): Promise<ShareFilesReply> => {
   dispatchToTransferStore({ type: 'share_requested' })
   try {
@@ -111,8 +121,19 @@ export const pauseDownload = async (fileId: string): Promise<void> => {
   }
 }
 
+const exceedsRelayAllowance = (files: DownloadFileRequest[]): boolean => {
+  const state = transferStore.getState()
+  if (!isReceiveRelayLimited(state, isSubscriptionActive())) return false
+  return includesLockedOffer(
+    files.map((file) => file.fileId),
+    state.incomingFileOffers,
+    state.receiveDownloadStates,
+    NATIVE_RELAY_MAX_BYTES
+  )
+}
+
 export const downloadFiles = async (files: DownloadFileRequest[]): Promise<DownloadFilesReply> => {
-  if (isReceiveRelayLimited(transferStore.getState(), isSubscriptionActive())) return { files: [] }
+  if (exceedsRelayAllowance(files)) return { files: [] }
   const offerKeys = files.map((f) => f.fileId)
   dispatchToTransferStore({ type: 'downloads_queued', offerKeys, queued: true })
   try {

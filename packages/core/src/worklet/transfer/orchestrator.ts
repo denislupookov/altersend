@@ -337,6 +337,7 @@ export class TransferOrchestrator implements TransferRPC {
       return
     }
     if (message.type === 'pro-status') {
+      session.drive?.setPeerPro(message.pro)
       this.sendStatus('peer-pro', { peer: session.peerKey, pro: message.pro })
       return
     }

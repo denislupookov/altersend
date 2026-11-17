@@ -39,6 +39,11 @@ export const styles = css.create({
   pressedScale: {
     transform: 'scale(0.97)'
   },
+  xs: {
+    minHeight: tokens.space7,
+    paddingInline: tokens.space3,
+    fontSize: tokens.fontSizeSm
+  },
   sm: {
     minHeight: tokens.space10,
     paddingInline: tokens.space5,
@@ -66,6 +71,11 @@ export const styles = css.create({
   },
   full: {
     width: '100%'
+  },
+  iconOnlyXs: {
+    minWidth: tokens.space7,
+    minHeight: tokens.space7,
+    paddingInline: 0
   },
   iconOnlySm: {
     minWidth: tokens.space8,
@@ -251,6 +261,7 @@ export const styles = css.create({
     textAlign: 'center',
     whiteSpace: 'nowrap'
   },
+  textXs: { fontSize: tokens.fontSizeSm },
   textSm: { fontSize: tokens.fontSizeMd },
   textMd: { fontSize: tokens.fontSizeBase },
   textLg: { fontSize: tokens.fontSizeLg },

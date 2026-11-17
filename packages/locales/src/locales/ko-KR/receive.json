@@ -64,9 +64,6 @@
     "sessionEnded": {
       "title": "세션이 종료되었습니다.",
       "description": "새로운 전송을 시작하려면 돌아오세요."
-    },
-    "relayLimit": {
-      "description": "이 전송은 {{limit}}를 넘고 릴레이를 거칩니다. 받으려면 Pro를 시작하거나, 두 기기가 직접 연결될 수 있는 네트워크에서 다시 시도하세요."
     }
   },
   "panel": {
@@ -191,5 +188,16 @@
       "title": "연결하지 못했습니다",
       "description": "직접 연결에 실패했고 릴레이도 혼잡합니다. 두 기기 중 하나에서 다른 네트워크를 사용해 보세요."
     }
+  },
+  "relayLimit": {
+    "free": "릴레이는 {{limit}}까지 무료",
+    "locked": "무료 릴레이 한도 초과",
+    "unlocked": "Pro로 잠금 해제되었습니다. 이제 모두 다운로드할 수 있습니다.",
+    "downloadSome": "{{files}}({{size}}) 다운로드",
+    "directTitle": "직접 연결하는 방법",
+    "directSameWifi": "두 기기를 같은 Wi-Fi에 연결하세요",
+    "directVpn": "또는 두 기기 모두 VPN을 끄세요",
+    "directFree": "직접 전송은 무료이며 용량 제한이 없습니다.",
+    "directOwnRelay": "릴레이 설정에서 직접 운영하는 릴레이를 쓰거나 릴레이를 끌 수도 있습니다."
   }
 }

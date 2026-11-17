@@ -8,18 +8,17 @@ import {
   useSubscriptionStore,
   formatFileSize,
   formatItemsCount,
-  NATIVE_RELAY_MAX_LABEL,
-  useSendRelayLimit,
   useShareViewModel,
   WEB_LINK_MAX_LABEL,
+  type ConnectedDeviceRow,
   type DeviceRenameTarget
 } from '@altersend/domain'
 import {
   Button,
-  ErrorBanner,
   Input,
   LinkCard,
   LinkRow,
+  ProTag,
   WaitingRadar,
   useTheme
 } from '@altersend/components'
@@ -43,6 +42,7 @@ import { useDeviceRemove } from '@/src/pairing/useDeviceRemove'
 import { QRSection } from './QRSection'
 import { ShareQrSheet } from './ShareQrSheet'
 import { ShareFilesSheet } from './ShareFilesSheet'
+import { LinkLimitSheet } from './LinkLimitSheet'
 import { Text } from '@/src/components/ThemedText'
 
 const TILE_GAP = 12
@@ -76,6 +76,7 @@ export function ShareView() {
   })
   const [isFilesSheetOpen, setIsFilesSheetOpen] = useState(false)
   const [isQrOpen, setIsQrOpen] = useState(false)
+  const [isLinkLimitOpen, setIsLinkLimitOpen] = useState(false)
   const [contentWidth, setContentWidth] = useState(0)
   const [actionsTarget, setActionsTarget] = useState<DeviceRenameTarget | null>(null)
   const { openRename, renameSheet } = useDeviceRename(vm.rename)
@@ -94,7 +95,30 @@ export function ShareView() {
 
   const pro = useSubscriptionStore((state) => state.active)
   const webLinkTooLarge = exceedsWebLinkLimit(vm.totalSize, pro)
-  const relayLimited = useSendRelayLimit(vm.totalSize)
+  const getPro = () => router.push('/account')
+  const linkTag = webLinkTooLarge ? (
+    <View pointerEvents='none' style={styles.linkTag}>
+      <ProTag label={t('send:peer.pro')} corner />
+    </View>
+  ) : null
+
+  const renderConnectedTrailing = (row: ConnectedDeviceRow) => {
+    if (row.action === 'pair') {
+      return (
+        <Button onClick={() => vm.pair(row.peerKey)} size='sm' variant='secondary' pill>
+          {t('send:peer.pair')}
+        </Button>
+      )
+    }
+    if (row.action === 'pair-requested') {
+      return (
+        <Button size='sm' variant='secondary' pill loading>
+          {t('send:peer.requested')}
+        </Button>
+      )
+    }
+    return null
+  }
   const tileCount = 3
   const tileWidth =
     contentWidth > 0 ? (contentWidth - TILE_GAP * (tileCount - 1)) / tileCount : undefined
@@ -102,7 +126,7 @@ export function ShareView() {
   const shareLink = async () => {
     if (!vm.topic) return
     if (webLinkTooLarge) {
-      router.push('/account')
+      setIsLinkLimitOpen(true)
       return
     }
 
@@ -133,18 +157,6 @@ export function ShareView() {
         contentContainerStyle={styles.content}
         onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
       >
-        {relayLimited ? (
-          <View style={styles.banner}>
-            <ErrorBanner
-              message={t('send:connection.relayLimit', { limit: NATIVE_RELAY_MAX_LABEL })}
-              action={
-                <Button onClick={() => router.push('/account')} size='sm' variant='primary'>
-                  {t('settings:account.getPro')}
-                </Button>
-              }
-            />
-          </View>
-        ) : null}
         {vm.phase === 'waiting' && (
           <View style={styles.statusStrip}>
             <WaitingRadar
@@ -192,6 +204,7 @@ export function ShareView() {
               >
                 {t('send:connection.shareLink')}
               </Button>
+              {linkTag}
             </View>
             <View style={[styles.tile, { width: tileWidth }]}>
               <Button
@@ -244,6 +257,7 @@ export function ShareView() {
                   icon={<LinkIcon size={18} />}
                   onClick={() => void shareLink()}
                 />
+                {linkTag}
               </View>
             </View>
           </View>
@@ -300,26 +314,14 @@ export function ShareView() {
                           }
                           iconBackground={Icon ? c.colorSurfacePrimary : c.colorInfoSubtle}
                           label={row.name}
+                          labelAccessory={
+                            row.peerPro ? <ProTag label={t('send:peer.pro')} /> : undefined
+                          }
                           subtitle={row.subtitle}
                           subtitleTone={row.subtitleTone}
                           status={row.status}
                           progressPercent={row.progressPercent}
-                          trailing={
-                            row.action === 'pair' ? (
-                              <Button
-                                onClick={() => vm.pair(row.peerKey)}
-                                size='sm'
-                                variant='secondary'
-                                pill
-                              >
-                                {t('send:peer.pair')}
-                              </Button>
-                            ) : row.action === 'pair-requested' ? (
-                              <Button size='sm' variant='secondary' pill loading>
-                                {t('send:peer.requested')}
-                              </Button>
-                            ) : null
-                          }
+                          trailing={renderConnectedTrailing(row)}
                           isLast={isLast}
                         />
                       </Pressable>
@@ -364,6 +366,13 @@ export function ShareView() {
         )}
       </ScrollView>
 
+      <LinkLimitSheet
+        open={isLinkLimitOpen}
+        totalSize={vm.totalSize}
+        onClose={() => setIsLinkLimitOpen(false)}
+        onGetPro={getPro}
+      />
+
       <ShareQrSheet open={isQrOpen} topic={vm.topic} onClose={() => setIsQrOpen(false)} />
 
       <DeviceActionsSheet
@@ -399,7 +408,6 @@ export function ShareView() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingTop: 0, paddingBottom: 16 },
-  banner: { marginBottom: 24 },
   statusStrip: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 24 },
   statusText: { flex: 1, minWidth: 0 },
   statusTitle: { fontSize: 16, fontWeight: '700' },
@@ -420,6 +428,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     width: '100%',
     gap: TILE_GAP,
+    paddingTop: 8,
     marginBottom: 24
   },
   tile: { flexGrow: 1, flexShrink: 1, minWidth: 0 },
@@ -430,5 +439,6 @@ const styles = StyleSheet.create({
   keyInput: { flex: 1, minWidth: 0 },
   keyAction: { width: 48, height: 48, flexDirection: 'row' },
   qrPanelSection: { paddingTop: 0 },
-  initials: { fontSize: 14, fontWeight: '700', letterSpacing: 0.5 }
+  initials: { fontSize: 14, fontWeight: '700', letterSpacing: 0.5 },
+  linkTag: { position: 'absolute', top: -8, right: 4 }
 })

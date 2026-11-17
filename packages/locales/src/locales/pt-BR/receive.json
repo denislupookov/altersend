@@ -64,9 +64,6 @@
     "sessionEnded": {
       "title": "Sessão encerrada",
       "description": "Retorne para iniciar uma nova transferência."
-    },
-    "relayLimit": {
-      "description": "Esta transferência passa de {{limit}} e vai pelo retransmissor. Obtenha o Pro para recebê-la ou tente uma rede em que os dois dispositivos consigam se conectar diretamente."
     }
   },
   "panel": {
@@ -191,5 +188,16 @@
       "title": "Não foi possível conectar",
       "description": "A conexão direta não funcionou e o retransmissor está ocupado. Tente outra rede em um dos dispositivos."
     }
+  },
+  "relayLimit": {
+    "free": "O retransmissor é grátis até {{limit}}",
+    "locked": "Acima do limite gratuito do retransmissor",
+    "unlocked": "Desbloqueado com o Pro. Tudo pode ser baixado.",
+    "downloadSome": "Baixar {{files}} ({{size}})",
+    "directTitle": "Conseguir uma conexão direta",
+    "directSameWifi": "Conecte os dois dispositivos ao mesmo Wi-Fi",
+    "directVpn": "Ou desative a VPN nos dois",
+    "directFree": "Transferências diretas são gratuitas e sem limite.",
+    "directOwnRelay": "Você também pode usar seu próprio retransmissor ou desativá-lo nas configurações do retransmissor."
   }
 }
