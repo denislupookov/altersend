@@ -25,6 +25,16 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         key: 'relayLimit',
         titleKey: 'common:whatsNew.releases.v2_1_0.relayLimit.title',
         descriptionKey: 'common:whatsNew.releases.v2_1_0.relayLimit.description'
+      },
+      {
+        key: 'autoAccept',
+        titleKey: 'common:whatsNew.releases.v2_1_0.autoAccept.title',
+        descriptionKey: 'common:whatsNew.releases.v2_1_0.autoAccept.description'
+      },
+      {
+        key: 'reliability',
+        titleKey: 'common:whatsNew.releases.v2_1_0.reliability.title',
+        descriptionKey: 'common:whatsNew.releases.v2_1_0.reliability.description'
       }
     ]
   },

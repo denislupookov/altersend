@@ -93,7 +93,15 @@
         },
         "relayLimit": {
           "title": "Relay gratis fino a 1 GB",
-          "description": "I trasferimenti diretti restano gratis e illimitati."
+          "description": "I trasferimenti gratuiti via relay ora vanno fino a 1 MB/s. I trasferimenti diretti restano gratis e illimitati."
+        },
+        "autoAccept": {
+          "title": "Accetta automaticamente dai dispositivi accoppiati",
+          "description": "I trasferimenti dai dispositivi accoppiati partono senza chiedere. Attivalo nelle Impostazioni."
+        },
+        "reliability": {
+          "title": "Trasferimenti più stabili",
+          "description": "Dopo un'interruzione di rete il trasferimento riprende da dove si era fermato, e le connessioni non riuscite si possono riprovare."
         }
       },
       "v2_0_0": {

@@ -93,7 +93,15 @@
         },
         "relayLimit": {
           "title": "Relay grátis até 1 GB",
-          "description": "Transferências diretas continuam grátis e ilimitadas."
+          "description": "Transferências grátis via relay agora vão até 1 MB/s. Transferências diretas continuam grátis e ilimitadas."
+        },
+        "autoAccept": {
+          "title": "Aceitar automaticamente de dispositivos emparelhados",
+          "description": "Transferências dos seus dispositivos emparelhados começam sem perguntar. Ative em Configurações."
+        },
+        "reliability": {
+          "title": "Transferências mais estáveis",
+          "description": "Se a rede cair, a transferência continua de onde parou, e conexões que falharem podem ser tentadas de novo."
         }
       },
       "v2_0_0": {

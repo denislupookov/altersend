@@ -93,7 +93,15 @@
         },
         "relayLimit": {
           "title": "免费中继最高 1 GB",
-          "description": "直连传输依然免费且不限量。"
+          "description": "免费中继传输现在最高 1 MB/s。直连传输依然免费且不限量。"
+        },
+        "autoAccept": {
+          "title": "自动接受已配对设备",
+          "description": "来自已配对设备的传输无需确认即可开始。可在设置中开启。"
+        },
+        "reliability": {
+          "title": "传输更稳定",
+          "description": "网络中断后会从断点继续传输，连接失败也可以重试。"
         }
       },
       "v2_0_0": {

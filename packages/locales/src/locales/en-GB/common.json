@@ -93,7 +93,15 @@
         },
         "relayLimit": {
           "title": "Free relay up to 1 GB",
-          "description": "Direct transfers stay free and unlimited."
+          "description": "Free relayed transfers now run at up to 1 MB/s. Direct transfers stay free and unlimited."
+        },
+        "autoAccept": {
+          "title": "Auto-accept from paired devices",
+          "description": "Transfers from your paired devices start without asking. Turn it on in Settings."
+        },
+        "reliability": {
+          "title": "Steadier transfers",
+          "description": "Transfers pick up where they left off after a network drop, and failed connections can be retried."
         }
       },
       "v2_0_0": {

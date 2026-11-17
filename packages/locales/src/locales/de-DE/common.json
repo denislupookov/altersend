@@ -93,7 +93,15 @@
         },
         "relayLimit": {
           "title": "Relay kostenlos bis 1 GB",
-          "description": "Direkte Übertragungen bleiben kostenlos und unbegrenzt."
+          "description": "Kostenlose Relay-Übertragungen laufen jetzt mit bis zu 1 MB/s. Direkte Übertragungen bleiben kostenlos und unbegrenzt."
+        },
+        "autoAccept": {
+          "title": "Von gekoppelten Geräten automatisch annehmen",
+          "description": "Übertragungen von gekoppelten Geräten starten ohne Nachfrage. Aktivierbar in den Einstellungen."
+        },
+        "reliability": {
+          "title": "Stabilere Übertragungen",
+          "description": "Nach einem Verbindungsabbruch geht die Übertragung dort weiter, wo sie stand, und fehlgeschlagene Verbindungen lassen sich erneut versuchen."
         }
       },
       "v2_0_0": {

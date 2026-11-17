@@ -93,7 +93,15 @@
         },
         "relayLimit": {
           "title": "免費中繼最高 1 GB",
-          "description": "直連傳輸依然免費且不限量。"
+          "description": "免費中繼傳輸現在最高 1 MB/s。直連傳輸依然免費且不限量。"
+        },
+        "autoAccept": {
+          "title": "自動接受已配對裝置",
+          "description": "來自已配對裝置的傳輸無需確認即可開始。可在設定中開啟。"
+        },
+        "reliability": {
+          "title": "傳輸更穩定",
+          "description": "網路中斷後會從中斷處繼續傳輸，連線失敗也可以重試。"
         }
       },
       "v2_0_0": {

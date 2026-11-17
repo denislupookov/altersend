@@ -93,7 +93,15 @@
         },
         "relayLimit": {
           "title": "Relais gratuit jusqu'à 1 Go",
-          "description": "Les transferts directs restent gratuits et illimités."
+          "description": "Les transferts gratuits par relais vont désormais jusqu'à 1 Mo/s. Les transferts directs restent gratuits et illimités."
+        },
+        "autoAccept": {
+          "title": "Accepter automatiquement des appareils associés",
+          "description": "Les transferts de vos appareils associés démarrent sans demander. À activer dans les Paramètres."
+        },
+        "reliability": {
+          "title": "Des transferts plus fiables",
+          "description": "Après une coupure réseau, le transfert reprend là où il s'était arrêté, et les connexions échouées peuvent être relancées."
         }
       },
       "v2_0_0": {
