@@ -16,6 +16,13 @@
     "label": "崩溃报告",
     "description": "共享匿名崩溃数据以帮助改进AlterSend"
   },
+  "systemTray": {
+    "label": "在系统托盘中运行",
+    "description": "关闭窗口后保持 AlterSend 运行。",
+    "open": "打开 AlterSend",
+    "quit": "退出 AlterSend",
+    "changeFailed": "无法更改系统托盘设置"
+  },
   "relay": {
     "mode": {
       "altersend": {

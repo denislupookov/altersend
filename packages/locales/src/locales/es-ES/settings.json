@@ -16,6 +16,13 @@
     "label": "Informes de fallos",
     "description": "Comparte datos anónimos sobre fallos para ayudar a mejorar AlterSend"
   },
+  "systemTray": {
+    "label": "Ejecutar en la bandeja del sistema",
+    "description": "Mantén AlterSend en ejecución cuando cierres la ventana.",
+    "open": "Abrir AlterSend",
+    "quit": "Salir de AlterSend",
+    "changeFailed": "No se pudo cambiar la configuración de la bandeja del sistema"
+  },
   "relay": {
     "mode": {
       "altersend": {

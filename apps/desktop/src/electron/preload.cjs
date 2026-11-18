@@ -30,6 +30,9 @@ contextBridge.exposeInMainWorld('bridge', {
   },
   getPathForFile: (file) => webUtils.getPathForFile(file),
   getDownloadFolder: () => ipcRenderer.invoke('app:getDownloadFolder'),
+  getSystemTrayEnabled: () => ipcRenderer.invoke('app:getSystemTrayEnabled'),
+  setSystemTrayEnabled: (enabled) => ipcRenderer.invoke('app:setSystemTrayEnabled', enabled),
+  setSystemTrayLabels: (labels) => ipcRenderer.invoke('app:setSystemTrayLabels', labels),
   getAccountCode: () => ipcRenderer.invoke('account:getCode'),
   setAccountCode: (code) => ipcRenderer.invoke('account:setCode', code),
   clearAccountCode: () => ipcRenderer.invoke('account:clearCode'),
@@ -68,5 +71,5 @@ contextBridge.exposeInMainWorld('bridge', {
   setSentryEnabled: (enabled) => ipcRenderer.invoke('sentry:setEnabled', enabled),
   setThemePreference: (preference) => ipcRenderer.invoke('theme:setPreference', preference),
   requestCameraAccess: () => ipcRenderer.invoke('app:requestCameraAccess'),
-  clipboardReadText: () => ipcRenderer.invoke('app:clipboardReadText'),
+  clipboardReadText: () => ipcRenderer.invoke('app:clipboardReadText')
 })

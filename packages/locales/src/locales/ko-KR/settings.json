@@ -16,6 +16,13 @@
     "label": "충돌 보고서",
     "description": "AlterSend 개선을 위해 익명 충돌 데이터 공유"
   },
+  "systemTray": {
+    "label": "시스템 트레이에서 실행",
+    "description": "창을 닫아도 AlterSend를 계속 실행합니다.",
+    "open": "AlterSend 열기",
+    "quit": "AlterSend 종료",
+    "changeFailed": "시스템 트레이 설정을 변경하지 못했습니다"
+  },
   "relay": {
     "mode": {
       "altersend": {

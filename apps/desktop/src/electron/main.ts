@@ -7,7 +7,8 @@ import { initSentry } from './sentry.js'
 import { registerIpcHandlers } from './ipc.js'
 import { cliArgs, createDesktopRuntime } from './runtime.js'
 import { updateSendToShortcut } from './sendToShortcut.js'
-import { createMainWindow, sendToAllWindows, showOrCreateMainWindow } from './window.js'
+import { SystemTrayController } from './systemTray.js'
+import { sendToAllWindows, showOrCreateMainWindow } from './window.js'
 
 if (squirrelStartup) {
   updateSendToShortcut(process.argv[1])
@@ -22,7 +23,6 @@ if (squirrelStartup) {
 
   const runtime = createDesktopRuntime({ broadcast: sendToAllWindows })
 
-  registerIpcHandlers(runtime)
   app.setAsDefaultProtocolClient(runtime.metadata.protocol)
 
   const lock = runtime.allowMultipleInstances ? true : app.requestSingleInstanceLock()
@@ -34,10 +34,19 @@ if (squirrelStartup) {
 
     const revealWindow = () => {
       if (!app.isReady()) return
-      showOrCreateMainWindow(runtime.getPear()).catch((err) => {
-        console.error('Failed to show window:', err)
-      })
+      showOrCreateMainWindow(runtime.getPear(), () => systemTray.shouldHideOnClose()).catch(
+        (err) => {
+          console.error('Failed to show window:', err)
+        }
+      )
     }
+
+    const systemTray = new SystemTrayController({
+      open: revealWindow,
+      quit: () => app.quit()
+    })
+    registerIpcHandlers(runtime, systemTray)
+    app.on('before-quit', () => systemTray.beginQuit())
 
     const takeFileArgs = (args: string[]) => {
       enqueueExternalPaths(extractFilePaths(args, runtime.metadata.protocol, appPath))
@@ -73,16 +82,19 @@ if (squirrelStartup) {
 
     app.on('activate', revealWindow)
 
-    app.whenReady().then(() => {
+    app.whenReady().then(async () => {
+      await systemTray.initialize()
       takeFileArgs(cliArgs)
-      createMainWindow(runtime.getPear()).catch((err) => {
-        console.error('Failed to create window:', err)
-        app.quit()
-      })
+      showOrCreateMainWindow(runtime.getPear(), () => systemTray.shouldHideOnClose()).catch(
+        (err) => {
+          console.error('Failed to create window:', err)
+          app.quit()
+        }
+      )
     })
 
     app.on('window-all-closed', () => {
-      if (process.platform !== 'darwin') {
+      if (process.platform !== 'darwin' && !systemTray.isActive()) {
         app.quit()
       }
     })

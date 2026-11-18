@@ -16,6 +16,13 @@
     "label": "Rapports d’erreur",
     "description": "Partagez des données anonymes sur les plantages pour contribuer à améliorer AlterSend"
   },
+  "systemTray": {
+    "label": "Exécuter dans la zone de notification",
+    "description": "Garder AlterSend actif lorsque vous fermez la fenêtre.",
+    "open": "Ouvrir AlterSend",
+    "quit": "Quitter AlterSend",
+    "changeFailed": "Impossible de modifier le paramètre de la zone de notification"
+  },
   "relay": {
     "mode": {
       "altersend": {

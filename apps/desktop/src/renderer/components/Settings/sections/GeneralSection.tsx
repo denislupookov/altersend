@@ -47,6 +47,9 @@ export function GeneralSection() {
   const [folder, setFolder] = useState<string | null>(null)
   const [askEveryTime, setAsk] = useState(isAskEveryTime)
   const [crashReporting, setCrashReporting] = useState(isCrashReportingEnabled)
+  const [systemTrayEnabled, setSystemTrayEnabled] = useState(false)
+  const [systemTrayBusy, setSystemTrayBusy] = useState(true)
+  const systemTrayChanging = useRef(false)
   const autoAccept = useAutoAcceptSetting(autoAcceptStoragePort)
   const [shareExtension, setShareExtension] = useState<ShareExtensionState>('unknown')
   const awaitingSettingsVisit = useRef(false)
@@ -56,6 +59,22 @@ export function GeneralSection() {
       .getDownloadFolder()
       .then(setFolder)
       .catch((error) => console.error('GeneralSection: could not load download folder', error))
+  }, [])
+
+  useEffect(() => {
+    let current = true
+    bridgeApi
+      .getSystemTrayEnabled()
+      .then((enabled) => {
+        if (current) setSystemTrayEnabled(enabled)
+      })
+      .catch((error) => console.error('GeneralSection: could not load tray setting', error))
+      .finally(() => {
+        if (current) setSystemTrayBusy(false)
+      })
+    return () => {
+      current = false
+    }
   }, [])
 
   useEffect(() => {
@@ -99,6 +118,24 @@ export function GeneralSection() {
     bridgeApi
       .openShareSettings()
       .catch((error) => console.error('GeneralSection: could not open share settings', error))
+  }
+
+  const handleSystemTrayToggle = async (next: boolean) => {
+    if (systemTrayChanging.current) return
+    systemTrayChanging.current = true
+    setSystemTrayBusy(true)
+    const previous = systemTrayEnabled
+    setSystemTrayEnabled(next)
+    try {
+      setSystemTrayEnabled(await bridgeApi.setSystemTrayEnabled(next))
+    } catch (error) {
+      setSystemTrayEnabled(previous)
+      console.error('GeneralSection: could not change tray setting', error)
+      toast.show({ title: t('settings:systemTray.changeFailed'), variant: 'error' })
+    } finally {
+      systemTrayChanging.current = false
+      setSystemTrayBusy(false)
+    }
   }
 
   const handleCrashToggle = (next: boolean) => {
@@ -179,6 +216,20 @@ export function GeneralSection() {
               }
             />
           )}
+
+          <LinkRow
+            compact
+            label={t('settings:systemTray.label')}
+            subtitle={t('settings:systemTray.description')}
+            trailing={
+              <ToggleSwitch
+                checked={systemTrayEnabled}
+                disabled={systemTrayBusy}
+                onChange={handleSystemTrayToggle}
+                aria-label={t('settings:systemTray.label')}
+              />
+            }
+          />
 
           <LinkRow
             compact

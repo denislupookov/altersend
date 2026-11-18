@@ -16,6 +16,13 @@
     "label": "Absturzberichte",
     "description": "Teilen Sie anonyme Absturzdaten, um AlterSend zu verbessern"
   },
+  "systemTray": {
+    "label": "Im Infobereich ausführen",
+    "description": "AlterSend beim Schließen des Fensters im Hintergrund ausführen.",
+    "open": "AlterSend öffnen",
+    "quit": "AlterSend beenden",
+    "changeFailed": "Die Infobereich-Einstellung konnte nicht geändert werden"
+  },
   "relay": {
     "mode": {
       "altersend": {

@@ -27,6 +27,7 @@ import {
 import { setThemeSource, type ThemeSource } from './theme.js'
 import type { DesktopRuntime } from './runtime.js'
 import { setReportingEnabled } from './sentry.js'
+import type { SystemTrayController } from './systemTray.js'
 
 const PICK_PROPERTIES: Record<PickMode, OpenDialogOptions['properties']> = {
   files: ['openFile', 'multiSelections'],
@@ -55,7 +56,7 @@ async function pickFolder(evt: Electron.IpcMainInvokeEvent): Promise<string | nu
   return folder
 }
 
-export function registerIpcHandlers(runtime: DesktopRuntime) {
+export function registerIpcHandlers(runtime: DesktopRuntime, systemTray: SystemTrayController) {
   ipcMain.on('pkg', (evt) => {
     evt.returnValue = runtime.metadata.pkg
   })
@@ -128,6 +129,27 @@ export function registerIpcHandlers(runtime: DesktopRuntime) {
   ipcMain.handle('app:pickDirectory', (evt) => pickFolder(evt))
 
   ipcMain.handle('app:getDownloadFolder', () => getDownloadFolder())
+
+  ipcMain.handle('app:getSystemTrayEnabled', () => systemTray.isEnabled())
+
+  ipcMain.handle('app:setSystemTrayEnabled', (_evt, enabled: unknown) => {
+    if (typeof enabled !== 'boolean') {
+      throw new Error('app:setSystemTrayEnabled expects a boolean')
+    }
+    return systemTray.setEnabled(enabled)
+  })
+
+  ipcMain.handle('app:setSystemTrayLabels', (_evt, labels: SystemTrayLabels) => {
+    if (
+      !labels ||
+      typeof labels.open !== 'string' ||
+      typeof labels.quit !== 'string' ||
+      typeof labels.tooltip !== 'string'
+    ) {
+      throw new Error('app:setSystemTrayLabels expects open, quit and tooltip strings')
+    }
+    systemTray.setLabels(labels)
+  })
 
   ipcMain.handle('account:getCode', () => readAccountCode())
 
