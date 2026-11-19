@@ -130,7 +130,7 @@ export function registerIpcHandlers(runtime: DesktopRuntime, systemTray: SystemT
 
   ipcMain.handle('app:getDownloadFolder', () => getDownloadFolder())
 
-  ipcMain.handle('app:getSystemTrayEnabled', () => systemTray.isEnabled())
+  ipcMain.handle('app:getSystemTrayEnabled', () => systemTray.getEnabled())
 
   ipcMain.handle('app:setSystemTrayEnabled', (_evt, enabled: unknown) => {
     if (typeof enabled !== 'boolean') {

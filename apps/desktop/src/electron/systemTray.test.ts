@@ -285,6 +285,21 @@ describe('SystemTrayController', () => {
     expect(controller.isActive()).toBe(false)
   })
 
+  it('reads the settled state for a remounted settings view while a disable is pending', async () => {
+    const { controller, store } = createController(true)
+    await controller.initialize()
+    let release!: () => void
+    store.write.mockImplementationOnce(() => new Promise<void>((resolve) => (release = resolve)))
+    const disable = controller.setEnabled(false)
+    await Promise.resolve()
+    expect(controller.isEnabled()).toBe(true)
+    const read = controller.getEnabled()
+    release()
+    await expect(read).resolves.toBe(false)
+    await expect(disable).resolves.toBe(false)
+    expect(controller.isEnabled()).toBe(false)
+  })
+
   it('does not reopen the window when a pending disable finishes during quit', async () => {
     const { controller, store, open } = createController(true)
     await controller.initialize()

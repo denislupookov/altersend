@@ -55,6 +55,11 @@ export class SystemTrayController {
     return this.enabled
   }
 
+  async getEnabled(): Promise<boolean> {
+    await this.pending
+    return this.enabled
+  }
+
   setLabels(labels: SystemTrayLabels): void {
     if (
       !labels ||
