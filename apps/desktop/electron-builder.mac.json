@@ -9,6 +9,7 @@
   "files": [
     "dist/**/*",
     "package.json",
+    "build/icon.png",
     "!dist/**/*.map",
     "!**/node_modules/react-native/**",
     "!**/node_modules/react-native-*/**",

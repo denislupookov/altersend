@@ -16,6 +16,13 @@
     "label": "Rapporti sugli incidenti",
     "description": "Condividi dati anonimi sugli arresti anomali per contribuire a migliorare AlterSend"
   },
+  "systemTray": {
+    "label": "Esegui nell'area di notifica",
+    "description": "Mantieni AlterSend in esecuzione quando chiudi la finestra.",
+    "open": "Apri AlterSend",
+    "quit": "Esci da AlterSend",
+    "changeFailed": "Impossibile modificare l'impostazione dell'area di notifica"
+  },
   "relay": {
     "mode": {
       "altersend": {

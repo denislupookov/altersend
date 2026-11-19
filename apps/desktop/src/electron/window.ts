@@ -8,6 +8,8 @@ import type { PearRuntimeInstance } from './runtime.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+const hiddenToTray = new WeakSet<BrowserWindow>()
+let creatingMainWindow: Promise<BrowserWindow> | null = null
 
 export function sendToAllWindows(name: string, data: unknown) {
   for (const win of BrowserWindow.getAllWindows()) {
@@ -15,7 +17,10 @@ export function sendToAllWindows(name: string, data: unknown) {
   }
 }
 
-export async function createMainWindow(pear: PearRuntimeInstance) {
+export async function createMainWindow(
+  pear: PearRuntimeInstance,
+  shouldHideOnClose: () => boolean = () => false
+) {
   const shouldOpenDevTools = false
   const minWidth = 720
   const minHeight = 480
@@ -39,6 +44,17 @@ export async function createMainWindow(pear: PearRuntimeInstance) {
     }
   })
 
+  let sessionEnding = false
+  win.on('query-session-end', () => {
+    sessionEnding = true
+  })
+  win.on('close', (event) => {
+    if (sessionEnding || !shouldHideOnClose()) return
+    event.preventDefault()
+    hiddenToTray.add(win)
+    win.hide()
+  })
+
   const allowedPermissions = new Set(['media', 'clipboard-sanitized-write'])
   const { session } = win.webContents
   session.setPermissionRequestHandler((_wc, permission, callback) =>
@@ -47,7 +63,7 @@ export async function createMainWindow(pear: PearRuntimeInstance) {
   session.setPermissionCheckHandler((_wc, permission) => allowedPermissions.has(permission))
 
   const showWindow = () => {
-    if (!win.isDestroyed() && !win.isVisible()) win.show()
+    if (!win.isDestroyed() && !win.isVisible() && !hiddenToTray.has(win)) win.show()
   }
   win.once('ready-to-show', showWindow)
   win.webContents.once('did-finish-load', showWindow)
@@ -109,13 +125,22 @@ export async function createMainWindow(pear: PearRuntimeInstance) {
   return win
 }
 
-export async function showOrCreateMainWindow(pear: PearRuntimeInstance): Promise<void> {
+export async function showOrCreateMainWindow(
+  pear: PearRuntimeInstance,
+  shouldHideOnClose: () => boolean = () => false
+): Promise<void> {
   const existing = BrowserWindow.getAllWindows().find((win) => !win.isDestroyed())
   if (!existing) {
-    await createMainWindow(pear)
+    if (!creatingMainWindow) {
+      creatingMainWindow = createMainWindow(pear, shouldHideOnClose).finally(() => {
+        creatingMainWindow = null
+      })
+    }
+    await creatingMainWindow
     return
   }
 
+  hiddenToTray.delete(existing)
   if (existing.isMinimized()) existing.restore()
   existing.show()
   existing.focus()

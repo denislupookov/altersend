@@ -16,6 +16,13 @@
     "label": "クラッシュレポート",
     "description": "AlterSend 改善のため匿名のクラッシュデータを共有する"
   },
+  "systemTray": {
+    "label": "システムトレイで実行",
+    "description": "ウィンドウを閉じても AlterSend を実行したままにします。",
+    "open": "AlterSend を開く",
+    "quit": "AlterSend を終了",
+    "changeFailed": "システムトレイの設定を変更できませんでした"
+  },
   "relay": {
     "mode": {
       "altersend": {

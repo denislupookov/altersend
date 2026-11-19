@@ -16,6 +16,13 @@
     "label": "Crash reports",
     "description": "Share anonymous crash data to help improve AlterSend"
   },
+  "systemTray": {
+    "label": "Run in system tray",
+    "description": "Keep AlterSend running when you close the window.",
+    "open": "Open AlterSend",
+    "quit": "Quit AlterSend",
+    "changeFailed": "Couldn't change the system tray setting"
+  },
   "relay": {
     "mode": {
       "altersend": {

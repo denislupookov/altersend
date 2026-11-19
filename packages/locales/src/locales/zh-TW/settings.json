@@ -16,6 +16,13 @@
     "label": "崩潰報告",
     "description": "共享匿名崩潰資料以幫助改進AlterSend"
   },
+  "systemTray": {
+    "label": "在系統匣中執行",
+    "description": "關閉視窗後讓 AlterSend 繼續執行。",
+    "open": "開啟 AlterSend",
+    "quit": "結束 AlterSend",
+    "changeFailed": "無法變更系統匣設定"
+  },
   "relay": {
     "mode": {
       "altersend": {

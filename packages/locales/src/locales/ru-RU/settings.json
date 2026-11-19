@@ -16,6 +16,13 @@
     "label": "Отчёты об ошибках",
     "description": "Отправляйте анонимные данные о сбоях, чтобы помочь улучшить AlterSend"
   },
+  "systemTray": {
+    "label": "Работать в системном трее",
+    "description": "Продолжать работу AlterSend при закрытии окна.",
+    "open": "Открыть AlterSend",
+    "quit": "Выйти из AlterSend",
+    "changeFailed": "Не удалось изменить настройку системного трея"
+  },
   "relay": {
     "mode": {
       "altersend": {

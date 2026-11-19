@@ -60,6 +60,12 @@ declare global {
 
   type ShareExtensionState = 'enabled' | 'disabled' | 'unknown'
 
+  interface SystemTrayLabels {
+    open: string
+    quit: string
+    tooltip: string
+  }
+
   interface Bridge {
     pkg: () => { version: string }
     platform: NodeJS.Platform
@@ -75,6 +81,9 @@ declare global {
     pickSaveFile: (defaultName: string) => Promise<PickedFile | null>
     getPathForFile: (file: File) => string
     getDownloadFolder: () => Promise<string | null>
+    getSystemTrayEnabled: () => Promise<boolean>
+    setSystemTrayEnabled: (enabled: boolean) => Promise<boolean>
+    setSystemTrayLabels: (labels: SystemTrayLabels) => Promise<void>
     chooseDownloadFolder: () => Promise<string | null>
     getAccountCode: () => Promise<string | null>
     setAccountCode: (code: string) => Promise<void>

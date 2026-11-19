@@ -61,10 +61,21 @@ function handleThemePreferenceChange(preference: ThemePreference) {
 }
 
 function DesktopRoot() {
-  const { i18n } = useTranslation()
+  const { i18n, t, ready } = useTranslation(['settings', 'common'])
   const language = i18n.resolvedLanguage ?? i18n.language
   const locale = isSupportedLocaleCode(language) ? language : 'en-US'
   const fontFamily = getLocaleFontFamily(locale)
+
+  React.useEffect(() => {
+    if (!hasBridge() || !ready) return
+    bridgeApi
+      .setSystemTrayLabels({
+        open: t('settings:systemTray.open'),
+        quit: t('settings:systemTray.quit'),
+        tooltip: t('common:app.name')
+      })
+      .catch((error) => captureException(error, 'setSystemTrayLabels'))
+  }, [locale, t, ready])
 
   return (
     <ThemeProvider

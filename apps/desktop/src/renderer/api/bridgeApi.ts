@@ -61,6 +61,15 @@ export const bridgeApi = {
   async getDownloadFolder() {
     return requireBridge().getDownloadFolder()
   },
+  getSystemTrayEnabled() {
+    return requireBridge().getSystemTrayEnabled()
+  },
+  setSystemTrayEnabled(enabled: boolean) {
+    return requireBridge().setSystemTrayEnabled(enabled)
+  },
+  setSystemTrayLabels(labels: SystemTrayLabels) {
+    return requireBridge().setSystemTrayLabels(labels)
+  },
   async chooseDownloadFolder() {
     return requireBridge().chooseDownloadFolder()
   },
