@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { declineInvite } from '../transfer/commands'
 import { transferStore, useTransferStore } from '../transfer/store'
 import type { IncomingInvite } from '../transfer/types'
@@ -27,7 +27,14 @@ export function useIncomingInvite({
   const [answeredTopic, setAnsweredTopic] = useState<string | null>(null)
   const answeredTopicRef = useRef<string | null>(null)
 
-  const invite = incoming && incoming.topic !== answeredTopic ? incoming : null
+  const unanswered = incoming && incoming.topic !== answeredTopic ? incoming : null
+  const autoAcceptable = useMemo(
+    () =>
+      unanswered !== null &&
+      canAutoAcceptInvite(transferStore.getState(), unanswered, storage.read()),
+    [unanswered, storage]
+  )
+  const invite = autoAcceptable ? null : unanswered
 
   const answer = (pending: IncomingInvite, respond: InviteResponder) => {
     if (answeredTopicRef.current === pending.topic) return
@@ -38,14 +45,12 @@ export function useIncomingInvite({
 
   const autoAccept = useRef(() => {})
   autoAccept.current = () => {
-    if (invite) answer(invite, onAutoAccept ?? onAccept)
+    if (unanswered) answer(unanswered, onAutoAccept ?? onAccept)
   }
 
   useEffect(() => {
-    if (!invite) return
-    if (!canAutoAcceptInvite(transferStore.getState(), invite, storage.read())) return
-    autoAccept.current()
-  }, [invite, storage])
+    if (autoAcceptable) autoAccept.current()
+  }, [autoAcceptable, unanswered])
 
   return {
     invite,
